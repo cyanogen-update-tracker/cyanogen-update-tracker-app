@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Color used in the status bar and the Action Bar-->
+    <color name="lightblue">#33B5E5</color>
+    <color name="chart_background">#EEEEEE</color>
+</resources>

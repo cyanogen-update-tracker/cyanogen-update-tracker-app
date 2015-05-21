@@ -1,0 +1,147 @@
+<RelativeLayout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity$PlaceholderFragment">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:id="@+id/relativeLayout"
+    tools:context=".MainActivity$PlaceholderFragment">
+
+    <TextView
+        android:text="@string/available_update_header"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/headerLabel" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:id="@+id/buildNumberLabel"
+        android:layout_marginTop="16dp"
+        android:layout_marginBottom="0dp"
+        android:layout_below="@+id/headerLabel"/>
+
+
+    <com.github.mikephil.charting.charts.PieChart
+        android:layout_width="match_parent"
+        android:layout_height="100dp"
+        android:id="@+id/rolloutPercentageDiagram"
+        android:layout_below="@+id/buildNumberLabel"
+        android:layout_marginTop="11dp"
+        android:contentDescription="@string/description_stats_chart"
+        android:layout_alignParentStart="true" />
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:id="@+id/buttonTable"
+        android:layout_below="@+id/rolloutPercentageDiagram">
+        <TableRow>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/download"
+                android:id="@+id/downloadButton"
+
+                android:enabled="false"
+                style="?android:attr/buttonBarButtonStyle"/>
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/install"
+                android:id="@+id/updateInstallationInstructionsButton"
+                android:enabled="true"
+                android:textAppearance="?android:textAppearanceSmall"
+                android:onClick="showUpdateInstructions"
+                style="?android:attr/buttonBarButtonStyle"
+                />
+
+        </TableRow>
+    </TableLayout>
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:id="@+id/tableHost"
+    android:layout_below="@id/buttonTable"
+    android:layout_centerHorizontal="true">
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/downloadSizeTable">
+        <TableRow>
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/icon"
+                android:src="@drawable/icon_download_size"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:id="@+id/downloadSizeLabel"
+                android:gravity="center_vertical" />
+        </TableRow>
+    </TableLayout>
+
+
+    <TableLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/lastUpdatedTable"
+        android:layout_below="@+id/downloadSizeTable">
+        <TableRow>
+            <ImageView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:contentDescription="@string/icon"
+
+                android:src="@drawable/icon_last_updated"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="10dp"
+                android:gravity="center_vertical"
+                android:id="@+id/lastUpdatedLabel" />
+
+
+
+        </TableRow>
+    </TableLayout>
+
+</RelativeLayout>
+
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/updateDescriptionButton"
+        android:text="@string/update_details_header"
+        android:layout_below="@+id/tableHost"
+        android:layout_centerHorizontal="true"
+        style="?android:attr/buttonBarButtonStyle"/>
+
+</RelativeLayout>
+    <com.google.android.gms.ads.AdView
+        android:layout_width="match_parent"
+        android:layout_marginBottom="15dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:id="@+id/update_information_banner_field"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/update_information_advertising_id"
+        />
+</RelativeLayout>
+

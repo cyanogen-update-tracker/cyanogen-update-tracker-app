@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingStart="@dimen/activity_horizontal_margin"
+    android:paddingEnd="@dimen/activity_horizontal_margin"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    tools:context=".views.AboutActivity">
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/app_name"
+        android:id="@+id/textView2"
+        android:layout_gravity="center_horizontal"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <ImageView
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:id="@+id/imageView"
+        android:layout_below="@+id/textView2"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="15dp"
+        android:src="@mipmap/ic_launcher"
+        android:contentDescription="@string/icon" />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_version_number_field"
+        android:text="@string/version"
+        android:textStyle="bold"
+        android:layout_marginTop="15dp"
+        android:layout_below="@+id/imageView"
+        android:layout_centerHorizontal="true"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/aboutText2"
+        android:text="@string/about_description"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:layout_below="@+id/about_version_number_field"
+        android:layout_centerHorizontal="true"
+        android:textStyle="italic"
+        android:layout_marginTop="15dp"/>
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_story_field"
+        android:text="@string/about_story"
+        android:textSize="13sp"
+        android:linksClickable="true"
+        android:layout_marginTop="15dp"
+        android:textAppearance="?android:textAppearanceSmall"
+        android:layout_below="@+id/aboutText2"/>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_rate_button"
+        android:text="@string/rate_app"
+        android:onClick="rateApp"
+        style="?android:buttonBarButtonStyle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/about_close_button"
+        android:text="@string/close"
+        style="?android:buttonBarButtonStyle"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:onClick="close"/>
+</RelativeLayout>

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Cyanogen Updatetracker</string>
+    <string name="action_settings">Kies toestel en updatetype</string>
+    <string name="at">om</string>
+    <string name="choose_device_type">Kies het toestel om te volgen:</string>
+    <string name="choose_update_type">Kies de update-methode om te volgen:</string>
+    <string name="download">Downloaden</string>
+    <string name="download_size_header">Downloadgrootte:</string>
+    <string name="downloader_description">Bezig met downloaden van Cyanogen OS-update…</string>
+    <string name="available_update_header">De meest recente systeemupdate is:</string>
+    <string name="install">Installatiehandleiding</string>
+    <string name="last_changed_on_server_header">Laatste wijziging op de server:</string>
+    <string name="roll_out_percentage_header">% van alle toestellen heeft deze systeemupdate ontvangen.</string>
+    <string name="description_stats_chart">Plaatje met statistieken van de verspreiding van de update</string>
+    <string name="title_activity_update_installation_instructions">Installatiehandleiding</string>
+    <string name="title_section1">Update-informatie</string>
+    <string name="title_section2">Toestel-informatie</string>
+    <string name="update_details_header">Lees de update-beschrijving</string>
+    <string name="update_details_not_available">Helaas, voor deze update is geen updatebeschrijving beschikbaar.</string>
+    <string name="app_requires_network">Voor deze app is een werkende internetverbinding vereist</string>
+    <string name="app_requires_network_will_close">Kan geen update-informatie van de server ophalen. Zorg ervoor dat je een werkende internetverbinding hebt. De app zal nu afsluiten.</string>
+    <string name="downloading_in_background">De update zal op de achtergrond worden gedownload…</string>
+    <string name="exit">Afsluiten</string>
+    <string name="fetching_update">Bezig met ophalen van update-informatie van de server</string>
+    <string name="loading">Laden</string>
+    <string name="today">Vandaag</string>
+    <string name="yesterday">Gisteren</string>
+    <string name="oneplus_one">OnePlus One</string>
+    <string name="oppo_n1">Oppo N1 Cyanogenmod-editie</string>
+    <string name="string_for">voor</string>
+    <string name="yu_yureka">Yu Yureka</string>
+    <string name="megabyte">MB</string>
+    <string name="update">update</string>
+    <string name="incremental_update">incrementele update</string>
+    <string name="stable_update">volledige update</string>
+    <string name="update_details">Beschrijving van de update</string>
+    <string name="difference_incremental_stable">Verschil tussen een incrementele en een volledige update</string>
+    <string name="explanation_incremntal_stable">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen, terwijl een volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je telefoon.</string>
+    <string-array name="update_types_array">
+        <item>Volledig updatebestand</item>
+        <item>Incrementeel updatebestand</item>
+    </string-array>
+
+    <string-array name="device_names_array">
+    <item>OnePlus One</item>
+    <item>YU Yureka</item>
+    <item>Oppo N1 CM-Editie</item>
+    </string-array>
+    <string name="not_updated">Nog geen update ontvangen</string>
+    <string name="updated">Update ontvangen&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
+    <string name="close">Sluiten</string>
+    <string name="about">Over deze app</string>
+    <string name="tutorial_image_description">Plaatje van de handleiding.</string>
+    <string name="tutorial_step1_download_update">Download de update.</string>
+    <string name="tutorial_step1_explanation">Druk op de Download-knop om het downloaden te starten. De download zal verschijnen als melding in uw notificatiescherm. Als het downloaden klaar is, ziet u een melding zoals deze:</string>
+    <string name="tutorial_step2_press_buttons">- houdt zowel de aan-uit knop als de volume-omlaag knop tegelijkertijd ingedrukt.</string>
+    <string name="tutorial_step2_recovery_mode">Ga naar de Recovery-modus.</string>
+    <string name="tutorial_step2_turn_off_phone">- Zet uw telefoon eerst uit.</string>
+    <string name="tutorial_step2_wait">- Wacht totdat u het recovery-menu op het scherm ziet.</string>
+    <string name="tutorial_step3_apply_update">Installeer de gedownloade update.</string>
+    <string name="tutorial_step3_browse_for_update">- Ga naar 0, Download, en kies het zip-bestand met hetelfde updatenummer als wat in de app staat.</string>
+    <string name="tutorial_step3_recovery_apply">- In het recovery-menu, kies Apply Update.</string>
+    <string name="tutorial_step3_recovery_internal_storage">- Kies Choose from Internal Storage.</string>
+    <string name="tutorial_step4_android_is_upgrading">- Na deze stap, zult u  \'Android wordt bijgewerkt\' zien, terwijl uw apps worden geoptimaliseerd.</string>
+    <string name="tutorial_step4_cyanogen_logo">- Uw telefoon zal het Cyanogen-logo een poosje laten zien terwijl de update wordt uitgevoerd.</string>
+    <string name="tutorial_step4_reboot_now">- In het recovery-menu, kies Reboot System Now.</string>
+    <string name="tutorial_step4_restart">Start uw telefoon opnieuw op.</string>
+    <string name="tutorial_step5_check_version">- Nadat het updateproces is voltooid, kunt u de geïnstalleerde systeemversie controleren:</string>
+    <string name="tutorial_step5_close_button">Sluit de installatiehandleiding</string>
+    <string name="tutorial_step5_done">Klaar. Geniet van uw nieuwe Cyanogen OS!</string>
+    <string name="tutorial_step5_rate_app">- Als u deze app geweldig vindt, geef hem dan 5 sterren op Google Play!</string>
+    <string name="tutorial_step5_settings_app">- Ga naar Instellingen, Over de telefoon en bekijk de Cyanogen OS-versie</string>
+    <string name="device_information_amount_of_memory">Hoeveelheid geheugen:</string>
+    <string name="device_information_battery">Capaciteit van de accu:</string>
+    <string name="device_information_cpu_frequency">Frequentie van de processor:</string>
+    <string name="device_information_gpu">Grafische processor:</string>
+    <string name="device_information_image_description">Plaatje van uw apparaat</string>
+    <string name="device_information_os_version">Systeemversie</string>
+    <string name="device_information_serial_number">Serienummer</string>
+    <string name="device_information_system_on_a_chip">Systeem-op-een-chip</string>
+    <string name="device_information_your_device">Uw telefoon:</string>
+    <string name="icon">Icoon</string>
+    <string name="unknown">Onbekend</string>
+    <string name="about_description">Een app om Cyanogen OS-updates te volgen.</string>
+    <string name="rate_app">Beoordeel op Google Play</string>
+    <string name="version">Versie:</string>
+    <string name="about_story">Deze app is gemaakt door Arjan Vlek, een IT-student uit Zoetermeer.\n\nDeze app is geïnspireerd door een website (<a href="http://www.cyanogen-ota-bacon.somee.com">klik</a>) die momenteel ongeveer hetzelfde biedt. Deze app probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\nIn de toekomst zullen push-berichten worden verstuurd bij het uitkomen van een nieuwe update en daarnaast zal uw telefoon automatisch worden gedetecteerd.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
+
+</resources>
