@@ -123,12 +123,20 @@ public class DeviceInformationData {
             } catch (IOException e) {
                 this.CPU_Frequency = UNKNOWN;
             }
-            int cpuFreqInt = Integer.parseInt(cpuMaxFreq);
-            int cpuFreqMhz = cpuFreqInt / 1000;
-            BigDecimal cpuFreqMhz2 = new BigDecimal(cpuFreqMhz);
+            int cpuFreqInt = 0;
+            try {
+                cpuFreqInt = Integer.parseInt(cpuMaxFreq);
+            }
+            catch(NumberFormatException e) {
+                this.CPU_Frequency = UNKNOWN;
+            }
+            if(cpuFreqInt != 0) {
+                int cpuFreqMhz = cpuFreqInt / 1000;
+                BigDecimal cpuFreqMhz2 = new BigDecimal(cpuFreqMhz);
 
-            BigDecimal cpuFreqGhz = cpuFreqMhz2.divide(new BigDecimal(1000),3,BigDecimal.ROUND_DOWN);
-            this.CPU_Frequency = cpuFreqGhz.toString();
+                BigDecimal cpuFreqGhz = cpuFreqMhz2.divide(new BigDecimal(1000), 3, BigDecimal.ROUND_DOWN);
+                this.CPU_Frequency = cpuFreqGhz.toString();
+            }
         }
     }
 
@@ -156,14 +164,14 @@ public class DeviceInformationData {
                     try {
                         memoryAmount2 = memoryAmount.replace("MemTotal:        ", "");
                     }
-                    catch (Exception ignored) {
-
+                    catch (Exception e) {
+                        this.memoryAmount = UNKNOWN;
                     }
                     try {
                         memoryAmount3 = memoryAmount2 != null ? memoryAmount2.replace(" kB", "") : null;
                     }
                     catch (Exception ignored) {
-
+                        this.memoryAmount = UNKNOWN;
                     }
                     if(memoryAmount3 == null) {
                         if(memoryAmount2 == null) {
@@ -174,12 +182,20 @@ public class DeviceInformationData {
                         }
                     }
                     else {
-                        int memoryInt = Integer.parseInt(memoryAmount3);
-                        int memoryInt2 = memoryInt / 1000;
-                        BigDecimal memoryMegabyte = new BigDecimal(memoryInt2);
+                        int memoryInt = 0;
+                        try {
+                            memoryInt = Integer.parseInt(memoryAmount3);
+                        }
+                        catch (NumberFormatException e) {
+                            this.memoryAmount = UNKNOWN;
+                        }
+                        if(memoryInt != 0) {
+                            int memoryInt2 = memoryInt / 1000;
+                            BigDecimal memoryMegabyte = new BigDecimal(memoryInt2);
 
-                        BigDecimal memoryGigabyte = memoryMegabyte.divide(new BigDecimal(1000),2,BigDecimal.ROUND_DOWN);
-                        this.memoryAmount = memoryGigabyte.toString();
+                            BigDecimal memoryGigabyte = memoryMegabyte.divide(new BigDecimal(1000), 2, BigDecimal.ROUND_DOWN);
+                            this.memoryAmount = memoryGigabyte.toString();
+                        }
                     }
 
                 }

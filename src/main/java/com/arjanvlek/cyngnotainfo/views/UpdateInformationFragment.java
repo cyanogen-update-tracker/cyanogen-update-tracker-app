@@ -115,7 +115,9 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
     }
 
     private void hideAds() {
-        mAdView.destroy();
+        if(mAdView != null) {
+            mAdView.destroy();
+        }
     }
 
     private void showAds() {
@@ -313,27 +315,27 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
             ServiceHandler sh = new ServiceHandler();
             String jsonStr = null;
             // Making a request to the right url and getting response
-                if (deviceType == DeviceType.BACON && Objects.equals(updateType, "incremental")) {
+                if (deviceType == DeviceType.BACON && updateType.equals("incremental")) {
                     String baconIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(baconIncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.BACON && Objects.equals(updateType, "stable")) {
+                if (deviceType == DeviceType.BACON && updateType.equals("stable")) {
                     String baconStableUrl = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=STABLE";
                     jsonStr = sh.makeServiceCall(baconStableUrl, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.TOMATO && Objects.equals(updateType, "incremental")) {
+                if (deviceType == DeviceType.TOMATO && updateType.equals("incremental")) {
                     String tomatoIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(tomatoIncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.TOMATO && Objects.equals(updateType, "stable")) {
+                if (deviceType == DeviceType.TOMATO && updateType.equals("stable")) {
                     String tomatoStableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=STABLE";
                     jsonStr = sh.makeServiceCall(tomatoStableUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.N1 && Objects.equals(updateType, "incremental")) {
+                if (deviceType == DeviceType.N1 && updateType.equals("incremental")) {
                     String n1IncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(n1IncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.N1 && Objects.equals(updateType, "stable")) {
+                if (deviceType == DeviceType.N1 && updateType.equals("stable")) {
                     String n1StableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=STABLE";
                     jsonStr = sh.makeServiceCall(n1StableUri, ServiceHandler.GET);
                 }

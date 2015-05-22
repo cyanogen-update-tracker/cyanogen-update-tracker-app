@@ -52,13 +52,7 @@ private SharedPreferences sharedPreferences;
 
             }
         })
-                .setCancelable(false)
-        .setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                onCreateDialog(null);
-            }
-        });
+                .setCancelable(false);
         return builder.create();
     }
 

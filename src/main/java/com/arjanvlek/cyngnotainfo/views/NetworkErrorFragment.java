@@ -3,6 +3,7 @@ package com.arjanvlek.cyngnotainfo.views;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -26,12 +27,6 @@ public class NetworkErrorFragment extends DialogFragment {
                 System.exit(0);
 
             }
-        }).setOnDismissListener(new DialogInterface.OnDismissListener() {
-            @Override
-            public void onDismiss(DialogInterface dialogInterface) {
-                getActivity().finish();
-                System.exit(0);
-            }
         }).setOnCancelListener(new DialogInterface.OnCancelListener() {
             @Override
             public void onCancel(DialogInterface dialogInterface) {
@@ -49,6 +44,15 @@ public class NetworkErrorFragment extends DialogFragment {
                 return true;
             }
         });
+        if(Build.VERSION.SDK_INT >= 17) {
+            builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
+                @Override
+                public void onDismiss(DialogInterface dialogInterface) {
+                    getActivity().finish();
+                    System.exit(0);
+                }
+            });
+        }
         return builder.create();
     }
 }
