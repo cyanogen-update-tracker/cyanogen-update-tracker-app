@@ -26,7 +26,7 @@
         android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/ic_launcher"
         android:contentDescription="@string/icon" />
     <TextView
         android:layout_width="wrap_content"

@@ -94,8 +94,8 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:id="@+id/downloadSizeLabel"
-                android:gravity="center_vertical"
-                android:layout_gravity="center" />
+                android:gravity="center"
+                android:layout_gravity="center_vertical" />
         </TableRow>
     </TableLayout>
 
@@ -119,7 +119,7 @@
                 android:layout_marginStart="10dp"
                 android:gravity="center"
                 android:id="@+id/lastUpdatedLabel"
-                android:layout_gravity="center" />
+                android:layout_gravity="center_vertical" />
 
 
 
