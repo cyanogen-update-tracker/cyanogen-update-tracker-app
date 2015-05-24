@@ -4,6 +4,10 @@ android {
     compileSdkVersion 22
     buildToolsVersion "21.1.2"
 
+    packagingOptions {
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/LICENSE.txt'
+    }
     defaultConfig {
         applicationId "com.arjanvlek.cyngnotainfo"
         minSdkVersion 16
@@ -26,27 +30,15 @@ repositories {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
-
     //General Android libraries
     compile 'com.android.support:appcompat-v7:22.1.1'
     compile 'com.android.support:support-v4:22.1.1'
-
     //Date and time library
-    compile  'joda-time:joda-time:2.7'
-
+    compile 'joda-time:joda-time:2.7'
     //Chart library
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.0'
-
-
     //Google Play Services libraries
     compile 'com.google.android.gms:play-services-ads:7.3.0'
     compile 'com.google.android.gms:play-services-gcm:7.3.0'
-
-    //Http REST libraries
-    compile 'org.apache.httpcomponents:httpclient:4.4.1'
-    compile 'org.apache.httpcomponents:httpasyncclient:4.1'
-    compile 'org.apache.httpcomponents:httpmime:4.4.1'
-
-    compile 'com.mashape.unirest:unirest-java:1.4.5'
-
+    compile files('libs/unirest-java-1.4.6-SNAPSHOT-withDependency-ShadedForAndroid.jar')
 }
