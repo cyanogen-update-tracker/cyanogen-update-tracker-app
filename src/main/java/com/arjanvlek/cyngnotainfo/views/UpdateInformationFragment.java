@@ -342,7 +342,6 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
 
             if (jsonStr != null) {
                 try {
-                    showAllInterfaceElements();
                     JSONObject c = new JSONObject(jsonStr);
 
 
@@ -398,32 +397,8 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
 
 
     }
-    private void hideAllInterfaceElements() {
-        rootView.findViewById(R.id.headerLabel).setVisibility(View.GONE);
-        rootView.findViewById(R.id.lastUpdatedLabel).setVisibility(View.GONE);
-        rootView.findViewById(R.id.rolloutPercentageDiagram).setVisibility(View.GONE);
-        TextView textView = (TextView)rootView.findViewById(R.id.downloadSizeLabel);
-        textView.setText(getString(R.string.app_requires_network));
-        rootView.findViewById(R.id.downloadButton).setVisibility(View.GONE);
-        rootView.findViewById(R.id.updateDescriptionButton).setVisibility(View.GONE);
-        rootView.findViewById(R.id.buildNumberLabel).setVisibility(View.GONE);
-        rootView.findViewById(R.id.updateInstallationInstructionsButton).setVisibility(View.GONE);
-    }
-
-    private void showAllInterfaceElements() {
-        rootView.findViewById(R.id.headerLabel).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.lastUpdatedLabel).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.rolloutPercentageDiagram).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.downloadSizeLabel).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.downloadButton).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.updateDescriptionButton).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.buildNumberLabel).setVisibility(View.VISIBLE);
-        rootView.findViewById(R.id.updateInstallationInstructionsButton).setVisibility(View.VISIBLE);
-
-    }
 
     private void showNetworkError() {
-        hideAllInterfaceElements();
         DialogFragment networkErrorFragment = new NetworkErrorFragment();
         networkErrorFragment.show(getFragmentManager(), "NetworkError");
 
