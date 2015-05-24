@@ -1,6 +1,8 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -8,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
+import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
 import com.arjanvlek.cyngnotainfo.R;
 
 public class AboutActivity extends AppCompatActivity {
@@ -15,9 +18,19 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceSate) {
         super.onCreate(savedInstanceSate);
+        String versionNumber = null;
+        try {
+            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            versionNumber = pInfo.versionName;
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
         setContentView(R.layout.activity_about);
         TextView versionNumberView = (TextView)findViewById(R.id.about_version_number_field);
-        versionNumberView.setText(getString(R.string.version) + " " + getString(R.string.app_version));
+        if(versionNumber == null) {
+            versionNumber = DeviceInformationData.UNKNOWN;
+        }
+        versionNumberView.setText(getString(R.string.version) + " " + versionNumber);
 
         //Make link clickable
         TextView storyView = (TextView)findViewById(R.id.about_story_field);

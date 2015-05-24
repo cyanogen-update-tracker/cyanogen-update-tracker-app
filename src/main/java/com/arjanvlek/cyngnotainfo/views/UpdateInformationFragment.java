@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
@@ -122,24 +123,25 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
 
     private void showAds() {
 
-        // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
-        // values/strings.xml.
-        mAdView = (AdView) rootView.findViewById(R.id.update_information_banner_field);
+            // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
+            // values/strings.xml.
+            mAdView = (AdView) rootView.findViewById(R.id.update_information_banner_field);
+        if(mAdView != null) {
+            // Create an ad request. Check logcat output for the hashed device ID to
+            // get test ads on a physical device. e.g.
+            // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+            String adsTestId = "7CFCF353FBC40363065F03DFAC7D7EE4";
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(adsTestId)
+                    .addKeyword("smartphone")
+                    .addKeyword("tablet")
+                    .addKeyword("news apps")
+                    .addKeyword("games")
+                    .build();
 
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device. e.g.
-        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-        String adsTestId = "7CFCF353FBC40363065F03DFAC7D7EE4";
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(adsTestId)
-                .addKeyword("smartphone")
-                .addKeyword("tablet")
-                .addKeyword("news apps")
-                .addKeyword("games")
-                .build();
-
-        // Start loading the ad in the background.
-        mAdView.loadAd(adRequest);
+            // Start loading the ad in the background.
+            mAdView.loadAd(adRequest);
+        }
     }
     private boolean checkNetworkConnection() {
         ConnectivityManager cm =
@@ -267,7 +269,12 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         pieChartView.setUsePercentValues(true);
         pieChartView.setData(pieData);
         pieChartView.setMinimumWidth(pieChartView.getWidth());
-        pieChartView.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
+        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+            pieChartView.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
+        }
+        else {
+            pieChartView.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        }
         pieChartView.setBackgroundColor(getResources().getColor(R.color.chart_background));
         pieChartView.invalidate();
 
