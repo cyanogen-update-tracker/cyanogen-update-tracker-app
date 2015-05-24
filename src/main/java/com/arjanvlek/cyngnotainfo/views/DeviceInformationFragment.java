@@ -76,7 +76,9 @@ public class DeviceInformationFragment extends Fragment {
     }
 
     private void hideAds() {
-        mAdView.destroy();
+        if(mAdView != null ) {
+            mAdView.destroy();
+        }
     }
 
     private void showAds() {
