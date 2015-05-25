@@ -404,8 +404,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             String regId = strings[0];
             HttpResponse<JsonNode> jsonResponse = null;
             try {
-                jsonResponse = Unirest.post("** Add the base URL of your API / backend here **register_device.php")
-                        .header("accept", "application/json")
+                jsonResponse = Unirest.post("** Add the base URL of your API / backend here **register-device.php")
+                        .header("Content-Type", "application/json")
                         .field("tracking_device_type", deviceName )
                         .field("tracking_update_type", updateType)
                         .field("device_id", regId)
@@ -441,7 +441,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGCMPreferences();
         int appVersion = getAppVersion(context);
-        System.out.println("Saving regId on app version " + appVersion);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_REG_ID, regId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
