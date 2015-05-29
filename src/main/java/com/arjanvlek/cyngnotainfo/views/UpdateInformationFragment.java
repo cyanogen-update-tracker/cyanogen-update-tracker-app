@@ -23,9 +23,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
-import com.arjanvlek.cyngnotainfo.Model.DeviceType;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.ServiceHandler;
 import com.github.mikephil.charting.charts.PieChart;
@@ -33,22 +33,18 @@ import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
-import com.github.mikephil.charting.utils.ValueFormatter;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class UpdateInformationFragment extends Fragment implements Button.OnClickListener {
 
-    private DeviceType deviceType;
     private String deviceName;
     private String updateType;
     private String localizedUpdateType;
@@ -62,19 +58,22 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
     private DateTime refreshedDate;
     private boolean isFetched;
 
+    public static final String ADS_TEST_DEVICE_ID = "7CFCF353FBC40363065F03DFAC7D7EE4";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         SharedPreferences preferences = getActivity().getPreferences(Context.MODE_APPEND);
-        String deviceName = preferences.getString("device-name", "not-set");
-        updateType = preferences.getString("update-type", "not-set");
+        deviceName = preferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, "");
+        updateType = preferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, "");
+        assert updateType != null;
+        if(updateType.equals(MainActivity.FULL_UPDATE)) {
+            localizedUpdateType = getString(R.string.stable_update);
 
-        if(deviceName != null) {
-            detectDevice(deviceName);
         }
-        if(updateType != null) {
-            detectUpdateType(updateType);
+        else {
+            localizedUpdateType = getString(R.string.incremental_update);
         }
 
     }
@@ -94,7 +93,7 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
 
     private boolean checkIfDeviceIsSet() {
         SharedPreferences preferences = getActivity().getPreferences(Context.MODE_APPEND);
-        return preferences.contains("device-name") || preferences.contains("update-type");
+        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) || preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE);
     }
 
     @Override
@@ -130,7 +129,7 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
             // Create an ad request. Check logcat output for the hashed device ID to
             // get test ads on a physical device. e.g.
             // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-            String adsTestId = "7CFCF353FBC40363065F03DFAC7D7EE4";
+            String adsTestId = ADS_TEST_DEVICE_ID;
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice(adsTestId)
                     .addKeyword("smartphone")
@@ -152,29 +151,6 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
                 activeNetwork.isConnectedOrConnecting();
     }
 
-    private void detectDevice(String deviceName) {
-        if(deviceName.equals("bacon")) {
-            deviceType = DeviceType.BACON;
-            this.deviceName = "OnePlus One";
-        }
-        if(deviceName.equals("tomato")) {
-            deviceType = DeviceType.TOMATO;
-            this.deviceName = "YU Yureka";
-        }
-        if(deviceName.equals("n1")) {
-            deviceType = DeviceType.N1;
-            this.deviceName = "Oppo N1 CyanogenMod Edition";
-        }
-    }
-
-    private void detectUpdateType(String updateTypeName) {
-        if(updateTypeName.equals("stable")) {
-            localizedUpdateType = getString(R.string.stable_update);
-        }
-        if(updateTypeName.equals("incremental")) {
-            localizedUpdateType = getString(R.string.incremental_update);
-        }
-    }
 
     @Override
     public void onResume() {
@@ -322,27 +298,27 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
             ServiceHandler sh = new ServiceHandler();
             String jsonStr = null;
             // Making a request to the right url and getting response
-                if (deviceType == DeviceType.BACON && updateType.equals("incremental")) {
+                if (deviceName.equals("OnePlus One") && updateType.equals("Incremental update")) {
                     String baconIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(baconIncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.BACON && updateType.equals("stable")) {
+                if (deviceName.equals("OnePlus One") && updateType.equals("Full update")) {
                     String baconStableUrl = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=STABLE";
                     jsonStr = sh.makeServiceCall(baconStableUrl, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.TOMATO && updateType.equals("incremental")) {
+                if (deviceName.equals("Yu Yureka") && updateType.equals("Incremental update")) {
                     String tomatoIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(tomatoIncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.TOMATO && updateType.equals("stable")) {
+                if (deviceName.equals("Yu Yureka")&& updateType.equals("Full update")) {
                     String tomatoStableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=STABLE";
                     jsonStr = sh.makeServiceCall(tomatoStableUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.N1 && updateType.equals("incremental")) {
+                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("Incremental update")) {
                     String n1IncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(n1IncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceType == DeviceType.N1 && updateType.equals("stable")) {
+                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("Full update")) {
                     String n1StableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=STABLE";
                     jsonStr = sh.makeServiceCall(n1StableUri, ServiceHandler.GET);
                 }

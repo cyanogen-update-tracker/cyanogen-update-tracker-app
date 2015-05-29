@@ -39,18 +39,19 @@ public class GcmIntentService extends IntentService {
              */
             if (GoogleCloudMessaging.
                     MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                sendNotification("Send error: " + extras.toString());
+                extras.putBoolean("Send error", true);
+                sendNotification(extras);
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_DELETED.equals(messageType)) {
-                sendNotification("Deleted messages on server: " +
-                        extras.toString());
+                extras.putBoolean("deleted", true);
+                sendNotification(extras);
                 // If it's a regular GCM message, do some work.
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
                 //TODO filter message and make it look nice
                 // Post notification of received message.
-                sendNotification("Received: " + extras.toString());
+                sendNotification(extras);
             }
         }
         // Release the wake lock provided by the WakefulBroadcastReceiver.
@@ -60,20 +61,35 @@ public class GcmIntentService extends IntentService {
     // Put the message into a notification and post it.
     // This is just one simple example of what you might choose to do with
     // a GCM message.
-    private void sendNotification(String msg) {
+    private void sendNotification(Bundle msg) {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(Context.NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
 
+        String message = null;
+        if(msg!= null) {
+            if(msg.getString("version_number") != null && msg.getString("tracking_device_type_id") != null) {
+                message = "Version " + msg.getString("version_number") + " is now available for your " +  msg.getString("tracking_device_type_id");
+            }
+            else {
+                message = "Fail";
+            }
+        }
+        long[] vibrationPattern = new long[2];
+        vibrationPattern[0] = 100L;
+        vibrationPattern[1] = 100L;
+
         NotificationCompat.Builder mBuilder =
                 new NotificationCompat.Builder(this)
                         .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle("GCM Notification") //TODO set notification title
+                        .setContentTitle(getString(R.string.app_name)) //TODO set notification title
                         .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(msg))
-                        .setContentText(msg); //TODO set text
+                                .bigText(message))
+                        .setVibrate(vibrationPattern)
+                        .setContentText(message); //TODO set text
+
 
         mBuilder.setContentIntent(contentIntent);
         mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());

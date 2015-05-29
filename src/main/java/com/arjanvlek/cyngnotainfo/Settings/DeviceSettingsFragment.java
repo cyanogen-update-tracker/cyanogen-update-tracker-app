@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.app.AlertDialog;
 
+import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.R;
 
 public class DeviceSettingsFragment extends DialogFragment {
@@ -20,7 +21,7 @@ private int itemClicked;
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.choose_device_type)
-                .setSingleChoiceItems(R.array.device_names_array, setCurrentlySelectedItem(), new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(R.array.device_names_array, 0, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -33,13 +34,13 @@ private int itemClicked;
                         sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         if (itemClicked == 0) {
-                            editor.putString("device-name", "bacon");
+                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "OnePlus One");
                         } else if (itemClicked == 1) {
-                            editor.putString("device-name", "tomato");
+                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "Yu Yureka");
                         } else if (itemClicked == 2) {
-                            editor.putString("device-name", "n1");
+                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "Oppo N1 CyanogenMod Edition");
                         } else if (itemClicked == -1) {
-                            editor.putString("device-name", "not-set");
+                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "");
                         }
                         editor.apply();
 
@@ -49,21 +50,4 @@ private int itemClicked;
         return builder.create();
     }
 
-    private int setCurrentlySelectedItem() {
-        sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
-        if(sharedPreferences.getString("device-name", "not-set") != null) {
-            switch (sharedPreferences.getString("device-name", "not-set")) {
-                case "bacon":
-                    return 0;
-                case "tomato":
-                    return 1;
-                case "n1":
-                    return 2;
-                default:
-                    return -1;
-
-            }
-        }
-        return -1;
-    }
 }

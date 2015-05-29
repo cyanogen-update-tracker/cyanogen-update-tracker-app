@@ -10,20 +10,21 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v4.app.DialogFragment;
 
+import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.R;
 
 public class UpdateSettingsFragment extends DialogFragment {
 
 private SharedPreferences sharedPreferences;
     private int itemClicked;
-    private static String UPDATE_TYPE = "update-type";
+
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.choose_update_type)
-                .setSingleChoiceItems(R.array.update_types_array,setCurrentlySelectedItem(),new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(R.array.update_types_array, 0,new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -36,13 +37,13 @@ private SharedPreferences sharedPreferences;
                 sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 if(itemClicked == 0) {
-                    editor.putString(UPDATE_TYPE, "stable");
+                    editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, MainActivity.FULL_UPDATE);
                 }
                 else if (itemClicked == 1) {
-                    editor.putString(UPDATE_TYPE, "incremental");
+                    editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, MainActivity.INCREMENTAL_UPDATE);
                 }
                 else if (itemClicked == -1) {
-                    editor.putString(UPDATE_TYPE, "not-set");
+                    editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, "");
                 }
                 editor.apply();
                 Intent i = getActivity().getBaseContext().getPackageManager()
@@ -56,19 +57,4 @@ private SharedPreferences sharedPreferences;
         return builder.create();
     }
 
-    private int setCurrentlySelectedItem() {
-        sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
-        if(sharedPreferences.getString(UPDATE_TYPE, "not-set") != null) {
-            switch (sharedPreferences.getString(UPDATE_TYPE, "not-set")) {
-                case "stable":
-                    return 0;
-                case "incremental":
-                    return 1;
-                default:
-                    return -1;
-
-            }
-        }
-        return -1;
-    }
 }

@@ -1,6 +1,14 @@
 package com.arjanvlek.cyngnotainfo;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -19,13 +27,13 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
 import com.arjanvlek.cyngnotainfo.Settings.DeviceSettingsFragment;
 import com.arjanvlek.cyngnotainfo.Settings.UpdateSettingsFragment;
+import com.arjanvlek.cyngnotainfo.Support.DatabaseHelper;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
 import com.arjanvlek.cyngnotainfo.views.UpdateInformationFragment;
@@ -35,10 +43,9 @@ import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
-import com.mashape.unirest.http.HttpResponse;
-import com.mashape.unirest.http.JsonNode;
-import com.mashape.unirest.http.Unirest;
-import com.mashape.unirest.http.exceptions.UnirestException;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener, GoogleApiClient.OnConnectionFailedListener {
 
@@ -49,16 +56,29 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
     // Used to register for Push Notifications
-    public static final String PROPERTY_REG_ID = "registration_id";
-    private static final String PROPERTY_APP_VERSION = "appVersion";
+    public static final String PROPERTY_GCM_REG_ID = "registration_id";
+    public static final String PROPERTY_GCM_DEVICE_TYPE = "gcm_device_type";
+    public static final String PROPERTY_GCM_UPDATE_TYPE = "gcm_update_type";
+    public static final String PROPERTY_APP_VERSION = "appVersion";
+    public static final String PROPERTY_DEVICE_TYPE = "device_type";
+    public static final String PROPERTY_UPDATE_TYPE = "update_type";
+    public static final String PROPERTY_REGISTRATION_ERROR = "registration_error";
+
+    private static final String JSON_PROPERTY_DEVICE_REGISTRATION_ID = "device_id";
+    private static final String JSON_PROPERTY_DEVICE_TYPE = "tracking_device_type";
+    private static final String JSON_PROPERTY_UPDATE_TYPE = "tracking_update_type";
+
+    public static final String FULL_UPDATE = "Full update";
+    public static final String INCREMENTAL_UPDATE = "Incremental update";
 
     private String SENDER_ID = "** Add your Google Cloud Messaging API key here **";
+    private String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
     private GoogleCloudMessaging cloudMessaging;
     AtomicInteger msgId = new AtomicInteger();
     private SharedPreferences messagingPreferences;
     private Context context;
     private String registrationId;
-    private String deviceName = "";
+    private String deviceType = "";
     private String updateType = "";
 
     @Override
@@ -68,14 +88,15 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         context = getApplicationContext();
         if (checkPlayServices()) {
             cloudMessaging = GoogleCloudMessaging.getInstance(context);
-            registrationId = getRegistrationId(context); //TODO write
+            registrationId = getRegistrationId(context);
 
             SharedPreferences preferences = getPreferences(MODE_APPEND);
-            deviceName = preferences.getString("device-name", "not-set");
-            updateType = preferences.getString("update-type", "not-set");
-//            if(registrationId.isEmpty() && !deviceName.equals("not-set")) {
-                registerInBackground(); //TODO write
-//            }
+            deviceType = preferences.getString(PROPERTY_DEVICE_TYPE, "");
+            updateType = preferences.getString(PROPERTY_UPDATE_TYPE, "");
+            checkIfRegistrationHasFailed();
+            if(!checkIfRegistrationIsValid(context)) {
+                registerInBackground();
+            }
 
             // Set up the action bar.
             final ActionBar actionBar = getSupportActionBar();
@@ -85,13 +106,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
 
             if (updateType != null) {
-                if (updateType.equals("not-set")) {
+                if (updateType.isEmpty()) {
                     askForUpdateSettings();
                 }
 
             }
-            if (deviceName != null) {
-                if (deviceName.equals("not-set")) {
+            if (deviceType != null) {
+                if (deviceType.isEmpty()) {
                     askForDeviceSettings();
                 }
             }
@@ -129,7 +150,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
 
     private void askForDeviceSettings() {
-            DialogFragment newFragment = new DeviceSettingsFragment();
+        DatabaseHelper databaseHelper = new DatabaseHelper();
+        try {
+            databaseHelper.getDeviceTypes();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        DialogFragment newFragment = new DeviceSettingsFragment();
             newFragment.show(getSupportFragmentManager(), "deviceSettings");
 
 
@@ -301,16 +328,45 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return true;
     }
 
-    private String getRegistrationId(Context context) {
+
+
+    private boolean checkIfRegistrationIsValid(Context context) {
         final SharedPreferences prefs = getGCMPreferences();
-        String registrationId = prefs.getString(PROPERTY_REG_ID, "");
+        String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
+        String registeredDeviceType = prefs.getString(PROPERTY_GCM_DEVICE_TYPE, "");
+        String registeredUpdateType = prefs.getString(PROPERTY_GCM_UPDATE_TYPE, "");
+
         if (registrationId != null && registrationId.isEmpty()) {
             System.out.println("Registration not found.");
-            return "";
+            return false;
+        }
+
+        if(!deviceType.equals(registeredDeviceType)){
+            System.out.println("Device type has changed.");
+            return false;
+        }
+        if(!updateType.equals(registeredUpdateType)) {
+            System.out.println("Update type has changed.");
+            return false;
         }
         // Check if app was updated; if so, it must clear the registration ID
         // since the existing registration ID is not guaranteed to work with
         // the new app version.
+        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
+        int currentVersion = getAppVersion(context);
+        if (registeredVersion != currentVersion) {
+            System.out.println("App version changed.");
+            return false;
+        }
+        return true;
+    }
+
+    private String getRegistrationId(Context context) {
+        final SharedPreferences prefs = getGCMPreferences();
+        String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
+        if(registrationId != null && registrationId.isEmpty()) {
+            return "";
+        }
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
@@ -397,40 +453,99 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         new RegisterIdToBackend().execute(registrationId);
     }
 
-    private class RegisterIdToBackend extends AsyncTask<String,Integer, HttpResponse<JsonNode>> {
+    private class RegisterIdToBackend extends AsyncTask<String,Integer, String> {
 
         @Override
-        protected HttpResponse<JsonNode> doInBackground(String... strings) {
+        protected String doInBackground(String... strings) {
             String regId = strings[0];
-            HttpResponse<JsonNode> jsonResponse = null;
+            HttpURLConnection urlConnection = null;
+            InputStream in;
+            String result = null;
             try {
-                jsonResponse = Unirest.post("** Add the base URL of your API / backend here **register-device.php")
-                        .header("Content-Type", "application/json")
-                        .field("tracking_device_type", deviceName )
-                        .field("tracking_update_type", updateType)
-                        .field("device_id", regId)
-                        .asJson(); //TODO fix request
-            } catch (UnirestException e) {
+
+                JSONObject jsonResponse = new JSONObject();
+                jsonResponse.put(JSON_PROPERTY_DEVICE_REGISTRATION_ID, regId);
+                jsonResponse.put(JSON_PROPERTY_DEVICE_TYPE, deviceType);
+                jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
+
+                URL url = new URL(SERVER_URL);
+                urlConnection = (HttpURLConnection)url.openConnection();
+                urlConnection.setDoOutput(true);
+                urlConnection.setRequestMethod("POST");
+                urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
+                urlConnection.setRequestProperty("Accept", "application/json");
+                urlConnection.connect();
+                OutputStream out = urlConnection.getOutputStream();
+                byte[] outputBytes = jsonResponse.toString().getBytes();
+                out.write(outputBytes);
+                out.close();
+                in = new BufferedInputStream(urlConnection.getInputStream());
+                result = inputStreamToString(in);
+            } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                if (urlConnection != null) {
+                    urlConnection.disconnect();
+                }
             }
-            return jsonResponse;
+
+            return result;
         }
 
         @Override
-        protected void onPostExecute(HttpResponse<JsonNode> response) {
+        protected void onPostExecute(String response) {
+            JSONObject result = null;
             try {
-                System.out.println("response status code: " + response.getStatusText());
-                JsonNode result = response.getBody();
-                System.out.println("response: " + result.toString()); //TODO filter server errors
+                result = new JSONObject(response);
+                System.out.println(result.toString());
+                if(result.getString("success") != null) {
+                    System.out.println("registration successful!");
+                }
+                else {
+                    setRegistrationFailure();
+                    System.out.println("registration error");
+                }
+            } catch (JSONException e) {
+                try {
+                    setRegistrationFailure();
+                    System.out.println("registration error: " + (result != null ? result.getString("error") : null));
+                } catch (JSONException e1) {
+                    e1.printStackTrace();
+                }
             }
-            catch (Exception e) {
-                e.printStackTrace();
-
-            }
-
         }
     }
+    private void setRegistrationFailure() {
+        SharedPreferences preferences = getGCMPreferences();
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(PROPERTY_REGISTRATION_ERROR, true);
+        editor.apply();
+    }
+    private void checkIfRegistrationHasFailed() {
+        SharedPreferences preferences = getGCMPreferences();
+        if(preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false)) {
+            registerInBackground();
+        }
 
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putBoolean(PROPERTY_REGISTRATION_ERROR, false);
+        editor.apply();
+    }
+
+    private String inputStreamToString(InputStream in) {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+        StringBuilder out = new StringBuilder();
+        String line;
+        try {
+            while ((line = reader.readLine()) != null) {
+                out.append(line);
+            }
+            reader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return out.toString();
+    }
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
@@ -442,7 +557,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         final SharedPreferences prefs = getGCMPreferences();
         int appVersion = getAppVersion(context);
         SharedPreferences.Editor editor = prefs.edit();
-        editor.putString(PROPERTY_REG_ID, regId);
+        editor.putString(PROPERTY_GCM_REG_ID, regId);
+        editor.putString(PROPERTY_GCM_DEVICE_TYPE, deviceType);
+        editor.putString(PROPERTY_GCM_UPDATE_TYPE, updateType);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.apply();
     }
