@@ -31,14 +31,14 @@ repositories {
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
     //General Android libraries
-    compile 'com.android.support:appcompat-v7:22.1.1'
-    compile 'com.android.support:support-v4:22.1.1'
+    compile 'com.android.support:appcompat-v7:22.2.0'
+    compile 'com.android.support:support-v4:22.2.0'
     //Date and time library
     compile 'joda-time:joda-time:2.7'
     //Chart library
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.0'
     //Google Play Services libraries
-    compile 'com.google.android.gms:play-services-ads:7.3.0'
-    compile 'com.google.android.gms:play-services-gcm:7.3.0'
+    compile 'com.google.android.gms:play-services-ads:7.5.0'
+    compile 'com.google.android.gms:play-services-gcm:7.5.0'
 //    compile files('libs/unirest-java-1.4.6-SNAPSHOT-withDependency-ShadedForAndroid.jar')
 }
