@@ -8,7 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -31,9 +31,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
 import com.arjanvlek.cyngnotainfo.Settings.DeviceSettingsFragment;
 import com.arjanvlek.cyngnotainfo.Settings.UpdateSettingsFragment;
-import com.arjanvlek.cyngnotainfo.Support.DatabaseHelper;
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
 import com.arjanvlek.cyngnotainfo.views.UpdateInformationFragment;
@@ -150,9 +151,12 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
 
     private void askForDeviceSettings() {
-        DatabaseHelper databaseHelper = new DatabaseHelper();
+        ServerConnector serverConnector = new ServerConnector();
         try {
-            databaseHelper.getDeviceTypes();
+            List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
+            for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
+                System.out.println(deviceTypeEntity.getDeviceType());
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -433,6 +437,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 // Persist the registration ID - no need to register again.
                 storeRegistrationId(context, registrationId);
             } catch (IOException ex) {
+                setRegistrationFailure();
                 ex.printStackTrace();
                 // If there is an error, don't just keep trying to register.
                 // Require the user to click a button again, or perform
@@ -467,7 +472,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 jsonResponse.put(JSON_PROPERTY_DEVICE_REGISTRATION_ID, regId);
                 jsonResponse.put(JSON_PROPERTY_DEVICE_TYPE, deviceType);
                 jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
-
+                //TODO delete old registration first
                 URL url = new URL(SERVER_URL);
                 urlConnection = (HttpURLConnection)url.openConnection();
                 urlConnection.setDoOutput(true);
