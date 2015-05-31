@@ -151,15 +151,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
 
     private void askForDeviceSettings() {
-        ServerConnector serverConnector = new ServerConnector();
-        try {
-            List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
-            for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
-                System.out.println(deviceTypeEntity.getDeviceType());
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         DialogFragment newFragment = new DeviceSettingsFragment();
             newFragment.show(getSupportFragmentManager(), "deviceSettings");
 
@@ -510,7 +501,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     setRegistrationFailure();
                     System.out.println("registration error");
                 }
-            } catch (JSONException e) {
+            } catch (Exception e) {
                 try {
                     setRegistrationFailure();
                     System.out.println("registration error: " + (result != null ? result.getString("error") : null));

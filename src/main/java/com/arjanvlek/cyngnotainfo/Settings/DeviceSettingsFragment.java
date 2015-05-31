@@ -10,7 +10,11 @@ import android.support.v4.app.DialogFragment;
 import android.app.AlertDialog;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
+import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
+
+import java.util.List;
 
 public class DeviceSettingsFragment extends DialogFragment {
 
@@ -48,6 +52,22 @@ private int itemClicked;
                 })
         .setCancelable(false);
         return builder.create();
+    }
+
+    private class serverInfoFetch implements Runnable {
+
+        @Override
+        public void run() {
+            ServerConnector serverConnector = new ServerConnector();
+            try {
+                List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
+                for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
+                    System.out.println(deviceTypeEntity.getDeviceType());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }

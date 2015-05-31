@@ -18,6 +18,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+@SuppressWarnings("StatementWithEmptyBody")
 public class ServerConnector implements AsyncTaskResultHelper{
 
     private final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
@@ -32,23 +33,15 @@ public class ServerConnector implements AsyncTaskResultHelper{
     private boolean updateTypesReady = false;
     private boolean updateLinksReady = false;
 
-
     public List<DeviceTypeEntity> getDeviceTypeEntities() {
         fetchDataFromServer fetchDeviceDataFromServer = new fetchDataFromServer();
         fetchDeviceDataFromServer.asyncTaskResultHelper = this;
         fetchDeviceDataFromServer.execute("device");
 
-        for(int i=0; i<5000; i++) {
-            if(!deviceTypesReady) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ignored) {
-                }
-            }
-            else {
-                break;
-            }
+        while(!deviceTypesReady) {
+            // We don't do anything here :)
         }
+
         return deviceTypeEntities;
     }
 
@@ -56,17 +49,8 @@ public class ServerConnector implements AsyncTaskResultHelper{
         fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
         fetchUpdateDataFromServer.asyncTaskResultHelper = this;
         fetchUpdateDataFromServer.execute("update");
-        for(int i=0; i<5000; i++) {
-            if(!updateTypesReady) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ignored) {
-
-                }
-            }
-            else {
-                break;
-            }
+        while(!updateTypesReady) {
+            // We don't do anything here :)
         }
         return updateTypeEntities;
     }
@@ -75,17 +59,8 @@ public class ServerConnector implements AsyncTaskResultHelper{
         fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
         fetchUpdateDataFromServer.asyncTaskResultHelper = this;
         fetchUpdateDataFromServer.execute("update_link");
-        for(int i=0; i<5000; i++) {
-            if(!updateLinksReady) {
-                try {
-                    Thread.sleep(1);
-                } catch (InterruptedException ignored) {
-
-                }
-            }
-            else {
-                break;
-            }
+        while(!updateLinksReady) {
+            // We don't do anything here :)
         }
         return updateLinkEntities;
     }

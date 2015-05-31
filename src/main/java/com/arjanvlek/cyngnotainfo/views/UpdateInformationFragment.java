@@ -60,7 +60,8 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
     private boolean isFetched;
 
     public static final String ADS_TEST_DEVICE_ID = "7CFCF353FBC40363065F03DFAC7D7EE4";
-
+    private static final String ADS_TEST_DEVICE_ID_2 = "D9323E61DFC727F573528DB3820F7215";
+    private static final String ADS_TEST_DEVICE_ID_3 = "D732F1B481C5274B05D707AC197B33B2";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -132,9 +133,10 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
             // Create an ad request. Check logcat output for the hashed device ID to
             // get test ads on a physical device. e.g.
             // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-            String adsTestId = ADS_TEST_DEVICE_ID;
             AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(adsTestId)
+                    .addTestDevice(ADS_TEST_DEVICE_ID)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_2)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_3)
                     .addKeyword("smartphone")
                     .addKeyword("tablet")
                     .addKeyword("news apps")
