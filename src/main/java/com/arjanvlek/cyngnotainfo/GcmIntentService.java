@@ -97,6 +97,7 @@ public class GcmIntentService extends IntentService {
                             .setStyle(new NotificationCompat.BigTextStyle()
                                     .bigText(message))
                             .setVibrate(vibrationPattern)
+                            .setAutoCancel(true)
                             .setContentText(message);
 
 
