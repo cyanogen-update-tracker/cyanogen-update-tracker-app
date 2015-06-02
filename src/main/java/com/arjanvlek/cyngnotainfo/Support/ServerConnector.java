@@ -35,6 +35,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
     private boolean deviceTypesReady = false;
     private boolean updateTypesReady = false;
     private boolean updateLinksReady = false;
+    private boolean offline = false;
 
     public ServerConnector() {
         this.offlineDeviceTypeEntities = fillOfflineDeviceEntities();
@@ -50,8 +51,12 @@ public class ServerConnector implements AsyncTaskResultHelper{
         while(!deviceTypesReady) {
             // We don't do anything here :)
         }
-
-        return deviceTypeEntities;
+        if(offline) {
+            return offlineDeviceTypeEntities;
+        }
+        else {
+            return deviceTypeEntities;
+        }
     }
 
     public List<UpdateTypeEntity> getUpdateTypeEntities() {
@@ -61,7 +66,12 @@ public class ServerConnector implements AsyncTaskResultHelper{
         while(!updateTypesReady) {
             // We don't do anything here :)
         }
-        return updateTypeEntities;
+        if(offline) {
+            return offlineUpdateTypeEntities;
+        }
+        else {
+            return updateTypeEntities;
+        }
     }
 
     public List<UpdateLinkEntity> getUpdateLinkEntities() {
@@ -71,7 +81,12 @@ public class ServerConnector implements AsyncTaskResultHelper{
         while(!updateLinksReady) {
             // We don't do anything here :)
         }
-        return updateLinkEntities;
+        if(offline) {
+            return offlineUpdateLinkEntities;
+        }
+        else {
+            return updateLinkEntities;
+        }
     }
 
     private void findAllDeviceTypesFromHtmlResponse(String htmlResponse) {
@@ -93,7 +108,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
             }
         }
         else {
-            deviceTypeEntities = offlineDeviceTypeEntities;
+            offline = true;
         }
         deviceTypesReady = true;
     }
@@ -118,7 +133,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
             }
         }
         else {
-            updateTypeEntities = offlineUpdateTypeEntities;
+            offline = true;
         }
         updateTypesReady = true;
     }
@@ -144,7 +159,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
             }
         }
         else {
-            updateLinkEntities = offlineUpdateLinkEntities;
+            offline = true;
         }
         updateLinksReady = true;
     }
