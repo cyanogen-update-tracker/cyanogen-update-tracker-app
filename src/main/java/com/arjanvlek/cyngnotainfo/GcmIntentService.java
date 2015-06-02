@@ -6,17 +6,19 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 
+import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
+
+import java.util.List;
 
 /**
  * Part of Cyanogen Update Tracker.
  */
 public class GcmIntentService extends IntentService {
     public static final int NOTIFICATION_ID = 1;
-    NotificationCompat.Builder builder;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -49,7 +51,6 @@ public class GcmIntentService extends IntentService {
             } else if (GoogleCloudMessaging.
                     MESSAGE_TYPE_MESSAGE.equals(messageType)) {
 
-                //TODO filter message and make it look nice
                 // Post notification of received message.
                 sendNotification(extras);
             }
@@ -67,31 +68,59 @@ public class GcmIntentService extends IntentService {
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
-
         String message = null;
         if(msg!= null) {
-            if(msg.getString("version_number") != null && msg.getString("tracking_device_type_id") != null) {
-                message = "Version " + msg.getString("version_number") + " is now available for your " +  msg.getString("tracking_device_type_id");
+            System.out.println(msg.getString("version_number"));
+
+
+            if(msg.getString("version_number") != null) {
+                String deviceName = getDeviceName(msg.getString("tracking_device_type_id"));
+                if(deviceName != null) {
+                    message = "Version " + msg.getString("version_number") + " is now available for your " + deviceName + "!";
+                }
             }
-            else {
-                message = "Fail";
+            else if (msg.getLong("new_device_id", 0) != 0 ) {
+                String deviceName = getDeviceName(msg.getString("new_device_id"));
+                if(deviceName != null) {
+                    message = "A new Cyanogen device can now be tracked: the " + deviceName + "!";
+                }
             }
         }
         long[] vibrationPattern = new long[2];
         vibrationPattern[0] = 100L;
         vibrationPattern[1] = 100L;
+        if(message != null) {
+            NotificationCompat.Builder mBuilder =
+                    new NotificationCompat.Builder(this)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setContentTitle(getString(R.string.app_name))
+                            .setStyle(new NotificationCompat.BigTextStyle()
+                                    .bigText(message))
+                            .setVibrate(vibrationPattern)
+                            .setContentText(message);
 
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
-                        .setSmallIcon(R.drawable.ic_launcher)
-                        .setContentTitle(getString(R.string.app_name)) //TODO set notification title
-                        .setStyle(new NotificationCompat.BigTextStyle()
-                                .bigText(message))
-                        .setVibrate(vibrationPattern)
-                        .setContentText(message); //TODO set text
 
+            mBuilder.setContentIntent(contentIntent);
+            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+        }
+    }
 
-        mBuilder.setContentIntent(contentIntent);
-        mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+    private String getDeviceName(String deviceId) {
+        Long deviceIdLong;
+        try {
+            deviceIdLong = Long.parseLong(deviceId);
+        }
+        catch (NumberFormatException ignored) {
+            return null;
+        }
+        String deviceName = null;
+        ServerConnector serverConnector = new ServerConnector();
+        List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
+            for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
+                if(deviceTypeEntity.getId() == deviceIdLong) {
+                    deviceName = deviceTypeEntity.getDeviceType();
+                }
+            }
+        return deviceName;
     }
 }
