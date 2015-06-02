@@ -21,10 +21,8 @@ import java.util.List;
 public class DeviceSettingsFragment extends DialogFragment {
 
     private SharedPreferences sharedPreferences;
-    private int itemClicked;
-    private List<DeviceTypeEntity>deviceTypeEntities = new ArrayList<>();
     private List<String>deviceNames = new ArrayList<>();
-    private boolean loaded = false;
+    private int itemClicked;
 
     @NonNull
     @Override
@@ -46,15 +44,7 @@ public class DeviceSettingsFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        if (itemClicked == 0) {
-                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "OnePlus One");
-                        } else if (itemClicked == 1) {
-                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "Yu Yureka");
-                        } else if (itemClicked == 2) {
-                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "Oppo N1 CyanogenMod Edition");
-                        } else if (itemClicked == -1) {
-                            editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, "");
-                        }
+                        editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, deviceNames.get(itemClicked));
                         editor.apply();
 
                     }
@@ -71,10 +61,8 @@ public class DeviceSettingsFragment extends DialogFragment {
             ServerConnector serverConnector = new ServerConnector();
             List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
             for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
-                deviceTypeEntities.add(deviceTypeEntity);
                 deviceNames.add(deviceTypeEntity.getDeviceType());
             }
-            loaded = true;
         }
     }
 }
