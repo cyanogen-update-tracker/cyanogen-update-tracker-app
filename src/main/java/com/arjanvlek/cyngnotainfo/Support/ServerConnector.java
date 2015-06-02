@@ -226,10 +226,8 @@ public class ServerConnector implements AsyncTaskResultHelper{
                 }
             }
             catch (Exception e) {
-                e.printStackTrace();
+                return null;
             }
-
-            return null;
         }
 
         @Override
