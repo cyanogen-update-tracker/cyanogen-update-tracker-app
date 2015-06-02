@@ -8,24 +8,33 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.app.AlertDialog;
+import android.widget.ArrayAdapter;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class DeviceSettingsFragment extends DialogFragment {
 
-private SharedPreferences sharedPreferences;
-private int itemClicked;
+    private SharedPreferences sharedPreferences;
+    private int itemClicked;
+    private List<DeviceTypeEntity>deviceTypeEntities = new ArrayList<>();
+    private List<String>deviceNames = new ArrayList<>();
+    private boolean loaded = false;
+
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        new Thread(new fetchData()).start();
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_single_choice, deviceNames);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.choose_device_type)
-                .setSingleChoiceItems(R.array.device_names_array, 0, new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -54,20 +63,18 @@ private int itemClicked;
         return builder.create();
     }
 
-    private class serverInfoFetch implements Runnable {
 
+    private class fetchData implements Runnable {
         @Override
         public void run() {
+
             ServerConnector serverConnector = new ServerConnector();
-            try {
-                List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
-                for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
-                    System.out.println(deviceTypeEntity.getDeviceType());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
+            List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
+            for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
+                deviceTypeEntities.add(deviceTypeEntity);
+                deviceNames.add(deviceTypeEntity.getDeviceType());
             }
+            loaded = true;
         }
     }
-
 }

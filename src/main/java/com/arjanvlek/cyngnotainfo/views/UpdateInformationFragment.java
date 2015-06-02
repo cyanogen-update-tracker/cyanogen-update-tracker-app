@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
@@ -70,7 +69,6 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         deviceName = preferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, "");
         updateType = preferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, "");
         assert updateType != null;
-        ServerConnector databaseHelper = new ServerConnector();
         //TODO add update types from database
         if(updateType.equals(MainActivity.FULL_UPDATE)) {
             localizedUpdateType = getString(R.string.stable_update);

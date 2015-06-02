@@ -94,9 +94,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             SharedPreferences preferences = getPreferences(MODE_APPEND);
             deviceType = preferences.getString(PROPERTY_DEVICE_TYPE, "");
             updateType = preferences.getString(PROPERTY_UPDATE_TYPE, "");
-            checkIfRegistrationHasFailed();
-            if(!checkIfRegistrationIsValid(context)) {
-                registerInBackground();
+            if(checkIfDeviceIsSet()) {
+                checkIfRegistrationHasFailed();
+                if (!checkIfRegistrationIsValid(context)) {
+                    registerInBackground();
+                }
             }
 
             // Set up the action bar.
@@ -404,6 +406,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         new cloudRegisterTask().execute(null, null, null);
     }
 
+    private boolean checkIfDeviceIsSet() {
+        SharedPreferences preferences = getPreferences(Context.MODE_APPEND);
+        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE);
+    }
 
     private class cloudRegisterTask extends AsyncTask<Void, Void, Void> {
 
