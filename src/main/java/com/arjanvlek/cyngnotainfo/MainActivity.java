@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -116,7 +117,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             }
             if (deviceType != null) {
                 if (deviceType.isEmpty()) {
-                    askForDeviceSettings();
+                    new deviceSettingsLauncher().execute();
                 }
             }
 
@@ -152,8 +153,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
 
-    private void askForDeviceSettings() {
+    private void askForDeviceSettings(ArrayList<String> deviceNames) {
         DialogFragment newFragment = new DeviceSettingsFragment();
+        Bundle args = new Bundle();
+        args.putStringArrayList("devices", deviceNames);
+        newFragment.setArguments(args);
             newFragment.show(getSupportFragmentManager(), "deviceSettings");
 
 
@@ -173,8 +177,26 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
     public void Settings() {
         askForUpdateSettings();
-        askForDeviceSettings();
+        new deviceSettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
+    }
+
+    private class deviceSettingsLauncher extends AsyncTask<Void,Integer,List<DeviceTypeEntity>> {
+        @Override
+        public List<DeviceTypeEntity> doInBackground(Void... voids) {
+            ServerConnector serverConnector = new ServerConnector();
+            return serverConnector.getDeviceTypeEntities();
+        }
+
+        @Override
+        public void onPostExecute(List<DeviceTypeEntity> deviceTypeEntities) {
+            ArrayList<String> deviceNames = new ArrayList<>();
+            for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
+                deviceNames.add(deviceTypeEntity.getDeviceType());
+            }
+            askForDeviceSettings(deviceNames);
+
+        }
     }
 
     private void About() {

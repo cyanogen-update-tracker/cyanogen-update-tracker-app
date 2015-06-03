@@ -46,7 +46,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<DeviceTypeEntity> getDeviceTypeEntities() {
         fetchDataFromServer fetchDeviceDataFromServer = new fetchDataFromServer();
         fetchDeviceDataFromServer.asyncTaskResultHelper = this;
-        fetchDeviceDataFromServer.execute("device");
+        fetchDeviceDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"device");
 
         while(!deviceTypesReady) {
             // We don't do anything here :)
@@ -62,7 +62,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<UpdateTypeEntity> getUpdateTypeEntities() {
         fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
         fetchUpdateDataFromServer.asyncTaskResultHelper = this;
-        fetchUpdateDataFromServer.execute("update");
+        fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update");
         while(!updateTypesReady) {
             // We don't do anything here :)
         }
@@ -77,7 +77,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<UpdateLinkEntity> getUpdateLinkEntities() {
         fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
         fetchUpdateDataFromServer.asyncTaskResultHelper = this;
-        fetchUpdateDataFromServer.execute("update_link");
+        fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update_link");
         while(!updateLinksReady) {
             // We don't do anything here :)
         }
