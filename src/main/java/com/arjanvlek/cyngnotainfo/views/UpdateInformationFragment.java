@@ -71,7 +71,7 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         assert updateType != null;
         //TODO add update types from database
         if(updateType.equals(MainActivity.FULL_UPDATE)) {
-            localizedUpdateType = getString(R.string.stable_update);
+            localizedUpdateType = getString(R.string.full_update);
 
         }
         else {
@@ -301,27 +301,27 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
             ServiceHandler sh = new ServiceHandler();
             String jsonStr = null;
             // Making a request to the right url and getting response
-                if (deviceName.equals("OnePlus One") && updateType.equals("Incremental update")) {
+                if (deviceName.equals("OnePlus One") && updateType.equals("incremental_update")) {
                     String baconIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(baconIncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceName.equals("OnePlus One") && updateType.equals("Full update")) {
+                if (deviceName.equals("OnePlus One") && updateType.equals("full_update")) {
                     String baconStableUrl = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=STABLE";
                     jsonStr = sh.makeServiceCall(baconStableUrl, ServiceHandler.GET);
                 }
-                if (deviceName.equals("Yu Yureka") && updateType.equals("Incremental update")) {
+                if (deviceName.equals("Yu Yureka") && updateType.equals("incremental_update")) {
                     String tomatoIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(tomatoIncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceName.equals("Yu Yureka")&& updateType.equals("Full update")) {
+                if (deviceName.equals("Yu Yureka")&& updateType.equals("full_update")) {
                     String tomatoStableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=STABLE";
                     jsonStr = sh.makeServiceCall(tomatoStableUri, ServiceHandler.GET);
                 }
-                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("Incremental update")) {
+                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("incremental_update")) {
                     String n1IncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=INCREMENTAL";
                     jsonStr = sh.makeServiceCall(n1IncrementalUri, ServiceHandler.GET);
                 }
-                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("Full update")) {
+                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("full_update")) {
                     String n1StableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=STABLE";
                     jsonStr = sh.makeServiceCall(n1StableUri, ServiceHandler.GET);
                 }

@@ -35,8 +35,8 @@
     <string name="update">update</string>
     <string name="updated">Received update&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
     <string name="not_updated">Not received update yet</string>
-    <string name="stable_update">full update</string>
-    <string name="incremental_update">incremental update</string>
+    <string name="full_update">Full update</string>
+    <string name="incremental_update">Incremental update</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
     <string name="close">Close</string>

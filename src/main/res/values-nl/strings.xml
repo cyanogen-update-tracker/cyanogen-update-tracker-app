@@ -32,8 +32,8 @@
     <string name="yu_yureka">Yu Yureka</string>
     <string name="megabyte">MB</string>
     <string name="update">update</string>
-    <string name="incremental_update">incrementele update</string>
-    <string name="stable_update">volledige update</string>
+    <string name="incremental_update">Incrementele update</string>
+    <string name="full_update">Volledige update</string>
     <string name="update_details">Beschrijving van de update</string>
     <string name="difference_incremental_stable">Verschil tussen een incrementele en een volledige update</string>
     <string name="explanation_incremntal_stable">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen, terwijl een volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je telefoon.</string>

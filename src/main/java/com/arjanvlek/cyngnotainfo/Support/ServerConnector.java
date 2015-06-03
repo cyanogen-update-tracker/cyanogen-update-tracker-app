@@ -273,10 +273,10 @@ public class ServerConnector implements AsyncTaskResultHelper{
         List<UpdateTypeEntity> offlineUpdateTypeEntities = new ArrayList<>();
         UpdateTypeEntity fullUpdate = new UpdateTypeEntity();
         fullUpdate.setId(1);
-        fullUpdate.setUpdateType("Full update");
+        fullUpdate.setUpdateType("full_update");
         UpdateTypeEntity incrementalUpdate = new UpdateTypeEntity();
         incrementalUpdate.setId(2);
-        incrementalUpdate.setUpdateType("Incremental update");
+        incrementalUpdate.setUpdateType("incremental_update");
         offlineUpdateTypeEntities.add(fullUpdate);
         offlineUpdateTypeEntities.add(incrementalUpdate);
         return offlineUpdateTypeEntities;
