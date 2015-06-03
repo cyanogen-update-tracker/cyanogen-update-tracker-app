@@ -23,8 +23,9 @@ public class DeviceSettingsFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-        final ArrayList<String> devices = getArguments().getStringArrayList("devices");
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_single_choice, devices);
+        final ArrayList<String> deviceNames = getArguments().getStringArrayList("device_names");
+        final ArrayList<String> updateTypes = getArguments().getStringArrayList("update_types");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_single_choice, deviceNames);
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.choose_device_type)
                 .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
@@ -39,15 +40,18 @@ public class DeviceSettingsFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int which) {
                         sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
-                        editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, devices.get(itemClicked));
+                        editor.putString(MainActivity.PROPERTY_DEVICE_TYPE, deviceNames.get(itemClicked));
                         editor.apply();
+
+                        DialogFragment fragment = new UpdateSettingsFragment();
+                        Bundle args = new Bundle();
+                        args.putStringArrayList("update_types", updateTypes);
+                        fragment.setArguments(args);
+                        fragment.show(getActivity().getSupportFragmentManager(), "updateSettings");
 
                     }
                 })
         .setCancelable(false);
         return builder.create();
     }
-
-
-
 }

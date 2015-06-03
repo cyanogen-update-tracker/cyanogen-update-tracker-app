@@ -33,6 +33,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
+import com.arjanvlek.cyngnotainfo.Model.UpdateTypeEntity;
 import com.arjanvlek.cyngnotainfo.Settings.DeviceSettingsFragment;
 import com.arjanvlek.cyngnotainfo.Settings.UpdateSettingsFragment;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
@@ -76,7 +77,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private String SENDER_ID = "** Add your Google Cloud Messaging API key here **";
     private String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
     private GoogleCloudMessaging cloudMessaging;
-    AtomicInteger msgId = new AtomicInteger();
     private SharedPreferences messagingPreferences;
     private Context context;
     private String registrationId;
@@ -108,16 +108,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
             }
 
-
-            if (updateType != null) {
-                if (updateType.isEmpty()) {
-                    askForUpdateSettings();
-                }
-
-            }
-            if (deviceType != null) {
-                if (deviceType.isEmpty()) {
-                    new deviceSettingsLauncher().execute();
+            if (deviceType != null && updateType != null) {
+                if (deviceType.isEmpty() || updateType.isEmpty()) {
+                    new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
 
@@ -153,19 +146,15 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
 
-    private void askForDeviceSettings(ArrayList<String> deviceNames) {
-        DialogFragment newFragment = new DeviceSettingsFragment();
+    private void askForDeviceSettings(ArrayList<String> deviceNames, ArrayList<String> updateTypes) {
+        DialogFragment fragment = new DeviceSettingsFragment();
         Bundle args = new Bundle();
-        args.putStringArrayList("devices", deviceNames);
-        newFragment.setArguments(args);
-            newFragment.show(getSupportFragmentManager(), "deviceSettings");
+        args.putStringArrayList("device_names", deviceNames);
+        args.putStringArrayList("update_types", updateTypes);
+        fragment.setArguments(args);
+            fragment.show(getSupportFragmentManager(), "deviceSettings");
 
 
-    }
-
-    private void askForUpdateSettings() {
-        DialogFragment fragment = new UpdateSettingsFragment();
-        fragment.show(getSupportFragmentManager(), "updateSettings");
     }
 
     @Override
@@ -175,26 +164,31 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         return true;
     }
-    public void Settings() {
-        askForUpdateSettings();
-        new deviceSettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
 
-    }
-
-    private class deviceSettingsLauncher extends AsyncTask<Void,Integer,List<DeviceTypeEntity>> {
+    private class SettingsLauncher extends AsyncTask<Void,Integer,List<Object>> {
         @Override
-        public List<DeviceTypeEntity> doInBackground(Void... voids) {
+        public List<Object> doInBackground(Void... voids) {
             ServerConnector serverConnector = new ServerConnector();
-            return serverConnector.getDeviceTypeEntities();
+            List<Object> objects = new ArrayList<>();
+            objects.add(serverConnector.getDeviceTypeEntities());
+            objects.add(serverConnector.getUpdateTypeEntities());
+            return objects;
         }
 
         @Override
-        public void onPostExecute(List<DeviceTypeEntity> deviceTypeEntities) {
-            ArrayList<String> deviceNames = new ArrayList<>();
+        public void onPostExecute(List<Object> entities) {
+            ArrayList<DeviceTypeEntity> deviceTypeEntities = (ArrayList<DeviceTypeEntity>)entities.get(0);
+            ArrayList<UpdateTypeEntity> updateTypeEntities = (ArrayList<UpdateTypeEntity>)entities.get(1);
+            ArrayList<String>deviceNames = new ArrayList<>();
+            ArrayList<String>updateTypes = new ArrayList<>();
+
             for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
                 deviceNames.add(deviceTypeEntity.getDeviceType());
             }
-            askForDeviceSettings(deviceNames);
+            for(UpdateTypeEntity updateTypeEntity : updateTypeEntities) {
+                updateTypes.add(updateTypeEntity.getUpdateType());
+            }
+            askForDeviceSettings(deviceNames, updateTypes);
 
         }
     }
@@ -212,7 +206,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            Settings();
+            new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
             return true;
         }
         if (id == R.id.action_about) {

@@ -9,22 +9,27 @@ import android.support.annotation.NonNull;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.support.v4.app.DialogFragment;
+import android.widget.ArrayAdapter;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.R;
 
+import java.util.ArrayList;
+
 public class UpdateSettingsFragment extends DialogFragment {
 
-private SharedPreferences sharedPreferences;
+    private SharedPreferences sharedPreferences;
     private int itemClicked;
 
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+        final ArrayList<String> updateTypes = getArguments().getStringArrayList("update_types");
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_single_choice, updateTypes);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.choose_update_type)
-                .setSingleChoiceItems(R.array.update_types_array, 0,new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, 0,new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -36,15 +41,7 @@ private SharedPreferences sharedPreferences;
             public void onClick(DialogInterface dialog, int which) {
                 sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
-                if(itemClicked == 0) {
-                    editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, MainActivity.FULL_UPDATE);
-                }
-                else if (itemClicked == 1) {
-                    editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, MainActivity.INCREMENTAL_UPDATE);
-                }
-                else if (itemClicked == -1) {
-                    editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, "");
-                }
+                editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, updateTypes.get(itemClicked));
                 editor.apply();
                 Intent i = getActivity().getBaseContext().getPackageManager()
                         .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
