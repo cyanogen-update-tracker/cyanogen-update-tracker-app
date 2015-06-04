@@ -1,10 +1,12 @@
 package com.arjanvlek.cyngnotainfo.Settings;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.app.AlertDialog;
@@ -13,14 +15,20 @@ import android.support.v4.app.DialogFragment;
 import android.widget.ArrayAdapter;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
+import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
+import com.arjanvlek.cyngnotainfo.Model.UpdateLinkEntity;
+import com.arjanvlek.cyngnotainfo.Model.UpdateTypeEntity;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class UpdateSettingsFragment extends DialogFragment {
 
     private SharedPreferences sharedPreferences;
     private int itemClicked;
+    private ProgressDialog progressDialog;
 
 
     @NonNull
@@ -49,15 +57,89 @@ public class UpdateSettingsFragment extends DialogFragment {
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, updateTypes.get(itemClicked));
                 editor.apply();
-                Intent i = getActivity().getBaseContext().getPackageManager()
-                        .getLaunchIntentForPackage( getActivity().getBaseContext().getPackageName() );
+                new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, sharedPreferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, ""), sharedPreferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, ""));
+
+                Intent i = getActivity().getPackageManager() .getLaunchIntentForPackage(getActivity().getPackageName());
                 i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(i);
+
+                if(isAdded()) {
+                    startActivity(i);
+                }
 
             }
         })
                 .setCancelable(false);
         return builder.create();
+    }
+
+    private class UpdateLinkSetter extends AsyncTask<String,Integer,List<Object>> {
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(getActivity());
+            progressDialog.setMessage(getString(R.string.fetching_devices));
+            progressDialog.setTitle(getString(R.string.loading));
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(false);
+            progressDialog.show();
+
+
+        }
+
+        @Override
+        public List<Object> doInBackground(String... strings) {
+            String deviceName = strings[0];
+            String updateType = strings[1];
+            ServerConnector serverConnector = new ServerConnector();
+            List<Object> objects = new ArrayList<>();
+            objects.add(serverConnector.getDeviceTypeEntities());
+            objects.add(serverConnector.getUpdateTypeEntities());
+            objects.add(serverConnector.getUpdateLinkEntities());
+            objects.add(deviceName);
+            objects.add(updateType);
+            return objects;
+        }
+
+        @SuppressWarnings("unchecked")
+        @Override
+        public void onPostExecute(List<Object> entities) {
+            ArrayList<DeviceTypeEntity> deviceTypeEntities = (ArrayList<DeviceTypeEntity>)entities.get(0);
+            ArrayList<UpdateTypeEntity> updateTypeEntities = (ArrayList<UpdateTypeEntity>)entities.get(1);
+            ArrayList<UpdateLinkEntity> updateLinkEntities = (ArrayList<UpdateLinkEntity>)entities.get(2);
+            String deviceName = (String)entities.get(3);
+            String updateType = (String)entities.get(4);
+            Long deviceId = null;
+            Long updateTypeId = null;
+            String updateLink = null;
+            for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
+                if(deviceTypeEntity.getDeviceType().equals(deviceName)) {
+                    deviceId = deviceTypeEntity.getId();
+                }
+            }
+            for(UpdateTypeEntity updateTypeEntity : updateTypeEntities) {
+                if(updateTypeEntity.getUpdateType().equals(updateType)) {
+                    updateTypeId = updateTypeEntity.getId();
+                }
+            }
+            if(deviceId != null && updateTypeId != null) {
+                for (UpdateLinkEntity updateLinkEntity : updateLinkEntities) {
+                    if (updateLinkEntity.getTracking_device_type_id() == deviceId && updateLinkEntity.getTracking_update_type_id() == updateTypeId) {
+                        updateLink = updateLinkEntity.getInformation_url();
+                    }
+                }
+            }
+
+
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString(MainActivity.PROPERTY_UPDATE_LINK, updateLink);
+            editor.apply();
+
+            if(progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
+
+
+        }
     }
 
 }

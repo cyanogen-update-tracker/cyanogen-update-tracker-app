@@ -68,23 +68,24 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public static final String PROPERTY_DEVICE_TYPE = "device_type";
     public static final String PROPERTY_UPDATE_TYPE = "update_type";
     public static final String PROPERTY_REGISTRATION_ERROR = "registration_error";
+    public static final String PROPERTY_UPDATE_LINK = "update_link";
 
     private static final String JSON_PROPERTY_DEVICE_REGISTRATION_ID = "device_id";
     private static final String JSON_PROPERTY_DEVICE_TYPE = "tracking_device_type";
     private static final String JSON_PROPERTY_UPDATE_TYPE = "tracking_update_type";
     private static final String JSON_PROPERTY_OLD_DEVICE_ID = "old_device_id";
 
-    public static final String FULL_UPDATE = "Full update";
+    public static final String FULL_UPDATE = "full_update";
     public static final String INCREMENTAL_UPDATE = "Incremental update";
 
     private String SENDER_ID = "** Add your Google Cloud Messaging API key here **";
     private String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
     private GoogleCloudMessaging cloudMessaging;
-    private SharedPreferences messagingPreferences;
     private Context context;
     private String registrationId;
     private String deviceType = "";
     private String updateType = "";
+    private String updateLink = "";
     private ProgressDialog progressDialog;
 
     @Override
@@ -96,6 +97,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         SharedPreferences preferences = getPreferences(MODE_APPEND);
         deviceType = preferences.getString(PROPERTY_DEVICE_TYPE, "");
         updateType = preferences.getString(PROPERTY_UPDATE_TYPE, "");
+        updateLink = preferences.getString(PROPERTY_UPDATE_LINK, "");
+
 
 
         // Set up the action bar.
@@ -147,7 +150,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 }
             }
             if (deviceType != null && updateType != null) {
-                if (deviceType.isEmpty() || updateType.isEmpty()) {
+                if (deviceType.isEmpty() || updateType.isEmpty() || updateLink.isEmpty()) {
                     new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
@@ -424,8 +427,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     private SharedPreferences getGCMPreferences() {
-        // This sample app persists the registration ID in shared preferences, but
-        // how you store the registration ID in your app is up to you.
         return getSharedPreferences(MainActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
     }
@@ -458,7 +459,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     private boolean checkIfDeviceIsSet() {
         SharedPreferences preferences = getPreferences(Context.MODE_APPEND);
-        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE);
+        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_LINK);
     }
 
     private class cloudRegisterTask extends AsyncTask<String, Void, Void> {
@@ -472,38 +473,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 }
                 registrationId = cloudMessaging.register(SENDER_ID);
 
-                // You should send the registration ID to your server over HTTP,
-                // so it can use GCM/HTTP or CCS to send messages to your app.
-                // The request to your server should be authenticated if your app
-                // is using accounts.
-                sendRegistrationIdToBackend(registrationId, oldRegistrationId);
+                new RegisterIdToBackend().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, registrationId, oldRegistrationId);
 
-                // For this demo: we don't need to send it because the device
-                // will send upstream messages to a server that echo back the
-                // message using the 'from' address in the message.
-
-                // Persist the registration ID - no need to register again.
                 storeRegistrationId(context, registrationId);
             } catch (IOException ex) {
                 setRegistrationFailure();
-                ex.printStackTrace();
-                // If there is an error, don't just keep trying to register.
-                // Require the user to click a button again, or perform
-                // exponential back-off.
             }
             return null;
         }
-
-    }
-
-    /**
-     * Sends the registration ID to your server over HTTP, so it can use GCM/HTTP
-     * or CCS to send messages to your app. Not needed for this demo since the
-     * device sends upstream messages to a server that echoes back the message
-     * using the 'from' address in the message.
-     */
-    private void sendRegistrationIdToBackend(String registrationId, String oldRegistrationId) {
-        new RegisterIdToBackend().execute(registrationId, oldRegistrationId);
     }
 
     private class RegisterIdToBackend extends AsyncTask<String,Integer, String> {

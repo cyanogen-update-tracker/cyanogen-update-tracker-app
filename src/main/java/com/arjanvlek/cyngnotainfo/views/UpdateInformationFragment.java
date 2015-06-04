@@ -43,24 +43,24 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateInformationFragment extends Fragment implements Button.OnClickListener {
+public class UpdateInformationFragment extends Fragment {
 
     private String deviceName;
     private String updateType;
-    private String localizedUpdateType;
+    private String updateLink;
 
     private CyanogenOTAUpdate cyanogenOTAUpdate;
 
     private RelativeLayout rootView;
-    private AdView mAdView;
+    private AdView adView;
 
     private ProgressDialog progressDialog;
     private DateTime refreshedDate;
     private boolean isFetched;
 
-    public static final String ADS_TEST_DEVICE_ID = "7CFCF353FBC40363065F03DFAC7D7EE4";
-    private static final String ADS_TEST_DEVICE_ID_2 = "D9323E61DFC727F573528DB3820F7215";
-    private static final String ADS_TEST_DEVICE_ID_3 = "D732F1B481C5274B05D707AC197B33B2";
+    public static final String ADS_TEST_DEVICE_ID_OWN_DEVICE = "7CFCF353FBC40363065F03DFAC7D7EE4";
+    public static final String ADS_TEST_DEVICE_ID_EMULATOR_1 = "D9323E61DFC727F573528DB3820F7215";
+    public static final String ADS_TEST_DEVICE_ID_EMULATOR_2 = "D732F1B481C5274B05D707AC197B33B2";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,14 +68,14 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         SharedPreferences preferences = getActivity().getPreferences(Context.MODE_APPEND);
         deviceName = preferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, "");
         updateType = preferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, "");
+        updateLink = preferences.getString(MainActivity.PROPERTY_UPDATE_LINK, "");
         assert updateType != null;
-        //TODO add update types from database
         if(updateType.equals(MainActivity.FULL_UPDATE)) {
-            localizedUpdateType = getString(R.string.full_update);
+            updateType = getString(R.string.full_update);
 
         }
         else {
-            localizedUpdateType = getString(R.string.incremental_update);
+            updateType = getString(R.string.incremental_update);
         }
 
     }
@@ -83,27 +83,21 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        //Inflate the layout for this fragment
         rootView = (RelativeLayout)inflater.inflate(R.layout.fragment_updateinformation, container, false);
         return rootView;
     }
 
-    @Override
-    public void onViewCreated(View view, Bundle savedInstanceState) {
-
-    }
-
-    private boolean checkIfDeviceIsSet() {
+    private boolean checkIfSettingsAreValid() {
         SharedPreferences preferences = getActivity().getPreferences(Context.MODE_APPEND);
-        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) || preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE);
+        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_LINK);
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(!isFetched && checkIfDeviceIsSet()) {
+        if(!isFetched && checkIfSettingsAreValid()) {
             if(checkNetworkConnection()) {
-                fetchUpdateInformation();
+                getUpdateInformation();
                 showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
@@ -117,51 +111,41 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
     }
 
     private void hideAds() {
-        if(mAdView != null) {
-            mAdView.destroy();
+        if(adView != null) {
+            adView.destroy();
         }
     }
 
     private void showAds() {
-
-            // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
-            // values/strings.xml.
-            mAdView = (AdView) rootView.findViewById(R.id.update_information_banner_field);
-        if(mAdView != null) {
-            // Create an ad request. Check logcat output for the hashed device ID to
-            // get test ads on a physical device. e.g.
-            // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
+        adView = (AdView) rootView.findViewById(R.id.update_information_banner_field);
+        if(adView != null) {
             AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(ADS_TEST_DEVICE_ID)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_2)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_3)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
                     .addKeyword("smartphone")
                     .addKeyword("tablet")
                     .addKeyword("news apps")
                     .addKeyword("games")
                     .build();
 
-            // Start loading the ad in the background.
-            mAdView.loadAd(adRequest);
+            adView.loadAd(adRequest);
         }
     }
     private boolean checkNetworkConnection() {
-        ConnectivityManager cm =
-                (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
+        ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
 
     @Override
     public void onResume() {
         super.onResume();
-        if(refreshedDate != null && isFetched && checkIfDeviceIsSet()) {
+        if(refreshedDate != null && isFetched && checkIfSettingsAreValid()) {
             if (refreshedDate.plusMinutes(5).isBefore(DateTime.now())) {
                 if(checkNetworkConnection()) {
-                    fetchUpdateInformation();
+                    getUpdateInformation();
                     refreshedDate = DateTime.now();
                 }
                 else {
@@ -171,7 +155,7 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         }
     }
 
-    private void fetchUpdateInformation() {
+    private void getUpdateInformation() {
         new GetUpdateInformation().execute();
     }
 
@@ -179,7 +163,7 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         if(cyanogenOTAUpdate != null) {
             generateCircleDiagram();
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
-            buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName + ", " + localizedUpdateType + getString(R.string.dot));
+            buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName + ", " + updateType + getString(R.string.dot));
 
             TextView downloadSizeView = (TextView) rootView.findViewById(R.id.downloadSizeLabel);
             downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.megabyte));
@@ -195,17 +179,27 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
                 downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        download(cyanogenOTAUpdate.getDownloadUrl(),cyanogenOTAUpdate.getFileName());
+                        downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
                     }
                 });
                 downloadButton.setEnabled(true);
             }
 
+
+            Button descriptionButton = (Button)rootView.findViewById(R.id.updateDescriptionButton);
+            descriptionButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    Intent i = new Intent(getActivity(), UpdateDetailsActivity.class);
+                    i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
+                    startActivity(i);
+                }
+            });
         }
 
     }
 
-    private void download(String downloadUrl, String downloadName) {
+    private void downloadUpdate(String downloadUrl, String downloadName) {
         DownloadManager downloadManager =  (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(downloadUrl);
         DownloadManager.Request request = new DownloadManager.Request(uri);
@@ -221,14 +215,14 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
     private void generateCircleDiagram() {
         PieChart pieChartView = (PieChart)rootView.findViewById(R.id.rolloutPercentageDiagram);
         List<Entry> chartData = new ArrayList<>();
-        int rolloutPercentage = cyanogenOTAUpdate.getRolloutPercentage();
-        chartData.add(0, new Entry(rolloutPercentage, 0));
-        if(rolloutPercentage < 100) {
-            chartData.add(1, new Entry(100 - rolloutPercentage, 1));
+        int percentage = cyanogenOTAUpdate.getRolloutPercentage();
+        chartData.add(0, new Entry(percentage, 0));
+        if(percentage < 100) {
+            chartData.add(1, new Entry(100 - percentage, 1));
         }
         ArrayList<String> xVals = new ArrayList<>();
         xVals.add(0, getString(R.string.updated));
-        if(rolloutPercentage < 100) {
+        if(percentage < 100) {
             xVals.add(1, getString(R.string.not_updated));
         }
         PieDataSet pieDataSet = new PieDataSet(chartData, "");
@@ -239,7 +233,7 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         pieData.setDrawValues(false);
         pieData.setValueTextSize(12);
         pieChartView.setDrawSliceText(false);
-        pieChartView.setCenterText(rolloutPercentage + "%");
+        pieChartView.setCenterText(percentage + "%");
         pieChartView.setDescription("");
         Legend legend = pieChartView.getLegend();
         legend.setForm(Legend.LegendForm.CIRCLE);
@@ -257,17 +251,8 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         pieChartView.setBackgroundColor(getResources().getColor(R.color.chart_background));
         pieChartView.invalidate();
 
-        Button descriptionButton = (Button)rootView.findViewById(R.id.updateDescriptionButton);
-        descriptionButton.setOnClickListener(this);
 
 
-    }
-
-    @Override
-    public void onClick(View view) {
-        Intent i = new Intent(getActivity(), UpdateDetailsActivity.class);
-        i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
-        startActivity(i);
     }
 
 
@@ -298,61 +283,33 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
         @Override
         protected Void doInBackground(Void... arg0) {
             // Creating service handler class instance
-            ServiceHandler sh = new ServiceHandler();
-            String jsonStr = null;
-            // Making a request to the right url and getting response
-                if (deviceName.equals("OnePlus One") && updateType.equals("incremental_update")) {
-                    String baconIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=INCREMENTAL";
-                    jsonStr = sh.makeServiceCall(baconIncrementalUri, ServiceHandler.GET);
-                }
-                if (deviceName.equals("OnePlus One") && updateType.equals("full_update")) {
-                    String baconStableUrl = "https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=STABLE";
-                    jsonStr = sh.makeServiceCall(baconStableUrl, ServiceHandler.GET);
-                }
-                if (deviceName.equals("Yu Yureka") && updateType.equals("incremental_update")) {
-                    String tomatoIncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=INCREMENTAL";
-                    jsonStr = sh.makeServiceCall(tomatoIncrementalUri, ServiceHandler.GET);
-                }
-                if (deviceName.equals("Yu Yureka")&& updateType.equals("full_update")) {
-                    String tomatoStableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=STABLE";
-                    jsonStr = sh.makeServiceCall(tomatoStableUri, ServiceHandler.GET);
-                }
-                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("incremental_update")) {
-                    String n1IncrementalUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=INCREMENTAL";
-                    jsonStr = sh.makeServiceCall(n1IncrementalUri, ServiceHandler.GET);
-                }
-                if (deviceName.equals("Oppo N1 CyanogenMod Edition") && updateType.equals("full_update")) {
-                    String n1StableUri = "https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=STABLE";
-                    jsonStr = sh.makeServiceCall(n1StableUri, ServiceHandler.GET);
-                }
-
+            ServiceHandler serviceHandler = new ServiceHandler();
+            String jsonStr = serviceHandler.makeServiceCall(updateLink, ServiceHandler.GET);
             if (jsonStr != null) {
                 try {
-                    JSONObject c = new JSONObject(jsonStr);
-
-
+                    JSONObject object = new JSONObject(jsonStr);
                         cyanogenOTAUpdate = new CyanogenOTAUpdate();
-                        cyanogenOTAUpdate.setDateUpdated(c.getString("date_updated"));
-                        cyanogenOTAUpdate.setIncremental(c.getString("incremental"));
-                        cyanogenOTAUpdate.setRequiredIncremental(c.getBoolean("required_incremental"));
-                        cyanogenOTAUpdate.setSize(c.getInt("size"));
-                        cyanogenOTAUpdate.setBuildNumber(c.getString("build_number"));
-                        cyanogenOTAUpdate.setIncrementalParent(c.getString("incremental_parent"));
-                        cyanogenOTAUpdate.setDownloadUrl(c.getString("download_url"));
-                        cyanogenOTAUpdate.setFileName(c.getString("filename"));
-                        cyanogenOTAUpdate.setSha1Sum(c.getString("sha1sum"));
-                        cyanogenOTAUpdate.setType(c.getString("type"));
-                        cyanogenOTAUpdate.setDescription(c.getString("description"));
-                        cyanogenOTAUpdate.setDateCreatedUnix(c.getString("date_created_unix"));
-                        cyanogenOTAUpdate.setRolloutPercentage(c.getInt("rollout_percentage"));
-                        cyanogenOTAUpdate.setKey(c.getString("key"));
-                        cyanogenOTAUpdate.setPath(c.getString("path"));
-                        cyanogenOTAUpdate.setName(c.getString("name"));
-                        cyanogenOTAUpdate.setMd5Sum(c.getString("md5sum"));
-                        cyanogenOTAUpdate.setPublished(c.getBoolean("published"));
-                        cyanogenOTAUpdate.setDateCreated(c.getString("date_created"));
-                        cyanogenOTAUpdate.setModel(c.getString("model"));
-                        cyanogenOTAUpdate.setApiLevel(c.getInt("api_level"));
+                        cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
+                        cyanogenOTAUpdate.setIncremental(object.getString("incremental"));
+                        cyanogenOTAUpdate.setRequiredIncremental(object.getBoolean("required_incremental"));
+                        cyanogenOTAUpdate.setSize(object.getInt("size"));
+                        cyanogenOTAUpdate.setBuildNumber(object.getString("build_number"));
+                        cyanogenOTAUpdate.setIncrementalParent(object.getString("incremental_parent"));
+                        cyanogenOTAUpdate.setDownloadUrl(object.getString("download_url"));
+                        cyanogenOTAUpdate.setFileName(object.getString("filename"));
+                        cyanogenOTAUpdate.setSha1Sum(object.getString("sha1sum"));
+                        cyanogenOTAUpdate.setType(object.getString("type"));
+                        cyanogenOTAUpdate.setDescription(object.getString("description"));
+                        cyanogenOTAUpdate.setDateCreatedUnix(object.getString("date_created_unix"));
+                        cyanogenOTAUpdate.setRolloutPercentage(object.getInt("rollout_percentage"));
+                        cyanogenOTAUpdate.setKey(object.getString("key"));
+                        cyanogenOTAUpdate.setPath(object.getString("path"));
+                        cyanogenOTAUpdate.setName(object.getString("name"));
+                        cyanogenOTAUpdate.setMd5Sum(object.getString("md5sum"));
+                        cyanogenOTAUpdate.setPublished(object.getBoolean("published"));
+                        cyanogenOTAUpdate.setDateCreated(object.getString("date_created"));
+                        cyanogenOTAUpdate.setModel(object.getString("model"));
+                        cyanogenOTAUpdate.setApiLevel(object.getInt("api_level"));
 
                     } catch (JSONException e) {
                     e.printStackTrace();
@@ -365,7 +322,6 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
                 showNetworkError();
 
             }
-
             return null;
         }
 
@@ -376,19 +332,12 @@ public class UpdateInformationFragment extends Fragment implements Button.OnClic
             if(progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
-
-
         }
-
-
-
     }
 
     private void showNetworkError() {
         DialogFragment networkErrorFragment = new NetworkErrorFragment();
         networkErrorFragment.show(getFragmentManager(), "NetworkError");
-
-
     }
 
 
