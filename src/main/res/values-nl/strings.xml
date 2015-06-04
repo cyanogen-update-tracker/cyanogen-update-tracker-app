@@ -87,5 +87,6 @@
     <string name="version">Versie:</string>
     <string name="about_story">Deze app is gemaakt door Arjan Vlek, een IT-student uit Zoetermeer.\n\nDeze app is geïnspireerd door een website (<a href="http://www.cyanogen-ota-bacon.somee.com">klik</a>) die momenteel ongeveer hetzelfde biedt. Deze app probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\nIn de toekomst zullen push-berichten worden verstuurd bij het uitkomen van een nieuwe update en daarnaast zal uw telefoon automatisch worden gedetecteerd.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
     <string name="fetching_devices">Bezig met ophalen van ondersteunde telefoons vanaf de server</string>
+    <string name="saving_settings">Uw instellingen worden opgeslagen...</string>
 
 </resources>

@@ -1,6 +1,10 @@
 package com.arjanvlek.cyngnotainfo.Settings;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.app.AlarmManager;
 import android.app.Dialog;
+import android.app.PendingIntent;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -23,12 +27,14 @@ import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class UpdateSettingsFragment extends DialogFragment {
 
     private SharedPreferences sharedPreferences;
     private int itemClicked = 0;
     private ProgressDialog progressDialog;
+    private Context context;
 
 
     @NonNull
@@ -40,10 +46,11 @@ public class UpdateSettingsFragment extends DialogFragment {
         for(String updateType : updateTypes) {
             localizedUpdateTypes.add(getString(resources.getIdentifier(updateType, "string",getActivity().getPackageName())));
         }
+        context = getActivity();
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_list_item_single_choice, localizedUpdateTypes);
         final AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.choose_update_type)
-                .setSingleChoiceItems(adapter, 0,new DialogInterface.OnClickListener() {
+                .setSingleChoiceItems(adapter, 0, new DialogInterface.OnClickListener() {
 
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
@@ -51,20 +58,17 @@ public class UpdateSettingsFragment extends DialogFragment {
                     }
                 })
         .setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
+            @SuppressLint("CommitPrefEdits")
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 sharedPreferences = getActivity().getPreferences(Context.MODE_APPEND);
                 SharedPreferences.Editor editor = sharedPreferences.edit();
                 editor.putString(MainActivity.PROPERTY_UPDATE_TYPE, updateTypes.get(itemClicked));
-                editor.apply();
+                editor.putString(MainActivity.PROPERTY_UPDATE_LINK, "");
+                editor.commit();
+
                 new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, sharedPreferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, ""), sharedPreferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, ""));
 
-                Intent i = getActivity().getPackageManager() .getLaunchIntentForPackage(getActivity().getPackageName());
-                i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-
-                if(isAdded()) {
-                    startActivity(i);
-                }
 
             }
         })
@@ -77,7 +81,7 @@ public class UpdateSettingsFragment extends DialogFragment {
         protected void onPreExecute() {
             super.onPreExecute();
             progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage(getString(R.string.fetching_devices));
+            progressDialog.setMessage(getString(R.string.saving_settings));
             progressDialog.setTitle(getString(R.string.loading));
             progressDialog.setIndeterminate(false);
             progressDialog.setCancelable(false);
@@ -132,11 +136,23 @@ public class UpdateSettingsFragment extends DialogFragment {
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(MainActivity.PROPERTY_UPDATE_LINK, updateLink);
-            editor.apply();
+            editor.commit();
 
-            if(progressDialog.isShowing()) {
-                progressDialog.dismiss();
+            try {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
             }
+            catch(Exception ignored) {
+
+            }
+            Intent mStartActivity = new Intent(context, MainActivity.class);
+            int mPendingIntentId = 123456;
+            PendingIntent mPendingIntent = PendingIntent.getActivity(context, mPendingIntentId,    mStartActivity, PendingIntent.FLAG_CANCEL_CURRENT);
+            AlarmManager mgr = (AlarmManager)context.getSystemService(Context.ALARM_SERVICE);
+            mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 100, mPendingIntent);
+            System.exit(0);
+
 
 
         }

@@ -1,9 +1,11 @@
 package com.arjanvlek.cyngnotainfo.views;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -48,12 +50,20 @@ public class DeviceInformationFragment extends Fragment {
             cpuFreqView.setText(getString(R.string.unknown));
         }
 
+        long totalMemory = 0;
+        try {
+            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+            ActivityManager activityManager = (ActivityManager) getActivity().getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
+            activityManager.getMemoryInfo(mi);
+            totalMemory = mi.totalMem / 1048576L;
+        }
+        catch(Exception ignored) {
 
-        String memoryString = deviceInformationData.getMemoryAmount();
+        }
         TextView memoryView = (TextView) rootView.findViewById(R.id.device_information_memory_field);
-        if(!memoryString.equals(DeviceInformationData.UNKNOWN)) {
+        if(totalMemory != 0) {
 
-            memoryView.setText(memoryString + " " + getString(R.string.gigabyte));
+            memoryView.setText(totalMemory + " " + getString(R.string.megabyte));
         }
         else {
             memoryView.setText(getString(R.string.unknown));

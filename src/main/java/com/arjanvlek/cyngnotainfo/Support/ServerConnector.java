@@ -217,7 +217,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
 
                 //setup request
                 urlConnection.setRequestProperty("User-Agent", USER_AGENT);
-                urlConnection.setConnectTimeout(5000);
+                urlConnection.setConnectTimeout(2000);
                 urlConnection.setReadTimeout(5000);
 
                 int responseCode = urlConnection.getResponseCode();
