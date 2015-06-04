@@ -13,7 +13,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
@@ -70,6 +72,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private static final String JSON_PROPERTY_DEVICE_REGISTRATION_ID = "device_id";
     private static final String JSON_PROPERTY_DEVICE_TYPE = "tracking_device_type";
     private static final String JSON_PROPERTY_UPDATE_TYPE = "tracking_update_type";
+    private static final String JSON_PROPERTY_OLD_DEVICE_ID = "old_device_id";
 
     public static final String FULL_UPDATE = "Full update";
     public static final String INCREMENTAL_UPDATE = "Incremental update";
@@ -82,80 +85,77 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private String registrationId;
     private String deviceType = "";
     private String updateType = "";
+    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main_activity);
         context = getApplicationContext();
+
+        SharedPreferences preferences = getPreferences(MODE_APPEND);
+        deviceType = preferences.getString(PROPERTY_DEVICE_TYPE, "");
+        updateType = preferences.getString(PROPERTY_UPDATE_TYPE, "");
+
+
+        // Set up the action bar.
+        final ActionBar actionBar = getSupportActionBar();
+        if (actionBar != null) {
+            actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
+        }
+
+
+
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+
+        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager.setAdapter(mSectionsPagerAdapter);
+
+        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+            @Override
+            public void onPageSelected(int position) {
+                if (actionBar != null) {
+                    actionBar.setSelectedNavigationItem(position);
+                }
+            }
+        });
+
+        // For each of the sections in the app, add a tab to the action bar.
+        for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
+            // Create a tab with text corresponding to the page title defined by
+            // the adapter. Also specify this Activity object, which implements
+            // the TabListener interface, as the callback (listener) for when
+            // this tab is selected.
+            actionBar.addTab(
+                    actionBar.newTab()
+                            .setText(mSectionsPagerAdapter.getPageTitle(i))
+                            .setTabListener(this));
+        }
+
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
         if (checkPlayServices()) {
             cloudMessaging = GoogleCloudMessaging.getInstance(context);
             registrationId = getRegistrationId(context);
-
-            SharedPreferences preferences = getPreferences(MODE_APPEND);
-            deviceType = preferences.getString(PROPERTY_DEVICE_TYPE, "");
-            updateType = preferences.getString(PROPERTY_UPDATE_TYPE, "");
-            if(checkIfDeviceIsSet()) {
+            if (checkIfDeviceIsSet()) {
                 checkIfRegistrationHasFailed();
                 if (!checkIfRegistrationIsValid(context)) {
-                    registerInBackground();
+                    registerInBackground(registrationId);
                 }
             }
-
-            // Set up the action bar.
-            final ActionBar actionBar = getSupportActionBar();
-            if (actionBar != null) {
-                actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-            }
-
             if (deviceType != null && updateType != null) {
                 if (deviceType.isEmpty() || updateType.isEmpty()) {
                     new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
                 }
             }
-
-            SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-            mViewPager = (ViewPager) findViewById(R.id.pager);
-            mViewPager.setAdapter(mSectionsPagerAdapter);
-
-            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-                @Override
-                public void onPageSelected(int position) {
-                    if (actionBar != null) {
-                        actionBar.setSelectedNavigationItem(position);
-                    }
-                }
-            });
-
-            // For each of the sections in the app, add a tab to the action bar.
-            for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-                // Create a tab with text corresponding to the page title defined by
-                // the adapter. Also specify this Activity object, which implements
-                // the TabListener interface, as the callback (listener) for when
-                // this tab is selected.
-                actionBar.addTab(
-                        actionBar.newTab()
-                                .setText(mSectionsPagerAdapter.getPageTitle(i))
-                                .setTabListener(this));
-            }
-        }
-        else {
-            System.out.println("No Google Play Services found :-(");
         }
     }
 
 
-    private void askForDeviceSettings(ArrayList<String> deviceNames, ArrayList<String> updateTypes) {
-        DialogFragment fragment = new DeviceSettingsFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList("device_names", deviceNames);
-        args.putStringArrayList("update_types", updateTypes);
-        fragment.setArguments(args);
-            fragment.show(getSupportFragmentManager(), "deviceSettings");
 
-
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -167,6 +167,25 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     private class SettingsLauncher extends AsyncTask<Void,Integer,List<Object>> {
         @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            progressDialog = new ProgressDialog(MainActivity.this);
+            progressDialog.setMessage(getString(R.string.fetching_devices));
+            progressDialog.setTitle(getString(R.string.loading));
+            progressDialog.setIndeterminate(false);
+            progressDialog.setCancelable(true);
+            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                @Override
+                public void onCancel(DialogInterface dialog) {
+                    cancel(true);
+                }
+            });
+            progressDialog.show();
+
+
+        }
+
+        @Override
         public List<Object> doInBackground(Void... voids) {
             ServerConnector serverConnector = new ServerConnector();
             List<Object> objects = new ArrayList<>();
@@ -175,6 +194,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             return objects;
         }
 
+        @SuppressWarnings("unchecked")
         @Override
         public void onPostExecute(List<Object> entities) {
             ArrayList<DeviceTypeEntity> deviceTypeEntities = (ArrayList<DeviceTypeEntity>)entities.get(0);
@@ -188,9 +208,23 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             for(UpdateTypeEntity updateTypeEntity : updateTypeEntities) {
                 updateTypes.add(updateTypeEntity.getUpdateType());
             }
+            if(progressDialog.isShowing()) {
+                progressDialog.dismiss();
+            }
             askForDeviceSettings(deviceNames, updateTypes);
 
         }
+    }
+
+    private void askForDeviceSettings(ArrayList<String> deviceNames, ArrayList<String> updateTypes) {
+        DialogFragment fragment = new DeviceSettingsFragment();
+        Bundle args = new Bundle();
+        args.putStringArrayList("device_names", deviceNames);
+        args.putStringArrayList("update_types", updateTypes);
+        fragment.setArguments(args);
+        fragment.show(getSupportFragmentManager(), "deviceSettings");
+
+
     }
 
     private void About() {
@@ -418,8 +452,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      * Stores the registration ID and app versionCode in the application's
      * shared preferences.
      */
-    private void registerInBackground() {
-        new cloudRegisterTask().execute(null, null, null);
+    private void registerInBackground(String registrationId) {
+        new cloudRegisterTask().execute(registrationId, null, null);
     }
 
     private boolean checkIfDeviceIsSet() {
@@ -427,10 +461,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE);
     }
 
-    private class cloudRegisterTask extends AsyncTask<Void, Void, Void> {
+    private class cloudRegisterTask extends AsyncTask<String, Void, Void> {
 
         @Override
-        protected Void doInBackground(Void... objects) {
+        protected Void doInBackground(String... strings) {
+            String oldRegistrationId = strings[0];
             try {
                 if (cloudMessaging == null) {
                     cloudMessaging = GoogleCloudMessaging.getInstance(context);
@@ -441,7 +476,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 // so it can use GCM/HTTP or CCS to send messages to your app.
                 // The request to your server should be authenticated if your app
                 // is using accounts.
-                sendRegistrationIdToBackend(registrationId);
+                sendRegistrationIdToBackend(registrationId, oldRegistrationId);
 
                 // For this demo: we don't need to send it because the device
                 // will send upstream messages to a server that echo back the
@@ -467,25 +502,26 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      * device sends upstream messages to a server that echoes back the message
      * using the 'from' address in the message.
      */
-    private void sendRegistrationIdToBackend(String registrationId) {
-        new RegisterIdToBackend().execute(registrationId);
+    private void sendRegistrationIdToBackend(String registrationId, String oldRegistrationId) {
+        new RegisterIdToBackend().execute(registrationId, oldRegistrationId);
     }
 
     private class RegisterIdToBackend extends AsyncTask<String,Integer, String> {
 
         @Override
         protected String doInBackground(String... strings) {
-            String regId = strings[0];
+            String registrationId = strings[0];
+            String oldRegistrationId = strings[1];
             HttpURLConnection urlConnection = null;
             InputStream in;
             String result = null;
             try {
 
                 JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put(JSON_PROPERTY_DEVICE_REGISTRATION_ID, regId);
+                jsonResponse.put(JSON_PROPERTY_DEVICE_REGISTRATION_ID, registrationId);
                 jsonResponse.put(JSON_PROPERTY_DEVICE_TYPE, deviceType);
                 jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
-                //TODO delete old registration first
+                jsonResponse.put(JSON_PROPERTY_OLD_DEVICE_ID, oldRegistrationId);
                 URL url = new URL(SERVER_URL);
                 urlConnection = (HttpURLConnection)url.openConnection();
                 urlConnection.setDoOutput(true);
@@ -542,7 +578,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private void checkIfRegistrationHasFailed() {
         SharedPreferences preferences = getGCMPreferences();
         if(preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false)) {
-            registerInBackground();
+            registerInBackground(registrationId);
         }
 
         SharedPreferences.Editor editor = preferences.edit();

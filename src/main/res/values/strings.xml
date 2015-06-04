@@ -50,6 +50,7 @@
 
     <!-- Loading strings-->
     <string name="fetching_update">Fetching update information from the server"</string>
+    <string name="fetching_devices">Fetching supported devices from the server</string>
     <string name="loading">Loading</string>
 
     <!-- Settings strings-->
