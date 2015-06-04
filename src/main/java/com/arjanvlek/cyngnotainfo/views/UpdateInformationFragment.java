@@ -213,45 +213,46 @@ public class UpdateInformationFragment extends Fragment {
     }
 
     private void generateCircleDiagram() {
-        PieChart pieChartView = (PieChart)rootView.findViewById(R.id.rolloutPercentageDiagram);
-        List<Entry> chartData = new ArrayList<>();
-        int percentage = cyanogenOTAUpdate.getRolloutPercentage();
-        chartData.add(0, new Entry(percentage, 0));
-        if(percentage < 100) {
-            chartData.add(1, new Entry(100 - percentage, 1));
-        }
-        ArrayList<String> xVals = new ArrayList<>();
-        xVals.add(0, getString(R.string.updated));
-        if(percentage < 100) {
-            xVals.add(1, getString(R.string.not_updated));
-        }
-        PieDataSet pieDataSet = new PieDataSet(chartData, "");
-        pieDataSet.setColors(new int[]{getResources().getColor(R.color.lightblue), getResources().getColor(android.R.color.darker_gray)});
+        if(isAdded()) {
+            PieChart pieChartView = (PieChart) rootView.findViewById(R.id.rolloutPercentageDiagram);
+            List<Entry> chartData = new ArrayList<>();
+            int percentage = cyanogenOTAUpdate.getRolloutPercentage();
+            chartData.add(0, new Entry(percentage, 0));
+            if (percentage < 100) {
+                chartData.add(1, new Entry(100 - percentage, 1));
+            }
+            ArrayList<String> xVals = new ArrayList<>();
+            xVals.add(0, getString(R.string.updated));
+            if (percentage < 100) {
+                xVals.add(1, getString(R.string.not_updated));
+            }
+            PieDataSet pieDataSet = new PieDataSet(chartData, "");
+            pieDataSet.setColors(new int[]{getResources().getColor(R.color.lightblue), getResources().getColor(android.R.color.darker_gray)});
 
 
-        PieData pieData = new PieData(xVals, pieDataSet);
-        pieData.setDrawValues(false);
-        pieData.setValueTextSize(12);
-        pieChartView.setDrawSliceText(false);
-        pieChartView.setCenterText(percentage + "%");
-        pieChartView.setDescription("");
-        Legend legend = pieChartView.getLegend();
-        legend.setForm(Legend.LegendForm.CIRCLE);
-        legend.setFormSize(10);
-        legend.setTextSize(12);
-        pieChartView.setUsePercentValues(true);
-        pieChartView.setData(pieData);
-        pieChartView.setMinimumWidth(pieChartView.getWidth());
-        if(getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            pieChartView.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
-        }
-        else {
-            pieChartView.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
-        }
-        pieChartView.setBackgroundColor(getResources().getColor(R.color.chart_background));
-        pieChartView.invalidate();
+            PieData pieData = new PieData(xVals, pieDataSet);
+            pieData.setDrawValues(false);
+            pieData.setValueTextSize(12);
+            pieChartView.setDrawSliceText(false);
+            pieChartView.setCenterText(percentage + "%");
+            pieChartView.setDescription("");
+            Legend legend = pieChartView.getLegend();
+            legend.setForm(Legend.LegendForm.CIRCLE);
+            legend.setFormSize(10);
+            legend.setTextSize(12);
+            pieChartView.setUsePercentValues(true);
+            pieChartView.setData(pieData);
+            pieChartView.setMinimumWidth(pieChartView.getWidth());
+            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
+                pieChartView.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
+            } else {
+                pieChartView.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+            }
+            pieChartView.setBackgroundColor(getResources().getColor(R.color.chart_background));
+            pieChartView.invalidate();
 
 
+        }
 
     }
 

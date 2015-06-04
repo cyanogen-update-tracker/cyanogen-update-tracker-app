@@ -27,7 +27,7 @@ import java.util.List;
 public class UpdateSettingsFragment extends DialogFragment {
 
     private SharedPreferences sharedPreferences;
-    private int itemClicked;
+    private int itemClicked = 0;
     private ProgressDialog progressDialog;
 
 
