@@ -4,6 +4,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Debug;
 import android.support.v4.app.Fragment;
@@ -55,7 +56,17 @@ public class DeviceInformationFragment extends Fragment {
             ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
             ActivityManager activityManager = (ActivityManager) getActivity().getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
             activityManager.getMemoryInfo(mi);
-            totalMemory = mi.totalMem / 1048576L;
+            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+                totalMemory = mi.totalMem / 1048576L;
+            }
+            else {
+                try {
+                    Runtime info = Runtime.getRuntime();
+                    totalMemory = info.totalMemory();
+                } catch (Exception e) {
+                    totalMemory = 0;
+                }
+            }
         }
         catch(Exception ignored) {
 
@@ -103,10 +114,12 @@ public class DeviceInformationFragment extends Fragment {
         String adsTestId = "7CFCF353FBC40363065F03DFAC7D7EE4";
         String adsTestId2 = "D9323E61DFC727F573528DB3820F7215";
         String adsTestId3 = "D732F1B481C5274B05D707AC197B33B2";
+        String adsTestId4 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(adsTestId)
                 .addTestDevice(adsTestId2)
                 .addTestDevice(adsTestId3)
+                .addTestDevice(adsTestId4)
                 .addKeyword("smartphone")
                 .addKeyword("tablet")
                 .addKeyword("cyanogen")

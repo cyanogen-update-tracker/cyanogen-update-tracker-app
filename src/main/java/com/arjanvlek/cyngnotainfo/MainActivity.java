@@ -21,6 +21,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -151,7 +152,12 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             }
             if (deviceType != null && updateType != null) {
                 if (deviceType.isEmpty() || updateType.isEmpty() || updateLink.isEmpty()) {
-                    new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+                    }
+                    else {
+                        new SettingsLauncher().execute();
+                    }
                 }
             }
         }
@@ -243,7 +249,12 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+            }
+            else {
+                new SettingsLauncher().execute();
+            }
             return true;
         }
         if (id == R.id.action_about) {
@@ -473,7 +484,12 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 }
                 registrationId = cloudMessaging.register(SENDER_ID);
 
-                new RegisterIdToBackend().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, registrationId, oldRegistrationId);
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    new RegisterIdToBackend().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, registrationId, oldRegistrationId);
+                }
+                else {
+                    new RegisterIdToBackend().execute(registrationId, oldRegistrationId);
+                }
 
                 storeRegistrationId(context, registrationId);
             } catch (IOException ex) {

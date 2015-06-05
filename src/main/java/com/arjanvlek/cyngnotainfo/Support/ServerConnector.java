@@ -1,6 +1,7 @@
 package com.arjanvlek.cyngnotainfo.Support;
 
 import android.os.AsyncTask;
+import android.os.Build;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
@@ -46,7 +47,12 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<DeviceTypeEntity> getDeviceTypeEntities() {
         fetchDataFromServer fetchDeviceDataFromServer = new fetchDataFromServer();
         fetchDeviceDataFromServer.asyncTaskResultHelper = this;
-        fetchDeviceDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR,"device");
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            fetchDeviceDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "device");
+        }
+        else {
+            fetchDeviceDataFromServer.execute("device");
+        }
 
         while(!deviceTypesReady) {
             // We don't do anything here :)
@@ -62,7 +68,12 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<UpdateTypeEntity> getUpdateTypeEntities() {
         fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
         fetchUpdateDataFromServer.asyncTaskResultHelper = this;
-        fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update");
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update");
+        }
+        else {
+            fetchUpdateDataFromServer.execute("update");
+        }
         while(!updateTypesReady) {
             // We don't do anything here :)
         }
@@ -75,9 +86,14 @@ public class ServerConnector implements AsyncTaskResultHelper{
     }
 
     public List<UpdateLinkEntity> getUpdateLinkEntities() {
-        fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
-        fetchUpdateDataFromServer.asyncTaskResultHelper = this;
-        fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update_link");
+        fetchDataFromServer fetchUpdateLinksFromServer = new fetchDataFromServer();
+        fetchUpdateLinksFromServer.asyncTaskResultHelper = this;
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            fetchUpdateLinksFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update_link");
+        }
+        else {
+            fetchUpdateLinksFromServer.execute("update_link");
+        }
         while(!updateLinksReady) {
             // We don't do anything here :)
         }

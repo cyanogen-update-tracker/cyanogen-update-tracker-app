@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.res.Resources;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.app.AlertDialog;
@@ -67,8 +68,11 @@ public class UpdateSettingsFragment extends DialogFragment {
                 editor.putString(MainActivity.PROPERTY_UPDATE_LINK, "");
                 editor.commit();
 
-                new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, sharedPreferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, ""), sharedPreferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, ""));
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, sharedPreferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, ""), sharedPreferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, ""));
+                } else {
+                    new UpdateLinkSetter().execute(sharedPreferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, ""), sharedPreferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, ""));
+                }
 
             }
         })

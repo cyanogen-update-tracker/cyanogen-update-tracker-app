@@ -11,6 +11,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
@@ -61,6 +62,7 @@ public class UpdateInformationFragment extends Fragment {
     public static final String ADS_TEST_DEVICE_ID_OWN_DEVICE = "7CFCF353FBC40363065F03DFAC7D7EE4";
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_1 = "D9323E61DFC727F573528DB3820F7215";
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_2 = "D732F1B481C5274B05D707AC197B33B2";
+    public static final String ADS_TEST_DEVICE_ID_EMULATOR_3 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -123,6 +125,7 @@ public class UpdateInformationFragment extends Fragment {
                     .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
                     .addKeyword("smartphone")
                     .addKeyword("tablet")
                     .addKeyword("news apps")
@@ -206,7 +209,12 @@ public class UpdateInformationFragment extends Fragment {
         request.setDescription(getActivity().getString(R.string.downloader_description)).setTitle(getString(R.string.downloader_description));
         request.setDestinationInExternalFilesDir(getActivity(), Environment.DIRECTORY_DOWNLOADS, downloadName);
         request.setVisibleInDownloadsUi(true);
-        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+        }
+        else {
+            request.setShowRunningNotification(true);
+        }
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
         downloadManager.enqueue(request);
         Toast.makeText(getActivity(),getString(R.string.downloading_in_background),Toast.LENGTH_LONG).show();
