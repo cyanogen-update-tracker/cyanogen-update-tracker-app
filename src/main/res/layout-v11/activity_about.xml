@@ -58,7 +58,7 @@
         android:text="@string/rate_app"
         android:onClick="rateApp"
         android:textColor="@color/lightblue"
-        android:background="@android:color/transparent"
+        style="?android:buttonBarButtonStyle"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
 
@@ -70,8 +70,8 @@
         android:textSize="13sp"
         android:linksClickable="true"
         android:layout_marginTop="15dp"
-        android:textAppearance="?android:textAppearanceSmall"
         android:textColorLink="@color/lightblue"
+        android:textAppearance="?android:textAppearanceSmall"
         android:layout_below="@+id/aboutText2"
         android:layout_above="@id/about_rate_button"/>
 

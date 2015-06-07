@@ -36,6 +36,7 @@ public class DeviceSettingsFragment extends DialogFragment {
                         itemClicked = which;
                     }
                 })
+
                 .setPositiveButton(android.R.string.ok, new Dialog.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {

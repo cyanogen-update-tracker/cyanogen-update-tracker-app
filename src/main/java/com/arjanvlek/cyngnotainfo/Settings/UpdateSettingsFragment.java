@@ -101,7 +101,7 @@ public class UpdateSettingsFragment extends DialogFragment {
             ServerConnector serverConnector = new ServerConnector();
             List<Object> objects = new ArrayList<>();
             objects.add(serverConnector.getDeviceTypeEntities());
-            objects.add(serverConnector.getUpdateTypeEntities());
+            objects.add(serverConnector.getUpdateTypeEntities(null));
             objects.add(serverConnector.getUpdateLinkEntities());
             objects.add(deviceName);
             objects.add(updateType);

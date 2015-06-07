@@ -49,17 +49,20 @@
     <string name="downloading_in_background">Your update will be downloaded in the background…</string>
 
     <!-- Loading strings-->
-    <string name="fetching_update">Fetching update information from the server"</string>
-    <string name="fetching_devices">Fetching supported devices from the server</string>
+    <string name="fetching_update">Fetching update information from the server.</string>
+    <string name="fetching_device_types">Fetching supported devices from the server.</string>
+    <string name="fetching_update_types">Fetching supported update types from the server.</string>
     <string name="saving_settings">Saving your settings…</string>
     <string name="loading">Loading</string>
 
     <!-- Settings strings-->
-    <string name="action_settings">Choose device and update settings</string>
-    <string name="choose_device_type">Choose the device you want to track:</string>
-    <string name="choose_update_type">Choose the update type you want to track:</string>
+    <string name="settings">Choose device and update type</string>
+    <string name="action_settings">Device and update method</string>
+    <string name="choose_device_type">Device</string>
+    <string name="choose_update_type">Update method</string>
     <string name="about">About this app</string>
-
+    <string name="settings_saved">Your settings are automatically saved.</string>
+    <string name="settings_explanation_update_methods">Explanation of update methods</string>
     <!--Device names -->
     <string name="oneplus_one">OnePlus One</string>
     <string name="yu_yureka">Yu Yureka</string>
@@ -69,6 +72,7 @@
     <string name="app_requires_network">This app requires an active Internet connection</string>
     <string name="app_requires_network_will_close">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
     <string name="exit">Exit</string>
+    <string name="push_failure">Unable to connect to the app server. In order to receive notifications about new updates, please try launching the app again. </string>
 
     <string-array name="update_types_array">
         <item>Full update package</item>
@@ -81,7 +85,7 @@
         <item>Oppo N1 CM Edition</item>
     </string-array>
     <string name="difference_incremental_stable">Difference between an incremental and a full update</string>
-    <string name="explanation_incremntal_stable">An incremental update can only be installed if you were running the latest version before this update was released, while a full update can be always be installed - regardless of your current software version running on your device.</string>
+    <string name="explanation_incremental_stable">An incremental update can only be installed if you were running the latest version before this update was released.\n\nA full update can be always be installed - regardless of your current software version running on your device.</string>
     <string name="downloader_description">Downloading Cyanogen OS Update…</string>
 
     <!-- Tutorial strings -->
@@ -129,4 +133,6 @@
 
     <string name="update_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
     <string name="device_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
+    <string name="title_activity_settings">Settings</string>
+
 </resources>

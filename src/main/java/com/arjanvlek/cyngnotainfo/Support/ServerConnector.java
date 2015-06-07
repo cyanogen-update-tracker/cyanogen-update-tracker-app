@@ -65,14 +65,14 @@ public class ServerConnector implements AsyncTaskResultHelper{
         }
     }
 
-    public List<UpdateTypeEntity> getUpdateTypeEntities() {
+    public List<UpdateTypeEntity> getUpdateTypeEntities(String deviceId) {
         fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
         fetchUpdateDataFromServer.asyncTaskResultHelper = this;
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update");
+            fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update", deviceId);
         }
         else {
-            fetchUpdateDataFromServer.execute("update");
+            fetchUpdateDataFromServer.execute("update", deviceId);
         }
         while(!updateTypesReady) {
             // We don't do anything here :)
@@ -108,19 +108,21 @@ public class ServerConnector implements AsyncTaskResultHelper{
     private void findAllDeviceTypesFromHtmlResponse(String htmlResponse) {
         deviceTypeEntities = null;
         if(htmlResponse != null) {
-            deviceTypeEntities = new ArrayList<>();
-            try {
-                JSONArray serverResponse = new JSONArray(htmlResponse);
-                for (int i = 0; i < serverResponse.length(); i++) {
-                    DeviceTypeEntity deviceTypeEntity = new DeviceTypeEntity();
-                    JSONObject rawDeviceTypeEntity = serverResponse.getJSONObject(i);
-                    deviceTypeEntity.setId(rawDeviceTypeEntity.getLong("id"));
-                    deviceTypeEntity.setDeviceType(rawDeviceTypeEntity.getString("device_type"));
-                    deviceTypeEntities.add(deviceTypeEntity);
+            if(!htmlResponse.isEmpty()) {
+                deviceTypeEntities = new ArrayList<>();
+                try {
+                    JSONArray serverResponse = new JSONArray(htmlResponse);
+                    for (int i = 0; i < serverResponse.length(); i++) {
+                        DeviceTypeEntity deviceTypeEntity = new DeviceTypeEntity();
+                        JSONObject rawDeviceTypeEntity = serverResponse.getJSONObject(i);
+                        deviceTypeEntity.setId(rawDeviceTypeEntity.getLong("id"));
+                        deviceTypeEntity.setDeviceType(rawDeviceTypeEntity.getString("device_type"));
+                        deviceTypeEntities.add(deviceTypeEntity);
+                    }
+                } catch (JSONException e) {
+                    deviceTypeEntities = null;
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                deviceTypeEntities = null;
-                e.printStackTrace();
             }
         }
         else {
@@ -134,18 +136,20 @@ public class ServerConnector implements AsyncTaskResultHelper{
         updateTypeEntities = null;
 
         if(htmlResponse != null) {
-            try {
-                updateTypeEntities = new ArrayList<>();
-                JSONArray serverResponse = new JSONArray(htmlResponse);
-                for (int i = 0; i < serverResponse.length(); i++) {
-                    UpdateTypeEntity updateTypeEntity = new UpdateTypeEntity();
-                    JSONObject rawUpdateTypeEntity = serverResponse.getJSONObject(i);
-                    updateTypeEntity.setId(rawUpdateTypeEntity.getLong("id"));
-                    updateTypeEntity.setUpdateType(rawUpdateTypeEntity.getString("update_type"));
-                    updateTypeEntities.add(updateTypeEntity);
+            if(!htmlResponse.isEmpty()) {
+                try {
+                    updateTypeEntities = new ArrayList<>();
+                    JSONArray serverResponse = new JSONArray(htmlResponse);
+                    for (int i = 0; i < serverResponse.length(); i++) {
+                        UpdateTypeEntity updateTypeEntity = new UpdateTypeEntity();
+                        JSONObject rawUpdateTypeEntity = serverResponse.getJSONObject(i);
+                        updateTypeEntity.setId(rawUpdateTypeEntity.getLong("id"));
+                        updateTypeEntity.setUpdateType(rawUpdateTypeEntity.getString("update_type"));
+                        updateTypeEntities.add(updateTypeEntity);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
         else {
@@ -158,20 +162,22 @@ public class ServerConnector implements AsyncTaskResultHelper{
         updateLinkEntities = null;
 
         if(htmlResponse != null) {
-            try {
-                updateLinkEntities = new ArrayList<>();
-                JSONArray serverResponse = new JSONArray(htmlResponse);
-                for (int i = 0; i < serverResponse.length(); i++) {
-                    UpdateLinkEntity updateLinkEntity = new UpdateLinkEntity();
-                    JSONObject rawUpdateLinkEntity = serverResponse.getJSONObject(i);
-                    updateLinkEntity.setId(rawUpdateLinkEntity.getLong("id"));
-                    updateLinkEntity.setTracking_update_type_id(rawUpdateLinkEntity.getLong("tracking_update_type_id"));
-                    updateLinkEntity.setTracking_device_type_id(rawUpdateLinkEntity.getLong("tracking_device_type_id"));
-                    updateLinkEntity.setInformation_url(rawUpdateLinkEntity.getString("information_url"));
-                    updateLinkEntities.add(updateLinkEntity);
+            if(!htmlResponse.isEmpty()) {
+                try {
+                    updateLinkEntities = new ArrayList<>();
+                    JSONArray serverResponse = new JSONArray(htmlResponse);
+                    for (int i = 0; i < serverResponse.length(); i++) {
+                        UpdateLinkEntity updateLinkEntity = new UpdateLinkEntity();
+                        JSONObject rawUpdateLinkEntity = serverResponse.getJSONObject(i);
+                        updateLinkEntity.setId(rawUpdateLinkEntity.getLong("id"));
+                        updateLinkEntity.setTracking_update_type_id(rawUpdateLinkEntity.getLong("tracking_update_type_id"));
+                        updateLinkEntity.setTracking_device_type_id(rawUpdateLinkEntity.getLong("tracking_device_type_id"));
+                        updateLinkEntity.setInformation_url(rawUpdateLinkEntity.getString("information_url"));
+                        updateLinkEntities.add(updateLinkEntity);
+                    }
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
         }
         else {
@@ -220,7 +226,8 @@ public class ServerConnector implements AsyncTaskResultHelper{
                         requestUrl = new URL(SERVER_URL + DEVICE_TYPE_URL);
                         break;
                     case "update":
-                        requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL);
+                        String deviceId = types[1];
+                        requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL +"?device_id=" + deviceId);
                         break;
                     case "update_link":
                         requestUrl = new URL(SERVER_URL + UPDATE_LINK_URL);
@@ -237,7 +244,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
                 urlConnection.setReadTimeout(5000);
 
                 int responseCode = urlConnection.getResponseCode();
-                if (responseCode <= 300) {
+                if (responseCode>= 200 && responseCode <= 300) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                     String inputLine;
                     StringBuilder response = new StringBuilder();

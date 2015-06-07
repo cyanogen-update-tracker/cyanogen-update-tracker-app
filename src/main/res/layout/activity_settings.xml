@@ -1,0 +1,110 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    tools:context="com.arjanvlek.cyngnotainfo.Settings.SettingsActivity">
+
+
+    <TextView
+        android:id="@+id/settingsDescriptionTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="@string/action_settings"
+        android:textColor="#ff88e0ff"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/settingsDivisor"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_below="@id/settingsDescriptionTextView"
+        android:background="#ff88e0ff" />
+
+    <TextView
+        android:id="@+id/deviceTypeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/settingsDivisor"
+        android:layout_marginTop="5dp"
+        android:text="@string/choose_device_type"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/deviceTypeSpinner"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@+id/settingsDivisor" />
+
+
+    <TextView
+        android:id="@+id/updateTypeTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignTop="@+id/updateTypeSpinner"
+        android:text="@string/choose_update_type"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <Spinner
+        android:id="@+id/updateTypeSpinner"
+        android:layout_width="120dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/deviceTypeSpinner" />
+
+    <TextView
+        android:id="@+id/settingsDescriptionTextView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/updateTypeSpinner"
+        android:layout_marginTop="10dp"
+        android:text="@string/settings_explanation_update_methods"
+        android:textColor="#ff88e0ff"
+        android:textStyle="bold" />
+
+    <View
+        android:id="@+id/settingsDivisor2"
+        android:layout_width="fill_parent"
+        android:layout_height="2dip"
+        android:layout_below="@id/settingsDescriptionTextView2"
+
+        android:background="#ff88e0ff" />
+
+    <TextView
+        android:id="@+id/settingsSavedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:text="@string/settings_saved"
+        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/settingsSavedTextView"
+        android:layout_below="@id/settingsDivisor2"
+        android:layout_marginBottom="10dp">
+
+        <TextView
+            android:id="@+id/updateTypeDescriptionTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/explanation_incremental_stable"
+            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+    </ScrollView>
+
+
+</RelativeLayout>

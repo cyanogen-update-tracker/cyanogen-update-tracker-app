@@ -5,7 +5,6 @@ import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
@@ -67,17 +66,16 @@ public class UpdateInformationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_APPEND);
-        deviceName = preferences.getString(MainActivity.PROPERTY_DEVICE_TYPE, "");
-        updateType = preferences.getString(MainActivity.PROPERTY_UPDATE_TYPE, "");
-        updateLink = preferences.getString(MainActivity.PROPERTY_UPDATE_LINK, "");
-        assert updateType != null;
-        if(updateType.equals(MainActivity.FULL_UPDATE)) {
-            updateType = getString(R.string.full_update);
+        deviceName = MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
+        updateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_TYPE, getActivity().getApplicationContext());
+        updateLink = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
+        if(updateType != null) {
+            if (updateType.equals(MainActivity.FULL_UPDATE)) {
+                updateType = getString(R.string.full_update);
 
-        }
-        else {
-            updateType = getString(R.string.incremental_update);
+            } else {
+                updateType = getString(R.string.incremental_update);
+            }
         }
 
     }
@@ -90,8 +88,7 @@ public class UpdateInformationFragment extends Fragment {
     }
 
     private boolean checkIfSettingsAreValid() {
-        SharedPreferences preferences = getActivity().getPreferences(Context.MODE_APPEND);
-        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_LINK);
+        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
     }
 
     @Override
@@ -166,7 +163,7 @@ public class UpdateInformationFragment extends Fragment {
         if(cyanogenOTAUpdate != null) {
             generateCircleDiagram();
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
-            buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName + ", " + updateType + getString(R.string.dot));
+            buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
 
             TextView downloadSizeView = (TextView) rootView.findViewById(R.id.downloadSizeLabel);
             downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.megabyte));
@@ -213,6 +210,7 @@ public class UpdateInformationFragment extends Fragment {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         }
         else {
+            //noinspection deprecation
             request.setShowRunningNotification(true);
         }
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
@@ -250,7 +248,7 @@ public class UpdateInformationFragment extends Fragment {
             legend.setTextSize(12);
             pieChartView.setUsePercentValues(true);
             pieChartView.setData(pieData);
-            pieChartView.setMinimumWidth(pieChartView.getWidth());
+            pieChartView.setTouchEnabled(false);
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
                 pieChartView.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
             } else {
@@ -288,12 +286,23 @@ public class UpdateInformationFragment extends Fragment {
 
 
         }
+        private String fetchResult(String updateUrl) {
+
+            ServiceHandler serviceHandler = new ServiceHandler();
+            try {
+                return serviceHandler.makeServiceCall(updateUrl, ServiceHandler.GET);
+            }
+            catch (Exception e) {
+                fetchResult(updateUrl);
+            }
+            return null;
+        }
 
         @Override
         protected Void doInBackground(Void... arg0) {
             // Creating service handler class instance
-            ServiceHandler serviceHandler = new ServiceHandler();
-            String jsonStr = serviceHandler.makeServiceCall(updateLink, ServiceHandler.GET);
+            String jsonStr = null;
+            jsonStr = fetchResult(updateLink);
             if (jsonStr != null) {
                 try {
                     JSONObject object = new JSONObject(jsonStr);
@@ -320,8 +329,7 @@ public class UpdateInformationFragment extends Fragment {
                         cyanogenOTAUpdate.setModel(object.getString("model"));
                         cyanogenOTAUpdate.setApiLevel(object.getInt("api_level"));
 
-                    } catch (JSONException e) {
-                    e.printStackTrace();
+                    } catch (JSONException ignored) {
                 }
 
             } else {

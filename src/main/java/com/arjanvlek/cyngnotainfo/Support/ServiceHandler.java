@@ -14,6 +14,7 @@ import org.apache.http.util.EntityUtils;
 /**
  * Copyright http://www.androidhive.info/2012/01/android-json-parsing-tutorial/.
  */
+@SuppressWarnings("deprecation")
 public class ServiceHandler {
 
     static String response = null;

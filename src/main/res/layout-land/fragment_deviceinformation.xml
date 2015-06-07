@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:ads="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_marginStart="@dimen/activity_horizontal_margin"
@@ -18,6 +17,8 @@
         android:text="@string/device_information_your_device"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:textStyle="bold"
+        android:singleLine="true"
+        android:ellipsize="end"
         android:id="@+id/device_information_header" />
     <ImageView
         android:layout_width="130dp"
@@ -31,10 +32,10 @@
         android:layout_below="@+id/device_information_header"
         android:contentDescription="@string/device_information_image_description"/>
 
-    <TableLayout
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tableLayout"
+        android:id="@+id/device_information_landscape_relative_layout"
         android:layout_toRightOf="@+id/device_information_device_image"
         android:layout_toEndOf="@+id/device_information_device_image"
         android:layout_marginEnd="36dp"
@@ -43,110 +44,93 @@
         android:layout_marginStart="50dp"
         android:layout_centerHorizontal="true"
         android:layout_alignTop="@+id/device_information_device_image">
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/device_information_system_on_a_chip"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/device_information_soc_label"
+            android:layout_marginTop="5dp"
+            android:text="@string/device_information_system_on_a_chip" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:layout_weight="1.0"
-                android:layout_marginTop="5dp"
-                android:paddingLeft="60dp"
-                android:id="@+id/device_information_soc_field"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                tools:ignore="RtlHardcoded" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/device_information_cpu_frequency"
-                />
+        <TextView
+            android:id="@+id/device_information_soc_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="end"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/device_information_cpu_freq_label"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/device_information_soc_label"
+            android:text="@string/device_information_cpu_frequency" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:id="@+id/device_information_cpu_freq_field"
-                android:layout_weight="1.0"
-                android:layout_marginTop="5dp"
-                android:paddingLeft="60dp"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                tools:ignore="RtlHardcoded" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/device_information_amount_of_memory"
-                />
+        <TextView
+            android:id="@+id/device_information_cpu_freq_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="end"
+            android:layout_below="@id/device_information_soc_field"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:layout_weight="1.0"
-                android:layout_marginTop="5dp"
-                android:id="@+id/device_information_memory_field"
-                android:paddingLeft="60dp"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                tools:ignore="RtlHardcoded" />
-        </TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:id="@+id/device_information_memory_label"
+            android:layout_below="@id/device_information_cpu_freq_label"
+            android:text="@string/device_information_amount_of_memory" />
 
+        <TextView
+            android:id="@+id/device_information_memory_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/device_information_cpu_freq_field"
+            android:layout_marginTop="5dp"
+            android:gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"/>
 
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/device_information_os_version"
-                />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/device_information_os_ver_label"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/device_information_memory_label"
+            android:text="@string/device_information_os_version" />
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:gravity="end"
-                android:layout_weight="1.0"
-                android:layout_marginTop="5dp"
-                android:id="@+id/device_information_os_ver_field"
-                android:paddingLeft="60dp"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                tools:ignore="RtlHardcoded" />
-        </TableRow>
-        <TableRow>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:text="@string/device_information_serial_number"
-                />
+        <TextView
+            android:id="@+id/device_information_os_ver_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/device_information_memory_field"/>
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
-                android:gravity="end"
-                android:layout_weight="1.0"
-                android:id="@+id/device_information_serial_number_field"
-                android:paddingLeft="60dp"
-                android:paddingRight="0dp"
-                android:paddingEnd="0dp"
-                tools:ignore="RtlHardcoded" />
-        </TableRow>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/device_information_serial_number_label"
+            android:layout_marginTop="5dp"
+            android:layout_below="@id/device_information_os_ver_label"
+            android:text="@string/device_information_serial_number"/>
+        <TextView
+            android:id="@+id/device_information_serial_number_field"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="end"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_below="@id/device_information_os_ver_field"/>
 
-    </TableLayout>
+    </RelativeLayout>
 
     <com.google.android.gms.ads.AdView
         android:layout_width="match_parent"

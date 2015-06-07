@@ -8,21 +8,15 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
-import android.support.v4.app.DialogFragment;
+import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -34,12 +28,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
-import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
-import com.arjanvlek.cyngnotainfo.Model.UpdateTypeEntity;
-import com.arjanvlek.cyngnotainfo.Settings.DeviceSettingsFragment;
-import com.arjanvlek.cyngnotainfo.Settings.UpdateSettingsFragment;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
+import com.arjanvlek.cyngnotainfo.Settings.SettingsActivity;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
 import com.arjanvlek.cyngnotainfo.views.UpdateInformationFragment;
@@ -77,17 +68,16 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private static final String JSON_PROPERTY_OLD_DEVICE_ID = "old_device_id";
 
     public static final String FULL_UPDATE = "full_update";
-    public static final String INCREMENTAL_UPDATE = "Incremental update";
+    public static final String INCREMENTAL_UPDATE = "incremental_update";
 
-    private String SENDER_ID = "** Add your Google Cloud Messaging API key here **";
-    private String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
+    public static String SENDER_ID = "** Add your Google Cloud Messaging API key here **";
+    public static String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
     private GoogleCloudMessaging cloudMessaging;
     private Context context;
     private String registrationId;
     private String deviceType = "";
     private String updateType = "";
     private String updateLink = "";
-    private ProgressDialog progressDialog;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -95,10 +85,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         setContentView(R.layout.activity_main_activity);
         context = getApplicationContext();
 
-        SharedPreferences preferences = getPreferences(MODE_APPEND);
-        deviceType = preferences.getString(PROPERTY_DEVICE_TYPE, "");
-        updateType = preferences.getString(PROPERTY_UPDATE_TYPE, "");
-        updateLink = preferences.getString(PROPERTY_UPDATE_LINK, "");
+        deviceType = getPreference(PROPERTY_DEVICE_TYPE, getApplicationContext());
+        updateType = getPreference(PROPERTY_UPDATE_TYPE, getApplicationContext());
+        updateLink = getPreference(PROPERTY_UPDATE_LINK, getApplicationContext());
 
 
 
@@ -150,16 +139,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     registerInBackground(registrationId);
                 }
             }
-            if (deviceType != null && updateType != null) {
-                if (deviceType.isEmpty() || updateType.isEmpty() || updateLink.isEmpty()) {
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-                    }
-                    else {
-                        new SettingsLauncher().execute();
-                    }
+                if (deviceType == null || updateType == null || updateLink == null) {
+                    Settings(); //TODO first time page
                 }
-            }
         }
     }
 
@@ -174,66 +156,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return true;
     }
 
-    private class SettingsLauncher extends AsyncTask<Void,Integer,List<Object>> {
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            progressDialog = new ProgressDialog(MainActivity.this);
-            progressDialog.setMessage(getString(R.string.fetching_devices));
-            progressDialog.setTitle(getString(R.string.loading));
-            progressDialog.setIndeterminate(false);
-            progressDialog.setCancelable(true);
-            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    cancel(true);
-                }
-            });
-            progressDialog.show();
 
-
-        }
-
-        @Override
-        public List<Object> doInBackground(Void... voids) {
-            ServerConnector serverConnector = new ServerConnector();
-            List<Object> objects = new ArrayList<>();
-            objects.add(serverConnector.getDeviceTypeEntities());
-            objects.add(serverConnector.getUpdateTypeEntities());
-            return objects;
-        }
-
-        @SuppressWarnings("unchecked")
-        @Override
-        public void onPostExecute(List<Object> entities) {
-            ArrayList<DeviceTypeEntity> deviceTypeEntities = (ArrayList<DeviceTypeEntity>)entities.get(0);
-            ArrayList<UpdateTypeEntity> updateTypeEntities = (ArrayList<UpdateTypeEntity>)entities.get(1);
-            ArrayList<String>deviceNames = new ArrayList<>();
-            ArrayList<String>updateTypes = new ArrayList<>();
-
-            for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
-                deviceNames.add(deviceTypeEntity.getDeviceType());
-            }
-            for(UpdateTypeEntity updateTypeEntity : updateTypeEntities) {
-                updateTypes.add(updateTypeEntity.getUpdateType());
-            }
-            if(progressDialog.isShowing()) {
-                progressDialog.dismiss();
-            }
-            askForDeviceSettings(deviceNames, updateTypes);
-
-        }
-    }
-
-    private void askForDeviceSettings(ArrayList<String> deviceNames, ArrayList<String> updateTypes) {
-        DialogFragment fragment = new DeviceSettingsFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList("device_names", deviceNames);
-        args.putStringArrayList("update_types", updateTypes);
-        fragment.setArguments(args);
-        fragment.show(getSupportFragmentManager(), "deviceSettings");
-
-
+    private void Settings() {
+        Intent i = new Intent(this,SettingsActivity.class);
+        startActivity(i);
     }
 
     private void About() {
@@ -249,12 +175,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                new SettingsLauncher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-            }
-            else {
-                new SettingsLauncher().execute();
-            }
+            Settings();
             return true;
         }
         if (id == R.id.action_about) {
@@ -469,8 +390,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     private boolean checkIfDeviceIsSet() {
-        SharedPreferences preferences = getPreferences(Context.MODE_APPEND);
-        return preferences.contains(MainActivity.PROPERTY_DEVICE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_TYPE) && preferences.contains(MainActivity.PROPERTY_UPDATE_LINK);
+        return checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_TYPE),getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_LINK),getApplicationContext());
     }
 
     private class cloudRegisterTask extends AsyncTask<String, Void, Void> {
@@ -493,7 +413,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
                 storeRegistrationId(context, registrationId);
             } catch (IOException ex) {
-                setRegistrationFailure();
+                setRegistrationFailed(true);
             }
             return null;
         }
@@ -529,7 +449,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 in = new BufferedInputStream(urlConnection.getInputStream());
                 result = inputStreamToString(in);
             } catch (Exception e) {
-                e.printStackTrace();
+                return null;
             } finally {
                 if (urlConnection != null) {
                     urlConnection.disconnect();
@@ -546,26 +466,30 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 result = new JSONObject(response);
                 System.out.println(result.toString());
                 if(result.getString("success") != null) {
+                    setRegistrationFailed(false);
                     System.out.println("registration successful!");
                 }
                 else {
-                    setRegistrationFailure();
+                    setRegistrationFailed(true);
                     System.out.println("registration error");
                 }
             } catch (Exception e) {
                 try {
-                    setRegistrationFailure();
+                    setRegistrationFailed(true);
                     System.out.println("registration error: " + (result != null ? result.getString("error") : null));
                 } catch (JSONException e1) {
-                    e1.printStackTrace();
+                    setRegistrationFailed(true);
                 }
             }
         }
     }
-    private void setRegistrationFailure() {
+    private void setRegistrationFailed(boolean failed) {
         SharedPreferences preferences = getGCMPreferences();
         SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(PROPERTY_REGISTRATION_ERROR, true);
+        editor.putBoolean(PROPERTY_REGISTRATION_ERROR, failed);
+        if(failed) {
+            Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
+        }
         editor.apply();
     }
     private void checkIfRegistrationHasFailed() {
@@ -573,10 +497,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         if(preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false)) {
             registerInBackground(registrationId);
         }
-
-        SharedPreferences.Editor editor = preferences.edit();
-        editor.putBoolean(PROPERTY_REGISTRATION_ERROR, false);
-        editor.apply();
     }
 
     private String inputStreamToString(InputStream in) {
@@ -609,5 +529,23 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         editor.putString(PROPERTY_GCM_UPDATE_TYPE, updateType);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.apply();
+    }
+
+
+    public static void savePreference(String key, String value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(key, value);
+        editor.apply();
+    }
+
+    public static boolean checkPreference(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.contains(key);
+    }
+
+    public static String getPreference(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getString(key, null);
     }
 }

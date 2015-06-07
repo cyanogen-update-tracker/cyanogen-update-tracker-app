@@ -6,7 +6,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Debug;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -56,16 +55,11 @@ public class DeviceInformationFragment extends Fragment {
             ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
             ActivityManager activityManager = (ActivityManager) getActivity().getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
             activityManager.getMemoryInfo(mi);
-            if(Build.VERSION.SDK_INT > Build.VERSION_CODES.JELLY_BEAN) {
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 totalMemory = mi.totalMem / 1048576L;
             }
             else {
-                try {
-                    Runtime info = Runtime.getRuntime();
-                    totalMemory = info.totalMemory();
-                } catch (Exception e) {
-                    totalMemory = 0;
-                }
+               totalMemory = 1;
             }
         }
         catch(Exception ignored) {
@@ -73,8 +67,14 @@ public class DeviceInformationFragment extends Fragment {
         }
         TextView memoryView = (TextView) rootView.findViewById(R.id.device_information_memory_field);
         if(totalMemory != 0) {
-
-            memoryView.setText(totalMemory + " " + getString(R.string.megabyte));
+            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                memoryView.setText(totalMemory + " " + getString(R.string.megabyte));
+            }
+            else {
+                View memoryLabel = rootView.findViewById(R.id.device_information_memory_label);
+                memoryLabel.setVisibility(View.GONE);
+                memoryView.setVisibility(View.GONE);
+            }
         }
         else {
             memoryView.setText(getString(R.string.unknown));

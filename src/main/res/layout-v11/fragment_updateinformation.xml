@@ -65,9 +65,9 @@
                         android:layout_height="wrap_content"
                         android:text="@string/download"
                         android:id="@+id/downloadButton"
-                        android:background="@android:color/transparent"
                         android:textColor="@color/lightblue"
-                        android:enabled="false"/>
+                        android:enabled="false"
+                        style="?android:buttonBarButtonStyle"/>
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
@@ -75,9 +75,9 @@
                         android:id="@+id/updateInstallationInstructionsButton"
                         android:enabled="true"
                         android:textColor="@color/lightblue"
-                        android:background="@android:color/transparent"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:onClick="showUpdateInstructions"
+                        style="?android:buttonBarButtonStyle"
                         />
 
                 </TableRow>
@@ -144,9 +144,9 @@
             android:id="@+id/updateDescriptionButton"
             android:text="@string/update_details_header"
             android:layout_below="@+id/tableHost"
-            android:background="@android:color/transparent"
+            android:layout_centerHorizontal="true"
             android:textColor="@color/lightblue"
-            android:layout_centerHorizontal="true"/>
+            style="?android:buttonBarButtonStyle"/>
 
     </RelativeLayout>
 </ScrollView>

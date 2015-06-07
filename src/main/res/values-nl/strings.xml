@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">Cyanogen Updatetracker</string>
-    <string name="action_settings">Kies toestel en updatetype</string>
+    <string name="action_settings">Telefoon en updatetype</string>
     <string name="at">om</string>
-    <string name="choose_device_type">Kies het toestel om te volgen:</string>
-    <string name="choose_update_type">Kies de update-methode om te volgen:</string>
+    <string name="choose_device_type">Telefoon</string>
+    <string name="choose_update_type">Update-methode</string>
     <string name="download">Downloaden</string>
     <string name="download_size_header">Downloadgrootte:</string>
     <string name="downloader_description">Bezig met downloaden van Cyanogen OS-update…</string>
@@ -36,7 +36,7 @@
     <string name="full_update">Volledige update</string>
     <string name="update_details">Beschrijving van de update</string>
     <string name="difference_incremental_stable">Verschil tussen een incrementele en een volledige update</string>
-    <string name="explanation_incremntal_stable">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen, terwijl een volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je telefoon.</string>
+    <string name="explanation_incremental_stable">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen.\n\nEen volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je telefoon.</string>
     <string-array name="update_types_array">
         <item>Volledig updatebestand</item>
         <item>Incrementeel updatebestand</item>
@@ -86,7 +86,13 @@
     <string name="rate_app">Beoordeel op Google Play</string>
     <string name="version">Versie:</string>
     <string name="about_story">Deze app is gemaakt door Arjan Vlek, een IT-student uit Zoetermeer.\n\nDeze app is geïnspireerd door een website (<a href="http://www.cyanogen-ota-bacon.somee.com">klik</a>) die momenteel ongeveer hetzelfde biedt. Deze app probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\nIn de toekomst zullen push-berichten worden verstuurd bij het uitkomen van een nieuwe update en daarnaast zal uw telefoon automatisch worden gedetecteerd.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
-    <string name="fetching_devices">Bezig met ophalen van ondersteunde telefoons vanaf de server</string>
-    <string name="saving_settings">Uw instellingen worden opgeslagen...</string>
+    <string name="fetching_device_types">Bezig met ophalen van ondersteunde telefoons vanaf de server</string>
+    <string name="saving_settings">Uw instellingen worden opgeslagen…</string>
+    <string name="title_activity_settings">Instellingen</string>
+    <string name="fetching_update_types">Bezig met ophalen van ondersteunde update-methoden van de server</string>
+    <string name="settings_saved">Uw instellingen worden automatisch opgeslagen</string>
+    <string name="settings_explanation_update_methods">Toelichting op de update-methodes</string>
+    <string name="settings">Kies telefoon en update-methode</string>
+    <string name="push_failure">Geen verbinding mogelijk met de app-server. Als u meldingen over nieuwe updates wilt ontvangen, kunt u de app het beste opnieuw starten.</string>
 
 </resources>

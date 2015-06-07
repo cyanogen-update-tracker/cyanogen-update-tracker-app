@@ -51,8 +51,4 @@ public class AboutActivity extends AppCompatActivity {
         }
     }
 
-    public void close (View view) {
-        finish();
-    }
-
 }
