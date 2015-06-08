@@ -18,7 +18,6 @@ import java.util.List;
  * Part of Cyanogen Update Tracker.
  */
 public class GcmIntentService extends IntentService {
-    public static final int NOTIFICATION_ID = 1;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -69,40 +68,61 @@ public class GcmIntentService extends IntentService {
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
         String message = null;
-        if(msg!= null) {
-            System.out.println(msg.getString("version_number"));
+        String messageType = "none";
+        if (msg != null) {
 
-
-            if(msg.getString("version_number") != null) {
+            if (msg.getString("version_number") != null) {
                 String deviceName = getDeviceName(msg.getString("tracking_device_type_id"));
-                if(deviceName != null) {
-                    message = "Version " + msg.getString("version_number") + " is now available for your " + deviceName + "!";
+                if (deviceName != null) {
+                    message = getString(R.string.notification_version) + " " + msg.getString("version_number") + " " + getString(R.string.notification_is_now_available) + " " + deviceName + "!";
+                    messageType = "update";
                 }
-            }
-            else if (msg.getLong("new_device_id", 0) != 0 ) {
-                String deviceName = getDeviceName(msg.getString("new_device_id"));
-                if(deviceName != null) {
-                    message = "A new Cyanogen device can now be tracked: the " + deviceName + "!";
+            } else if (msg.getString("new_device") != null) {
+                String deviceName = getDeviceName(msg.getString("new_device"));
+                if (deviceName != null) {
+                    message = getString(R.string.notification_new_device) + " " + deviceName +" " +  getString(R.string.nofitication_new_device_2);
+                    messageType = "newDevice";
                 }
             }
         }
         long[] vibrationPattern = new long[2];
         vibrationPattern[0] = 100L;
         vibrationPattern[1] = 100L;
-        if(message != null) {
-            NotificationCompat.Builder mBuilder =
-                    new NotificationCompat.Builder(this)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle(getString(R.string.app_name))
-                            .setStyle(new NotificationCompat.BigTextStyle()
-                                    .bigText(message))
-                            .setVibrate(vibrationPattern)
-                            .setAutoCancel(true)
-                            .setContentText(message);
+        if (message != null) {
+            int notficationId = MainActivity.getIntPreference(MainActivity.PROPERTY_NOTIFICATION_ID, getApplicationContext());
+            if (messageType.equals("update")) {
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_stat_notification_update)
+                                .setContentTitle(getString(R.string.app_name))
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .bigText(message)
+                                        .setSummaryText(getString(R.string.notification_update_short)))
+                                .setVibrate(vibrationPattern)
+                                .setAutoCancel(true)
+                                .setContentText(message);
 
 
-            mBuilder.setContentIntent(contentIntent);
-            mNotificationManager.notify(NOTIFICATION_ID, mBuilder.build());
+                mBuilder.setContentIntent(contentIntent);
+                mNotificationManager.notify(MainActivity.getIntPreference(MainActivity.PROPERTY_NOTIFICATION_ID, getApplicationContext()), mBuilder.build());
+                MainActivity.saveIntPreference(MainActivity.PROPERTY_NOTIFICATION_ID, notficationId + 1, getApplicationContext());
+            } else if (messageType.equals("newDevice")) {
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_stat_notification_new_phone)
+                                .setContentTitle(getString(R.string.app_name))
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .bigText(message)
+                                        .setSummaryText(getString(R.string.notification_new_device_short)))
+                                .setVibrate(vibrationPattern)
+                                .setAutoCancel(true)
+                                .setContentText(message);
+
+
+                mBuilder.setContentIntent(contentIntent);
+                mNotificationManager.notify(notficationId, mBuilder.build());
+                MainActivity.saveIntPreference(MainActivity.PROPERTY_NOTIFICATION_ID, notficationId + 1, getApplicationContext());
+            }
         }
     }
 

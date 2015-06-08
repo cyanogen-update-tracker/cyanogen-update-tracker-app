@@ -5,19 +5,17 @@
     android:id="@+id/deviceInformationFragmentTop"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
-    android:padding="@dimen/activity_horizontal_margin"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:paddingRight="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingLeft="@dimen/activity_horizontal_margin"
-    android:paddingTop="@dimen/activity_vertical_margin"
     tools:context=".MainActivity$PlaceholderFragment">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
         android:layout_above="@+id/device_information_banner_field">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
@@ -46,7 +44,7 @@
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="45dp"
                 android:contentDescription="@string/device_information_image_description"
-                android:src="@drawable/phone" />
+                android:src="@drawable/icon_phone" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -135,7 +133,8 @@
 
     <com.google.android.gms.ads.AdView
         android:id="@+id/device_information_banner_field"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         ads:adSize="BANNER"

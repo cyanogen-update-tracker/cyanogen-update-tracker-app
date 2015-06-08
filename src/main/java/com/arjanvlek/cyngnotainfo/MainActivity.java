@@ -30,7 +30,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.arjanvlek.cyngnotainfo.Settings.SettingsActivity;
+import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
 import com.arjanvlek.cyngnotainfo.views.UpdateInformationFragment;
@@ -44,10 +44,12 @@ import com.google.android.gms.gcm.GoogleCloudMessaging;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+@SuppressWarnings("deprecation")
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener, GoogleApiClient.OnConnectionFailedListener {
 
     private ViewPager mViewPager;
-    private AdView mAdView;
+    private AdView updateInformationAdView;
+    private AdView deviceInformationAdView;
 
     // Used for Google Play Services check
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -61,6 +63,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public static final String PROPERTY_UPDATE_TYPE = "update_type";
     public static final String PROPERTY_REGISTRATION_ERROR = "registration_error";
     public static final String PROPERTY_UPDATE_LINK = "update_link";
+    public static final String PROPERTY_NOTIFICATION_ID = "notification_id";
 
     private static final String JSON_PROPERTY_DEVICE_REGISTRATION_ID = "device_id";
     private static final String JSON_PROPERTY_DEVICE_TYPE = "tracking_device_type";
@@ -119,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             // the adapter. Also specify this Activity object, which implements
             // the TabListener interface, as the callback (listener) for when
             // this tab is selected.
+            //noinspection ConstantConditions
             actionBar.addTab(
                     actionBar.newTab()
                             .setText(mSectionsPagerAdapter.getPageTitle(i))
@@ -131,6 +135,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onStart() {
         super.onStart();
         if (checkPlayServices()) {
+            deviceInformationAdView = (AdView)findViewById(R.id.device_information_banner_field);
+            updateInformationAdView = (AdView)findViewById(R.id.update_information_banner_field);
             cloudMessaging = GoogleCloudMessaging.getInstance(context);
             registrationId = getRegistrationId(context);
             if (checkIfDeviceIsSet()) {
@@ -270,10 +276,15 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     /** Called when leaving the activity */
     @Override
     public void onPause() {
-        if (mAdView != null) {
-            mAdView.pause();
-        }
         super.onPause();
+        if (deviceInformationAdView != null) {
+            deviceInformationAdView.pause();
+        }
+        if (updateInformationAdView != null) {
+            System.out.println("adview pause!!!");
+            updateInformationAdView.pause();
+        }
+
     }
 
     /** Called when returning to the activity */
@@ -281,18 +292,24 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onResume() {
         super.onResume();
         checkPlayServices();
-        if (mAdView != null) {
-            mAdView.resume();
+        if (deviceInformationAdView != null) {
+            deviceInformationAdView.resume();
+        }
+        if (updateInformationAdView != null) {
+            updateInformationAdView.pause();
         }
     }
 
     /** Called before the activity is destroyed */
     @Override
     public void onDestroy() {
-        if (mAdView != null) {
-            mAdView.destroy();
-        }
         super.onDestroy();
+        if (deviceInformationAdView != null) {
+            deviceInformationAdView.destroy();
+        }
+        if (updateInformationAdView != null) {
+            updateInformationAdView.pause();
+        }
     }
 
     private boolean checkPlayServices() {
@@ -539,6 +556,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         editor.apply();
     }
 
+    public static void saveIntPreference(String key, int value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
     public static boolean checkPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.contains(key);
@@ -547,5 +571,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public static String getPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
+    }
+
+    public static int getIntPreference(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(key, 0);
     }
 }

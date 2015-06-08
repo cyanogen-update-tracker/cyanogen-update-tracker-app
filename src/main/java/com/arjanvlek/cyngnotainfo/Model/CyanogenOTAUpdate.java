@@ -1,5 +1,6 @@
 package com.arjanvlek.cyngnotainfo.Model;
 
+@SuppressWarnings("unused")
 public class CyanogenOTAUpdate {
 
     private String dateUpdated;
@@ -14,7 +15,7 @@ public class CyanogenOTAUpdate {
     private String type;
     private String description;
     private String dateCreatedUnix;
-    private int rolloutPercentage;
+    private int rollOutPercentage;
     private String key;
     private String path;
     private String name;
@@ -121,12 +122,12 @@ public class CyanogenOTAUpdate {
         this.dateCreatedUnix = dateCreatedUnix;
     }
 
-    public int getRolloutPercentage() {
-        return rolloutPercentage;
+    public int getRollOutPercentage() {
+        return rollOutPercentage;
     }
 
-    public void setRolloutPercentage(int rolloutPercentage) {
-        this.rolloutPercentage = rolloutPercentage;
+    public void setRollOutPercentage(int rollOutPercentage) {
+        this.rollOutPercentage = rollOutPercentage;
     }
 
     public String getKey() {

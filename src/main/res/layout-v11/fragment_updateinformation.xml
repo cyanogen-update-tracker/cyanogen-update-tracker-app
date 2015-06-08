@@ -65,7 +65,7 @@
                         android:layout_height="wrap_content"
                         android:text="@string/download"
                         android:id="@+id/downloadButton"
-                        android:textColor="@color/lightblue"
+                        android:textColor="@color/lightBlue"
                         android:enabled="false"
                         style="?android:buttonBarButtonStyle"/>
                     <Button
@@ -74,7 +74,7 @@
                         android:text="@string/install"
                         android:id="@+id/updateInstallationInstructionsButton"
                         android:enabled="true"
-                        android:textColor="@color/lightblue"
+                        android:textColor="@color/lightBlue"
                         android:textAppearance="?android:textAppearanceSmall"
                         android:onClick="showUpdateInstructions"
                         style="?android:buttonBarButtonStyle"
@@ -145,13 +145,14 @@
             android:text="@string/update_details_header"
             android:layout_below="@+id/tableHost"
             android:layout_centerHorizontal="true"
-            android:textColor="@color/lightblue"
+            android:textColor="@color/lightBlue"
             style="?android:buttonBarButtonStyle"/>
 
     </RelativeLayout>
 </ScrollView>
     <com.google.android.gms.ads.AdView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
+        android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:id="@+id/update_information_banner_field"

@@ -129,10 +129,18 @@
     <string name="version">Version:</string>
     <string name="rate_app">Rate on Google Play</string>
     <string name="about_description">An app to track Cyanogen OS updates.</string>
-    <string name="about_story">This app is written by Arjan Vlek, an IT-interested guy living in Zoetermeer, The Netherlands.\n\nThis app is inspired by a website (<a href="http://www.cyanogen-ota-bacon.somee.com">click</a>), which provides similar functionality. This app aims to be more user-friendly and to offer more features.\n\nIn the future, it will include push notifications when a new update is released and your device will be detected automatically. \n\nIf you like my app, please rate it on Google play now:</string>
+    <string name="about_story">This app is written by Arjan Vlek, an IT-interested guy living in Zoetermeer, The Netherlands.\n\nThis app is inspired by a website (<a href="http://www.cyanogen-ota-bacon.somee.com">click</a>), which provides similar functionality. This app aims to be more user-friendly and to offer more features.\n\nIn the future, your device will be detected automatically. \n\nIf you like my app, please rate it on Google play now:</string>
 
     <string name="update_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
     <string name="device_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
     <string name="title_activity_settings">Settings</string>
 
+
+    <!-- Notification strings -->
+    <string name="notification_version">Version</string>
+    <string name="notification_is_now_available">is now available for the</string>
+    <string name="notification_update_short">Open the app to download the update.</string>
+    <string name="notification_new_device">New device released! Updates for the</string>
+    <string name="nofitication_new_device_2">can now be tracked!</string>
+    <string name="notification_new_device_short">Open the app to choose it.</string>
 </resources>

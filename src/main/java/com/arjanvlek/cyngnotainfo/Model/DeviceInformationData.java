@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 
+@SuppressWarnings("unused")
 public class DeviceInformationData {
     private String DeviceManufacturer;
     private String deviceName;
@@ -16,7 +17,7 @@ public class DeviceInformationData {
     private String OSVersion;
     private String SerialNumber;
     private String OSCodeName;
-    public static String UNKNOWN = "Unknown";
+    public static String UNKNOWN = "-";
 
     public DeviceInformationData() {
         setOSVersion(null);
@@ -26,7 +27,6 @@ public class DeviceInformationData {
         setDeviceName(null);
         setOSCodeName(null);
         setSOC(null);
-        setMemoryAmount(null);
     }
     public String getOSCodeName() {
         return OSCodeName;
@@ -36,7 +36,7 @@ public class DeviceInformationData {
             this.OSCodeName = osCodeName;
         }
         else {
-            this.OSCodeName = Build.VERSION.INCREMENTAL;;
+            this.OSCodeName = Build.VERSION.INCREMENTAL;
         }
 
     }
@@ -145,71 +145,7 @@ public class DeviceInformationData {
     }
 
     public void setMemoryAmount(String memoryAmount) {
-        String memoryAmount2 = null;
-        String memoryAmount3 = null;
-        if(memoryAmount != null) {
-            this.memoryAmount = memoryAmount;
-        }
-        else {
-
-            RandomAccessFile reader = null;
-            try {
-                reader = new RandomAccessFile("/proc/meminfo", "r");
-            } catch (FileNotFoundException e) {
-                this.memoryAmount = UNKNOWN;
-            }
-            try {
-                if (reader != null) {
-                    memoryAmount = reader.readLine();
-                    try {
-                        memoryAmount2 = memoryAmount.replace("MemTotal:        ", "");
-                    }
-                    catch (Exception e) {
-                        this.memoryAmount = UNKNOWN;
-                    }
-                    try {
-                        memoryAmount3 = memoryAmount2 != null ? memoryAmount2.replace(" kB", "") : null;
-                    }
-                    catch (Exception ignored) {
-                        this.memoryAmount = UNKNOWN;
-                    }
-                    if(memoryAmount3 == null) {
-                        if(memoryAmount2 == null) {
-                            this.memoryAmount = memoryAmount;
-                        }
-                        else {
-                            this.memoryAmount = memoryAmount2;
-                        }
-                    }
-                    else {
-                        int memoryInt = 0;
-                        try {
-                            memoryInt = Integer.parseInt(memoryAmount3);
-                        }
-                        catch (NumberFormatException e) {
-                            this.memoryAmount = UNKNOWN;
-                        }
-                        if(memoryInt != 0) {
-                            int memoryInt2 = memoryInt / 1000;
-                            BigDecimal memoryMegabyte = new BigDecimal(memoryInt2);
-
-                            BigDecimal memoryGigabyte = memoryMegabyte.divide(new BigDecimal(1000), 2, BigDecimal.ROUND_DOWN);
-                            this.memoryAmount = memoryGigabyte.toString();
-                        }
-                    }
-
-                }
-            } catch (IOException e) {
-                this.memoryAmount = UNKNOWN;
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                this.memoryAmount = UNKNOWN;
-            }
-        }
+        this.memoryAmount = memoryAmount;
     }
 
     public String getOSVersion() {

@@ -26,7 +26,7 @@
         android:layout_marginLeft="@dimen/activity_vertical_margin"
         android:layout_marginStart="@dimen/activity_vertical_margin"
         android:id="@+id/device_information_device_image"
-        android:src="@drawable/phone"
+        android:src="@drawable/icon_phone"
         android:layout_alignParentTop="true"
         android:layout_marginTop="61dp"
         android:layout_below="@+id/device_information_header"
@@ -133,13 +133,12 @@
     </RelativeLayout>
 
     <com.google.android.gms.ads.AdView
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
         android:id="@+id/device_information_banner_field"
         ads:adSize="BANNER"
         ads:adUnitId="@string/device_information_advertising_id"
         android:layout_alignParentBottom="true"
-        android:layout_toRightOf="@+id/device_information_device_image"
-        android:layout_toEndOf="@+id/device_information_device_image" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 </RelativeLayout>

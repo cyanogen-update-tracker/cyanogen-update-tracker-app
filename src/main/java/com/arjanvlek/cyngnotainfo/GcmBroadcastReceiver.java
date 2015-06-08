@@ -9,6 +9,7 @@ import android.support.v4.content.WakefulBroadcastReceiver;
 /**
  * Created by Arjan on 23-5-2015.
  */
+@SuppressWarnings("DefaultFileTemplate")
 public class GcmBroadcastReceiver extends WakefulBroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {

@@ -46,7 +46,6 @@ import java.util.List;
 public class UpdateInformationFragment extends Fragment {
 
     private String deviceName;
-    private String updateType;
     private String updateLink;
 
     private CyanogenOTAUpdate cyanogenOTAUpdate;
@@ -67,16 +66,7 @@ public class UpdateInformationFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         deviceName = MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
-        updateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_TYPE, getActivity().getApplicationContext());
         updateLink = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
-        if(updateType != null) {
-            if (updateType.equals(MainActivity.FULL_UPDATE)) {
-                updateType = getString(R.string.full_update);
-
-            } else {
-                updateType = getString(R.string.incremental_update);
-            }
-        }
 
     }
 
@@ -222,7 +212,7 @@ public class UpdateInformationFragment extends Fragment {
         if(isAdded()) {
             PieChart pieChartView = (PieChart) rootView.findViewById(R.id.rolloutPercentageDiagram);
             List<Entry> chartData = new ArrayList<>();
-            int percentage = cyanogenOTAUpdate.getRolloutPercentage();
+            int percentage = cyanogenOTAUpdate.getRollOutPercentage();
             chartData.add(0, new Entry(percentage, 0));
             if (percentage < 100) {
                 chartData.add(1, new Entry(100 - percentage, 1));
@@ -233,7 +223,7 @@ public class UpdateInformationFragment extends Fragment {
                 xVals.add(1, getString(R.string.not_updated));
             }
             PieDataSet pieDataSet = new PieDataSet(chartData, "");
-            pieDataSet.setColors(new int[]{getResources().getColor(R.color.lightblue), getResources().getColor(android.R.color.darker_gray)});
+            pieDataSet.setColors(new int[]{getResources().getColor(R.color.lightBlue), getResources().getColor(android.R.color.darker_gray)});
 
 
             PieData pieData = new PieData(xVals, pieDataSet);
@@ -301,7 +291,7 @@ public class UpdateInformationFragment extends Fragment {
         @Override
         protected Void doInBackground(Void... arg0) {
             // Creating service handler class instance
-            String jsonStr = null;
+            String jsonStr;
             jsonStr = fetchResult(updateLink);
             if (jsonStr != null) {
                 try {
@@ -319,7 +309,7 @@ public class UpdateInformationFragment extends Fragment {
                         cyanogenOTAUpdate.setType(object.getString("type"));
                         cyanogenOTAUpdate.setDescription(object.getString("description"));
                         cyanogenOTAUpdate.setDateCreatedUnix(object.getString("date_created_unix"));
-                        cyanogenOTAUpdate.setRolloutPercentage(object.getInt("rollout_percentage"));
+                        cyanogenOTAUpdate.setRollOutPercentage(object.getInt("rollout_percentage"));
                         cyanogenOTAUpdate.setKey(object.getString("key"));
                         cyanogenOTAUpdate.setPath(object.getString("path"));
                         cyanogenOTAUpdate.setName(object.getString("name"));

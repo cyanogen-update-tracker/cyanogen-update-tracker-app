@@ -23,7 +23,8 @@
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
         android:layout_below="@+id/scrollView"
-        style="?android:buttonBarButtonStyle"
+        android:textColor="@color/lightBlue"
+        android:background="@android:color/transparent"
         android:onClick="onCloseButtonClicked"
         android:text="@string/close"/>
 </RelativeLayout>

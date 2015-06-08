@@ -5,15 +5,16 @@
     android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="@dimen/activity_horizontal_margin"
-    android:paddingStart="@dimen/activity_horizontal_margin"
-    android:paddingEnd="@dimen/activity_horizontal_margin"
-    android:layout_marginTop="@dimen/activity_vertical_margin"
     tools:context=".views.AboutActivity">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/app_name"
         android:id="@+id/textView2"
@@ -24,15 +25,23 @@
     <ImageView
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:id="@+id/imageView"
         android:layout_below="@+id/textView2"
         android:layout_centerHorizontal="true"
         android:layout_marginTop="15dp"
-        android:src="@drawable/ic_launcher"
+        android:src="@mipmap/ic_launcher"
         android:contentDescription="@string/icon" />
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:id="@+id/about_version_number_field"
         android:text="@string/version"
         android:textStyle="bold"
@@ -43,6 +52,10 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:id="@+id/aboutText2"
         android:text="@string/about_description"
         android:textAppearance="?android:textAppearanceSmall"
@@ -54,26 +67,37 @@
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:id="@+id/about_rate_button"
         android:text="@string/rate_app"
         android:onClick="rateApp"
-        android:textColor="@color/lightblue"
+        android:textColor="@color/lightBlue"
         style="?android:buttonBarButtonStyle"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"/>
 
-    <TextView
+    <ScrollView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/about_story_field"
-        android:text="@string/about_story"
-        android:textSize="13sp"
-        android:linksClickable="true"
-        android:layout_marginTop="15dp"
-        android:textColorLink="@color/lightblue"
-        android:textAppearance="?android:textAppearanceSmall"
+        android:layout_marginStart="@dimen/activity_horizontal_margin"
+        android:layout_marginEnd="@dimen/activity_horizontal_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_below="@+id/aboutText2"
-        android:layout_above="@id/about_rate_button"/>
+        android:layout_above="@id/about_rate_button">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/about_story_field"
+            android:text="@string/about_story"
+            android:textSize="13sp"
+            android:linksClickable="true"
+            android:layout_marginTop="15dp"
+            android:textColorLink="@color/lightBlue"
+            android:textAppearance="?android:textAppearanceSmall"/>
 
-
+    </ScrollView>
 </RelativeLayout>
