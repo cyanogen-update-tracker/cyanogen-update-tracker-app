@@ -74,6 +74,8 @@
                         android:text="@string/install"
                         android:id="@+id/updateInstallationInstructionsButton"
                         android:enabled="true"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginStart="10dp"
                         android:textColor="@color/lightBlue"
                         android:background="@android:color/transparent"
                         android:textAppearance="?android:textAppearanceSmall"
