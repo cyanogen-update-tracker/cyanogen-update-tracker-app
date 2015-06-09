@@ -51,12 +51,12 @@
     <!-- Loading strings-->
     <string name="fetching_update">Fetching update information from the server.</string>
     <string name="fetching_device_types">Fetching supported devices from the server.</string>
-    <string name="fetching_update_types">Fetching supported update types from the server.</string>
+    <string name="fetching_update_types">Fetching supported update methods from the server.</string>
     <string name="saving_settings">Saving your settings…</string>
     <string name="loading">Loading</string>
 
     <!-- Settings strings-->
-    <string name="settings">Choose device and update type</string>
+    <string name="settings">Choose device and update method</string>
     <string name="action_settings">Device and update method</string>
     <string name="choose_device_type">Device</string>
     <string name="choose_update_type">Update method</string>
@@ -93,11 +93,11 @@
     <string name="introduction_welcome">Welcome to Cyanogen update tracker!</string>
     <string name="introduction_page_1">This app will allow you to stay informed about the latest Android™  updates for your Cyanogen® OS powered device. \n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_device">Choose your device:</string>
-    <string name="introduction_page_2">In order to stay up-to-date, you will need to choose a device from the list shown above.\n\nMore devices will be automatically added when they are released!\n\nSwipe to the left to continue.</string>
+    <string name="introduction_page_2">In order to stay up-to-date, you will need to choose a device from the list shown above.\n\nWhen more devices running Cyanogen OS are released, they\'ll automatically be added and you will be notified!\n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_update_method">Choose your update method:</string>
-    <string name="introduction_page_3">For most of the devices, there are two update methods shown in the list above. These are the full and the incremental update.\n\nA full update contains everything and can always be installed on your device.\n\nAn incremental update can only be installed if you had the latest version before the new update was released.\nChoose this for faster downloads or if you are low on storage space.\n\nSwipe to the left to continue.</string>
+    <string name="introduction_page_3">For most of the devices, there are two update methods shown in the list above. These are the full and the incremental update.\n\nA full update contains everything and can always be installed on your device.(recommended)\n\nAn incremental update can only be installed if you had the latest version before the new update was released.\nChoose this for faster downloads or if you are low on storage space.\n\nSwipe to the left to continue.</string>
     <string name="introduction_ready_to_start">You are ready to start!</string>
-    <string name="introduction_page_4">Enjoy using this application!\n\nYou can always change your settings by clicking the three dots in the top right corner (or press your Menu button) and then clicking on 'change device and update settings'.</string>
+    <string name="introduction_page_4">Enjoy using this app!\n\nYou can always change your settings by clicking the three dots in the top right corner (or press your Menu button) following a tap on \'change device and update settings\'.</string>
     <string name="introduction_close_button">start app</string>
     <!-- Tutorial strings -->
     <string name="tutorial_image_description">Tutorial image.</string>
@@ -105,7 +105,7 @@
     <string name="tutorial_step1_explanation">Press the Download button to start the download process. The download will appear in your notifications screen. When it\'s done, you\'ll see a notification like this:</string>
 
     <string name="tutorial_step2_recovery_mode">Enter Recovery Mode.</string>
-    <string name="tutorial_step2_turn_off_phone">- Turn off your phone first.</string>
+    <string name="tutorial_step2_turn_off_phone">- Turn off your device first.</string>
     <string name="tutorial_step2_press_buttons">- Press both the power and the volume down button at the same time.</string>
     <string name="tutorial_step2_wait">- Wait until you see the recovery menu on your screen.</string>
 
@@ -154,8 +154,6 @@
     <string name="notification_new_device">New device released! Updates for the</string>
     <string name="nofitication_new_device_2">can now be tracked!</string>
     <string name="notification_new_device_short">Open the app to choose it.</string>
-    <string name="title_activity_tutorial">TutorialActivity</string>
-    <string name="title_section3">Section 3</string>
-
-    <string name="hello_world">Hello world!</string>
+    <string name="title_activity_tutorial">Welcome</string>
+    <string name="title_section3">Update method</string>
 </resources>

@@ -21,12 +21,13 @@ import com.google.android.gms.ads.AdView;
 
 public class DeviceInformationFragment extends Fragment {
     private RelativeLayout rootView;
-    private AdView mAdView;
+    private AdView adView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         //Inflate the layout for this fragment
-        rootView = (RelativeLayout)inflater.inflate(R.layout.fragment_deviceinformation, container, false);
+        rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_deviceinformation, container, false);
         return rootView;
     }
 
@@ -35,18 +36,17 @@ public class DeviceInformationFragment extends Fragment {
     public void onViewCreated(View view, Bundle savedInstanceState) {
         DeviceInformationData deviceInformationData = new DeviceInformationData();
 
-        TextView deviceNameView = (TextView)rootView.findViewById(R.id.device_information_header);
+        TextView deviceNameView = (TextView) rootView.findViewById(R.id.device_information_header);
         deviceNameView.setText(deviceInformationData.getDeviceManufacturer() + " " + deviceInformationData.getDeviceName());
 
-        TextView socView = (TextView)rootView.findViewById(R.id.device_information_soc_field);
+        TextView socView = (TextView) rootView.findViewById(R.id.device_information_soc_field);
         socView.setText(deviceInformationData.getSOC());
 
         String cpuFreqString = deviceInformationData.getCPU_Frequency();
-        TextView cpuFreqView = (TextView)rootView.findViewById(R.id.device_information_cpu_freq_field);
-        if(!cpuFreqString.equals(DeviceInformationData.UNKNOWN)) {
+        TextView cpuFreqView = (TextView) rootView.findViewById(R.id.device_information_cpu_freq_field);
+        if (!cpuFreqString.equals(DeviceInformationData.UNKNOWN)) {
             cpuFreqView.setText(deviceInformationData.getCPU_Frequency() + " " + getString(R.string.gigahertz));
-        }
-        else {
+        } else {
             cpuFreqView.setText(getString(R.string.unknown));
         }
 
@@ -55,50 +55,45 @@ public class DeviceInformationFragment extends Fragment {
             ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
             ActivityManager activityManager = (ActivityManager) getActivity().getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
             activityManager.getMemoryInfo(mi);
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 totalMemory = mi.totalMem / 1048576L;
+            } else {
+                totalMemory = 1;
             }
-            else {
-               totalMemory = 1;
-            }
-        }
-        catch(Exception ignored) {
+        } catch (Exception ignored) {
 
         }
         TextView memoryView = (TextView) rootView.findViewById(R.id.device_information_memory_field);
-        if(totalMemory != 0) {
-            if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+        if (totalMemory != 0) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
                 memoryView.setText(totalMemory + " " + getString(R.string.megabyte));
-            }
-            else {
+            } else {
                 View memoryLabel = rootView.findViewById(R.id.device_information_memory_label);
                 memoryLabel.setVisibility(View.GONE);
                 memoryView.setVisibility(View.GONE);
             }
-        }
-        else {
+        } else {
             memoryView.setText(getString(R.string.unknown));
         }
 
 
-        TextView osVerView = (TextView)rootView.findViewById(R.id.device_information_os_ver_field);
+        TextView osVerView = (TextView) rootView.findViewById(R.id.device_information_os_ver_field);
         osVerView.setText(deviceInformationData.getOSVersion());
 
-        TextView serialNumberView = (TextView)rootView.findViewById(R.id.device_information_serial_number_field);
+        TextView serialNumberView = (TextView) rootView.findViewById(R.id.device_information_serial_number_field);
         serialNumberView.setText(deviceInformationData.getSerialNumber());
 
-        if(checkNetworkConnection()) {
+        if (checkNetworkConnection()) {
             showAds();
-        }
-        else {
+        } else {
             hideAds();
         }
 
     }
 
     private void hideAds() {
-        if(mAdView != null ) {
-            mAdView.destroy();
+        if (adView != null) {
+            adView.destroy();
         }
     }
 
@@ -106,7 +101,7 @@ public class DeviceInformationFragment extends Fragment {
 
         // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
         // values/strings.xml.
-        mAdView = (AdView) rootView.findViewById(R.id.device_information_banner_field);
+        adView = (AdView) rootView.findViewById(R.id.device_information_banner_field);
 
         // Create an ad request. Check logcat output for the hashed device ID to
         // get test ads on a physical device. e.g.
@@ -128,15 +123,50 @@ public class DeviceInformationFragment extends Fragment {
                 .build();
 
         // Start loading the ad in the background.
-        mAdView.loadAd(adRequest);
+        adView.loadAd(adRequest);
     }
+
     private boolean checkNetworkConnection() {
         ConnectivityManager cm =
-                (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         return activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
+    }
+
+    /**
+     * Called when leaving the activity
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
+
+    }
+
+    /**
+     * Called when the activity enters the foreground
+     */
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (adView != null) {
+            adView.resume();
+        }
+    }
+
+    /**
+     * Called before the activity is destroyed
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
     }
 
 }

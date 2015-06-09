@@ -82,7 +82,7 @@ public class GcmIntentService extends IntentService {
             } else if (msg.getString("new_device") != null) {
                 String deviceName = getDeviceName(msg.getString("new_device"));
                 if (deviceName != null) {
-                    message = getString(R.string.notification_new_device) + " " + deviceName +" " +  getString(R.string.nofitication_new_device_2);
+                    message = getString(R.string.notification_new_device) + " " + deviceName + " " + getString(R.string.nofitication_new_device_2);
                     messageType = "newDevice";
                 }
             }
@@ -129,18 +129,17 @@ public class GcmIntentService extends IntentService {
         Long deviceIdLong;
         try {
             deviceIdLong = Long.parseLong(deviceId);
-        }
-        catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ignored) {
             return null;
         }
         String deviceName = null;
         ServerConnector serverConnector = new ServerConnector();
         List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
-            for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
-                if(deviceTypeEntity.getId() == deviceIdLong) {
-                    deviceName = deviceTypeEntity.getDeviceType();
-                }
+        for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
+            if (deviceTypeEntity.getId() == deviceIdLong) {
+                deviceName = deviceTypeEntity.getDeviceType();
             }
+        }
         return deviceName;
     }
 }

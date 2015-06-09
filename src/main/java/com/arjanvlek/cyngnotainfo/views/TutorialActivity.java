@@ -40,7 +40,7 @@ public class TutorialActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_tutorial);
-        if(getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
         // Create the adapter that will return a fragment for each of the three
@@ -73,6 +73,7 @@ public class TutorialActivity extends AppCompatActivity {
         });
 
     }
+
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -112,11 +113,12 @@ public class TutorialActivity extends AppCompatActivity {
             return null;
         }
     }
+
     public Fragment newInstance(int sectionNumber) {
-        if(sectionNumber == 2) {
+        if (sectionNumber == 2) {
             return new TutorialStep2Fragment();
         }
-        if(sectionNumber == 3) {
+        if (sectionNumber == 3) {
             step3Fragment = new TutorialStep3Fragment();
             return step3Fragment;
         }
@@ -144,11 +146,10 @@ public class TutorialActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             Bundle args = getArguments();
-            int sectionNumber = args.getInt(ARG_SECTION_NUMBER,0);
-            if(sectionNumber == 1) {
+            int sectionNumber = args.getInt(ARG_SECTION_NUMBER, 0);
+            if (sectionNumber == 1) {
                 return inflater.inflate(R.layout.fragment_tutorial_1, container, false);
-            }
-            else if(sectionNumber == 4) {
+            } else if (sectionNumber == 4) {
                 return inflater.inflate(R.layout.fragment_tutorial_4, container, false);
 
             }

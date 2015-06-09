@@ -32,7 +32,7 @@
                 android:layout_below="@+id/startTut1Image1"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="You are ready to start!"
+                android:text="@string/introduction_ready_to_start"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -48,7 +48,7 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_centerHorizontal="true"
-                android:text="Enjoy using this application!"
+                android:text="@string/introduction_page_4"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/material_blue_grey_800" />
             
@@ -62,7 +62,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:text="done"
+        android:text="@string/introduction_close_button"
         android:textColor="@color/lightBlue"
         style="?android:buttonBarButtonStyle"
         android:layout_alignParentBottom="true"

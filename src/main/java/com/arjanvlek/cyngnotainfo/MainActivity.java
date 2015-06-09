@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
+
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -42,7 +43,6 @@ import com.google.android.gms.common.GooglePlayServicesUtil;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
 @SuppressWarnings("deprecation")
@@ -64,7 +64,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public static final String PROPERTY_UPDATE_TYPE = "update_type";
     public static final String PROPERTY_REGISTRATION_ERROR = "registration_error";
     public static final String PROPERTY_UPDATE_LINK = "update_link";
-    public static final String PROPERTY_NOTIFICATION_ID = "notification_id";
 
     private static final String JSON_PROPERTY_DEVICE_REGISTRATION_ID = "device_id";
     private static final String JSON_PROPERTY_DEVICE_TYPE = "tracking_device_type";
@@ -94,13 +93,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         updateLink = getPreference(PROPERTY_UPDATE_LINK, getApplicationContext());
 
 
-
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         }
-
 
 
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -136,8 +133,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onStart() {
         super.onStart();
         if (checkPlayServices()) {
-            deviceInformationAdView = (AdView)findViewById(R.id.device_information_banner_field);
-            updateInformationAdView = (AdView)findViewById(R.id.update_information_banner_field);
+            deviceInformationAdView = (AdView) findViewById(R.id.device_information_banner_field);
+            updateInformationAdView = (AdView) findViewById(R.id.update_information_banner_field);
             cloudMessaging = GoogleCloudMessaging.getInstance(context);
             registrationId = getRegistrationId(context);
             if (checkIfDeviceIsSet()) {
@@ -153,8 +150,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
 
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -165,7 +160,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
 
     private void Settings() {
-        Intent i = new Intent(this,SettingsActivity.class);
+        Intent i = new Intent(this, SettingsActivity.class);
         startActivity(i);
     }
 
@@ -175,9 +170,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     private void About() {
-        Intent i = new Intent(this,AboutActivity.class);
+        Intent i = new Intent(this, AboutActivity.class);
         startActivity(i);
     }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -264,59 +260,32 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
          * number.
          */
         public static Fragment newInstance(int sectionNumber) {
-            if(sectionNumber == 1) {
+            if (sectionNumber == 1) {
                 return new UpdateInformationFragment();
             }
-            if(sectionNumber == 2) {
+            if (sectionNumber == 2) {
                 return new DeviceInformationFragment();
             }
             return null;
         }
 
     }
-    public void showUpdateInstructions(View v){
-        Intent i = new Intent(this,UpdateInstallationInstructionsActivity.class);
+
+    public void showUpdateInstructions(View v) {
+        Intent i = new Intent(this, UpdateInstallationInstructionsActivity.class);
         startActivity(i);
     }
 
-    /** Called when leaving the activity */
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (deviceInformationAdView != null) {
-            deviceInformationAdView.pause();
-        }
-        if (updateInformationAdView != null) {
-            System.out.println("adview pause!!!");
-            updateInformationAdView.pause();
-        }
 
-    }
-
-    /** Called when returning to the activity */
+    /**
+     * Called when returning to the activity
+     */
     @Override
     public void onResume() {
         super.onResume();
         checkPlayServices();
-        if (deviceInformationAdView != null) {
-            deviceInformationAdView.resume();
-        }
-        if (updateInformationAdView != null) {
-            updateInformationAdView.pause();
-        }
     }
 
-    /** Called before the activity is destroyed */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (deviceInformationAdView != null) {
-            deviceInformationAdView.destroy();
-        }
-        if (updateInformationAdView != null) {
-            updateInformationAdView.pause();
-        }
-    }
 
     private boolean checkPlayServices() {
         int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(this);
@@ -334,7 +303,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
 
-
     private boolean checkIfRegistrationIsValid(Context context) {
         final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
@@ -342,16 +310,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         String registeredUpdateType = prefs.getString(PROPERTY_GCM_UPDATE_TYPE, "");
 
         if (registrationId != null && registrationId.isEmpty()) {
-            System.out.println("Registration not found.");
             return false;
         }
 
-        if(!deviceType.equals(registeredDeviceType)){
-            System.out.println("Device type has changed.");
+        if (!deviceType.equals(registeredDeviceType)) {
             return false;
         }
-        if(!updateType.equals(registeredUpdateType)) {
-            System.out.println("Update type has changed.");
+        if (!updateType.equals(registeredUpdateType)) {
             return false;
         }
         // Check if app was updated; if so, it must clear the registration ID
@@ -359,23 +324,18 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         // the new app version.
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion) {
-            System.out.println("App version changed.");
-            return false;
-        }
-        return true;
+        return registeredVersion == currentVersion;
     }
 
     private String getRegistrationId(Context context) {
         final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
-        if(registrationId != null && registrationId.isEmpty()) {
+        if (registrationId != null && registrationId.isEmpty()) {
             return "";
         }
         int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
         int currentVersion = getAppVersion(context);
         if (registeredVersion != currentVersion) {
-            System.out.println("App version changed.");
             return "";
         }
         return registrationId;
@@ -394,17 +354,15 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             PackageInfo packageInfo = context.getPackageManager()
                     .getPackageInfo(context.getPackageName(), 0);
             return packageInfo.versionCode;
-        } catch (PackageManager.NameNotFoundException e) {
-            // should never happen
-            throw new RuntimeException("Could not get package name: " + e);
+        } catch (PackageManager.NameNotFoundException ignored) {
+            return 0;
         }
     }
 
 
-
     /**
      * Registers the application with GCM servers asynchronously.
-     * <p>
+     * <p/>
      * Stores the registration ID and app versionCode in the application's
      * shared preferences.
      */
@@ -413,7 +371,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     private boolean checkIfDeviceIsSet() {
-        return checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_TYPE),getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_LINK),getApplicationContext());
+        return checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_TYPE), getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_LINK), getApplicationContext());
     }
 
     private class cloudRegisterTask extends AsyncTask<String, Void, Void> {
@@ -427,10 +385,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 }
                 registrationId = cloudMessaging.register(SENDER_ID);
 
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     new RegisterIdToBackend().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, registrationId, oldRegistrationId);
-                }
-                else {
+                } else {
                     new RegisterIdToBackend().execute(registrationId, oldRegistrationId);
                 }
 
@@ -442,7 +399,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         }
     }
 
-    private class RegisterIdToBackend extends AsyncTask<String,Integer, String> {
+    private class RegisterIdToBackend extends AsyncTask<String, Integer, String> {
 
         @Override
         protected String doInBackground(String... strings) {
@@ -459,7 +416,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
                 jsonResponse.put(JSON_PROPERTY_OLD_DEVICE_ID, oldRegistrationId);
                 URL url = new URL(SERVER_URL);
-                urlConnection = (HttpURLConnection)url.openConnection();
+                urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
@@ -484,40 +441,34 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         @Override
         protected void onPostExecute(String response) {
-            JSONObject result = null;
+            JSONObject result;
             try {
                 result = new JSONObject(response);
                 System.out.println(result.toString());
-                if(result.getString("success") != null) {
+                if (result.getString("success") != null) {
                     setRegistrationFailed(false);
-                    System.out.println("registration successful!");
-                }
-                else {
+                } else {
                     setRegistrationFailed(true);
-                    System.out.println("registration error");
                 }
             } catch (Exception e) {
-                try {
-                    setRegistrationFailed(true);
-                    System.out.println("registration error: " + (result != null ? result.getString("error") : null));
-                } catch (JSONException e1) {
-                    setRegistrationFailed(true);
-                }
+                setRegistrationFailed(true);
             }
         }
     }
+
     private void setRegistrationFailed(boolean failed) {
         SharedPreferences preferences = getGCMPreferences();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(PROPERTY_REGISTRATION_ERROR, failed);
-        if(failed) {
+        if (failed) {
             Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
         }
         editor.apply();
     }
+
     private void checkIfRegistrationHasFailed() {
         SharedPreferences preferences = getGCMPreferences();
-        if(preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false)) {
+        if (preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false)) {
             registerInBackground(registrationId);
         }
     }
@@ -536,12 +487,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         }
         return out.toString();
     }
+
     /**
      * Stores the registration ID and app versionCode in the application's
      * {@code SharedPreferences}.
      *
      * @param context application's context.
-     * @param regId registration ID
+     * @param regId   registration ID
      */
     private void storeRegistrationId(Context context, String regId) {
         final SharedPreferences prefs = getGCMPreferences();
@@ -562,13 +514,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         editor.apply();
     }
 
-    public static void saveIntPreference(String key, int value, Context context) {
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putInt(key, value);
-        editor.apply();
-    }
-
     public static boolean checkPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.contains(key);
@@ -577,10 +522,5 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public static String getPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
-    }
-
-    public static int getIntPreference(String key, Context context) {
-        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getInt(key, 0);
     }
 }

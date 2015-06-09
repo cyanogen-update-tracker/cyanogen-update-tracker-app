@@ -26,14 +26,14 @@ public class AboutActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         setContentView(R.layout.activity_about);
-        TextView versionNumberView = (TextView)findViewById(R.id.about_version_number_field);
-        if(versionNumber == null) {
+        TextView versionNumberView = (TextView) findViewById(R.id.about_version_number_field);
+        if (versionNumber == null) {
             versionNumber = DeviceInformationData.UNKNOWN;
         }
         versionNumberView.setText(getString(R.string.version) + " " + versionNumber);
 
         //Make link clickable
-        TextView storyView = (TextView)findViewById(R.id.about_story_field);
+        TextView storyView = (TextView) findViewById(R.id.about_story_field);
         storyView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
@@ -45,9 +45,8 @@ public class AboutActivity extends AppCompatActivity {
             } catch (android.content.ActivityNotFoundException e) {
                 startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
             }
-        }
-        catch(Exception ignored) {
-            
+        } catch (Exception ignored) {
+
         }
     }
 

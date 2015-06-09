@@ -28,14 +28,15 @@ public class DeviceInformationData {
         setOSCodeName(null);
         setSOC(null);
     }
+
     public String getOSCodeName() {
         return OSCodeName;
     }
+
     public void setOSCodeName(String osCodeName) {
-        if(osCodeName != null) {
+        if (osCodeName != null) {
             this.OSCodeName = osCodeName;
-        }
-        else {
+        } else {
             this.OSCodeName = Build.VERSION.INCREMENTAL;
         }
 
@@ -46,10 +47,9 @@ public class DeviceInformationData {
     }
 
     public void setDeviceManufacturer(String deviceManufacturer) {
-        if(deviceManufacturer != null) {
+        if (deviceManufacturer != null) {
             this.DeviceManufacturer = deviceManufacturer;
-        }
-        else {
+        } else {
             DeviceManufacturer = Build.MANUFACTURER;
         }
     }
@@ -59,11 +59,9 @@ public class DeviceInformationData {
     }
 
     public void setDeviceName(String deviceName) {
-        if(deviceName != null) {
+        if (deviceName != null) {
             this.deviceName = deviceName;
-        }
-
-        else {
+        } else {
             switch (Build.MODEL) {
                 case "A0001":
                     this.deviceName = "One";
@@ -85,10 +83,9 @@ public class DeviceInformationData {
     }
 
     public void setSOC(String SOC) {
-        if(SOC != null) {
+        if (SOC != null) {
             this.SOC = SOC;
-        }
-        else {
+        } else {
             this.SOC = Build.BOARD;
         }
     }
@@ -98,10 +95,9 @@ public class DeviceInformationData {
     }
 
     public void setCPU_Frequency(String CPU_Frequency) {
-        if(CPU_Frequency != null) {
+        if (CPU_Frequency != null) {
             this.CPU_Frequency = CPU_Frequency;
-        }
-        else {
+        } else {
             String cpuMaxFreq = "";
             RandomAccessFile reader = null;
             try {
@@ -126,11 +122,10 @@ public class DeviceInformationData {
             int cpuFreqInt = 0;
             try {
                 cpuFreqInt = Integer.parseInt(cpuMaxFreq);
-            }
-            catch(NumberFormatException e) {
+            } catch (NumberFormatException e) {
                 this.CPU_Frequency = UNKNOWN;
             }
-            if(cpuFreqInt != 0) {
+            if (cpuFreqInt != 0) {
                 int cpuFreqMhz = cpuFreqInt / 1000;
                 BigDecimal cpuFreqMhz2 = new BigDecimal(cpuFreqMhz);
 

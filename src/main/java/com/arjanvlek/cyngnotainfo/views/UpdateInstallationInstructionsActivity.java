@@ -46,8 +46,6 @@ public class UpdateInstallationInstructionsActivity extends AppCompatActivity {
     }
 
 
-
-
     /**
      * A {@link FragmentPagerAdapter} that returns a fragment corresponding to
      * one of the sections/tabs/pages.
@@ -99,29 +97,26 @@ public class UpdateInstallationInstructionsActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             Bundle args = getArguments();
-            int sectionNumber = args.getInt(ARG_SECTION_NUMBER,0);
-            if(sectionNumber == 1) {
+            int sectionNumber = args.getInt(ARG_SECTION_NUMBER, 0);
+            if (sectionNumber == 1) {
                 return inflater.inflate(R.layout.fragment_update_installation_instructions_1, container, false);
-            }
-            else if(sectionNumber == 2) {
+            } else if (sectionNumber == 2) {
                 return inflater.inflate(R.layout.fragment_update_installation_instructions_2, container, false);
 
-            }
-            else if(sectionNumber == 3) {
+            } else if (sectionNumber == 3) {
                 return inflater.inflate(R.layout.fragment_update_installation_instructions_3, container, false);
 
-            }
-            else if(sectionNumber == 4) {
+            } else if (sectionNumber == 4) {
                 return inflater.inflate(R.layout.fragment_update_installation_instructions_4, container, false);
 
-            }
-            else if(sectionNumber == 5) {
+            } else if (sectionNumber == 5) {
                 return inflater.inflate(R.layout.fragment_update_installation_instructions_5, container, false);
 
             }
             return null;
         }
     }
+
     public void closeTutorial(View view) {
         finish();
     }

@@ -13,18 +13,16 @@ public class UpdateDetailsActivity extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update_details);
-        TextView updateDetailsField = (TextView)findViewById(R.id.textView_update_details);
+        TextView updateDetailsField = (TextView) findViewById(R.id.textView_update_details);
         String updateDetails = null;
         try {
             updateDetails = getIntent().getExtras().getString("update-description");
-        }
-        catch(NullPointerException e) {
+        } catch (NullPointerException e) {
             updateDetailsField.setText(getString(R.string.update_details_not_available));
         }
-        if(updateDetails != null && !updateDetails.equals("")) {
+        if (updateDetails != null && !updateDetails.equals("")) {
             updateDetailsField.setText(updateDetails);
-        }
-        else {
+        } else {
             updateDetailsField.setText(getString(R.string.update_details_not_available));
         }
     }

@@ -34,17 +34,17 @@ public class NetworkErrorFragment extends DialogFragment {
                 System.exit(0);
             }
         })
-        .setOnKeyListener(new DialogInterface.OnKeyListener() {
-            @Override
-            public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                if(i == KeyEvent.KEYCODE_BACK) {
-                    getActivity().finish();
-                    System.exit(0);
-                }
-                return true;
-            }
-        });
-        if(Build.VERSION.SDK_INT >= 17) {
+                .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                    @Override
+                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                        if (i == KeyEvent.KEYCODE_BACK) {
+                            getActivity().finish();
+                            System.exit(0);
+                        }
+                        return true;
+                    }
+                });
+        if (Build.VERSION.SDK_INT >= 17) {
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
                 public void onDismiss(DialogInterface dialogInterface) {

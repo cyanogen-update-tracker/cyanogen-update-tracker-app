@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("StatementWithEmptyBody")
-public class ServerConnector implements AsyncTaskResultHelper{
+public class ServerConnector implements AsyncTaskResultHelper {
 
     private final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
     private final static String SERVER_URL = "** Add the base URL of your API / backend here **";
@@ -47,20 +47,18 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<DeviceTypeEntity> getDeviceTypeEntities() {
         fetchDataFromServer fetchDeviceDataFromServer = new fetchDataFromServer();
         fetchDeviceDataFromServer.asyncTaskResultHelper = this;
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
             fetchDeviceDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "device");
-        }
-        else {
+        } else {
             fetchDeviceDataFromServer.execute("device");
         }
 
-        while(!deviceTypesReady) {
+        while (!deviceTypesReady) {
             // We don't do anything here :)
         }
-        if(offline) {
+        if (offline) {
             return offlineDeviceTypeEntities;
-        }
-        else {
+        } else {
             return deviceTypeEntities;
         }
     }
@@ -68,19 +66,17 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<UpdateTypeEntity> getUpdateTypeEntities(String deviceId) {
         fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
         fetchUpdateDataFromServer.asyncTaskResultHelper = this;
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
             fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update", deviceId);
-        }
-        else {
+        } else {
             fetchUpdateDataFromServer.execute("update", deviceId);
         }
-        while(!updateTypesReady) {
+        while (!updateTypesReady) {
             // We don't do anything here :)
         }
-        if(offline) {
+        if (offline) {
             return offlineUpdateTypeEntities;
-        }
-        else {
+        } else {
             return updateTypeEntities;
         }
     }
@@ -88,27 +84,25 @@ public class ServerConnector implements AsyncTaskResultHelper{
     public List<UpdateLinkEntity> getUpdateLinkEntities() {
         fetchDataFromServer fetchUpdateLinksFromServer = new fetchDataFromServer();
         fetchUpdateLinksFromServer.asyncTaskResultHelper = this;
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
             fetchUpdateLinksFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update_link");
-        }
-        else {
+        } else {
             fetchUpdateLinksFromServer.execute("update_link");
         }
-        while(!updateLinksReady) {
+        while (!updateLinksReady) {
             // We don't do anything here :)
         }
-        if(offline) {
+        if (offline) {
             return offlineUpdateLinkEntities;
-        }
-        else {
+        } else {
             return updateLinkEntities;
         }
     }
 
     private void findAllDeviceTypesFromHtmlResponse(String htmlResponse) {
         deviceTypeEntities = null;
-        if(htmlResponse != null) {
-            if(!htmlResponse.isEmpty()) {
+        if (htmlResponse != null) {
+            if (!htmlResponse.isEmpty()) {
                 deviceTypeEntities = new ArrayList<>();
                 try {
                     JSONArray serverResponse = new JSONArray(htmlResponse);
@@ -124,8 +118,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
                     e.printStackTrace();
                 }
             }
-        }
-        else {
+        } else {
             offline = true;
         }
         deviceTypesReady = true;
@@ -135,8 +128,8 @@ public class ServerConnector implements AsyncTaskResultHelper{
     private void findAllUpdateTypesFromHtmlResponse(String htmlResponse) {
         updateTypeEntities = null;
 
-        if(htmlResponse != null) {
-            if(!htmlResponse.isEmpty()) {
+        if (htmlResponse != null) {
+            if (!htmlResponse.isEmpty()) {
                 try {
                     updateTypeEntities = new ArrayList<>();
                     JSONArray serverResponse = new JSONArray(htmlResponse);
@@ -151,8 +144,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
                     e.printStackTrace();
                 }
             }
-        }
-        else {
+        } else {
             offline = true;
         }
         updateTypesReady = true;
@@ -161,8 +153,8 @@ public class ServerConnector implements AsyncTaskResultHelper{
     private void findAllUpdateLinksFromHtmlResponse(String htmlResponse) {
         updateLinkEntities = null;
 
-        if(htmlResponse != null) {
-            if(!htmlResponse.isEmpty()) {
+        if (htmlResponse != null) {
+            if (!htmlResponse.isEmpty()) {
                 try {
                     updateLinkEntities = new ArrayList<>();
                     JSONArray serverResponse = new JSONArray(htmlResponse);
@@ -179,8 +171,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
                     e.printStackTrace();
                 }
             }
-        }
-        else {
+        } else {
             offline = true;
         }
         updateLinksReady = true;
@@ -188,7 +179,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
 
     @Override
     public void onTaskComplete(String... output) {
-        if(output != null) {
+        if (output != null) {
             String type = output[0];
             String data = output[1];
             switch (type) {
@@ -202,8 +193,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
                     findAllUpdateLinksFromHtmlResponse(data);
                     break;
             }
-        }
-        else {
+        } else {
             findAllUpdateTypesFromHtmlResponse(null);
             findAllDeviceTypesFromHtmlResponse(null);
             findAllUpdateLinksFromHtmlResponse(null);
@@ -212,7 +202,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
     }
 
 
-    private class fetchDataFromServer extends AsyncTask<String,Void,String[]> {
+    private class fetchDataFromServer extends AsyncTask<String, Void, String[]> {
         public AsyncTaskResultHelper asyncTaskResultHelper = null;
 
         @Override
@@ -221,13 +211,13 @@ public class ServerConnector implements AsyncTaskResultHelper{
 
             URL requestUrl;
             try {
-                switch(type) {
+                switch (type) {
                     case "device":
                         requestUrl = new URL(SERVER_URL + DEVICE_TYPE_URL);
                         break;
                     case "update":
                         String deviceId = types[1];
-                        requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL +"?device_id=" + deviceId);
+                        requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
                         break;
                     case "update_link":
                         requestUrl = new URL(SERVER_URL + UPDATE_LINK_URL);
@@ -244,7 +234,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
                 urlConnection.setReadTimeout(5000);
 
                 int responseCode = urlConnection.getResponseCode();
-                if (responseCode>= 200 && responseCode <= 300) {
+                if (responseCode >= 200 && responseCode <= 300) {
                     BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
                     String inputLine;
                     StringBuilder response = new StringBuilder();
@@ -262,8 +252,7 @@ public class ServerConnector implements AsyncTaskResultHelper{
                 } else {
                     return null;
                 }
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 return null;
             }
         }

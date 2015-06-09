@@ -73,7 +73,7 @@ public class UpdateInformationFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        rootView = (RelativeLayout)inflater.inflate(R.layout.fragment_updateinformation, container, false);
+        rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_updateinformation, container, false);
         return rootView;
     }
 
@@ -84,14 +84,13 @@ public class UpdateInformationFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        if(!isFetched && checkIfSettingsAreValid()) {
-            if(checkNetworkConnection()) {
+        if (!isFetched && checkIfSettingsAreValid()) {
+            if (checkNetworkConnection()) {
                 getUpdateInformation();
                 showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
-            }
-            else {
+            } else {
                 hideAds();
                 showNetworkError();
             }
@@ -100,14 +99,14 @@ public class UpdateInformationFragment extends Fragment {
     }
 
     private void hideAds() {
-        if(adView != null) {
+        if (adView != null) {
             adView.destroy();
         }
     }
 
     private void showAds() {
         adView = (AdView) rootView.findViewById(R.id.update_information_banner_field);
-        if(adView != null) {
+        if (adView != null) {
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
@@ -122,23 +121,39 @@ public class UpdateInformationFragment extends Fragment {
             adView.loadAd(adRequest);
         }
     }
+
     private boolean checkNetworkConnection() {
-        ConnectivityManager connectivityManager = (ConnectivityManager)getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 
 
+    /**
+     * Called when leaving the activity
+     */
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (adView != null) {
+            adView.pause();
+        }
+
+    }
+
     @Override
     public void onResume() {
         super.onResume();
-        if(refreshedDate != null && isFetched && checkIfSettingsAreValid()) {
+
+        if (adView != null) {
+            adView.resume();
+        }
+        if (refreshedDate != null && isFetched && checkIfSettingsAreValid()) {
             if (refreshedDate.plusMinutes(5).isBefore(DateTime.now())) {
-                if(checkNetworkConnection()) {
+                if (checkNetworkConnection()) {
                     getUpdateInformation();
                     refreshedDate = DateTime.now();
-                }
-                else {
+                } else {
                     showNetworkError();
                 }
             }
@@ -150,7 +165,7 @@ public class UpdateInformationFragment extends Fragment {
     }
 
     private void displayUpdateInformation() {
-        if(cyanogenOTAUpdate != null) {
+        if (cyanogenOTAUpdate != null) {
             generateCircleDiagram();
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
             buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
@@ -159,13 +174,13 @@ public class UpdateInformationFragment extends Fragment {
             downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.megabyte));
 
             TextView updatedDataView = (TextView) rootView.findViewById(R.id.lastUpdatedLabel);
-            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(),this);
+            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
             String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
             updatedDataView.setText(dateUpdated);
 
 
-            if(cyanogenOTAUpdate.getDownloadUrl() != null) {
-                Button downloadButton = (Button)rootView.findViewById(R.id.downloadButton);
+            if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+                Button downloadButton = (Button) rootView.findViewById(R.id.downloadButton);
                 downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -176,7 +191,7 @@ public class UpdateInformationFragment extends Fragment {
             }
 
 
-            Button descriptionButton = (Button)rootView.findViewById(R.id.updateDescriptionButton);
+            Button descriptionButton = (Button) rootView.findViewById(R.id.updateDescriptionButton);
             descriptionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -190,26 +205,25 @@ public class UpdateInformationFragment extends Fragment {
     }
 
     private void downloadUpdate(String downloadUrl, String downloadName) {
-        DownloadManager downloadManager =  (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
+        DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(downloadUrl);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setDescription(getActivity().getString(R.string.downloader_description)).setTitle(getString(R.string.downloader_description));
         request.setDestinationInExternalFilesDir(getActivity(), Environment.DIRECTORY_DOWNLOADS, downloadName);
         request.setVisibleInDownloadsUi(true);
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        }
-        else {
+        } else {
             //noinspection deprecation
             request.setShowRunningNotification(true);
         }
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
         downloadManager.enqueue(request);
-        Toast.makeText(getActivity(),getString(R.string.downloading_in_background),Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getString(R.string.downloading_in_background), Toast.LENGTH_LONG).show();
     }
 
     private void generateCircleDiagram() {
-        if(isAdded()) {
+        if (isAdded()) {
             PieChart pieChartView = (PieChart) rootView.findViewById(R.id.rolloutPercentageDiagram);
             List<Entry> chartData = new ArrayList<>();
             int percentage = cyanogenOTAUpdate.getRollOutPercentage();
@@ -255,7 +269,7 @@ public class UpdateInformationFragment extends Fragment {
 
     /**
      * Async task class to get json by making HTTP call
-     * */
+     */
     private class GetUpdateInformation extends AsyncTask<Void, Void, Void> {
 
         @Override
@@ -276,13 +290,13 @@ public class UpdateInformationFragment extends Fragment {
 
 
         }
+
         private String fetchResult(String updateUrl) {
 
             ServiceHandler serviceHandler = new ServiceHandler();
             try {
                 return serviceHandler.makeServiceCall(updateUrl, ServiceHandler.GET);
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 fetchResult(updateUrl);
             }
             return null;
@@ -296,34 +310,34 @@ public class UpdateInformationFragment extends Fragment {
             if (jsonStr != null) {
                 try {
                     JSONObject object = new JSONObject(jsonStr);
-                        cyanogenOTAUpdate = new CyanogenOTAUpdate();
-                        cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
-                        cyanogenOTAUpdate.setIncremental(object.getString("incremental"));
-                        cyanogenOTAUpdate.setRequiredIncremental(object.getBoolean("required_incremental"));
-                        cyanogenOTAUpdate.setSize(object.getInt("size"));
-                        cyanogenOTAUpdate.setBuildNumber(object.getString("build_number"));
-                        cyanogenOTAUpdate.setIncrementalParent(object.getString("incremental_parent"));
-                        cyanogenOTAUpdate.setDownloadUrl(object.getString("download_url"));
-                        cyanogenOTAUpdate.setFileName(object.getString("filename"));
-                        cyanogenOTAUpdate.setSha1Sum(object.getString("sha1sum"));
-                        cyanogenOTAUpdate.setType(object.getString("type"));
-                        cyanogenOTAUpdate.setDescription(object.getString("description"));
-                        cyanogenOTAUpdate.setDateCreatedUnix(object.getString("date_created_unix"));
-                        cyanogenOTAUpdate.setRollOutPercentage(object.getInt("rollout_percentage"));
-                        cyanogenOTAUpdate.setKey(object.getString("key"));
-                        cyanogenOTAUpdate.setPath(object.getString("path"));
-                        cyanogenOTAUpdate.setName(object.getString("name"));
-                        cyanogenOTAUpdate.setMd5Sum(object.getString("md5sum"));
-                        cyanogenOTAUpdate.setPublished(object.getBoolean("published"));
-                        cyanogenOTAUpdate.setDateCreated(object.getString("date_created"));
-                        cyanogenOTAUpdate.setModel(object.getString("model"));
-                        cyanogenOTAUpdate.setApiLevel(object.getInt("api_level"));
+                    cyanogenOTAUpdate = new CyanogenOTAUpdate();
+                    cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
+                    cyanogenOTAUpdate.setIncremental(object.getString("incremental"));
+                    cyanogenOTAUpdate.setRequiredIncremental(object.getBoolean("required_incremental"));
+                    cyanogenOTAUpdate.setSize(object.getInt("size"));
+                    cyanogenOTAUpdate.setBuildNumber(object.getString("build_number"));
+                    cyanogenOTAUpdate.setIncrementalParent(object.getString("incremental_parent"));
+                    cyanogenOTAUpdate.setDownloadUrl(object.getString("download_url"));
+                    cyanogenOTAUpdate.setFileName(object.getString("filename"));
+                    cyanogenOTAUpdate.setSha1Sum(object.getString("sha1sum"));
+                    cyanogenOTAUpdate.setType(object.getString("type"));
+                    cyanogenOTAUpdate.setDescription(object.getString("description"));
+                    cyanogenOTAUpdate.setDateCreatedUnix(object.getString("date_created_unix"));
+                    cyanogenOTAUpdate.setRollOutPercentage(object.getInt("rollout_percentage"));
+                    cyanogenOTAUpdate.setKey(object.getString("key"));
+                    cyanogenOTAUpdate.setPath(object.getString("path"));
+                    cyanogenOTAUpdate.setName(object.getString("name"));
+                    cyanogenOTAUpdate.setMd5Sum(object.getString("md5sum"));
+                    cyanogenOTAUpdate.setPublished(object.getBoolean("published"));
+                    cyanogenOTAUpdate.setDateCreated(object.getString("date_created"));
+                    cyanogenOTAUpdate.setModel(object.getString("model"));
+                    cyanogenOTAUpdate.setApiLevel(object.getInt("api_level"));
 
-                    } catch (JSONException ignored) {
+                } catch (JSONException ignored) {
                 }
 
             } else {
-                if(progressDialog.isShowing()) {
+                if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
                 showNetworkError();
@@ -336,7 +350,7 @@ public class UpdateInformationFragment extends Fragment {
         protected void onPostExecute(Void result) {
             super.onPostExecute(result);
             displayUpdateInformation();
-            if(progressDialog.isShowing()) {
+            if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
             }
         }
@@ -347,5 +361,17 @@ public class UpdateInformationFragment extends Fragment {
         networkErrorFragment.show(getFragmentManager(), "NetworkError");
     }
 
+
+
+    /**
+     * Called before the activity is destroyed
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
+    }
 
 }

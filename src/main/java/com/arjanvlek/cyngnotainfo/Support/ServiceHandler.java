@@ -1,4 +1,5 @@
 package com.arjanvlek.cyngnotainfo.Support;
+
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -27,19 +28,21 @@ public class ServiceHandler {
 
     /**
      * Making service call
+     *
      * @String - url to make request
      * @method - http request method
-     * */
+     */
     public String makeServiceCall(String url, int method) {
         return this.makeServiceCall(url, method, null);
     }
 
     /**
      * Making service call
+     *
      * @url - url to make request
      * @method - http request method
      * @params - http request params
-     * */
+     */
     public String makeServiceCall(String url, int method,
                                   List<NameValuePair> params) {
         try {

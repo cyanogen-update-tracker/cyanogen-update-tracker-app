@@ -25,25 +25,25 @@ import java.util.List;
 @SuppressWarnings("DefaultFileTemplate")
 public class TutorialStep2Fragment extends Fragment {
     private View rootView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        rootView = inflater.inflate(R.layout.fragment_tutorial_2,container,false);
+        rootView = inflater.inflate(R.layout.fragment_tutorial_2, container, false);
         return rootView;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             new DeviceDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-        else {
+        } else {
             new DeviceDataFetcher().execute();
         }
     }
 
 
-    private class DeviceDataFetcher extends AsyncTask<Void,Integer,List<DeviceTypeEntity>> {
+    private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<DeviceTypeEntity>> {
 
         @Override
         public List<DeviceTypeEntity> doInBackground(Void... voids) {
@@ -60,15 +60,15 @@ public class TutorialStep2Fragment extends Fragment {
     }
 
     private void fillDeviceSettings(List<DeviceTypeEntity> deviceTypeEntities) {
-        Spinner spinner = (Spinner)rootView.findViewById(R.id.deviceTypeSpinner);
-        List<String>deviceNames = new ArrayList<>();
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.deviceTypeSpinner);
+        List<String> deviceNames = new ArrayList<>();
 
-        for(DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
+        for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
             deviceNames.add(deviceTypeEntity.getDeviceType());
         }
         Integer position = null;
         String currentDeviceName = MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
-        if(currentDeviceName != null) {
+        if (currentDeviceName != null) {
             for (int i = 0; i < deviceNames.size(); i++) {
                 if (deviceNames.get(i).equals(currentDeviceName)) {
                     position = i;
@@ -76,10 +76,10 @@ public class TutorialStep2Fragment extends Fragment {
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(),android.R.layout.simple_spinner_item, deviceNames);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, deviceNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        if(position != null) {
+        if (position != null) {
             spinner.setSelection(position);
         }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
