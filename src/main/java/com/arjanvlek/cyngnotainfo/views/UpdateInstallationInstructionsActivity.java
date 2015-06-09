@@ -61,8 +61,8 @@ public class UpdateInstallationInstructionsActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            // Return a TutorialFragment (defined as a static inner class below).
-            return TutorialFragment.newInstance(position + 1);
+            // Return a InstallationGuideFragment (defined as a static inner class below).
+            return InstallationGuideFragment.newInstance(position + 1);
         }
 
         @Override
@@ -76,7 +76,7 @@ public class UpdateInstallationInstructionsActivity extends AppCompatActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class TutorialFragment extends Fragment {
+    public static class InstallationGuideFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -87,8 +87,8 @@ public class UpdateInstallationInstructionsActivity extends AppCompatActivity {
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static TutorialFragment newInstance(int sectionNumber) {
-            TutorialFragment fragment = new TutorialFragment();
+        public static InstallationGuideFragment newInstance(int sectionNumber) {
+            InstallationGuideFragment fragment = new InstallationGuideFragment();
             Bundle args = new Bundle();
             args.putInt(ARG_SECTION_NUMBER, sectionNumber);
             fragment.setArguments(args);

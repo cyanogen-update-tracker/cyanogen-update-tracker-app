@@ -10,7 +10,7 @@
     <!-- Push notification permissions -->
     <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.VIBRATE"/>
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <permission
         android:name="com.arjanvlek.cyngnotainfo.permission.C2D_MESSAGE"
@@ -85,10 +85,19 @@
             android:name=".views.SettingsActivity"
             android:label="@string/title_activity_settings"
             android:parentActivityName=".MainActivity"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
+        </activity>
+        <activity
+            android:name=".views.TutorialActivity"
+            android:label="@string/title_activity_tutorial"
+            android:parentActivityName=".MainActivity"
+            tools:ignore="UnusedAttribute" >
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.arjanvlek.cyngnotainfo.MainActivity" />>
         </activity>
     </application>
 

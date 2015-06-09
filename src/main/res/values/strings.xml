@@ -143,4 +143,8 @@
     <string name="notification_new_device">New device released! Updates for the</string>
     <string name="nofitication_new_device_2">can now be tracked!</string>
     <string name="notification_new_device_short">Open the app to choose it.</string>
+    <string name="title_activity_tutorial">TutorialActivity</string>
+    <string name="title_section3">Section 3</string>
+
+    <string name="hello_world">Hello world!</string>
 </resources>

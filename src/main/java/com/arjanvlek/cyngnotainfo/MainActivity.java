@@ -33,6 +33,7 @@ import android.widget.Toast;
 import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
+import com.arjanvlek.cyngnotainfo.views.TutorialActivity;
 import com.arjanvlek.cyngnotainfo.views.UpdateInformationFragment;
 import com.arjanvlek.cyngnotainfo.views.UpdateInstallationInstructionsActivity;
 import com.google.android.gms.ads.AdView;
@@ -145,9 +146,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     registerInBackground(registrationId);
                 }
             }
-                if (deviceType == null || updateType == null || updateLink == null) {
-                    Settings(); //TODO first time page
-                }
+            if (deviceType == null || updateType == null || updateLink == null) {
+                Tutorial();
+            }
         }
     }
 
@@ -165,6 +166,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     private void Settings() {
         Intent i = new Intent(this,SettingsActivity.class);
+        startActivity(i);
+    }
+
+    private void Tutorial() {
+        Intent i = new Intent(this, TutorialActivity.class);
         startActivity(i);
     }
 
