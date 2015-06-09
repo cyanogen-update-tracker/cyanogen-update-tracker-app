@@ -26,8 +26,7 @@ import java.util.List;
 public class TutorialStep2Fragment extends Fragment {
     private View rootView;
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tutorial_2,container,false);
         return rootView;
     }
@@ -41,8 +40,6 @@ public class TutorialStep2Fragment extends Fragment {
         else {
             new DeviceDataFetcher().execute();
         }
-
-
     }
 
 
@@ -98,9 +95,5 @@ public class TutorialStep2Fragment extends Fragment {
             }
 
         });
-
-
-
-
     }
 }

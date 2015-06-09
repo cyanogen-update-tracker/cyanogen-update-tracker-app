@@ -285,7 +285,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void showSettingsWarning() {
-        Toast.makeText(this, "One or more settings are entered incorrectly", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, getString(R.string.settings_entered_incorrectly), Toast.LENGTH_LONG).show();
     }
 
 

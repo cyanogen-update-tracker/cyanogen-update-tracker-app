@@ -100,5 +100,6 @@
     <string name="notification_is_now_available">is nu beschikbaar voor de</string>
     <string name="nofitication_new_device_2">kunnen nu worden gevolgd!</string>
     <string name="notification_version">Versie</string>
+    <string name="settings_entered_incorrectly">Een of meer instellingen zijn onjuist ingevuld.</string>
 
 </resources>

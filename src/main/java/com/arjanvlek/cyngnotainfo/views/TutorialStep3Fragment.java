@@ -11,7 +11,6 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
@@ -31,8 +30,7 @@ public class TutorialStep3Fragment extends Fragment {
     private View rootView;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tutorial_3,container, false);
         return rootView;
     }
@@ -76,7 +74,6 @@ public class TutorialStep3Fragment extends Fragment {
                 updateTypeNames.add(updateTypeEntity.getUpdateType());
             }
             fillUpdateSettings(updateTypeNames);
-
         }
     }
 
@@ -124,7 +121,6 @@ public class TutorialStep3Fragment extends Fragment {
                 else {
                     new UpdateLinkSetter().execute(MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()), updateTypeName);
                 }
-
             }
 
             @Override
@@ -132,11 +128,7 @@ public class TutorialStep3Fragment extends Fragment {
 
             }
         });
-
-
-
     }
-
 
     private class UpdateLinkSetter extends AsyncTask<String,Integer,List<Object>> {
 
@@ -195,27 +187,6 @@ public class TutorialStep3Fragment extends Fragment {
                 }
             }
             MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_LINK, updateLink, getActivity().getApplicationContext());
-
-
-
-
         }
     }
-
-
-
-
-
-
-    private boolean checkIfSettingsAreValid() {
-        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
-    }
-
-    private void showSettingsWarning() {
-        Toast.makeText(getActivity(), "One or more settings are entered incorrectly", Toast.LENGTH_LONG).show();
-    }
-
-
-
-
 }

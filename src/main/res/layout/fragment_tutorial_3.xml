@@ -32,7 +32,7 @@
                 android:layout_below="@+id/startTut1Image1"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="Choose your update method"
+                android:text="@string/introduction_choose_update_method"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -60,7 +60,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:text="For most of the devices, there are two update methods available. These are the full and the incremental update.\n\nA full update contains every system file and can always be installed on your device.\n\n An incremental update can only be installed if you were running the latest version before the new update was released. It will save you bandwith and storage space\n\nSwipe to the left to continue"
+                android:text="@string/introduction_page_3"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/material_blue_grey_800" />
 

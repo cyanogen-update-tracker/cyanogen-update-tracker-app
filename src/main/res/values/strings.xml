@@ -62,7 +62,8 @@
     <string name="choose_update_type">Update method</string>
     <string name="about">About this app</string>
     <string name="settings_saved">Your settings are automatically saved.</string>
-    <string name="settings_explanation_update_methods">Explanation of update methods</string>
+    <string name="settings_explanation_update_methods">Explanation of update methods</string>]
+    <string name="settings_entered_incorrectly">One or more settings are entered incorrectly.</string>
     <!--Device names -->
     <string name="oneplus_one">OnePlus One</string>
     <string name="yu_yureka">Yu Yureka</string>
@@ -88,6 +89,16 @@
     <string name="explanation_incremental_stable">An incremental update can only be installed if you were running the latest version before this update was released.\n\nA full update can be always be installed - regardless of your current software version running on your device.</string>
     <string name="downloader_description">Downloading Cyanogen OS Update…</string>
 
+    <!-- First-time tutorial strings -->
+    <string name="introduction_welcome">Welcome to Cyanogen update tracker!</string>
+    <string name="introduction_page_1">This app will allow you to stay informed about the latest Android™  updates for your Cyanogen® OS powered device. \n\nSwipe to the left to continue.</string>
+    <string name="introduction_choose_device">Choose your device:</string>
+    <string name="introduction_page_2">In order to stay up-to-date, you will need to choose a device from the list shown above.\n\nMore devices will be automatically added when they are released!\n\nSwipe to the left to continue.</string>
+    <string name="introduction_choose_update_method">Choose your update method:</string>
+    <string name="introduction_page_3">For most of the devices, there are two update methods shown in the list above. These are the full and the incremental update.\n\nA full update contains everything and can always be installed on your device.\n\nAn incremental update can only be installed if you had the latest version before the new update was released.\nChoose this for faster downloads or if you are low on storage space.\n\nSwipe to the left to continue.</string>
+    <string name="introduction_ready_to_start">You are ready to start!</string>
+    <string name="introduction_page_4">Enjoy using this application!\n\nYou can always change your settings by clicking the three dots in the top right corner (or press your Menu button) and then clicking on 'change device and update settings'.</string>
+    <string name="introduction_close_button">start app</string>
     <!-- Tutorial strings -->
     <string name="tutorial_image_description">Tutorial image.</string>
     <string name="tutorial_step1_download_update">Download the update.</string>

@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.arjanvlek.cyngnotainfo.views.TutorialActivity$PlaceholderFragment">
 
@@ -32,7 +33,7 @@
                 android:layout_below="@+id/startTut1Image1"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="Welcome to Cyanogen update tracker!"
+                android:text="@string/introduction_welcome"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -42,15 +43,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/tut1Text1"
-                android:layout_marginTop="20dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
                 android:layout_marginEnd="20dp"
+                android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="This app will allow you to stay informed about the latest Android™  updates for your Cyanogen® OS powered device. \n\nSwipe to the left to continue. "
+                android:layout_marginStart="20dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/introduction_page_1"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/material_blue_grey_800" />
-
 
 
         </RelativeLayout>

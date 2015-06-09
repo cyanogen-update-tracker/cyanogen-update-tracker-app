@@ -32,7 +32,7 @@
                 android:layout_below="@+id/startTut1Image1"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="Choose your device"
+                android:text="@string/introduction_choose_device"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textSize="18sp"
                 android:textStyle="bold" />
@@ -60,7 +60,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
-                android:text="In order to stay up-to-date, you will need to choose a device.\n\nMore devices will be added when they are released!\n\nSwipe to the left to continue"
+                android:text="@string/introduction_page_2"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/material_blue_grey_800" />
 
