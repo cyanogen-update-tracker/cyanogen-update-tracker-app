@@ -40,5 +40,4 @@ dependencies {
     //Google Play Services libraries
     compile 'com.google.android.gms:play-services-ads:7.5.0'
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
-//    compile files('libs/unirest-java-1.4.6-SNAPSHOT-withDependency-ShadedForAndroid.jar')
 }
