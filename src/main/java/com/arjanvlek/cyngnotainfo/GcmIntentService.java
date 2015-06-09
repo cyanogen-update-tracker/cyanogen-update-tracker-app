@@ -18,8 +18,8 @@ import java.util.List;
  * Part of Cyanogen Update Tracker.
  */
 public class GcmIntentService extends IntentService {
-    public static int NEW_UPDATE_NOFITICATION_ID = 1;
-    public static int NEW_DEVICE_NOFITICATION_ID = 2;
+    public static int NEW_UPDATE_NOTIFICATION_ID = 1;
+    public static int NEW_DEVICE_NOTIFICATION_ID = 2;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -105,7 +105,7 @@ public class GcmIntentService extends IntentService {
 
 
                 mBuilder.setContentIntent(contentIntent);
-                mNotificationManager.notify(NEW_UPDATE_NOFITICATION_ID, mBuilder.build());
+                mNotificationManager.notify(NEW_UPDATE_NOTIFICATION_ID, mBuilder.build());
             } else if (messageType.equals("newDevice")) {
                 NotificationCompat.Builder mBuilder =
                         new NotificationCompat.Builder(this)
@@ -120,7 +120,7 @@ public class GcmIntentService extends IntentService {
 
 
                 mBuilder.setContentIntent(contentIntent);
-                mNotificationManager.notify(NEW_DEVICE_NOFITICATION_ID, mBuilder.build());
+                mNotificationManager.notify(NEW_DEVICE_NOTIFICATION_ID, mBuilder.build());
             }
         }
     }
