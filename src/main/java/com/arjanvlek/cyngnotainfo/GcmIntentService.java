@@ -1,10 +1,12 @@
 package com.arjanvlek.cyngnotainfo;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
@@ -87,9 +89,6 @@ public class GcmIntentService extends IntentService {
                 }
             }
         }
-        long[] vibrationPattern = new long[2];
-        vibrationPattern[0] = 100L;
-        vibrationPattern[1] = 100L;
         if (message != null) {
             if (messageType.equals("update")) {
                 NotificationCompat.Builder mBuilder =
@@ -99,11 +98,14 @@ public class GcmIntentService extends IntentService {
                                 .setStyle(new NotificationCompat.BigTextStyle()
                                         .bigText(message)
                                         .setSummaryText(getString(R.string.notification_update_short)))
-                                .setVibrate(vibrationPattern)
+                                .setDefaults(Notification.DEFAULT_ALL)
                                 .setAutoCancel(true)
                                 .setContentText(message);
 
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
+                    mBuilder.setPriority(Notification.PRIORITY_HIGH);
+                }
                 mBuilder.setContentIntent(contentIntent);
                 mNotificationManager.notify(NEW_UPDATE_NOTIFICATION_ID, mBuilder.build());
             } else if (messageType.equals("newDevice")) {
@@ -114,11 +116,14 @@ public class GcmIntentService extends IntentService {
                                 .setStyle(new NotificationCompat.BigTextStyle()
                                         .bigText(message)
                                         .setSummaryText(getString(R.string.notification_new_device_short)))
-                                .setVibrate(vibrationPattern)
+                                .setDefaults(Notification.DEFAULT_ALL)
                                 .setAutoCancel(true)
                                 .setContentText(message);
 
-
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
+                    mBuilder.setPriority(Notification.PRIORITY_HIGH);
+                }
                 mBuilder.setContentIntent(contentIntent);
                 mNotificationManager.notify(NEW_DEVICE_NOTIFICATION_ID, mBuilder.build());
             }
