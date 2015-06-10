@@ -153,7 +153,7 @@
     <string name="notification_update_short">Open the app to download the update.</string>
     <string name="notification_new_device">New device released! Updates for the</string>
     <string name="nofitication_new_device_2">can now be tracked!</string>
-    <string name="notification_new_device_short">Open the app to choose it.</string>
+    <string name="notification_new_device_short">Open the app to choose this device.</string>
     <string name="title_activity_tutorial">Welcome</string>
     <string name="title_section3">Update method</string>
 </resources>
