@@ -98,7 +98,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         if (actionBar != null) {
             actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
         }
-
+        setTitle(getString(R.string.app_name));
 
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 

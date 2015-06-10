@@ -112,5 +112,6 @@
     <string name="introduction_welcome">Welkom bij Cyanogen updatetracker!</string>
     <string name="title_activity_tutorial">Welkom</string>
     <string name="title_section3">Update-methode</string>
+    <string name="app_name_launcher">Updatetracker</string>
 
 </resources>
