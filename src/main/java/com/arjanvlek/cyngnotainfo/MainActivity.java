@@ -421,6 +421,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 urlConnection.setRequestProperty("Accept", "application/json");
+                urlConnection.setConnectTimeout(2000);
+                urlConnection.setReadTimeout(5000);
                 urlConnection.connect();
                 OutputStream out = urlConnection.getOutputStream();
                 byte[] outputBytes = jsonResponse.toString().getBytes();
