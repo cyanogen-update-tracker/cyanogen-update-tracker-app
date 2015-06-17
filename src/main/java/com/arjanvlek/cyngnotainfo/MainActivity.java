@@ -463,7 +463,17 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean(PROPERTY_REGISTRATION_ERROR, failed);
         if (failed) {
-            Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
+            try {
+                Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
+            }
+            catch (Exception e) {
+                try {
+                    Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
+                }
+                catch(Exception ignored) {
+
+                }
+            }
         }
         editor.apply();
     }
