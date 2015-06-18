@@ -41,8 +41,8 @@ public class TutorialActivity extends AppCompatActivity {
         try {
             super.onCreate(savedInstanceState);
         }
-        catch (Exception e) {
-            super.onCreate(null);
+        catch (Exception ignored) {
+
         }
         setContentView(R.layout.activity_tutorial);
         if (getSupportActionBar() != null) {

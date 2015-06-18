@@ -90,7 +90,7 @@ public class GcmIntentService extends IntentService {
                     messageType = "newDevice";
                 }
             }
-            else if (msg.getString("new_device") == null && msg.getString("version_number") == null) {
+            else if (msg.getString("new_device") == null && msg.getString("version_number") == null &&msg.getString("maintenance") == null && msg.getString("tracking_device_type_id") != null) {
                 String deviceName = getDeviceName(msg.getString("tracking_device_type_id"));
                 if (deviceName != null) {
                     message = getString(R.string.notification_unknown_version_number) + " " + deviceName + "!";
@@ -102,10 +102,12 @@ public class GcmIntentService extends IntentService {
                 String language = Locale.getDefault().getDisplayLanguage();
                 switch(language) {
                     case "Nederlands":
-                        message = msg.getString("maintenance_nl");
+                        String message1 = msg.getString("maintenance_nl");
+                        message = message1.replace("_", " ");
                         break;
                     default:
-                        message = msg.getString("maintenance");
+                        String message2 = msg.getString("maintenance");
+                        message = message2.replace("_", " ");
                         break;
                 }
                 messageType = "maintenance";

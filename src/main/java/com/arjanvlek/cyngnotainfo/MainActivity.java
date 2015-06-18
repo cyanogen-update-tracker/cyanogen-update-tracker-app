@@ -31,6 +31,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
@@ -75,6 +76,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     public static String SENDER_ID = "** Add your Google Cloud Messaging API key here **";
     public static String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
+    public static String TEST_SERVER_URL = "http://192.168.178.14/register-device.php";
     private GoogleCloudMessaging cloudMessaging;
     private Context context;
     private String registrationId;
@@ -132,7 +134,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     @Override
     public void onStart() {
         super.onStart();
-        String language = Locale.getDefault().getDisplayLanguage();
         if (checkPlayServices()) {
             deviceInformationAdView = (AdView) findViewById(R.id.device_information_banner_field);
             updateInformationAdView = (AdView) findViewById(R.id.update_information_banner_field);
@@ -412,8 +413,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
                 jsonResponse.put(JSON_PROPERTY_OLD_DEVICE_ID, oldRegistrationId);
                 URL url = new URL(SERVER_URL);
+//                URL url = new URL(TEST_SERVER_URL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
+                urlConnection.setRequestProperty("User-Agent", ServerConnector.USER_AGENT);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 urlConnection.setRequestProperty("Accept", "application/json");

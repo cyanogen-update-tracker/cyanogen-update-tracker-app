@@ -79,14 +79,7 @@ public class TutorialStep3Fragment extends Fragment {
     private void fillUpdateSettings(ArrayList<String> updateTypes) {
         Spinner spinner = (Spinner) rootView.findViewById(R.id.updateTypeSpinner);
         String currentUpdateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_TYPE, getActivity().getApplicationContext());
-        Integer position = null;
-        if (currentUpdateType != null) {
-            for (int i = 0; i < updateTypes.size(); i++) {
-                if (updateTypes.get(i).equals(currentUpdateType)) {
-                    position = i;
-                }
-            }
-        }
+        Integer position = 1;
         Resources resources = getResources();
         ArrayList<String> localizedUpdateTypes = new ArrayList<>();
         for (String updateType : updateTypes) {
@@ -95,7 +88,7 @@ public class TutorialStep3Fragment extends Fragment {
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, localizedUpdateTypes);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        if (position != null) {
+        if (localizedUpdateTypes.size() > 1) {
             spinner.setSelection(position);
         }
 

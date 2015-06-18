@@ -22,8 +22,9 @@ import java.util.List;
 @SuppressWarnings("StatementWithEmptyBody")
 public class ServerConnector implements AsyncTaskResultHelper {
 
-    private final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
+    public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
     private final static String SERVER_URL = "** Add the base URL of your API / backend here **";
+    private final static String TEST_SERVER_URL = "http://192.168.178.14/";
     private final static String DEVICE_TYPE_URL = "check_device_types.php";
     private final static String UPDATE_TYPE_URL = "check_update_types.php";
     private final static String UPDATE_LINK_URL = "check_update_links.php";
@@ -214,13 +215,16 @@ public class ServerConnector implements AsyncTaskResultHelper {
                 switch (type) {
                     case "device":
                         requestUrl = new URL(SERVER_URL + DEVICE_TYPE_URL);
+//                        requestUrl = new URL(TEST_SERVER_URL + DEVICE_TYPE_URL);
                         break;
                     case "update":
                         String deviceId = types[1];
                         requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
+//                        requestUrl = new URL(TEST_SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
                         break;
                     case "update_link":
                         requestUrl = new URL(SERVER_URL + UPDATE_LINK_URL);
+//                        requestUrl = new URL(TEST_SERVER_URL + UPDATE_LINK_URL);
                         break;
                     default:
                         return null;
