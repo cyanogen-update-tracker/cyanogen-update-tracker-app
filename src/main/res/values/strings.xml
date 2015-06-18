@@ -87,7 +87,7 @@
     </string-array>
     <string name="difference_incremental_stable">Difference between an incremental and a full update</string>
     <string name="explanation_incremental_stable">An incremental update can only be installed if you were running the latest version before this update was released.\n\nA full update can be always be installed - regardless of your current software version running on your device.</string>
-    <string name="downloader_description">Downloading Cyanogen OS Update…</string>
+    <string name="downloader_description">Cyanogen OS Update</string>
 
     <!-- First-time tutorial strings -->
     <string name="introduction_welcome">Welcome to Cyanogen update tracker!</string>

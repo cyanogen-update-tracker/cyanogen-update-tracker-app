@@ -7,7 +7,7 @@
     <string name="choose_update_type">Update-methode</string>
     <string name="download">Downloaden</string>
     <string name="download_size_header">Downloadgrootte:</string>
-    <string name="downloader_description">Bezig met downloaden van Cyanogen OS-update…</string>
+    <string name="downloader_description">Cyanogen OS-update</string>
     <string name="available_update_header">De meest recente systeemupdate is:</string>
     <string name="install">Installatiehandleiding</string>
     <string name="last_changed_on_server_header">Laatste wijziging op de server:</string>
