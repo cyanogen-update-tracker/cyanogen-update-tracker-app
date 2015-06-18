@@ -31,7 +31,7 @@
     <string name="string_for">voor</string>
     <string name="yu_yureka">Yu Yureka</string>
     <string name="megabyte">MB</string>
-    <string name="update">update</string>
+    <string name="update">Update</string>
     <string name="incremental_update">Incrementele update</string>
     <string name="full_update">Volledige update</string>
     <string name="update_details">Beschrijving van de update</string>
@@ -113,5 +113,6 @@
     <string name="title_activity_tutorial">Welkom</string>
     <string name="title_section3">Update-methode</string>
     <string name="app_name_launcher">Updatetracker</string>
+    <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
 
 </resources>

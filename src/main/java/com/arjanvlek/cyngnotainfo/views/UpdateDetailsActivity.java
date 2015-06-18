@@ -20,7 +20,7 @@ public class UpdateDetailsActivity extends AppCompatActivity {
         } catch (NullPointerException e) {
             updateDetailsField.setText(getString(R.string.update_details_not_available));
         }
-        if (updateDetails != null && !updateDetails.equals("")) {
+        if (updateDetails != null && !updateDetails.equals("") &&!updateDetails.equals("null")) {
             updateDetailsField.setText(updateDetails);
         } else {
             updateDetailsField.setText(getString(R.string.update_details_not_available));

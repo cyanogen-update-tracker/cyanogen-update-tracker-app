@@ -15,6 +15,7 @@ import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Part of Cyanogen Update Tracker.
@@ -22,6 +23,7 @@ import java.util.List;
 public class GcmIntentService extends IntentService {
     public static int NEW_UPDATE_NOTIFICATION_ID = 1;
     public static int NEW_DEVICE_NOTIFICATION_ID = 2;
+    public static int MAINTENANCE_NOTIFICATION_ID = 3;
 
     public GcmIntentService() {
         super("GcmIntentService");
@@ -88,6 +90,26 @@ public class GcmIntentService extends IntentService {
                     messageType = "newDevice";
                 }
             }
+            else if (msg.getString("new_device") == null && msg.getString("version_number") == null) {
+                String deviceName = getDeviceName(msg.getString("tracking_device_type_id"));
+                if (deviceName != null) {
+                    message = getString(R.string.notification_unknown_version_number) + " " + deviceName + "!";
+                    messageType = "update";
+                }
+
+            }
+            else if(msg.getString("maintenance") != null && msg.getString("maintenance_nl") != null) {
+                String language = Locale.getDefault().getDisplayLanguage();
+                switch(language) {
+                    case "Nederlands":
+                        message = msg.getString("maintenance_nl");
+                        break;
+                    default:
+                        message = msg.getString("maintenance");
+                        break;
+                }
+                messageType = "maintenance";
+            }
         }
         if (message != null) {
             if (messageType.equals("update")) {
@@ -126,6 +148,24 @@ public class GcmIntentService extends IntentService {
                 }
                 mBuilder.setContentIntent(contentIntent);
                 mNotificationManager.notify(NEW_DEVICE_NOTIFICATION_ID, mBuilder.build());
+            } else if (messageType.equals("maintenance")) {
+                NotificationCompat.Builder mBuilder =
+                        new NotificationCompat.Builder(this)
+                                .setSmallIcon(R.drawable.ic_stat_notification_maintenance)
+                                .setContentTitle(getString(R.string.app_name))
+                                .setStyle(new NotificationCompat.BigTextStyle()
+                                        .bigText(message))
+                                .setDefaults(Notification.DEFAULT_ALL)
+                                .setAutoCancel(true)
+                                .setContentText(message);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    mBuilder.setVisibility(Notification.VISIBILITY_PUBLIC);
+                    mBuilder.setPriority(Notification.PRIORITY_HIGH);
+                }
+                mBuilder.setContentIntent(contentIntent);
+                mNotificationManager.notify(MAINTENANCE_NOTIFICATION_ID, mBuilder.build());
+
             }
         }
     }

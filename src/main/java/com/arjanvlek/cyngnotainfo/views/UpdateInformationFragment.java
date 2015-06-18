@@ -168,7 +168,12 @@ public class UpdateInformationFragment extends Fragment {
         if (cyanogenOTAUpdate != null) {
             generateCircleDiagram();
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
-            buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
+            if(cyanogenOTAUpdate.getName() != null &&!cyanogenOTAUpdate.getName().equals("null")) {
+                buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
+            }
+            else {
+                buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.string_for) + " " + deviceName);
+            }
 
             TextView downloadSizeView = (TextView) rootView.findViewById(R.id.downloadSizeLabel);
             downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.megabyte));

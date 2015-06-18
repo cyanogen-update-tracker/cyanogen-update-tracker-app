@@ -132,11 +132,12 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     @Override
     public void onStart() {
         super.onStart();
+        String language = Locale.getDefault().getDisplayLanguage();
         if (checkPlayServices()) {
             deviceInformationAdView = (AdView) findViewById(R.id.device_information_banner_field);
             updateInformationAdView = (AdView) findViewById(R.id.update_information_banner_field);
             cloudMessaging = GoogleCloudMessaging.getInstance(context);
-            registrationId = getRegistrationId(context);
+            registrationId = getRegistrationId();
             if (checkIfDeviceIsSet()) {
                 checkIfRegistrationHasFailed();
                 if (!checkIfRegistrationIsValid(context)) {
@@ -327,15 +328,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return registeredVersion == currentVersion;
     }
 
-    private String getRegistrationId(Context context) {
+    private String getRegistrationId() {
         final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
         if (registrationId != null && registrationId.isEmpty()) {
-            return "";
-        }
-        int registeredVersion = prefs.getInt(PROPERTY_APP_VERSION, Integer.MIN_VALUE);
-        int currentVersion = getAppVersion(context);
-        if (registeredVersion != currentVersion) {
             return "";
         }
         return registrationId;
