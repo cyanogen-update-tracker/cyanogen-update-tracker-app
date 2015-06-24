@@ -213,7 +213,7 @@ public class UpdateInformationFragment extends Fragment {
         DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(downloadUrl);
         DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setDescription(getActivity().getString(R.string.downloader_description)).setTitle(getString(R.string.downloader_description));
+        request.setDescription(downloadUrl).setTitle(getString(R.string.downloader_description));
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadName);
         request.setVisibleInDownloadsUi(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
