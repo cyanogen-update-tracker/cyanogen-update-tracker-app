@@ -87,9 +87,16 @@ public class GcmRegistrationIntentService extends IntentService {
             // on a third-party server, this ensures that we'll attempt the update at a later time.
             setRegistrationFailed(true);
         }
-        //Release the wakelock received when the app has been upgraded.
-        if(intent.getExtras().getBoolean("package_upgrade",false)) {
-            GcmPackageReplacedReceiver.completeWakefulIntent(intent);
+        //Release the wake lock received when the app has been upgraded.
+        if(intent.getExtras() != null) {
+            try {
+                if (intent.getExtras().getBoolean("package_upgrade", false)) {
+                    GcmPackageReplacedReceiver.completeWakefulIntent(intent);
+                }
+            }
+            catch (Exception ignored) {
+
+            }
         }
     }
 
@@ -127,8 +134,8 @@ public class GcmRegistrationIntentService extends IntentService {
                 jsonResponse.put(JSON_PROPERTY_DEVICE_TYPE, deviceType);
                 jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
                 jsonResponse.put(JSON_PROPERTY_OLD_DEVICE_ID, oldRegistrationId);
-                URL url = new URL(SERVER_URL);
-//                URL url = new URL(TEST_SERVER_URL);
+//                URL url = new URL(SERVER_URL);
+                URL url = new URL(TEST_SERVER_URL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestProperty("User-Agent", ServerConnector.USER_AGENT);
