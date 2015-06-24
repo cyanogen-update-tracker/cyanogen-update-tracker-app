@@ -1,6 +1,5 @@
 package com.arjanvlek.cyngnotainfo.views;
 
-import android.app.ProgressDialog;
 import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -135,7 +134,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void fillUpdateSettings(ArrayList<String> updateTypes) {
         Spinner spinner = (Spinner) findViewById(R.id.updateTypeSpinner);
-        String currentUpdateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_TYPE, getApplicationContext());
+        String currentUpdateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_METHOD, getApplicationContext());
         Integer position = null;
         if (currentUpdateType != null) {
             for (int i = 0; i < updateTypes.size(); i++) {
@@ -168,7 +167,7 @@ public class SettingsActivity extends AppCompatActivity {
                     updateTypeName = MainActivity.INCREMENTAL_UPDATE;
                 }
                 //Set update type in preferences.
-                MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_TYPE, updateTypeName, getApplicationContext());
+                MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_METHOD, updateTypeName, getApplicationContext());
                 //Set update link
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()), updateTypeName);
@@ -245,7 +244,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private boolean checkIfSettingsAreValid() {
-        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_TYPE, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getApplicationContext());
+        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getApplicationContext());
     }
 
     private void showSettingsWarning() {

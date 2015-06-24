@@ -78,7 +78,7 @@ public class TutorialStep3Fragment extends Fragment {
 
     private void fillUpdateSettings(ArrayList<String> updateTypes) {
         Spinner spinner = (Spinner) rootView.findViewById(R.id.updateTypeSpinner);
-        String currentUpdateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_TYPE, getActivity().getApplicationContext());
+        String currentUpdateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_METHOD, getActivity().getApplicationContext());
         Integer position = 1;
         Resources resources = getResources();
         ArrayList<String> localizedUpdateTypes = new ArrayList<>();
@@ -104,7 +104,7 @@ public class TutorialStep3Fragment extends Fragment {
                     updateTypeName = MainActivity.INCREMENTAL_UPDATE;
                 }
                 //Set update type in preferences.
-                MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_TYPE, updateTypeName, getActivity().getApplicationContext());
+                MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_METHOD, updateTypeName, getActivity().getApplicationContext());
                 //Set update link
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()), updateTypeName);

@@ -78,7 +78,7 @@ public class UpdateInformationFragment extends Fragment {
     }
 
     private boolean checkIfSettingsAreValid() {
-        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
+        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
     }
 
     @Override

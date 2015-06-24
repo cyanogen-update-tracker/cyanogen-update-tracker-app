@@ -1,6 +1,5 @@
 package com.arjanvlek.cyngnotainfo;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -12,7 +11,7 @@ import android.support.v4.app.NotificationCompat;
 
 import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
-import com.google.android.gms.gcm.GoogleCloudMessaging;
+import com.google.android.gms.gcm.GcmListenerService;
 
 import java.util.List;
 import java.util.Locale;
@@ -20,48 +19,16 @@ import java.util.Locale;
 /**
  * Part of Cyanogen Update Tracker.
  */
-public class GcmIntentService extends IntentService {
+public class GcmNotificationListenerService extends com.google.android.gms.gcm.GcmListenerService {
     public static int NEW_UPDATE_NOTIFICATION_ID = 1;
     public static int NEW_DEVICE_NOTIFICATION_ID = 2;
     public static int MAINTENANCE_NOTIFICATION_ID = 3;
 
-    public GcmIntentService() {
-        super("GcmIntentService");
-    }
 
     @Override
-    protected void onHandleIntent(Intent intent) {
-        Bundle extras = intent.getExtras();
-        GoogleCloudMessaging gcm = GoogleCloudMessaging.getInstance(this);
-        // The getMessageType() intent parameter must be the intent you received
-        // in your BroadcastReceiver.
-        String messageType = gcm.getMessageType(intent);
+    public void onMessageReceived(String from, Bundle data) {
+        sendNotification(data);
 
-        if (!extras.isEmpty()) {  // has effect of unparcelling Bundle
-            /*
-             * Filter messages based on message type. Since it is likely that GCM
-             * will be extended in the future with new message types, just ignore
-             * any message types you're not interested in, or that you don't
-             * recognize.
-             */
-            if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_SEND_ERROR.equals(messageType)) {
-                extras.putBoolean("Send error", true);
-                sendNotification(extras);
-            } else if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_DELETED.equals(messageType)) {
-                extras.putBoolean("deleted", true);
-                sendNotification(extras);
-                // If it's a regular GCM message, do some work.
-            } else if (GoogleCloudMessaging.
-                    MESSAGE_TYPE_MESSAGE.equals(messageType)) {
-
-                // Post notification of received message.
-                sendNotification(extras);
-            }
-        }
-        // Release the wake lock provided by the WakefulBroadcastReceiver.
-        GcmBroadcastReceiver.completeWakefulIntent(intent);
     }
 
     // Put the message into a notification and post it.

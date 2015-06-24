@@ -94,7 +94,7 @@
                 android:enabled="true"
                 android:textColor="@color/lightBlue"
                 android:textAppearance="?android:textAppearanceSmall"
-                android:onClick="showUpdateInstructions"
+                android:onClick="UpdateInstructions"
                 style="?android:attr/buttonBarButtonStyle"
                 />
 
