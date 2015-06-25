@@ -57,6 +57,7 @@ public class UpdateInformationFragment extends Fragment {
     private DateTime refreshedDate;
     private boolean isFetched;
 
+    //Test devices for ads.
     public static final String ADS_TEST_DEVICE_ID_OWN_DEVICE = "7CFCF353FBC40363065F03DFAC7D7EE4";
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_1 = "D9323E61DFC727F573528DB3820F7215";
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_2 = "D732F1B481C5274B05D707AC197B33B2";
@@ -122,6 +123,10 @@ public class UpdateInformationFragment extends Fragment {
         }
     }
 
+    /**
+     * Checks if the device has an active network connection
+     * @return Returns if the device has an active network connection
+     */
     private boolean checkNetworkConnection() {
         ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
@@ -141,6 +146,9 @@ public class UpdateInformationFragment extends Fragment {
 
     }
 
+    /**
+     * Called when re-opening the activity
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -160,12 +168,23 @@ public class UpdateInformationFragment extends Fragment {
         }
     }
 
+    /**
+     * Called before the activity is destroyed
+     */
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (adView != null) {
+            adView.destroy();
+        }
+    }
+
     private void getUpdateInformation() {
         new GetUpdateInformation().execute();
     }
 
     private void displayUpdateInformation() {
-        if (cyanogenOTAUpdate != null) {
+        if (cyanogenOTAUpdate != null && isAdded()) {
             generateCircleDiagram();
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
             if(cyanogenOTAUpdate.getName() != null &&!cyanogenOTAUpdate.getName().equals("null")) {
@@ -367,16 +386,5 @@ public class UpdateInformationFragment extends Fragment {
     }
 
 
-
-    /**
-     * Called before the activity is destroyed
-     */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (adView != null) {
-            adView.destroy();
-        }
-    }
 
 }
