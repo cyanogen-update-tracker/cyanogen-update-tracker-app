@@ -10,6 +10,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -24,14 +25,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
+    private ProgressBar progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        progressBar = (ProgressBar)findViewById(R.id.settingsProgressBar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            try {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            catch (Exception ignored) {
+
+            }
             new DeviceDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
+            try {
+                progressBar.setVisibility(View.VISIBLE);
+            }
+            catch (Exception ignored) {
+
+            }
             new DeviceDataFetcher().execute();
         }
     }
@@ -83,8 +98,20 @@ public class SettingsActivity extends AppCompatActivity {
                 MainActivity.savePreference(MainActivity.PROPERTY_DEVICE_TYPE, deviceTypeName, getApplicationContext());
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    try {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                    catch (Exception ignored) {
+
+                    }
                     new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceTypeName);
                 } else {
+                    try {
+                        progressBar.setVisibility(View.VISIBLE);
+                    }
+                    catch (Exception ignored) {
+
+                    }
                     new UpdateDataFetcher().execute(deviceTypeName);
                 }
             }
@@ -161,6 +188,12 @@ public class SettingsActivity extends AppCompatActivity {
 
                 String localizedUpdateTypeName = (String) adapterView.getItemAtPosition(i);
                 String updateTypeName;
+                try {
+                    progressBar.setVisibility(View.VISIBLE);
+                }
+                catch(Exception ignored) {
+
+                }
                 if (localizedUpdateTypeName.equals(getString(R.string.full_update))) {
                     updateTypeName = MainActivity.FULL_UPDATE;
                 } else {
@@ -240,11 +273,19 @@ public class SettingsActivity extends AppCompatActivity {
                 }
             }
             MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_LINK, updateLink, getApplicationContext());
+            try {
+                if (progressBar != null) {
+                    progressBar.setVisibility(View.GONE);
+                }
+            }
+            catch (Exception ignored) {
+
+            }
         }
     }
 
     private boolean checkIfSettingsAreValid() {
-        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getApplicationContext());
+        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getApplicationContext()) && !progressBar.isShown();
     }
 
     private void showSettingsWarning() {

@@ -63,7 +63,7 @@
     <string name="about">About this app</string>
     <string name="settings_saved">Your settings are automatically saved.</string>
     <string name="settings_explanation_update_methods">Explanation of update methods</string>]
-    <string name="settings_entered_incorrectly">One or more settings are entered incorrectly.</string>
+    <string name="settings_entered_incorrectly">Please wait while your settings are being saved.</string>
     <!--Device names -->
     <string name="oneplus_one">OnePlus One</string>
     <string name="yu_yureka">Yu Yureka</string>

@@ -15,6 +15,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,12 +44,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateInformationFragment extends Fragment {
+public class UpdateInformationFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private String deviceName;
     private String updateLink;
 
     private CyanogenOTAUpdate cyanogenOTAUpdate;
+    private SwipeRefreshLayout refreshLayout;
 
     private RelativeLayout rootView;
     private AdView adView;
@@ -85,6 +87,11 @@ public class UpdateInformationFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
+        if(refreshLayout == null && rootView != null) {
+            refreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.updateInformationRefreshLayout);
+            refreshLayout.setOnRefreshListener(this);
+            refreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
+        }
         if (!isFetched && checkIfSettingsAreValid()) {
             if (checkNetworkConnection()) {
                 getUpdateInformation();
@@ -290,6 +297,11 @@ public class UpdateInformationFragment extends Fragment {
 
     }
 
+    @Override
+    public void onRefresh() {
+        getUpdateInformation();
+    }
+
 
     /**
      * Async task class to get json by making HTTP call
@@ -299,20 +311,23 @@ public class UpdateInformationFragment extends Fragment {
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            progressDialog = new ProgressDialog(getActivity());
-            progressDialog.setMessage(getString(R.string.fetching_update));
-            progressDialog.setTitle(getString(R.string.loading));
-            progressDialog.setIndeterminate(false);
-            progressDialog.setCancelable(true);
-            progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                @Override
-                public void onCancel(DialogInterface dialog) {
-                    cancel(true);
+            if(refreshLayout != null) {
+                if (!refreshLayout.isRefreshing()) {
+                    progressDialog = new ProgressDialog(getActivity());
+                    progressDialog.setMessage(getString(R.string.fetching_update));
+                    progressDialog.setTitle(getString(R.string.loading));
+                    progressDialog.setIndeterminate(false);
+                    progressDialog.setCancelable(true);
+                    progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
+                        @Override
+                        public void onCancel(DialogInterface dialog) {
+                            cancel(true);
+                        }
+                    });
+                    progressDialog.show();
+
                 }
-            });
-            progressDialog.show();
-
-
+            }
         }
 
         private String fetchResult(String updateUrl) {
@@ -376,6 +391,11 @@ public class UpdateInformationFragment extends Fragment {
             displayUpdateInformation();
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
+            }
+            if(refreshLayout != null) {
+                if(refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
+                }
             }
         }
     }

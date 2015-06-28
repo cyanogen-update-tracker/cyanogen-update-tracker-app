@@ -5,6 +5,12 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     tools:context=".MainActivity$PlaceholderFragment">
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/updateInformationRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        android:layout_above="@+id/update_information_banner_field">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -150,6 +156,7 @@
 
     </RelativeLayout>
 </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
     <com.google.android.gms.ads.AdView
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"

@@ -89,6 +89,8 @@
 
         android:background="#ff88e0ff" />
 
+
+
     <TextView
         android:id="@+id/settingsSavedTextView"
         android:layout_width="wrap_content"
@@ -114,6 +116,14 @@
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
     </ScrollView>
+
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/settingsProgressBar"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_above="@+id/settingsSavedTextView"
+        android:layout_centerHorizontal="true" />
 
 
 </RelativeLayout>
