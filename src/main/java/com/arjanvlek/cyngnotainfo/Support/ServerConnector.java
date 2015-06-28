@@ -279,9 +279,14 @@ public class ServerConnector implements AsyncTaskResultHelper {
         DeviceTypeEntity oppoN1 = new DeviceTypeEntity();
         oppoN1.setId(3);
         oppoN1.setDeviceType("Oppo N1 Cyanogenmod Edition");
+        DeviceTypeEntity yuYuphoria = new DeviceTypeEntity();
+        yuYuphoria.setId(5); // The ID 4 is reserved for the Alcatel Onetouch Hero 2+
+        yuYuphoria.setDeviceType("Yu Yuphoria");
+
         offlineDeviceTypeEntities.add(onePlusOne);
         offlineDeviceTypeEntities.add(yuYureka);
         offlineDeviceTypeEntities.add(oppoN1);
+        offlineDeviceTypeEntities.add(yuYuphoria);
         return offlineDeviceTypeEntities;
     }
 
@@ -337,12 +342,26 @@ public class ServerConnector implements AsyncTaskResultHelper {
         N1IncrementalUpdate.setTracking_update_type_id(2);
         N1IncrementalUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=INCREMENTAL");
 
+        UpdateLinkEntity YuYuphoriaFullUpdate = new UpdateLinkEntity();
+        YuYuphoriaFullUpdate.setId(9); //The IDs 7 and 8 are reserved for the Alcatel Onetouch Hero 2+
+        YuYuphoriaFullUpdate.setTracking_device_type_id(5);
+        YuYuphoriaFullUpdate.setTracking_update_type_id(1);
+        YuYuphoriaFullUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=lettuce&type=STABLE");
+
+        UpdateLinkEntity YuYuphoriaIncrementalUpdate = new UpdateLinkEntity();
+        YuYuphoriaIncrementalUpdate.setId(10);
+        YuYuphoriaIncrementalUpdate.setTracking_device_type_id(5);
+        YuYuphoriaIncrementalUpdate.setTracking_update_type_id(2);
+        YuYuphoriaIncrementalUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=lettuce&type=INCREMENTAL");
+
         updateLinkEntities.add(OnePlusOneFullUpdate);
         updateLinkEntities.add(OnePlusOneIncrementalUpdate);
         updateLinkEntities.add(YuYurekaFullUpdate);
         updateLinkEntities.add(YuYurekaIncrementalUpdate);
         updateLinkEntities.add(N1FullUpdate);
         updateLinkEntities.add(N1IncrementalUpdate);
+        updateLinkEntities.add(YuYuphoriaFullUpdate);
+        updateLinkEntities.add(YuYuphoriaIncrementalUpdate);
 
         return updateLinkEntities;
 
