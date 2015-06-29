@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -116,7 +118,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 //Check if there was a server error during registration for push notifications.
                 checkIfRegistrationHasFailed();
                 //Check if app needs to re-register (like after device type change etc.)
-                if (!checkIfRegistrationIsValid(context)) {
+                if (!checkIfRegistrationIsValid(context) && checkNetworkConnection()) {
                     registerInBackground();
                 }
             }
@@ -299,6 +301,15 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return true;
     }
 
+    /**
+     * Checks if the device has an active network connection
+     * @return Returns if the device has an active network connection
+     */
+    private boolean checkNetworkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
+    }
 
     /**
      * Fetches the Google Cloud Messaging (GCM) preferences which are stored in a seperate file.
@@ -377,7 +388,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      */
     private void checkIfRegistrationHasFailed() {
         SharedPreferences preferences = getGCMPreferences();
-        if (preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false)) {
+        if (preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false) &&checkNetworkConnection()) {
             registerInBackground();
         }
     }
@@ -391,6 +402,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         editor.apply();
     }
 
+    public static void saveIntPreference(String key, int value, Context context) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putInt(key, value);
+        editor.apply();
+    }
+
     public static boolean checkPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.contains(key);
@@ -399,5 +417,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public static String getPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
+    }
+
+    public static int getIntPreference(String key, Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getInt(key, 0);
     }
 }

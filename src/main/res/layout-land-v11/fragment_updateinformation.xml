@@ -3,12 +3,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity$PlaceholderFragment">
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationNoConnectionBar"
+        android:visibility="gone"
+        android:background="@color/holo_red_dark"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationNoConnectionTextView"
+        android:textColor="@android:color/white"
+        android:text="@string/no_internet_connection"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:gravity="center"/>
+
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/updateInformationRefreshLayout"
+        android:layout_below="@id/updateInformationNoConnectionBar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-
-        android:layout_above="@+id/update_information_banner_field">
+        android:layout_height="match_parent">
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"

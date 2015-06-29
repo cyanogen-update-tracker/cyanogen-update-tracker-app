@@ -114,5 +114,7 @@
     <string name="title_section3">Update-methode</string>
     <string name="app_name_launcher">Updatetracker</string>
     <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
+    <string name="no_internet_connection">Geen internetverbinding.</string>
+    <string name="no_internet_connection_extra">Geen internetverbinding.\nGegevens zijn mogelijk verouderd.</string>
 
 </resources>

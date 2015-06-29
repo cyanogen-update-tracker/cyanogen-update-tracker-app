@@ -1,5 +1,6 @@
 package com.arjanvlek.cyngnotainfo.Support;
 
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.http.HttpEntity;
@@ -32,7 +33,7 @@ public class ServiceHandler {
      * @String - url to make request
      * @method - http request method
      */
-    public String makeServiceCall(String url, int method) {
+    public String makeServiceCall(String url, int method) throws IOException {
         return this.makeServiceCall(url, method, null);
     }
 
@@ -44,8 +45,7 @@ public class ServiceHandler {
      * @params - http request params
      */
     public String makeServiceCall(String url, int method,
-                                  List<NameValuePair> params) {
-        try {
+                                  List<NameValuePair> params) throws IOException {
             // http client
             DefaultHttpClient httpClient = new DefaultHttpClient();
             HttpEntity httpEntity = null;
@@ -78,9 +78,6 @@ public class ServiceHandler {
             }
             response = EntityUtils.toString(httpEntity);
 
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
 
         return response;
 

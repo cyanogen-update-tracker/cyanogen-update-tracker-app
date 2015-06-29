@@ -41,15 +41,21 @@ import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.arjanvlek.cyngnotainfo.MainActivity.checkPreference;
+import static com.arjanvlek.cyngnotainfo.MainActivity.getIntPreference;
+import static com.arjanvlek.cyngnotainfo.MainActivity.getPreference;
+import static com.arjanvlek.cyngnotainfo.MainActivity.saveIntPreference;
+import static com.arjanvlek.cyngnotainfo.MainActivity.savePreference;
 
 public class UpdateInformationFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private String deviceName;
     private String updateLink;
 
-    private CyanogenOTAUpdate cyanogenOTAUpdate;
     private SwipeRefreshLayout refreshLayout;
 
     private RelativeLayout rootView;
@@ -65,11 +71,18 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_2 = "D732F1B481C5274B05D707AC197B33B2";
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_3 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
 
+    //Offline cache properties
+    public static final String PROPERTY_OFFLINE_UPDATE_NAME = "offlineUpdateName";
+    public static final String PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE = "offlineUpdateDownloadSize";
+    public static final String PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME = "offlineServerUpdateTime";
+    public static final String PROPERTY_OFFLINE_UPDATE_DESCRIPTION = "offlineUpdateDescription";
+    public static final String PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE = "offlineUpdateRolloutPercentage";
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        deviceName = MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
-        updateLink = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
+        deviceName = getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
+        updateLink = getPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
 
     }
 
@@ -81,7 +94,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     }
 
     private boolean checkIfSettingsAreValid() {
-        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getActivity().getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
+        return checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()) && checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getActivity().getApplicationContext()) && checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
     }
 
     @Override
@@ -98,7 +111,14 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
-            } else {
+            }
+            else if(cacheIsAvailable()) {
+                getOfflineUpdateInformation();
+                showAds();
+                refreshedDate = DateTime.now();
+                isFetched = true;
+            }
+            else {
                 hideAds();
                 showNetworkError();
             }
@@ -168,7 +188,13 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 if (checkNetworkConnection()) {
                     getUpdateInformation();
                     refreshedDate = DateTime.now();
-                } else {
+                }
+                else if(cacheIsAvailable()) {
+                    getOfflineUpdateInformation();
+                    refreshedDate = DateTime.now();
+                }
+
+                else {
                     showNetworkError();
                 }
             }
@@ -190,9 +216,25 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         new GetUpdateInformation().execute();
     }
 
-    private void displayUpdateInformation() {
+    private void getOfflineUpdateInformation() {
+
+        displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false);
+    }
+
+    private CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate() {
+        CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
+        Context context = getActivity().getApplicationContext();
+        cyanogenOTAUpdate.setName(getPreference(PROPERTY_OFFLINE_UPDATE_NAME, context));
+        cyanogenOTAUpdate.setSize(getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, context));
+        cyanogenOTAUpdate.setDateUpdated(getPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, context));
+        cyanogenOTAUpdate.setDescription(getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, context));
+        cyanogenOTAUpdate.setRollOutPercentage(getIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, context));
+        return cyanogenOTAUpdate;
+    }
+
+    private void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online) {
         if (cyanogenOTAUpdate != null && isAdded()) {
-            generateCircleDiagram();
+            generateCircleDiagram(cyanogenOTAUpdate);
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
             if(cyanogenOTAUpdate.getName() != null &&!cyanogenOTAUpdate.getName().equals("null")) {
                 buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
@@ -209,16 +251,31 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
             updatedDataView.setText(dateUpdated);
 
+            View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
+            TextView noConnectionTextField = (TextView)rootView.findViewById(R.id.updateInformationNoConnectionTextView);
 
-            if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+            if(online) {
+                // Hide the "no connection" bar.
+                noConnectionBar.setVisibility(View.GONE);
+                noConnectionTextField.setVisibility(View.GONE);
+
+                if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+                    Button downloadButton = (Button) rootView.findViewById(R.id.downloadButton);
+                    downloadButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                        }
+                    });
+                    downloadButton.setEnabled(true);
+                }
+            }
+            else {
+                //Show the "no connection" bar.
+                noConnectionBar.setVisibility(View.VISIBLE);
+                noConnectionTextField.setVisibility(View.VISIBLE);
                 Button downloadButton = (Button) rootView.findViewById(R.id.downloadButton);
-                downloadButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                    }
-                });
-                downloadButton.setEnabled(true);
+                downloadButton.setEnabled(false);
             }
 
 
@@ -231,6 +288,22 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     startActivity(i);
                 }
             });
+
+            // Save preferences for offline viewing
+            Context context = getActivity().getApplicationContext();
+            savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName(), context);
+            saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage(), context);
+            saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize(), context);
+            savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated(), context);
+            savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription(), context);
+
+            // Hide the refreshing icon
+
+            if(refreshLayout != null) {
+                if(refreshLayout.isRefreshing()) {
+                    refreshLayout.setRefreshing(false);
+                }
+            }
         }
 
     }
@@ -253,7 +326,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         Toast.makeText(getActivity(), getString(R.string.downloading_in_background), Toast.LENGTH_LONG).show();
     }
 
-    private void generateCircleDiagram() {
+    private void generateCircleDiagram(CyanogenOTAUpdate cyanogenOTAUpdate) {
         if (isAdded()) {
             PieChart pieChartView = (PieChart) rootView.findViewById(R.id.rolloutPercentageDiagram);
             List<Entry> chartData = new ArrayList<>();
@@ -299,14 +372,22 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
-        getUpdateInformation();
+        if(checkNetworkConnection()) {
+            getUpdateInformation();
+        }
+        else if(cacheIsAvailable()) {
+            getOfflineUpdateInformation();
+        }
+        else {
+            showNetworkError();
+        }
     }
 
 
     /**
      * Async task class to get json by making HTTP call
      */
-    private class GetUpdateInformation extends AsyncTask<Void, Void, Void> {
+    private class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOTAUpdate> {
 
         @Override
         protected void onPreExecute() {
@@ -335,21 +416,20 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             ServiceHandler serviceHandler = new ServiceHandler();
             try {
                 return serviceHandler.makeServiceCall(updateUrl, ServiceHandler.GET);
-            } catch (Exception e) {
-                fetchResult(updateUrl);
+            } catch (IOException ignored) {
             }
             return null;
         }
 
         @Override
-        protected Void doInBackground(Void... arg0) {
+        protected CyanogenOTAUpdate doInBackground(Void... arg0) {
             // Creating service handler class instance
             String jsonStr;
             jsonStr = fetchResult(updateLink);
             if (jsonStr != null) {
                 try {
                     JSONObject object = new JSONObject(jsonStr);
-                    cyanogenOTAUpdate = new CyanogenOTAUpdate();
+                    CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
                     cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
                     cyanogenOTAUpdate.setIncremental(object.getString("incremental"));
                     cyanogenOTAUpdate.setRequiredIncremental(object.getBoolean("required_incremental"));
@@ -371,31 +451,46 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     cyanogenOTAUpdate.setDateCreated(object.getString("date_created"));
                     cyanogenOTAUpdate.setModel(object.getString("model"));
                     cyanogenOTAUpdate.setApiLevel(object.getInt("api_level"));
+                    return cyanogenOTAUpdate;
 
-                } catch (JSONException ignored) {
+                } catch (JSONException e) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
+                    if(cacheIsAvailable()) {
+                        return buildOfflineCyanogenOTAUpdate();
+                    }
+                    else {
+                        showNetworkError();
+                    }
                 }
 
             } else {
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                showNetworkError();
+                if(cacheIsAvailable()) {
+                    return buildOfflineCyanogenOTAUpdate();
+                }
+                else {
+                    showNetworkError();
+                }
 
             }
             return null;
         }
 
         @Override
-        protected void onPostExecute(Void result) {
+        protected void onPostExecute(CyanogenOTAUpdate result) {
             super.onPostExecute(result);
-            displayUpdateInformation();
+            if(checkNetworkConnection()) {
+                displayUpdateInformation(result, true);
+            }
+            else {
+                displayUpdateInformation(result, false);
+            }
             if (progressDialog.isShowing()) {
                 progressDialog.dismiss();
-            }
-            if(refreshLayout != null) {
-                if(refreshLayout.isRefreshing()) {
-                    refreshLayout.setRefreshing(false);
-                }
             }
         }
     }
@@ -405,6 +500,13 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         networkErrorFragment.show(getFragmentManager(), "NetworkError");
     }
 
-
+    private boolean cacheIsAvailable() {
+        Context context = getActivity().getApplicationContext();
+        return checkPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, context)
+                && checkPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, context)
+                && checkPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, context)
+                && checkPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, context)
+                && checkPreference(PROPERTY_OFFLINE_UPDATE_NAME, context);
+    }
 
 }

@@ -74,6 +74,8 @@
     <string name="app_requires_network_will_close">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
     <string name="exit">Exit</string>
     <string name="push_failure">Unable to connect to the app server. In order to receive notifications about new updates, please try launching the app again. </string>
+    <string name="no_internet_connection">No internet connection.</string>
+    <string name="no_internet_connection_extra">No Internet connection.\nSome data may be out-of-date.</string>
 
     <string-array name="update_types_array">
         <item>Full update package</item>
