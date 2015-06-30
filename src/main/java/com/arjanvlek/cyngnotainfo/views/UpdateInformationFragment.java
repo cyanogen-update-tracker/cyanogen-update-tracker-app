@@ -417,6 +417,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             try {
                 return serviceHandler.makeServiceCall(updateUrl, ServiceHandler.GET);
             } catch (IOException ignored) {
+                ignored.printStackTrace();
             }
             return null;
         }
@@ -426,10 +427,10 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             // Creating service handler class instance
             String jsonStr;
             jsonStr = fetchResult(updateLink);
+            CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
             if (jsonStr != null) {
                 try {
                     JSONObject object = new JSONObject(jsonStr);
-                    CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
                     cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
                     cyanogenOTAUpdate.setIncremental(object.getString("incremental"));
                     cyanogenOTAUpdate.setRequiredIncremental(object.getBoolean("required_incremental"));
@@ -457,11 +458,15 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    if(cacheIsAvailable()) {
-                        return buildOfflineCyanogenOTAUpdate();
+                    if(checkNetworkConnection()) {
+                        return cyanogenOTAUpdate;
                     }
                     else {
-                        showNetworkError();
+                        if (cacheIsAvailable()) {
+                            return buildOfflineCyanogenOTAUpdate();
+                        } else {
+                            showNetworkError();
+                        }
                     }
                 }
 

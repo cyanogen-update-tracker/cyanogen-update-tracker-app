@@ -134,8 +134,8 @@ public class GcmRegistrationIntentService extends IntentService {
                 jsonResponse.put(JSON_PROPERTY_DEVICE_TYPE, deviceType);
                 jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
                 jsonResponse.put(JSON_PROPERTY_OLD_DEVICE_ID, oldRegistrationId);
-//                URL url = new URL(SERVER_URL);
-                URL url = new URL(TEST_SERVER_URL);
+                URL url = new URL(SERVER_URL);
+//                URL url = new URL(TEST_SERVER_URL);
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestProperty("User-Agent", ServerConnector.USER_AGENT);
