@@ -203,6 +203,10 @@ public class ServerConnector implements AsyncTaskResultHelper {
     }
 
 
+    /**
+     * Fetches data from the App Server.
+     * @params String array with data type at position zero and optional device id at position 1 (for update information).
+     */
     private class fetchDataFromServer extends AsyncTask<String, Void, String[]> {
         public AsyncTaskResultHelper asyncTaskResultHelper = null;
 

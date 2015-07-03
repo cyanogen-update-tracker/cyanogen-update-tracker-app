@@ -14,8 +14,7 @@ public class GcmPackageReplacedReceiver extends WakefulBroadcastReceiver {
             Intent i = new Intent(context, GcmRegistrationIntentService.class);
             i.putExtra("package_upgrade", true);
             startWakefulService(context, i);
-        }
-        else {
+        } else {
             Intent i = new Intent(context, GcmRegistrationIntentService.class);
             i.putExtra("package_upgrade", true);
             startWakefulService(context, i);

@@ -92,7 +92,8 @@
     <string name="fetching_update_types">Bezig met ophalen van ondersteunde update-methoden van de server</string>
     <string name="settings_saved">Uw instellingen worden automatisch opgeslagen.</string>
     <string name="settings_explanation_update_methods">Toelichting op de update-methodes</string>
-    <string name="settings">Kies apparaat en update-methode</string>
+    <string name="settings">Instellingen</string>
+    <string name="help">Help</string>
     <string name="push_failure">Geen verbinding mogelijk met de app-server. Als u meldingen over nieuwe updates wilt ontvangen, kunt u de app het beste opnieuw starten.</string>
     <string name="notification_new_device">Nieuw apparaat beschikbaar! Updates voor de</string>
     <string name="notification_new_device_short">Open de app om dit apparaat te kiezen.</string>
@@ -116,5 +117,13 @@
     <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
     <string name="no_internet_connection">Geen internetverbinding.</string>
     <string name="no_internet_connection_extra">Geen internetverbinding.\nGegevens zijn mogelijk verouderd.</string>
+    <string name="help_how_works_app">Overzicht van de app:</string>
+    <string name="help_middle_stats">In het midden staan de statistieken, de downloadknop en een knop voor de installatie-handleiding.\n\nHieronder staan de downloadgrootte en de datum van laatste wijziging.</string>
+    <string name="help_bottom_description">Onderaan kun je de update-beschrijving openen. Deze is Engelstalig.\n\nRechtsbovenin staat het menu. Hier staan de instellingen en een Help-knop, waarmee je deze pagina opnieuw kunt openen.</string>
+    <string name="help_symbol_clock">Toont het tijdstip waarop de updatestatus voor het laatst op de server is gewijzigd.</string>
+    <string name="help_symbol_download">Toont de downloadgrootte van deze update.</string>
+    <string name="help_symbol_stats">Toont hoeveel procent gebruikers al toegang heeft tot deze update.</string>
+    <string name="help_used_symbols">Gebruikte symoblen:</string>
+    <string name="help_top_update">Bovenaan staat welke update momenteel wordt verspreid.</string>
 
 </resources>

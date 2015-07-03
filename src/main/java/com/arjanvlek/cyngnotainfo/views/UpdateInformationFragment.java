@@ -100,8 +100,8 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     @Override
     public void onStart() {
         super.onStart();
-        if(refreshLayout == null && rootView != null) {
-            refreshLayout = (SwipeRefreshLayout)rootView.findViewById(R.id.updateInformationRefreshLayout);
+        if (refreshLayout == null && rootView != null) {
+            refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
             refreshLayout.setOnRefreshListener(this);
             refreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
         }
@@ -111,14 +111,12 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
-            }
-            else if(cacheIsAvailable()) {
+            } else if (cacheIsAvailable()) {
                 getOfflineUpdateInformation();
                 showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
-            }
-            else {
+            } else {
                 hideAds();
                 showNetworkError();
             }
@@ -142,8 +140,17 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
                     .addKeyword("smartphone")
                     .addKeyword("tablet")
-                    .addKeyword("news apps")
                     .addKeyword("games")
+                    .addKeyword("android")
+                    .addKeyword("cyanogen")
+                    .addKeyword("cyanogenmod")
+                    .addKeyword("cyanogenos")
+                    .addKeyword("cyanogen os")
+                    .addKeyword("raspberrypi")
+                    .addKeyword("oneplus")
+                    .addKeyword("yu")
+                    .addKeyword("oppo")
+
                     .build();
 
             adView.loadAd(adRequest);
@@ -152,6 +159,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
     /**
      * Checks if the device has an active network connection
+     *
      * @return Returns if the device has an active network connection
      */
     private boolean checkNetworkConnection() {
@@ -188,13 +196,10 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 if (checkNetworkConnection()) {
                     getUpdateInformation();
                     refreshedDate = DateTime.now();
-                }
-                else if(cacheIsAvailable()) {
+                } else if (cacheIsAvailable()) {
                     getOfflineUpdateInformation();
                     refreshedDate = DateTime.now();
-                }
-
-                else {
+                } else {
                     showNetworkError();
                 }
             }
@@ -236,10 +241,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         if (cyanogenOTAUpdate != null && isAdded()) {
             generateCircleDiagram(cyanogenOTAUpdate);
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
-            if(cyanogenOTAUpdate.getName() != null &&!cyanogenOTAUpdate.getName().equals("null")) {
+            if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
                 buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
-            }
-            else {
+            } else {
                 buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.string_for) + " " + deviceName);
             }
 
@@ -252,9 +256,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             updatedDataView.setText(dateUpdated);
 
             View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
-            TextView noConnectionTextField = (TextView)rootView.findViewById(R.id.updateInformationNoConnectionTextView);
+            TextView noConnectionTextField = (TextView) rootView.findViewById(R.id.updateInformationNoConnectionTextView);
 
-            if(online) {
+            if (online) {
                 // Hide the "no connection" bar.
                 noConnectionBar.setVisibility(View.GONE);
                 noConnectionTextField.setVisibility(View.GONE);
@@ -269,8 +273,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     });
                     downloadButton.setEnabled(true);
                 }
-            }
-            else {
+            } else {
                 //Show the "no connection" bar.
                 noConnectionBar.setVisibility(View.VISIBLE);
                 noConnectionTextField.setVisibility(View.VISIBLE);
@@ -299,13 +302,12 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
             // Hide the refreshing icon
 
-            if(refreshLayout != null) {
-                if(refreshLayout.isRefreshing()) {
+            if (refreshLayout != null) {
+                if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);
                 }
             }
         }
-
     }
 
     private void downloadUpdate(String downloadUrl, String downloadName) {
@@ -372,13 +374,11 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
-        if(checkNetworkConnection()) {
+        if (checkNetworkConnection()) {
             getUpdateInformation();
-        }
-        else if(cacheIsAvailable()) {
+        } else if (cacheIsAvailable()) {
             getOfflineUpdateInformation();
-        }
-        else {
+        } else {
             showNetworkError();
         }
     }
@@ -392,7 +392,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(refreshLayout != null) {
+            if (refreshLayout != null) {
                 if (!refreshLayout.isRefreshing()) {
                     progressDialog = new ProgressDialog(getActivity());
                     progressDialog.setMessage(getString(R.string.fetching_update));
@@ -458,10 +458,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     if (progressDialog.isShowing()) {
                         progressDialog.dismiss();
                     }
-                    if(checkNetworkConnection()) {
+                    if (checkNetworkConnection()) {
                         return cyanogenOTAUpdate;
-                    }
-                    else {
+                    } else {
                         if (cacheIsAvailable()) {
                             return buildOfflineCyanogenOTAUpdate();
                         } else {
@@ -474,10 +473,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 if (progressDialog.isShowing()) {
                     progressDialog.dismiss();
                 }
-                if(cacheIsAvailable()) {
+                if (cacheIsAvailable()) {
                     return buildOfflineCyanogenOTAUpdate();
-                }
-                else {
+                } else {
                     showNetworkError();
                 }
 
@@ -488,10 +486,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         @Override
         protected void onPostExecute(CyanogenOTAUpdate result) {
             super.onPostExecute(result);
-            if(checkNetworkConnection()) {
+            if (checkNetworkConnection()) {
                 displayUpdateInformation(result, true);
-            }
-            else {
+            } else {
                 displayUpdateInformation(result, false);
             }
             if (progressDialog.isShowing()) {

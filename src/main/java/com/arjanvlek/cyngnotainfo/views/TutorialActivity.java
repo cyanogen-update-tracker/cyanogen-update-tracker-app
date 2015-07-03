@@ -19,7 +19,7 @@ import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.R;
 
 public class TutorialActivity extends AppCompatActivity {
-    private Fragment step3Fragment;
+    private Fragment step4Fragment;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -40,8 +40,7 @@ public class TutorialActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         try {
             super.onCreate(savedInstanceState);
-        }
-        catch (Exception ignored) {
+        } catch (Exception ignored) {
 
         }
         setContentView(R.layout.activity_tutorial);
@@ -63,10 +62,10 @@ public class TutorialActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
-                if (position == 2) {
-                    if (step3Fragment != null) {
-                        TutorialStep3Fragment tutorialStep3Fragment = (TutorialStep3Fragment) step3Fragment;
-                        tutorialStep3Fragment.fetchUpdateMethods();
+                if (position == 3) {
+                    if (step4Fragment != null) {
+                        TutorialStep4Fragment tutorialStep4Fragment = (TutorialStep4Fragment) step4Fragment;
+                        tutorialStep4Fragment.fetchUpdateMethods();
                     }
                 }
             }
@@ -98,8 +97,8 @@ public class TutorialActivity extends AppCompatActivity {
 
         @Override
         public int getCount() {
-            // Show 4 total pages.
-            return 4;
+            // Show 5 total pages.
+            return 5;
         }
 
         @Override
@@ -120,12 +119,12 @@ public class TutorialActivity extends AppCompatActivity {
     }
 
     public Fragment newInstance(int sectionNumber) {
-        if (sectionNumber == 2) {
-            return new TutorialStep2Fragment();
-        }
         if (sectionNumber == 3) {
-            step3Fragment = new TutorialStep3Fragment();
-            return step3Fragment;
+            return new TutorialStep3Fragment();
+        }
+        if (sectionNumber == 4) {
+            step4Fragment = new TutorialStep4Fragment();
+            return step4Fragment;
         }
         Bundle args = new Bundle();
         args.putInt("section_number", sectionNumber);
@@ -154,8 +153,10 @@ public class TutorialActivity extends AppCompatActivity {
             int sectionNumber = args.getInt(ARG_SECTION_NUMBER, 0);
             if (sectionNumber == 1) {
                 return inflater.inflate(R.layout.fragment_tutorial_1, container, false);
-            } else if (sectionNumber == 4) {
-                return inflater.inflate(R.layout.fragment_tutorial_4, container, false);
+            } else if (sectionNumber == 2) {
+                return inflater.inflate(R.layout.fragment_tutorial_2, container, false);
+            } else if (sectionNumber == 5) {
+                return inflater.inflate(R.layout.fragment_tutorial_5, container, false);
 
             }
             return null;

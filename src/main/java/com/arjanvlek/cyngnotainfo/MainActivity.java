@@ -9,6 +9,7 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.arjanvlek.cyngnotainfo.views.HelpActivity;
 import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
@@ -71,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         updateMethod = getPreference(PROPERTY_UPDATE_METHOD, getApplicationContext());
         updateLink = getPreference(PROPERTY_UPDATE_LINK, getApplicationContext());
 
-
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
         if (actionBar != null) {
@@ -95,10 +96,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
-            // Create a tab with text corresponding to the page title defined by
-            // the adapter. Also specify this Activity object, which implements
-            // the TabListener interface, as the callback (listener) for when
-            // this tab is selected.
+            // Creates a tab with text corresponding to the page title defined by
+            // the adapter.
             //noinspection ConstantConditions
             actionBar.addTab(
                     actionBar.newTab()
@@ -113,11 +112,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         super.onStart();
         // Check if Google Play services are installed on the device
         if (checkPlayServices()) {
-            // Check if a device has been set
+            // Check if a device, update method and update link have been set
             if (checkIfDeviceIsSet()) {
                 //Check if there was a server error during registration for push notifications.
                 checkIfRegistrationHasFailed();
-                //Check if app needs to re-register (like after device type change etc.)
+                //Check if app needs to re-register for push notifications (like after device type change etc.)
                 if (!checkIfRegistrationIsValid(context) && checkNetworkConnection()) {
                     registerInBackground();
                 }
@@ -129,19 +128,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         }
     }
 
-    /**
-     * Called when returning to the activity
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        checkPlayServices();
-    }
-
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
+        // Inflate the menu; this adds items to the action bar.
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         return true;
@@ -150,18 +139,20 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+        // Handles action bar item clicks.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             Settings();
             return true;
         }
         if (id == R.id.action_about) {
             About();
+            return true;
+        }
+
+        if (id == R.id.action_help) {
+            Help();
             return true;
         }
 
@@ -246,7 +237,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     }
 
-
     /**
      * Opens the settings page.
      */
@@ -268,6 +258,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      */
     private void About() {
         Intent i = new Intent(this, AboutActivity.class);
+        startActivity(i);
+    }
+
+    /**
+     * Opens the help page.
+     */
+    private void Help() {
+        Intent i = new Intent(this, HelpActivity.class);
         startActivity(i);
     }
 
@@ -312,7 +310,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     /**
-     * Fetches the Google Cloud Messaging (GCM) preferences which are stored in a seperate file.
+     * Fetches the Google Cloud Messaging (GCM) preferences which are stored in a separate file.
      * @return Shared Preferences with GCM preferences.
      */
     private SharedPreferences getGCMPreferences() {
@@ -346,18 +344,17 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     /**
-     * Checks if a device has been set.
+     * Checks if a device, update method and update link have been set.
      * @return if the application is set up properly.
      */
     private boolean checkIfDeviceIsSet() {
         return checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_METHOD), getApplicationContext()) && checkPreference((MainActivity.PROPERTY_UPDATE_LINK), getApplicationContext());
     }
 
-
     /**
-     * Checks if the registration for push notifications is still valid.
+     * Checks if the registration token for push notifications is still valid.
      * @param context Application context
-     * @return returns if the registration is valid.
+     * @return returns if the registration token is valid.
      */
     private boolean checkIfRegistrationIsValid(Context context) {
         final SharedPreferences prefs = getGCMPreferences();
@@ -365,13 +362,17 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         String registeredDeviceType = prefs.getString(PROPERTY_GCM_DEVICE_TYPE, "");
         String registeredUpdateType = prefs.getString(PROPERTY_GCM_UPDATE_TYPE, "");
 
+        // The registration token is empty, so not valid.
         if (registrationId != null && registrationId.isEmpty()) {
             return false;
         }
 
+        // The registration token does not match the registered device type.
         if (!deviceType.equals(registeredDeviceType)) {
             return false;
         }
+
+        // The registration token does not match the registered update method.
         if (!updateMethod.equals(registeredUpdateType)) {
             return false;
         }
@@ -388,13 +389,18 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      */
     private void checkIfRegistrationHasFailed() {
         SharedPreferences preferences = getGCMPreferences();
-        if (preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false) &&checkNetworkConnection()) {
+        if (preferences.getBoolean(PROPERTY_REGISTRATION_ERROR, false) && checkNetworkConnection()) {
             registerInBackground();
         }
     }
 
 
-
+    /**
+     * Saves a String preference to SharedPreferences.
+     * @param key Preference Key
+     * @param value Preference Value
+     * @param context Application Context (getApplicationContext())
+     */
     public static void savePreference(String key, String value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -402,6 +408,12 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         editor.apply();
     }
 
+    /**
+     * Saves an Integer preference to SharedPreferences.
+     * @param key Preference Key
+     * @param value Preference Value
+     * @param context Application Context (getApplicationContext())
+     */
     public static void saveIntPreference(String key, int value, Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
@@ -409,16 +421,34 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         editor.apply();
     }
 
+    /**
+     * Checks if a certain preference is set.
+     * @param key Preference Key
+     * @param context Application Context (getApplicationContext())
+     * @return Returns if the given key is stored in the preferences.
+     */
     public static boolean checkPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.contains(key);
     }
 
+    /**
+     * Get a String preference from Shared Preferences
+     * @param key Preference Key
+     * @param context Application Context (getApplicationContext())
+     * @return Preference Value
+     */
     public static String getPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
     }
 
+    /**
+     * Get a String preference from Shared Preferences
+     * @param key Preference Key
+     * @param context Application Context (getApplicationContext())
+     * @return Preference Value
+     */
     public static int getIntPreference(String key, Context context) {
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getInt(key, 0);

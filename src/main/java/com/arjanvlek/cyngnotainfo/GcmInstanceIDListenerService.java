@@ -11,12 +11,10 @@ public class GcmInstanceIDListenerService extends InstanceIDListenerService {
      * the previous token had been compromised. This call is initiated by the
      * InstanceID provider.
      */
-    // [START refresh_token]
     @Override
     public void onTokenRefresh() {
-        // Fetch updated Instance ID token and notify our app's server of any changes (if applicable).
+        // Fetch updated Instance ID token and notify our app's server of any changes.
         Intent intent = new Intent(this, GcmRegistrationIntentService.class);
         startService(intent);
     }
-    // [END refresh_token]
 }

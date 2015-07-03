@@ -1,5 +1,6 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.arjanvlek.cyngnotainfo.views.TutorialActivity$PlaceholderFragment">
 
@@ -17,56 +18,142 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content">
 
-            <ImageView
-                android:id="@+id/startTut1Image1"
-                android:layout_width="300dp"
-                android:layout_height="100dp"
-                android:layout_centerHorizontal="true"
-                android:contentDescription="@string/tutorial_image_description"
-                android:src="@drawable/icon_phone" />
-
             <TextView
-                android:id="@+id/tut1Text1"
+                android:id="@+id/tut1bText1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/startTut1Image1"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
-                android:text="@string/introduction_choose_device"
+                android:text="@string/help_how_works_app"
                 android:textAppearance="?android:textAppearanceLarge"
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <Spinner
-                android:id="@+id/deviceTypeSpinner"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:layout_centerHorizontal="true"
-                android:layout_below="@id/tut1Text1" />
-
             <TextView
-                android:id="@+id/tut1Text2"
+                android:id="@+id/tut1bText2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/deviceTypeSpinner"
-                android:layout_marginTop="10dp"
-                android:layout_marginStart="20dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginEnd="20dp"
-                android:layout_marginRight="20dp"
-                android:text="@string/introduction_page_2"
+                android:layout_below="@+id/tut1bText1"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/help_top_update"
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/material_blue_grey_800" />
 
+            <TextView
+                android:id="@+id/tut1bText2a"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tut1bText2"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/help_middle_stats"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/material_blue_grey_800" />
 
+            <TextView
+                android:id="@+id/tut1bText2b"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tut1bText2a"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:text="@string/help_bottom_description"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/material_blue_grey_800" />
+
+            <TextView
+                android:id="@+id/tut1bText2c"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/tut1bText2b"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="20dp"
+                android:text="@string/help_used_symbols"
+                android:textAppearance="?android:textAppearanceLarge"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/tut1bText3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tut1bText2c"
+                android:layout_centerHorizontal="true"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@+id/tut1bCircleDiagramImage"
+                android:layout_toRightOf="@+id/tut1bCircleDiagramImage"
+                android:text="@string/help_symbol_stats"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/material_blue_grey_800" />
+
+            <TextView
+                android:id="@+id/tut1bText4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tut1bText3"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@+id/tut1bdownloadSizeImage"
+                android:layout_toRightOf="@+id/tut1bdownloadSizeImage"
+                android:gravity="center_vertical"
+                android:minHeight="50dp"
+                android:text="@string/help_symbol_download"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/material_blue_grey_800" />
+
+            <TextView
+                android:id="@+id/tut1bText5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/tut1bText4"
+                android:layout_marginLeft="10dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginTop="20dp"
+                android:layout_toEndOf="@+id/tut1btimeImage"
+                android:layout_toRightOf="@+id/tut1btimeImage"
+                android:text="@string/help_symbol_clock"
+                android:textAppearance="?android:textAppearanceMedium"
+                android:textColor="@color/material_blue_grey_800" />
+
+            <ImageView
+                android:id="@+id/tut1bCircleDiagramImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_above="@+id/tut1bText4"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/tut1bText3"
+                android:contentDescription="@string/icon"
+                android:src="@drawable/icon_rollout_diagram" />
+
+            <ImageView
+                android:id="@+id/tut1bdownloadSizeImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/tut1bText4"
+                android:contentDescription="@string/icon"
+                android:src="@drawable/icon_download_size" />
+
+            <ImageView
+                android:id="@+id/tut1btimeImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="5dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentStart="true"
+                android:layout_alignTop="@+id/tut1bText5"
+                android:contentDescription="@string/icon"
+                android:src="@drawable/icon_last_updated" />
 
         </RelativeLayout>
     </ScrollView>
-
 </RelativeLayout>

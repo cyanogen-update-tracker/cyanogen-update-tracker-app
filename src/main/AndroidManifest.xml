@@ -82,7 +82,16 @@
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.arjanvlek.cyngnotainfo.MainActivity" />>
+                android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
+        </activity>
+        <activity
+            android:name=".views.HelpActivity"
+            android:label="@string/help"
+            android:parentActivityName=".MainActivity"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
         </activity>
 
         <!-- Advertisements -->
@@ -91,7 +100,7 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
             android:theme="@android:style/Theme.Translucent" />
 
-        <!-- Push notifications services and receiver -->
+        <!-- Push notifications services and receiver, Package updated receiver -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"

@@ -33,10 +33,9 @@ public class GcmRegistrationIntentService extends IntentService {
     private String deviceType;
     private String updateType;
 
-
+    //Settings properties
     public static final String PROPERTY_DEVICE_TYPE = "device_type";
     public static final String PROPERTY_UPDATE_TYPE = "update_type";
-
     public static final String PROPERTY_GCM_REG_ID = "registration_id";
     public static final String PROPERTY_GCM_DEVICE_TYPE = "gcm_device_type";
     public static final String PROPERTY_GCM_UPDATE_TYPE = "gcm_update_type";
@@ -50,7 +49,6 @@ public class GcmRegistrationIntentService extends IntentService {
     private static final String JSON_PROPERTY_OLD_DEVICE_ID = "old_device_id";
 
     //Server URLs
-
     public static String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
     public static String TEST_SERVER_URL = "http://192.168.178.14/register-device.php";
 
@@ -67,22 +65,14 @@ public class GcmRegistrationIntentService extends IntentService {
             // In the (unlikely) event that multiple refresh operations occur simultaneously,
             // ensure that they are processed sequentially.
             synchronized (TAG) {
-                // [START register_for_gcm]
                 // Initially this call goes out to the network to retrieve the token, subsequent calls
                 // are local.
-                // [START get_token]
                 InstanceID instanceID = InstanceID.getInstance(this);
-                token = instanceID.getToken(getString(R.string.gcm_defaultSenderId),
-                        GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
-                // [END get_token]
-                Log.i(TAG, "GCM Registration Token: " + token);
+                token = instanceID.getToken(getString(R.string.gcm_defaultSenderId), GoogleCloudMessaging.INSTANCE_ID_SCOPE, null);
 
                 sendRegistrationToServer(token);
-
-                // [END register_for_gcm]
             }
         } catch (Exception e) {
-            Log.d(TAG, "Failed to complete token refresh", e);
             // If an exception happens while fetching the new token or updating our registration data
             // on a third-party server, this ensures that we'll attempt the update at a later time.
             setRegistrationFailed(true);
@@ -93,8 +83,7 @@ public class GcmRegistrationIntentService extends IntentService {
                 if (intent.getExtras().getBoolean("package_upgrade", false)) {
                     GcmPackageReplacedReceiver.completeWakefulIntent(intent);
                 }
-            }
-            catch (Exception ignored) {
+            } catch (Exception ignored) {
 
             }
         }
@@ -103,8 +92,7 @@ public class GcmRegistrationIntentService extends IntentService {
     /**
      * Persist registration to third-party servers.
      * <p/>
-     * Modify this method to associate the user's GCM registration token with any server-side account
-     * maintained by your application.
+     * This code connects to <a href="arjan1995.raspctl.com">arjan1995.raspctl.com</a> to store the device registration.
      *
      * @param token The new token.
      */
@@ -115,9 +103,11 @@ public class GcmRegistrationIntentService extends IntentService {
         } else {
             new RegisterIdToBackend().execute(token, getCurrentRegistrationId());
         }
-        // Add custom implementation, as needed.
     }
 
+    /**
+     * Registers a GCM Registration Token to the app's server.
+     */
     private class RegisterIdToBackend extends AsyncTask<String, Integer, String> {
 
         @Override
@@ -180,6 +170,10 @@ public class GcmRegistrationIntentService extends IntentService {
         }
     }
 
+    /**
+     * Sets a flag that this device needs to be re-registered for push notifications at a later stage.
+     * @param failed Returns if GCM Registration has failed.
+     */
     private void setRegistrationFailed(boolean failed) {
         SharedPreferences preferences = getGCMPreferences();
         SharedPreferences.Editor editor = preferences.edit();
@@ -187,12 +181,10 @@ public class GcmRegistrationIntentService extends IntentService {
         if (failed) {
             try {
                 Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
-            }
-            catch (Exception e) {
+            } catch (Exception e) {
                 try {
                     Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
-                }
-                catch(Exception ignored) {
+                } catch(Exception ignored) {
 
                 }
             }
@@ -200,6 +192,10 @@ public class GcmRegistrationIntentService extends IntentService {
         editor.apply();
     }
 
+    /**
+     * Returns the current device registration token, used for push notifications.
+     * @return GCM Registration Token.
+     */
     private String getCurrentRegistrationId() {
         final SharedPreferences prefs = getGCMPreferences();
         String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
@@ -209,13 +205,21 @@ public class GcmRegistrationIntentService extends IntentService {
         return registrationId;
     }
 
+    /**
+     * Returns the special section of settings that contains the notification settings.
+     * @return GCM Shared Preferences.
+     */
     private SharedPreferences getGCMPreferences() {
         return getSharedPreferences(MainActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
     }
 
 
-
+    /**
+     * Converts an InputStream (e.g. from HttpUrlConnection) to a normal String.
+     * @param in InputStream that will be converted
+     * @return String with the same text as in the InputStream.
+     */
     private String inputStreamToString(InputStream in) {
         BufferedReader reader = new BufferedReader(new InputStreamReader(in));
         StringBuilder out = new StringBuilder();

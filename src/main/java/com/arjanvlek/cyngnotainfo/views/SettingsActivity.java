@@ -1,6 +1,9 @@
 package com.arjanvlek.cyngnotainfo.views;
 
+import android.content.Context;
 import android.content.res.Resources;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -31,26 +34,40 @@ public class SettingsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
-        progressBar = (ProgressBar)findViewById(R.id.settingsProgressBar);
+        progressBar = (ProgressBar) findViewById(R.id.settingsProgressBar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             try {
                 progressBar.setVisibility(View.VISIBLE);
-            }
-            catch (Exception ignored) {
+            } catch (Exception ignored) {
 
             }
             new DeviceDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         } else {
             try {
                 progressBar.setVisibility(View.VISIBLE);
-            }
-            catch (Exception ignored) {
+            } catch (Exception ignored) {
 
+            }
+            if (!checkNetworkConnection()) {
+                findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
+                findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.VISIBLE);
             }
             new DeviceDataFetcher().execute();
         }
     }
 
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (!checkNetworkConnection()) {
+            findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
+            findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.settingsNoConnectionBar).setVisibility(View.GONE);
+            findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.GONE);
+        }
+    }
 
     private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<DeviceTypeEntity>> {
 
@@ -60,7 +77,6 @@ public class SettingsActivity extends AppCompatActivity {
             return serverConnector.getDeviceTypeEntities();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public void onPostExecute(List<DeviceTypeEntity> deviceTypeEntities) {
             fillDeviceSettings(deviceTypeEntities);
@@ -100,16 +116,14 @@ public class SettingsActivity extends AppCompatActivity {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     try {
                         progressBar.setVisibility(View.VISIBLE);
-                    }
-                    catch (Exception ignored) {
+                    } catch (Exception ignored) {
 
                     }
                     new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceTypeName);
                 } else {
                     try {
                         progressBar.setVisibility(View.VISIBLE);
-                    }
-                    catch (Exception ignored) {
+                    } catch (Exception ignored) {
 
                     }
                     new UpdateDataFetcher().execute(deviceTypeName);
@@ -190,8 +204,7 @@ public class SettingsActivity extends AppCompatActivity {
                 String updateTypeName;
                 try {
                     progressBar.setVisibility(View.VISIBLE);
-                }
-                catch(Exception ignored) {
+                } catch (Exception ignored) {
 
                 }
                 if (localizedUpdateTypeName.equals(getString(R.string.full_update))) {
@@ -277,8 +290,7 @@ public class SettingsActivity extends AppCompatActivity {
                 if (progressBar != null) {
                     progressBar.setVisibility(View.GONE);
                 }
-            }
-            catch (Exception ignored) {
+            } catch (Exception ignored) {
 
             }
         }
@@ -316,5 +328,16 @@ public class SettingsActivity extends AppCompatActivity {
                 }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Checks if the device has an active network connection
+     *
+     * @return Returns if the device has an active network connection
+     */
+    private boolean checkNetworkConnection() {
+        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
+        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
 }
