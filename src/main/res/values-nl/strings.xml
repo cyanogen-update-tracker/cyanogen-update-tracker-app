@@ -85,7 +85,7 @@
     <string name="about_description">Een app om Cyanogen OS-updates te volgen.</string>
     <string name="rate_app">Beoordeel op Google Play</string>
     <string name="version">Versie:</string>
-    <string name="about_story">Deze app is gemaakt door Arjan Vlek, een IT-student uit Zoetermeer.\n\nDeze app is geïnspireerd door een website (<a href="http://www.cyanogen-ota-bacon.somee.com">klik</a>) die momenteel ongeveer hetzelfde biedt. Deze app probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\nIn de toekomst zal uw apparaat automatisch worden gedetecteerd.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
+    <string name="about_story">Deze app is gemaakt door Arjan Vlek, een IT-student uit Zoetermeer.\n\nDeze app is geïnspireerd door een website (<a href="http://www.cyanogen-ota-bacon.somee.com">klik</a>) die momenteel ongeveer hetzelfde biedt. Deze app probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
     <string name="fetching_device_types">Bezig met ophalen van ondersteunde apparaten vanaf de server</string>
     <string name="saving_settings">Uw instellingen worden opgeslagen…</string>
     <string name="title_activity_settings">Instellingen</string>

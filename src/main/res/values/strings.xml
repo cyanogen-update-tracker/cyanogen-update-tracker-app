@@ -142,7 +142,7 @@
     <string name="version">Version:</string>
     <string name="rate_app">Rate on Google Play</string>
     <string name="about_description">An app to track Cyanogen OS updates.</string>
-    <string name="about_story">This app is written by Arjan Vlek, an IT-interested guy living in Zoetermeer, The Netherlands.\n\nThis app is inspired by a website (<a href="http://www.cyanogen-ota-bacon.somee.com">click</a>), which provides similar functionality. This app aims to be more user-friendly and to offer more features.\n\nIn the future, your device will be detected automatically. \n\nIf you like my app, please rate it on Google play now:</string>
+    <string name="about_story">This app is written by Arjan Vlek, an IT-interested guy living in Zoetermeer, The Netherlands.\n\nThis app is inspired by a website (<a href="http://www.cyanogen-ota-bacon.somee.com">click</a>), which provides similar functionality. This app aims to be more user-friendly and to offer more features.\n\nIf you like my app, please rate it on Google play now:</string>
 
     <string name="update_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
     <string name="device_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
