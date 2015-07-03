@@ -19,7 +19,7 @@ android {
     buildTypes {
         release {
             minifyEnabled true
-            shrinkResources true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -37,6 +37,7 @@ dependencies {
     compile 'com.android.support:support-v4:22.2.0'
     //Date and time library
     compile 'joda-time:joda-time:2.7'
+    compile 'org.joda:joda-convert:1.7'
     //Chart library
     compile 'com.github.PhilJay:MPAndroidChart:v2.1.0'
     //Google Play Services libraries
