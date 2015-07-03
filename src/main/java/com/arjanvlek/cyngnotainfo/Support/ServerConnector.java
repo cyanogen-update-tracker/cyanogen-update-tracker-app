@@ -218,17 +218,17 @@ public class ServerConnector implements AsyncTaskResultHelper {
             try {
                 switch (type) {
                     case "device":
-//                        requestUrl = new URL(SERVER_URL + DEVICE_TYPE_URL);
-                        requestUrl = new URL(TEST_SERVER_URL + DEVICE_TYPE_URL);
+                        requestUrl = new URL(SERVER_URL + DEVICE_TYPE_URL);
+//                        requestUrl = new URL(TEST_SERVER_URL + DEVICE_TYPE_URL);
                         break;
                     case "update":
                         String deviceId = types[1];
-//                        requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
-                        requestUrl = new URL(TEST_SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
+                        requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
+//                        requestUrl = new URL(TEST_SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
                         break;
                     case "update_link":
-//                        requestUrl = new URL(SERVER_URL + UPDATE_LINK_URL);
-                        requestUrl = new URL(TEST_SERVER_URL + UPDATE_LINK_URL);
+                        requestUrl = new URL(SERVER_URL + UPDATE_LINK_URL);
+//                        requestUrl = new URL(TEST_SERVER_URL + UPDATE_LINK_URL);
                         break;
                     default:
                         return null;
