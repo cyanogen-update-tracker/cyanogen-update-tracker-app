@@ -455,8 +455,10 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     return cyanogenOTAUpdate;
 
                 } catch (JSONException e) {
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
+                    if(progressDialog != null) {
+                        if (progressDialog.isShowing()) {
+                            progressDialog.dismiss();
+                        }
                     }
                     if (checkNetworkConnection()) {
                         return cyanogenOTAUpdate;
@@ -470,8 +472,10 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 }
 
             } else {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
+                if(progressDialog != null) {
+                    if (progressDialog.isShowing()) {
+                        progressDialog.dismiss();
+                    }
                 }
                 if (cacheIsAvailable()) {
                     return buildOfflineCyanogenOTAUpdate();
@@ -491,8 +495,10 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             } else {
                 displayUpdateInformation(result, false);
             }
-            if (progressDialog.isShowing()) {
-                progressDialog.dismiss();
+            if(progressDialog != null) {
+                if (progressDialog.isShowing()) {
+                    progressDialog.dismiss();
+                }
             }
         }
     }
