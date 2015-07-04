@@ -61,6 +61,8 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     private RelativeLayout rootView;
     private AdView adView;
 
+    private ConnectivityManager connectivityManager;
+
     private DateTime refreshedDate;
     private boolean isFetched;
 
@@ -80,6 +82,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         deviceName = getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
         updateLink = getPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
 
@@ -162,7 +165,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
      * @return Returns if the device has an active network connection
      */
     private boolean checkNetworkConnection() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
         return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
     }
@@ -428,7 +430,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     cyanogenOTAUpdate.setPublished(object.getBoolean("published"));
                     cyanogenOTAUpdate.setDateCreated(object.getString("date_created"));
                     cyanogenOTAUpdate.setModel(object.getString("model"));
-                    cyanogenOTAUpdate.setApiLevel(object.getInt("api_level"));
                     return cyanogenOTAUpdate;
 
                 } catch (JSONException e) {
