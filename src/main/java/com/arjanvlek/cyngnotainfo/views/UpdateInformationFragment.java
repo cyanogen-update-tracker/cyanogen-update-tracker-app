@@ -218,7 +218,11 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     }
 
     private void getUpdateInformation() {
-        new GetUpdateInformation().execute();
+        try {
+            new GetUpdateInformation().execute();
+        } catch (Exception ignored) {
+
+        }
     }
 
     private void getOfflineUpdateInformation() {
