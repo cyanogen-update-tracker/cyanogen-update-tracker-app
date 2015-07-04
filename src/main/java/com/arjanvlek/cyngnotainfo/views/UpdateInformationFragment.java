@@ -61,7 +61,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     private RelativeLayout rootView;
     private AdView adView;
 
-    private ProgressDialog progressDialog;
     private DateTime refreshedDate;
     private boolean isFetched;
 
@@ -218,11 +217,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     }
 
     private void getUpdateInformation() {
-        try {
-            new GetUpdateInformation().execute();
-        } catch (Exception ignored) {
-
-        }
+        new GetUpdateInformation().execute();
     }
 
     private void getOfflineUpdateInformation() {
@@ -393,28 +388,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
      */
     private class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOTAUpdate> {
 
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            if (refreshLayout != null) {
-                if (!refreshLayout.isRefreshing()) {
-                    progressDialog = new ProgressDialog(getActivity());
-                    progressDialog.setMessage(getString(R.string.fetching_update));
-                    progressDialog.setTitle(getString(R.string.loading));
-                    progressDialog.setIndeterminate(false);
-                    progressDialog.setCancelable(true);
-                    progressDialog.setOnCancelListener(new DialogInterface.OnCancelListener() {
-                        @Override
-                        public void onCancel(DialogInterface dialog) {
-                            cancel(true);
-                        }
-                    });
-                    progressDialog.show();
-
-                }
-            }
-        }
-
         private String fetchResult(String updateUrl) {
 
             ServiceHandler serviceHandler = new ServiceHandler();
@@ -459,11 +432,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                     return cyanogenOTAUpdate;
 
                 } catch (JSONException e) {
-                    if(progressDialog != null) {
-                        if (progressDialog.isShowing()) {
-                            progressDialog.dismiss();
-                        }
-                    }
                     if (checkNetworkConnection()) {
                         return cyanogenOTAUpdate;
                     } else {
@@ -476,11 +444,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 }
 
             } else {
-                if(progressDialog != null) {
-                    if (progressDialog.isShowing()) {
-                        progressDialog.dismiss();
-                    }
-                }
                 if (cacheIsAvailable()) {
                     return buildOfflineCyanogenOTAUpdate();
                 } else {
@@ -498,11 +461,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 displayUpdateInformation(result, true);
             } else {
                 displayUpdateInformation(result, false);
-            }
-            if(progressDialog != null) {
-                if (progressDialog.isShowing()) {
-                    progressDialog.dismiss();
-                }
             }
         }
     }
