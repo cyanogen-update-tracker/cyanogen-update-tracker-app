@@ -13,8 +13,8 @@ android {
         applicationId "com.arjanvlek.cyngnotainfo"
         minSdkVersion 9
         targetSdkVersion 22
-        versionCode 7
-        versionName "1.2.0"
+        versionCode 8
+        versionName "1.2.1"
     }
     buildTypes {
         release {

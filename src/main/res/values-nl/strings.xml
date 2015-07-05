@@ -6,12 +6,9 @@
     <string name="choose_device_type">Apparaat</string>
     <string name="choose_update_type">Update-methode</string>
     <string name="download">Downloaden</string>
-    <string name="download_size_header">Downloadgrootte:</string>
     <string name="downloader_description">Cyanogen OS-update</string>
     <string name="available_update_header">De meest recente systeemupdate is:</string>
     <string name="install">Installatiehandleiding</string>
-    <string name="last_changed_on_server_header">Laatste wijziging op de server:</string>
-    <string name="roll_out_percentage_header">% van alle apparaten heeft deze systeemupdate ontvangen.</string>
     <string name="description_stats_chart">Plaatje met statistieken van de verspreiding van de update</string>
     <string name="title_activity_update_installation_instructions">Installatiehandleiding</string>
     <string name="title_section1">Update-informatie</string>
@@ -22,31 +19,16 @@
     <string name="app_requires_network_will_close">Kan geen update-informatie van de server ophalen. Zorg ervoor dat je een werkende internetverbinding hebt. De app zal nu afsluiten.</string>
     <string name="downloading_in_background">De update zal op de achtergrond worden gedownload…</string>
     <string name="exit">Afsluiten</string>
-    <string name="fetching_update">Bezig met ophalen van update-informatie van de server</string>
-    <string name="loading">Laden</string>
     <string name="today">Vandaag</string>
     <string name="yesterday">Gisteren</string>
-    <string name="oneplus_one">OnePlus One</string>
-    <string name="oppo_n1">Oppo N1 Cyanogenmod-editie</string>
     <string name="string_for">voor</string>
-    <string name="yu_yureka">Yu Yureka</string>
     <string name="megabyte">MB</string>
     <string name="update">Update</string>
     <string name="incremental_update">Incrementele update</string>
     <string name="full_update">Volledige update</string>
     <string name="update_details">Beschrijving van de update</string>
-    <string name="difference_incremental_stable">Verschil tussen een incrementele en een volledige update</string>
     <string name="explanation_incremental_stable">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen.\n\nEen volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je apparaat.</string>
-    <string-array name="update_types_array">
-        <item>Volledig updatebestand</item>
-        <item>Incrementeel updatebestand</item>
-    </string-array>
 
-    <string-array name="device_names_array">
-    <item>OnePlus One</item>
-    <item>YU Yureka</item>
-    <item>Oppo N1 CM-Editie</item>
-    </string-array>
     <string name="not_updated">Nog geen update ontvangen</string>
     <string name="updated">Update ontvangen&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
     <string name="close">Sluiten</string>
@@ -72,9 +54,7 @@
     <string name="tutorial_step5_rate_app">- Als u deze app geweldig vindt, geef hem dan 5 sterren op Google Play!</string>
     <string name="tutorial_step5_settings_app">- Ga naar Instellingen, Over de telefoon en bekijk de Cyanogen OS-versie</string>
     <string name="device_information_amount_of_memory">Hoeveelheid geheugen:</string>
-    <string name="device_information_battery">Capaciteit van de accu:</string>
     <string name="device_information_cpu_frequency">Frequentie van de processor:</string>
-    <string name="device_information_gpu">Grafische processor:</string>
     <string name="device_information_image_description">Plaatje van uw apparaat</string>
     <string name="device_information_os_version">Systeemversie</string>
     <string name="device_information_serial_number">Serienummer</string>
@@ -86,10 +66,7 @@
     <string name="rate_app">Beoordeel op Google Play</string>
     <string name="version">Versie:</string>
     <string name="about_story">Deze app is gemaakt door Arjan Vlek, een IT-student uit Zoetermeer.\n\nDeze app is geïnspireerd door een website (<a href="http://www.cyanogen-ota-bacon.somee.com">klik</a>) die momenteel ongeveer hetzelfde biedt. Deze app probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
-    <string name="fetching_device_types">Bezig met ophalen van ondersteunde apparaten vanaf de server</string>
-    <string name="saving_settings">Uw instellingen worden opgeslagen…</string>
     <string name="title_activity_settings">Instellingen</string>
-    <string name="fetching_update_types">Bezig met ophalen van ondersteunde update-methoden van de server</string>
     <string name="settings_saved">Uw instellingen worden automatisch opgeslagen.</string>
     <string name="settings_explanation_update_methods">Toelichting op de update-methodes</string>
     <string name="settings">Instellingen</string>
@@ -116,7 +93,6 @@
     <string name="app_name_launcher">Updatetracker</string>
     <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
     <string name="no_internet_connection">Geen internetverbinding.</string>
-    <string name="no_internet_connection_extra">Geen internetverbinding.\nGegevens zijn mogelijk verouderd.</string>
     <string name="help_how_works_app">Overzicht van de app:</string>
     <string name="help_middle_stats">In het midden staan de statistieken, de downloadknop en een knop voor de installatie-handleiding.\n\nHieronder staan de downloadgrootte en de datum van laatste wijziging.</string>
     <string name="help_bottom_description">Onderaan kun je de update-beschrijving openen. Deze is Engelstalig.\n\nRechtsbovenin staat het menu. Hier staan de instellingen en een Help-knop, waarmee je deze pagina opnieuw kunt openen.</string>

@@ -2,7 +2,6 @@ package com.arjanvlek.cyngnotainfo;
 
 import android.content.Context;
 import android.content.Intent;
-import android.os.Build;
 import android.support.v4.content.WakefulBroadcastReceiver;
 
 public class GcmPackageReplacedReceiver extends WakefulBroadcastReceiver {
