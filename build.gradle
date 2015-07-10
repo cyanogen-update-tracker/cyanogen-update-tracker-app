@@ -43,4 +43,6 @@ dependencies {
     //Google Play Services libraries
     compile 'com.google.android.gms:play-services-ads:7.5.0'
     compile 'com.google.android.gms:play-services-gcm:7.5.0'
+    //Testing framework
+    compile 'com.jayway.android.robotium:robotium-solo:5.4.1'
 }
