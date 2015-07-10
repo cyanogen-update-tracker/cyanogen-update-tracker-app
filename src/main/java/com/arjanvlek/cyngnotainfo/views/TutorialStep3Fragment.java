@@ -19,10 +19,6 @@ import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Arjan on 9-6-2015. Part of Cyanogen Update Tracker.
- */
-@SuppressWarnings("DefaultFileTemplate")
 public class TutorialStep3Fragment extends Fragment {
     private View rootView;
     private SettingsManager settingsManager;

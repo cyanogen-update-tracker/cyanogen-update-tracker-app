@@ -18,7 +18,6 @@ import com.arjanvlek.cyngnotainfo.R;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-
 public class DeviceInformationFragment extends Fragment {
     private RelativeLayout rootView;
     private AdView adView;
