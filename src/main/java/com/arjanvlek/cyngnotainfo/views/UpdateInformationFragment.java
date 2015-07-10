@@ -26,7 +26,7 @@ import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
-import com.arjanvlek.cyngnotainfo.Support.ServiceHandler;
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
@@ -36,10 +36,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.joda.time.DateTime;
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -236,7 +232,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         return cyanogenOTAUpdate;
     }
 
-    private void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online) {
+    public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online) {
         if (cyanogenOTAUpdate != null && isAdded()) {
             generateCircleDiagram(cyanogenOTAUpdate);
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
@@ -388,59 +384,14 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
      */
     private class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOTAUpdate> {
 
-        private String fetchResult(String updateUrl) {
-
-            ServiceHandler serviceHandler = new ServiceHandler();
-            try {
-                return serviceHandler.makeServiceCall(updateUrl, ServiceHandler.GET);
-            } catch (IOException ignored) {
-                ignored.printStackTrace();
-            }
-            return null;
-        }
 
         @Override
         protected CyanogenOTAUpdate doInBackground(Void... arg0) {
-            // Creating service handler class instance
-            String jsonStr;
-            jsonStr = fetchResult(updateLink);
-            CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
-            if (jsonStr != null) {
-                try {
-                    JSONObject object = new JSONObject(jsonStr);
-                    cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
-                    cyanogenOTAUpdate.setIncremental(object.getString("incremental"));
-                    cyanogenOTAUpdate.setRequiredIncremental(object.getBoolean("required_incremental"));
-                    cyanogenOTAUpdate.setSize(object.getInt("size"));
-                    cyanogenOTAUpdate.setBuildNumber(object.getString("build_number"));
-                    cyanogenOTAUpdate.setIncrementalParent(object.getString("incremental_parent"));
-                    cyanogenOTAUpdate.setDownloadUrl(object.getString("download_url"));
-                    cyanogenOTAUpdate.setFileName(object.getString("filename"));
-                    cyanogenOTAUpdate.setSha1Sum(object.getString("sha1sum"));
-                    cyanogenOTAUpdate.setType(object.getString("type"));
-                    cyanogenOTAUpdate.setDescription(object.getString("description"));
-                    cyanogenOTAUpdate.setDateCreatedUnix(object.getString("date_created_unix"));
-                    cyanogenOTAUpdate.setRollOutPercentage(object.getInt("rollout_percentage"));
-                    cyanogenOTAUpdate.setKey(object.getString("key"));
-                    cyanogenOTAUpdate.setPath(object.getString("path"));
-                    cyanogenOTAUpdate.setName(object.getString("name"));
-                    cyanogenOTAUpdate.setMd5Sum(object.getString("md5sum"));
-                    cyanogenOTAUpdate.setPublished(object.getBoolean("published"));
-                    cyanogenOTAUpdate.setDateCreated(object.getString("date_created"));
-                    cyanogenOTAUpdate.setModel(object.getString("model"));
-                    return cyanogenOTAUpdate;
+            ServerConnector serverConnector = new ServerConnector();
 
-                } catch (JSONException e) {
-                    if (checkNetworkConnection()) {
-                        return cyanogenOTAUpdate;
-                    } else {
-                        if (cacheIsAvailable()) {
-                            return buildOfflineCyanogenOTAUpdate();
-                        } else {
-                            showNetworkError();
-                        }
-                    }
-                }
+            CyanogenOTAUpdate cyanogenOTAUpdate = serverConnector.fetchCyanogenOtaUpdate(updateLink);
+            if (cyanogenOTAUpdate != null) {
+                return cyanogenOTAUpdate;
 
             } else {
                 if (cacheIsAvailable()) {
@@ -448,7 +399,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 } else {
                     showNetworkError();
                 }
-
             }
             return null;
         }
@@ -470,12 +420,16 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     }
 
     private boolean cacheIsAvailable() {
-        Context context = getActivity().getApplicationContext();
-        return checkPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, context)
-                && checkPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, context)
-                && checkPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, context)
-                && checkPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, context)
-                && checkPreference(PROPERTY_OFFLINE_UPDATE_NAME, context);
+        try {
+            Context context = getActivity().getApplicationContext();
+            return checkPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, context)
+                    && checkPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, context)
+                    && checkPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, context)
+                    && checkPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, context)
+                    && checkPreference(PROPERTY_OFFLINE_UPDATE_NAME, context);
+        } catch(Exception ignored) {
+            return false;
+        }
     }
 
 }
