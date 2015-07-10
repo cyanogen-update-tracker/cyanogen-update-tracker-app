@@ -10,6 +10,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
@@ -57,8 +58,9 @@ public class GcmRegistrationIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        deviceType = MainActivity.getPreference(PROPERTY_DEVICE_TYPE, getApplicationContext());
-        updateType = MainActivity.getPreference(PROPERTY_UPDATE_TYPE, getApplicationContext());
+        SettingsManager settingsManager = new SettingsManager(getApplicationContext());
+        deviceType = settingsManager.getPreference(PROPERTY_DEVICE_TYPE);
+        updateType = settingsManager.getPreference(PROPERTY_UPDATE_TYPE);
 
         try {
             // In the (unlikely) event that multiple refresh operations occur simultaneously,

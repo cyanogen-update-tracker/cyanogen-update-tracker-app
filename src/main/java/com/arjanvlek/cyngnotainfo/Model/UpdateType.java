@@ -1,10 +1,6 @@
 package com.arjanvlek.cyngnotainfo.Model;
 
-/**
- * Created by Arjan on 31-5-2015. Part of Cyanogen Update Tracker.
- */
-@SuppressWarnings("DefaultFileTemplate")
-public class UpdateTypeEntity {
+public class UpdateType {
     private long id;
     private String updateType;
 

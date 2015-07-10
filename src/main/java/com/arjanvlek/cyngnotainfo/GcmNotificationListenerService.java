@@ -9,7 +9,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
-import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
+import com.arjanvlek.cyngnotainfo.Model.DeviceType;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.util.List;
@@ -154,10 +154,10 @@ public class GcmNotificationListenerService extends com.google.android.gms.gcm.G
         }
         String deviceName = null;
         ServerConnector serverConnector = new ServerConnector();
-        List<DeviceTypeEntity> deviceTypeEntityList = serverConnector.getDeviceTypeEntities();
-        for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntityList) {
-            if (deviceTypeEntity.getId() == deviceIdLong) {
-                deviceName = deviceTypeEntity.getDeviceType();
+        List<DeviceType> deviceTypeList = serverConnector.getDeviceTypeEntities();
+        for (DeviceType deviceType : deviceTypeList) {
+            if (deviceType.getId() == deviceIdLong) {
+                deviceName = deviceType.getDeviceType();
             }
         }
         return deviceName;

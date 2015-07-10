@@ -1,9 +1,6 @@
 package com.arjanvlek.cyngnotainfo.views;
 
-import android.content.Context;
 import android.content.res.Resources;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -17,11 +14,12 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.arjanvlek.cyngnotainfo.MainActivity;
-import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
-import com.arjanvlek.cyngnotainfo.Model.UpdateLinkEntity;
-import com.arjanvlek.cyngnotainfo.Model.UpdateTypeEntity;
+import com.arjanvlek.cyngnotainfo.Model.DeviceType;
+import com.arjanvlek.cyngnotainfo.Model.UpdateLink;
+import com.arjanvlek.cyngnotainfo.Model.UpdateType;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.util.ArrayList;
@@ -29,11 +27,15 @@ import java.util.List;
 
 public class SettingsActivity extends AppCompatActivity {
     private ProgressBar progressBar;
+    private SettingsManager settingsManager;
+    private NetworkConnectionManager networkConnectionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
+        settingsManager = new SettingsManager(getApplicationContext());
+        networkConnectionManager = new NetworkConnectionManager(getApplicationContext());
         progressBar = (ProgressBar) findViewById(R.id.settingsProgressBar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             try {
@@ -48,7 +50,7 @@ public class SettingsActivity extends AppCompatActivity {
             } catch (Exception ignored) {
 
             }
-            if (!checkNetworkConnection()) {
+            if (!networkConnectionManager.checkNetworkConnection()) {
                 findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
                 findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.VISIBLE);
             }
@@ -60,7 +62,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     public void onResume() {
         super.onResume();
-        if (!checkNetworkConnection()) {
+        if (!networkConnectionManager.checkNetworkConnection()) {
             findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
             findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.VISIBLE);
         } else {
@@ -69,30 +71,30 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<DeviceTypeEntity>> {
+    private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<DeviceType>> {
 
         @Override
-        public List<DeviceTypeEntity> doInBackground(Void... voids) {
+        public List<DeviceType> doInBackground(Void... voids) {
             ServerConnector serverConnector = new ServerConnector();
             return serverConnector.getDeviceTypeEntities();
         }
 
         @Override
-        public void onPostExecute(List<DeviceTypeEntity> deviceTypeEntities) {
+        public void onPostExecute(List<DeviceType> deviceTypeEntities) {
             fillDeviceSettings(deviceTypeEntities);
 
         }
     }
 
-    private void fillDeviceSettings(List<DeviceTypeEntity> deviceTypeEntities) {
+    private void fillDeviceSettings(List<DeviceType> deviceTypeEntities) {
         Spinner spinner = (Spinner) findViewById(R.id.deviceTypeSpinner);
         List<String> deviceNames = new ArrayList<>();
 
-        for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
-            deviceNames.add(deviceTypeEntity.getDeviceType());
+        for (DeviceType deviceType : deviceTypeEntities) {
+            deviceNames.add(deviceType.getDeviceType());
         }
         Integer position = null;
-        String currentDeviceName = MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext());
+        String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE);
         if (currentDeviceName != null) {
             for (int i = 0; i < deviceNames.size(); i++) {
                 if (deviceNames.get(i).equals(currentDeviceName)) {
@@ -111,7 +113,7 @@ public class SettingsActivity extends AppCompatActivity {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String deviceTypeName = (String) adapterView.getItemAtPosition(i);
-                MainActivity.savePreference(MainActivity.PROPERTY_DEVICE_TYPE, deviceTypeName, getApplicationContext());
+                settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE_TYPE, deviceTypeName);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     try {
@@ -140,17 +142,17 @@ public class SettingsActivity extends AppCompatActivity {
 
     }
 
-    private class UpdateDataFetcher extends AsyncTask<String, Integer, List<UpdateTypeEntity>> {
+    private class UpdateDataFetcher extends AsyncTask<String, Integer, List<UpdateType>> {
 
         @Override
-        public List<UpdateTypeEntity> doInBackground(String... strings) {
+        public List<UpdateType> doInBackground(String... strings) {
             String deviceName = strings[0];
             String deviceId = null;
             ServerConnector serverConnector = new ServerConnector();
-            List<DeviceTypeEntity> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
-            for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
-                if (deviceTypeEntity.getDeviceType().equals(deviceName)) {
-                    deviceId = String.valueOf(deviceTypeEntity.getId());
+            List<DeviceType> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
+            for (DeviceType deviceType : deviceTypeEntities) {
+                if (deviceType.getDeviceType().equals(deviceName)) {
+                    deviceId = String.valueOf(deviceType.getId());
                 }
             }
             if (deviceId != null) {
@@ -162,11 +164,11 @@ public class SettingsActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onPostExecute(List<UpdateTypeEntity> updateTypeEntities) {
+        public void onPostExecute(List<UpdateType> updateTypeEntities) {
             ArrayList<String> updateTypeNames = new ArrayList<>();
 
-            for (UpdateTypeEntity updateTypeEntity : updateTypeEntities) {
-                updateTypeNames.add(updateTypeEntity.getUpdateType());
+            for (UpdateType updateType : updateTypeEntities) {
+                updateTypeNames.add(updateType.getUpdateType());
             }
             fillUpdateSettings(updateTypeNames);
 
@@ -175,7 +177,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     private void fillUpdateSettings(ArrayList<String> updateTypes) {
         Spinner spinner = (Spinner) findViewById(R.id.updateTypeSpinner);
-        String currentUpdateType = MainActivity.getPreference(MainActivity.PROPERTY_UPDATE_METHOD, getApplicationContext());
+        String currentUpdateType = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
         Integer position = null;
         if (currentUpdateType != null) {
             for (int i = 0; i < updateTypes.size(); i++) {
@@ -208,17 +210,17 @@ public class SettingsActivity extends AppCompatActivity {
 
                 }
                 if (localizedUpdateTypeName.equals(getString(R.string.full_update))) {
-                    updateTypeName = MainActivity.FULL_UPDATE;
+                    updateTypeName = SettingsManager.FULL_UPDATE;
                 } else {
-                    updateTypeName = MainActivity.INCREMENTAL_UPDATE;
+                    updateTypeName = SettingsManager.INCREMENTAL_UPDATE;
                 }
                 //Set update type in preferences.
-                MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_METHOD, updateTypeName, getApplicationContext());
+                settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateTypeName);
                 //Set update link
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()), updateTypeName);
+                    new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE), updateTypeName);
                 } else {
-                    new UpdateLinkSetter().execute(MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()), updateTypeName);
+                    new UpdateLinkSetter().execute(settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE), updateTypeName);
                 }
 
             }
@@ -237,10 +239,10 @@ public class SettingsActivity extends AppCompatActivity {
             String updateType = strings[1];
             String deviceId = null;
             ServerConnector serverConnector = new ServerConnector();
-            List<DeviceTypeEntity> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
-            for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
-                if (deviceTypeEntity.getDeviceType().equals(deviceName)) {
-                    deviceId = String.valueOf(deviceTypeEntity.getId());
+            List<DeviceType> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
+            for (DeviceType deviceType : deviceTypeEntities) {
+                if (deviceType.getDeviceType().equals(deviceName)) {
+                    deviceId = String.valueOf(deviceType.getId());
                 }
             }
             if (deviceId != null) {
@@ -260,32 +262,32 @@ public class SettingsActivity extends AppCompatActivity {
         @SuppressWarnings("unchecked")
         @Override
         public void onPostExecute(List<Object> entities) {
-            ArrayList<DeviceTypeEntity> deviceTypeEntities = (ArrayList<DeviceTypeEntity>) entities.get(0);
-            ArrayList<UpdateTypeEntity> updateTypeEntities = (ArrayList<UpdateTypeEntity>) entities.get(1);
-            ArrayList<UpdateLinkEntity> updateLinkEntities = (ArrayList<UpdateLinkEntity>) entities.get(2);
+            ArrayList<DeviceType> deviceTypeEntities = (ArrayList<DeviceType>) entities.get(0);
+            ArrayList<UpdateType> updateTypeEntities = (ArrayList<UpdateType>) entities.get(1);
+            ArrayList<UpdateLink> updateLinkEntities = (ArrayList<UpdateLink>) entities.get(2);
             String deviceName = (String) entities.get(3);
             String updateType = (String) entities.get(4);
             Long deviceId = null;
             Long updateTypeId = null;
             String updateLink = null;
-            for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
-                if (deviceTypeEntity.getDeviceType().equals(deviceName)) {
-                    deviceId = deviceTypeEntity.getId();
+            for (DeviceType deviceType : deviceTypeEntities) {
+                if (deviceType.getDeviceType().equals(deviceName)) {
+                    deviceId = deviceType.getId();
                 }
             }
-            for (UpdateTypeEntity updateTypeEntity : updateTypeEntities) {
+            for (UpdateType updateTypeEntity : updateTypeEntities) {
                 if (updateTypeEntity.getUpdateType().equals(updateType)) {
                     updateTypeId = updateTypeEntity.getId();
                 }
             }
             if (deviceId != null && updateTypeId != null) {
-                for (UpdateLinkEntity updateLinkEntity : updateLinkEntities) {
+                for (UpdateLink updateLinkEntity : updateLinkEntities) {
                     if (updateLinkEntity.getTracking_device_type_id() == deviceId && updateLinkEntity.getTracking_update_type_id() == updateTypeId) {
                         updateLink = updateLinkEntity.getInformation_url();
                     }
                 }
             }
-            MainActivity.savePreference(MainActivity.PROPERTY_UPDATE_LINK, updateLink, getApplicationContext());
+            settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_LINK, updateLink);
             try {
                 if (progressBar != null) {
                     progressBar.setVisibility(View.GONE);
@@ -296,10 +298,6 @@ public class SettingsActivity extends AppCompatActivity {
         }
     }
 
-    private boolean checkIfSettingsAreValid() {
-        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getApplicationContext()) && !progressBar.isShown();
-    }
-
     private void showSettingsWarning() {
         Toast.makeText(this, getString(R.string.settings_entered_incorrectly), Toast.LENGTH_LONG).show();
     }
@@ -307,7 +305,7 @@ public class SettingsActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (checkIfSettingsAreValid()) {
+        if (settingsManager.checkIfSettingsAreValid() && !progressBar.isShown()) {
             NavUtils.navigateUpFromSameTask(this);
         } else {
             showSettingsWarning();
@@ -319,7 +317,7 @@ public class SettingsActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
-                if (checkIfSettingsAreValid()) {
+                if (settingsManager.checkIfSettingsAreValid() && !progressBar.isShown()) {
                     NavUtils.navigateUpFromSameTask(this);
                     return true;
                 } else {
@@ -330,14 +328,4 @@ public class SettingsActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    /**
-     * Checks if the device has an active network connection
-     *
-     * @return Returns if the device has an active network connection
-     */
-    private boolean checkNetworkConnection() {
-        ConnectivityManager connectivityManager = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    }
 }

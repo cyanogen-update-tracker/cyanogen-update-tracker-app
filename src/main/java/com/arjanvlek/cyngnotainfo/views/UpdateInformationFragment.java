@@ -4,8 +4,6 @@ import android.app.DownloadManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -22,10 +20,11 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.arjanvlek.cyngnotainfo.MainActivity;
+import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
@@ -39,12 +38,6 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.arjanvlek.cyngnotainfo.MainActivity.checkPreference;
-import static com.arjanvlek.cyngnotainfo.MainActivity.getIntPreference;
-import static com.arjanvlek.cyngnotainfo.MainActivity.getPreference;
-import static com.arjanvlek.cyngnotainfo.MainActivity.saveIntPreference;
-import static com.arjanvlek.cyngnotainfo.MainActivity.savePreference;
-
 public class UpdateInformationFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private String deviceName;
@@ -55,7 +48,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     private RelativeLayout rootView;
     private AdView adView;
 
-    private ConnectivityManager connectivityManager;
+    private SettingsManager settingsManager;
+    private NetworkConnectionManager networkConnectionManager;
+
 
     private DateTime refreshedDate;
     private boolean isFetched;
@@ -66,19 +61,13 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_2 = "D732F1B481C5274B05D707AC197B33B2";
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_3 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
 
-    //Offline cache properties
-    public static final String PROPERTY_OFFLINE_UPDATE_NAME = "offlineUpdateName";
-    public static final String PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE = "offlineUpdateDownloadSize";
-    public static final String PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME = "offlineServerUpdateTime";
-    public static final String PROPERTY_OFFLINE_UPDATE_DESCRIPTION = "offlineUpdateDescription";
-    public static final String PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE = "offlineUpdateRolloutPercentage";
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        connectivityManager = (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-        deviceName = getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
-        updateLink = getPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
+        settingsManager = new SettingsManager(getActivity().getApplicationContext());
+        networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
+        deviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE);
+        updateLink = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_LINK);
 
     }
 
@@ -90,7 +79,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     }
 
     private boolean checkIfSettingsAreValid() {
-        return checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext()) && checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getActivity().getApplicationContext()) && checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getActivity().getApplicationContext());
+        return settingsManager.checkPreference(SettingsManager.PROPERTY_DEVICE_TYPE)
+                && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_METHOD)
+                && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_LINK);
     }
 
     @Override
@@ -102,12 +93,12 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             refreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
         }
         if (!isFetched && checkIfSettingsAreValid()) {
-            if (checkNetworkConnection()) {
+            if (networkConnectionManager.checkNetworkConnection()) {
                 getUpdateInformation();
                 showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
-            } else if (cacheIsAvailable()) {
+            } else if (settingsManager.checkIfCacheIsAvailable()) {
                 getOfflineUpdateInformation();
                 showAds();
                 refreshedDate = DateTime.now();
@@ -154,17 +145,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     }
 
     /**
-     * Checks if the device has an active network connection
-     *
-     * @return Returns if the device has an active network connection
-     */
-    private boolean checkNetworkConnection() {
-        NetworkInfo activeNetwork = connectivityManager.getActiveNetworkInfo();
-        return activeNetwork != null && activeNetwork.isConnectedOrConnecting();
-    }
-
-
-    /**
      * Called when leaving the activity
      */
     @Override
@@ -188,10 +168,10 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         }
         if (refreshedDate != null && isFetched && checkIfSettingsAreValid()) {
             if (refreshedDate.plusMinutes(5).isBefore(DateTime.now())) {
-                if (checkNetworkConnection()) {
+                if (networkConnectionManager.checkNetworkConnection()) {
                     getUpdateInformation();
                     refreshedDate = DateTime.now();
-                } else if (cacheIsAvailable()) {
+                } else if (settingsManager.checkIfCacheIsAvailable()) {
                     getOfflineUpdateInformation();
                     refreshedDate = DateTime.now();
                 } else {
@@ -223,12 +203,11 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
     private CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate() {
         CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
-        Context context = getActivity().getApplicationContext();
-        cyanogenOTAUpdate.setName(getPreference(PROPERTY_OFFLINE_UPDATE_NAME, context));
-        cyanogenOTAUpdate.setSize(getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, context));
-        cyanogenOTAUpdate.setDateUpdated(getPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, context));
-        cyanogenOTAUpdate.setDescription(getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, context));
-        cyanogenOTAUpdate.setRollOutPercentage(getIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, context));
+        cyanogenOTAUpdate.setName(settingsManager.getPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_NAME));
+        cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
+        cyanogenOTAUpdate.setDateUpdated(settingsManager.getPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME));
+        cyanogenOTAUpdate.setDescription(settingsManager.getPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
+        cyanogenOTAUpdate.setRollOutPercentage(settingsManager.getIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE));
         return cyanogenOTAUpdate;
     }
 
@@ -281,19 +260,18 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             descriptionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent i = new Intent(getActivity(), UpdateDetailsActivity.class);
+                    Intent i = new Intent(getActivity(), UpdateDescriptionActivity.class);
                     i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
                     startActivity(i);
                 }
             });
 
             // Save preferences for offline viewing
-            Context context = getActivity().getApplicationContext();
-            savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName(), context);
-            saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage(), context);
-            saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize(), context);
-            savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated(), context);
-            savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription(), context);
+            settingsManager.savePreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
+            settingsManager.saveIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
+            settingsManager.saveIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
+            settingsManager.savePreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
+            settingsManager.savePreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
 
             // Hide the refreshing icon
 
@@ -369,9 +347,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
     @Override
     public void onRefresh() {
-        if (checkNetworkConnection()) {
+        if (networkConnectionManager.checkNetworkConnection()) {
             getUpdateInformation();
-        } else if (cacheIsAvailable()) {
+        } else if (settingsManager.checkIfCacheIsAvailable()) {
             getOfflineUpdateInformation();
         } else {
             showNetworkError();
@@ -394,7 +372,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 return cyanogenOTAUpdate;
 
             } else {
-                if (cacheIsAvailable()) {
+                if (settingsManager.checkIfCacheIsAvailable()) {
                     return buildOfflineCyanogenOTAUpdate();
                 } else {
                     showNetworkError();
@@ -406,7 +384,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         @Override
         protected void onPostExecute(CyanogenOTAUpdate result) {
             super.onPostExecute(result);
-            if (checkNetworkConnection()) {
+            if (networkConnectionManager.checkNetworkConnection()) {
                 displayUpdateInformation(result, true);
             } else {
                 displayUpdateInformation(result, false);
@@ -417,19 +395,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     private void showNetworkError() {
         DialogFragment networkErrorFragment = new NetworkErrorFragment();
         networkErrorFragment.show(getFragmentManager(), "NetworkError");
-    }
-
-    private boolean cacheIsAvailable() {
-        try {
-            Context context = getActivity().getApplicationContext();
-            return checkPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, context)
-                    && checkPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, context)
-                    && checkPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, context)
-                    && checkPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, context)
-                    && checkPreference(PROPERTY_OFFLINE_UPDATE_NAME, context);
-        } catch(Exception ignored) {
-            return false;
-        }
     }
 
 }

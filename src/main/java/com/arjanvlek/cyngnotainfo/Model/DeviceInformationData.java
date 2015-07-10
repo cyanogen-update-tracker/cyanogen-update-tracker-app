@@ -7,39 +7,22 @@ import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 
-@SuppressWarnings("unused")
 public class DeviceInformationData {
     private String DeviceManufacturer;
     private String deviceName;
     private String SOC;
     private String CPU_Frequency;
-    private String memoryAmount;
     private String OSVersion;
     private String SerialNumber;
-    private String OSCodeName;
     public static String UNKNOWN = "-";
 
     public DeviceInformationData() {
-        setOSVersion(null);
+        setOSVersion();
         setCPU_Frequency(null);
-        setSerialNumber(null);
+        setSerialNumber();
         setDeviceManufacturer(null);
         setDeviceName(null);
-        setOSCodeName(null);
         setSOC(null);
-    }
-
-    public String getOSCodeName() {
-        return OSCodeName;
-    }
-
-    public void setOSCodeName(String osCodeName) {
-        if (osCodeName != null) {
-            this.OSCodeName = osCodeName;
-        } else {
-            this.OSCodeName = Build.VERSION.INCREMENTAL;
-        }
-
     }
 
     public String getDeviceManufacturer() {
@@ -135,19 +118,11 @@ public class DeviceInformationData {
         }
     }
 
-    public String getMemoryAmount() {
-        return memoryAmount;
-    }
-
-    public void setMemoryAmount(String memoryAmount) {
-        this.memoryAmount = memoryAmount;
-    }
-
     public String getOSVersion() {
         return OSVersion;
     }
 
-    public void setOSVersion(String OSVersion) {
+    public void setOSVersion() {
         this.OSVersion = Build.VERSION.RELEASE;
     }
 
@@ -155,7 +130,7 @@ public class DeviceInformationData {
         return SerialNumber;
     }
 
-    public void setSerialNumber(String serialNumber) {
+    public void setSerialNumber() {
         SerialNumber = Build.SERIAL;
     }
 }

@@ -15,11 +15,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
-import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 
 public class TutorialActivity extends AppCompatActivity {
     private Fragment step4Fragment;
+    private SettingsManager settingsManager;
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
@@ -43,6 +44,7 @@ public class TutorialActivity extends AppCompatActivity {
         } catch (Exception ignored) {
 
         }
+        settingsManager = new SettingsManager(getApplicationContext());
         setContentView(R.layout.activity_tutorial);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
@@ -165,7 +167,7 @@ public class TutorialActivity extends AppCompatActivity {
 
 
     private boolean checkIfSettingsAreValid() {
-        return MainActivity.checkPreference(MainActivity.PROPERTY_DEVICE_TYPE, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_METHOD, getApplicationContext()) && MainActivity.checkPreference(MainActivity.PROPERTY_UPDATE_LINK, getApplicationContext());
+        return settingsManager.checkPreference(SettingsManager.PROPERTY_DEVICE_TYPE) && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_METHOD) && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_LINK);
     }
 
     public void closeInitialTutorial(View view) {

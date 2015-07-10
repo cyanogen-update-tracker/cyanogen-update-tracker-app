@@ -58,7 +58,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.UpdateDetailsActivity"
+            android:name=".views.UpdateDescriptionActivity"
             android:label="@string/update_details">
             <intent-filter>
                 <action android:name="updateDetailsActivity" />

@@ -7,7 +7,7 @@ import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.R;
 
-public class UpdateDetailsActivity extends AppCompatActivity {
+public class UpdateDescriptionActivity extends AppCompatActivity {
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

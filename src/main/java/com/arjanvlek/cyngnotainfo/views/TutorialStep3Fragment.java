@@ -11,9 +11,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.arjanvlek.cyngnotainfo.MainActivity;
-import com.arjanvlek.cyngnotainfo.Model.DeviceTypeEntity;
+import com.arjanvlek.cyngnotainfo.Model.DeviceType;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.util.ArrayList;
@@ -25,10 +25,12 @@ import java.util.List;
 @SuppressWarnings("DefaultFileTemplate")
 public class TutorialStep3Fragment extends Fragment {
     private View rootView;
+    private SettingsManager settingsManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tutorial_3, container, false);
+        settingsManager = new SettingsManager(getActivity().getApplicationContext());
         return rootView;
     }
 
@@ -43,31 +45,31 @@ public class TutorialStep3Fragment extends Fragment {
     }
 
 
-    private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<DeviceTypeEntity>> {
+    private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<DeviceType>> {
 
         @Override
-        public List<DeviceTypeEntity> doInBackground(Void... voids) {
+        public List<DeviceType> doInBackground(Void... voids) {
             ServerConnector serverConnector = new ServerConnector();
             return serverConnector.getDeviceTypeEntities();
         }
 
         @SuppressWarnings("unchecked")
         @Override
-        public void onPostExecute(List<DeviceTypeEntity> deviceTypeEntities) {
+        public void onPostExecute(List<DeviceType> deviceTypeEntities) {
             fillDeviceSettings(deviceTypeEntities);
 
         }
     }
 
-    private void fillDeviceSettings(List<DeviceTypeEntity> deviceTypeEntities) {
+    private void fillDeviceSettings(List<DeviceType> deviceTypeEntities) {
         Spinner spinner = (Spinner) rootView.findViewById(R.id.deviceTypeSpinner);
         List<String> deviceNames = new ArrayList<>();
 
-        for (DeviceTypeEntity deviceTypeEntity : deviceTypeEntities) {
-            deviceNames.add(deviceTypeEntity.getDeviceType());
+        for (DeviceType deviceType : deviceTypeEntities) {
+            deviceNames.add(deviceType.getDeviceType());
         }
         Integer position = null;
-        String currentDeviceName = MainActivity.getPreference(MainActivity.PROPERTY_DEVICE_TYPE, getActivity().getApplicationContext());
+        String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE);
         if (currentDeviceName != null) {
             for (int i = 0; i < deviceNames.size(); i++) {
                 if (deviceNames.get(i).equals(currentDeviceName)) {
@@ -86,7 +88,7 @@ public class TutorialStep3Fragment extends Fragment {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
                 String deviceTypeName = (String) adapterView.getItemAtPosition(i);
-                MainActivity.savePreference(MainActivity.PROPERTY_DEVICE_TYPE, deviceTypeName, getActivity().getApplicationContext());
+                settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE_TYPE, deviceTypeName);
             }
 
             @Override
