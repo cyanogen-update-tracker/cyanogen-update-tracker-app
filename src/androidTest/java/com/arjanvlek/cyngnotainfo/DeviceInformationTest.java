@@ -77,14 +77,19 @@ public class DeviceInformationTest extends ActivityInstrumentationTestCase2<Main
         assertEquals(View.VISIBLE, headerView.getVisibility());
         assertEquals(View.VISIBLE, socView.getVisibility());
         assertEquals(View.VISIBLE, cpuFreqView.getVisibility());
-        assertEquals(View.VISIBLE, memoryView.getVisibility());
+        // On Android versions lower than 3.0 "Honeycomb", the available memory amount is not displayed
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            assertEquals(View.VISIBLE, memoryView.getVisibility());
+        }
         assertEquals(View.VISIBLE, osVerView.getVisibility());
         assertEquals(View.VISIBLE, serialNumberView.getVisibility());
 
         assertEquals(Build.MANUFACTURER + " " + deviceName, headerView.getText());
         assertEquals(Build.BOARD, socView.getText());
         assertNotNull(cpuFreqView.getText()); //TODO test this reliably on all devices and emulators
-        assertEquals(memory, memoryView.getText());
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            assertEquals(memory, memoryView.getText());
+        }
         assertEquals(Build.VERSION.RELEASE, osVerView.getText());
         assertEquals(Build.SERIAL, serialNumberView.getText());
     }

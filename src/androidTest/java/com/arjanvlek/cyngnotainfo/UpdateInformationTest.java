@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.PointF;
 import android.test.ActivityInstrumentationTestCase2;
+import android.text.format.DateFormat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -24,7 +25,9 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
     public final static String DEVICE_NAME = "Test Device";
     public final static String DOWNLOAD_SIZE = "570 MB";
     public final static String UPDATED_TIME = "6/6/2015 at 11:02 PM";
+    public final static String UPDATED_TIME_24_HRS = "6/6/2015 at 23:02";
     public final static String UPDATED_TIME_DUTCH = "06-06-2015 om 23:02";
+    public final static String UPDATED_TIME_DUTCH_12_HRS = "06-06-2015 om 11:02 PM";
     public final static String ROLL_OUT_PERCENTAGE = "95%";
     public final static String LOCALE_DUTCH = "Nederlands";
 
@@ -93,10 +96,17 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         //test the last updated time
         TextView lastUpdatedText = (TextView)solo.getView(R.id.lastUpdatedLabel);
         if(appLocale.equals(LOCALE_DUTCH)) {
-            assertEquals(UPDATED_TIME_DUTCH, lastUpdatedText.getText());
-        }
-        else {
-            assertEquals(UPDATED_TIME, lastUpdatedText.getText());
+            if(DateFormat.is24HourFormat(getActivity().getApplicationContext())) {
+                assertEquals(UPDATED_TIME_DUTCH, lastUpdatedText.getText());
+            } else {
+                assertEquals(UPDATED_TIME_DUTCH_12_HRS, lastUpdatedText.getText());
+            }
+        } else {
+            if(DateFormat.is24HourFormat(getActivity().getApplicationContext())) {
+                assertEquals(UPDATED_TIME_24_HRS, lastUpdatedText.getText());
+            } else {
+                assertEquals(UPDATED_TIME, lastUpdatedText.getText());
+            }
         }
 
         // test the roll out percentage
