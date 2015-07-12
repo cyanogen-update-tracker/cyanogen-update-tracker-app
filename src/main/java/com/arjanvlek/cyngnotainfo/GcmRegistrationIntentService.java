@@ -50,8 +50,8 @@ public class GcmRegistrationIntentService extends IntentService {
 
     //Server URLs
     public static String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
-    public static String TEST_SERVER_URL = "http://192.168.178.14/register-device.php";
-
+    public static String TEST_SERVER_URL = "http://192.168.178.11/register-device.php";
+    public static boolean testing = false;
     public GcmRegistrationIntentService() {
         super(TAG);
     }
@@ -125,8 +125,12 @@ public class GcmRegistrationIntentService extends IntentService {
                 jsonResponse.put(JSON_PROPERTY_DEVICE_TYPE, deviceType);
                 jsonResponse.put(JSON_PROPERTY_UPDATE_TYPE, updateType);
                 jsonResponse.put(JSON_PROPERTY_OLD_DEVICE_ID, oldRegistrationId);
-                URL url = new URL(SERVER_URL);
-//                URL url = new URL(TEST_SERVER_URL);
+                URL url;
+                if(!testing) {
+                    url = new URL(SERVER_URL);
+                } else {
+                    url = new URL(TEST_SERVER_URL);
+                }
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestProperty("User-Agent", ServerConnector.USER_AGENT);
