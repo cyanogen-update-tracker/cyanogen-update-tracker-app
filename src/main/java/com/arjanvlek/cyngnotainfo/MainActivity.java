@@ -24,7 +24,7 @@ import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
 import com.arjanvlek.cyngnotainfo.views.TutorialActivity;
 import com.arjanvlek.cyngnotainfo.views.UpdateInformationFragment;
-import com.arjanvlek.cyngnotainfo.views.UpdateInstallationInstructionsActivity;
+import com.arjanvlek.cyngnotainfo.views.UpdateInstallationGuideActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
@@ -261,7 +261,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      * @param v View (button onclick from XML).
      */
     public void UpdateInstructions(View v) {
-        Intent i = new Intent(this, UpdateInstallationInstructionsActivity.class);
+        Intent i = new Intent(this, UpdateInstallationGuideActivity.class);
         startActivity(i);
     }
 

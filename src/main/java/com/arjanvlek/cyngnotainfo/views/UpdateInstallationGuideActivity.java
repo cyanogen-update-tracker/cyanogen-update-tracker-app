@@ -12,7 +12,7 @@ import android.view.ViewGroup;
 
 import com.arjanvlek.cyngnotainfo.R;
 
-public class UpdateInstallationInstructionsActivity extends AppCompatActivity {
+public class UpdateInstallationGuideActivity extends AppCompatActivity {
 
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
