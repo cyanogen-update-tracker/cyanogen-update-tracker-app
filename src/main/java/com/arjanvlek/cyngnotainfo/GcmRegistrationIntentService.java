@@ -50,7 +50,7 @@ public class GcmRegistrationIntentService extends IntentService {
 
     //Server URLs
     public static String SERVER_URL = "** Add the base URL of your API / backend here **register-device.php";
-    public static String TEST_SERVER_URL = "http://192.168.178.11/register-device.php";
+    public static String TEST_SERVER_URL = "http://192.168.178.16/register-device.php";
     public static boolean testing = false;
     public GcmRegistrationIntentService() {
         super(TAG);

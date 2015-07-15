@@ -25,7 +25,7 @@ public class ServerConnector implements AsyncTaskResultHelper {
 
     public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
     private final static String SERVER_URL = "** Add the base URL of your API / backend here **";
-    private final static String TEST_SERVER_URL = "http://192.168.178.11/";
+    private final static String TEST_SERVER_URL = "http://192.168.178.16/";
     private final static String DEVICE_TYPE_URL = "check_device_types.php";
     private final static String UPDATE_TYPE_URL = "check_update_types.php";
     private final static String UPDATE_LINK_URL = "check_update_links.php";
