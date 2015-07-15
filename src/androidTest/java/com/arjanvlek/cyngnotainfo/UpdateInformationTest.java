@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.github.mikephil.charting.charts.PieChart;
+import com.google.android.gms.ads.AdView;
 import com.robotium.solo.Solo;
 
 import java.util.Locale;
@@ -117,6 +118,10 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         ServerConnector.testing = true;
         assertTrue(gcmPreferences.contains(SettingsManager.PROPERTY_REGISTRATION_ERROR));
         assertFalse(gcmPreferences.getBoolean(SettingsManager.PROPERTY_REGISTRATION_ERROR, false));
+
+        AdView adView = (AdView) solo.getView(R.id.update_information_banner_field);
+        assertEquals(getActivity().getString(R.string.update_information_advertising_id), adView.getAdUnitId());
+
 
         // test if the app responds normally to screen rotation
         for(int i = 0; i< 5; i++) {

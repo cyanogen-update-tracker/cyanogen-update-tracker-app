@@ -7,6 +7,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.TextView;
 
+import com.google.android.gms.ads.AdView;
 import com.robotium.solo.Solo;
 
 import java.util.Locale;
@@ -47,6 +48,7 @@ public class DeviceInformationTest extends ActivityInstrumentationTestCase2<Main
         TextView memoryView = (TextView)solo.getView(R.id.device_information_memory_field);
         TextView osVerView = (TextView)solo.getView(R.id.device_information_os_ver_field);
         TextView serialNumberView = (TextView)solo.getView(R.id.device_information_serial_number_field);
+        AdView adView = (AdView) solo.getView(R.id.device_information_banner_field);
 
         String deviceName;
         switch (Build.MODEL) {
@@ -83,6 +85,7 @@ public class DeviceInformationTest extends ActivityInstrumentationTestCase2<Main
         }
         assertEquals(View.VISIBLE, osVerView.getVisibility());
         assertEquals(View.VISIBLE, serialNumberView.getVisibility());
+        assertEquals(View.VISIBLE, adView.getVisibility());
 
         assertEquals(Build.MANUFACTURER + " " + deviceName, headerView.getText());
         assertEquals(Build.BOARD, socView.getText());
@@ -92,5 +95,6 @@ public class DeviceInformationTest extends ActivityInstrumentationTestCase2<Main
         }
         assertEquals(Build.VERSION.RELEASE, osVerView.getText());
         assertEquals(Build.SERIAL, serialNumberView.getText());
+        assertEquals(getActivity().getString(R.string.device_information_advertising_id), adView.getAdUnitId());
     }
 }
