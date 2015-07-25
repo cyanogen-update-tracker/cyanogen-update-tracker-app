@@ -26,14 +26,14 @@ public class AboutActivity extends AppCompatActivity {
             e.printStackTrace();
         }
         setContentView(R.layout.activity_about);
-        TextView versionNumberView = (TextView) findViewById(R.id.about_version_number_field);
+        TextView versionNumberView = (TextView) findViewById(R.id.aboutVersionNumberView);
         if (versionNumber == null) {
             versionNumber = DeviceInformationData.UNKNOWN;
         }
         versionNumberView.setText(getString(R.string.version) + " " + versionNumber);
 
         //Make link clickable
-        TextView storyView = (TextView) findViewById(R.id.about_story_field);
+        TextView storyView = (TextView) findViewById(R.id.aboutBackgroundStoryView);
         storyView.setMovementMethod(LinkMovementMethod.getInstance());
     }
 

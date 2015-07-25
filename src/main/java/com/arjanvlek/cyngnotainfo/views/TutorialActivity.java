@@ -93,7 +93,7 @@ public class TutorialActivity extends AppCompatActivity {
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
-            // Return a PlaceholderFragment (defined as a static inner class below).
+            // Return a SimpleTutorialFragment (defined as a static inner class below).
             return newInstance(position + 1);
         }
 
@@ -105,17 +105,6 @@ public class TutorialActivity extends AppCompatActivity {
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
-            switch (position) {
-                case 0:
-                    return getString(R.string.title_section1).toUpperCase(l);
-                case 1:
-                    return getString(R.string.title_section2).toUpperCase(l);
-                case 2:
-                    return getString(R.string.title_section3).toUpperCase(l);
-                case 3:
-                    return "TEST".toUpperCase();
-            }
             return null;
         }
     }
@@ -130,17 +119,17 @@ public class TutorialActivity extends AppCompatActivity {
         }
         Bundle args = new Bundle();
         args.putInt("section_number", sectionNumber);
-        PlaceholderFragment placeholderFragment = new PlaceholderFragment();
-        placeholderFragment.setArguments(args);
-        return placeholderFragment;
+        SimpleTutorialFragment simpleTutorialFragment = new SimpleTutorialFragment();
+        simpleTutorialFragment.setArguments(args);
+        return simpleTutorialFragment;
     }
 
 
     /**
-     * A placeholder fragment containing a simple view.
+     * Contains the basic / non interactive tutorial fragments.
      */
     @SuppressLint("ValidFragment")
-    public class PlaceholderFragment extends Fragment {
+    public class SimpleTutorialFragment extends Fragment {
         /**
          * The fragment argument representing the section number for this
          * fragment.
@@ -165,13 +154,8 @@ public class TutorialActivity extends AppCompatActivity {
         }
     }
 
-
-    private boolean checkIfSettingsAreValid() {
-        return settingsManager.checkPreference(SettingsManager.PROPERTY_DEVICE_TYPE) && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_METHOD) && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_LINK);
-    }
-
     public void closeInitialTutorial(View view) {
-        if (checkIfSettingsAreValid()) {
+        if (settingsManager.checkIfDeviceIsSet()) {
             NavUtils.navigateUpFromSameTask(this);
         } else {
             showSettingsWarning();

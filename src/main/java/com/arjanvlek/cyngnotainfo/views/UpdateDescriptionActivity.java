@@ -12,8 +12,8 @@ public class UpdateDescriptionActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_update_details);
-        TextView updateDetailsField = (TextView) findViewById(R.id.textView_update_details);
+        setContentView(R.layout.activity_update_description);
+        TextView updateDetailsField = (TextView) findViewById(R.id.updateDescriptionView);
         String updateDetails = null;
         try {
             updateDetails = getIntent().getExtras().getString("update-description");

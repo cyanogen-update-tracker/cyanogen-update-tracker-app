@@ -100,7 +100,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 isFetched = true;
             } else if (settingsManager.checkIfCacheIsAvailable()) {
                 getOfflineUpdateInformation();
-                showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
             } else {

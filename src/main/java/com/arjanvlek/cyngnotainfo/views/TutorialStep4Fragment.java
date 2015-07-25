@@ -75,7 +75,7 @@ public class TutorialStep4Fragment extends Fragment {
     }
 
     private void fillUpdateSettings(ArrayList<String> updateTypes) {
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.updateTypeSpinner);
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsUpdateTypeSpinner);
         Integer position = 1;
         Resources resources = getResources();
         ArrayList<String> localizedUpdateTypes = new ArrayList<>();

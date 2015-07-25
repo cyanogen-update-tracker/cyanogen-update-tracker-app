@@ -7,8 +7,6 @@ import android.widget.TextView;
 import com.arjanvlek.cyngnotainfo.views.UpdateDescriptionActivity;
 import com.robotium.solo.Solo;
 
-import java.util.Locale;
-
 public class UpdateDescriptionTest extends ActivityInstrumentationTestCase2<MainActivity>{
     private Solo solo;
 
@@ -31,7 +29,7 @@ public class UpdateDescriptionTest extends ActivityInstrumentationTestCase2<Main
         solo.clickOnView(updateDescriptionButton);
         solo.waitForActivity(UpdateDescriptionActivity.class);
         String updateDescription = "This update is just a test!";
-        TextView updateDescriptionTextView = (TextView)solo.getView(R.id.textView_update_details);
+        TextView updateDescriptionTextView = (TextView)solo.getView(R.id.updateDescriptionView);
         assertEquals(updateDescription, updateDescriptionTextView.getText());
     }
 }

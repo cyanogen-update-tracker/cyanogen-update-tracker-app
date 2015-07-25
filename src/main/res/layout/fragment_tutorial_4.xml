@@ -1,7 +1,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.arjanvlek.cyngnotainfo.views.TutorialActivity$PlaceholderFragment">
+    tools:context="com.arjanvlek.cyngnotainfo.views.TutorialActivity.SimpleTutorialFragment">
 
     <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
@@ -38,7 +38,7 @@
                 android:textStyle="bold" />
 
             <Spinner
-                android:id="@+id/updateTypeSpinner"
+                android:id="@+id/settingsUpdateTypeSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -54,7 +54,7 @@
                 android:id="@+id/tut1Text2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/updateTypeSpinner"
+                android:layout_below="@+id/settingsUpdateTypeSpinner"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginLeft="20dp"

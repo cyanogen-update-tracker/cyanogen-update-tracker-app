@@ -11,7 +11,7 @@
         android:visibility="gone" />
 
     <TextView
-        android:id="@+id/settingsNoConnectionTextView"
+        android:id="@+id/settingsNoConnectionView"
         android:layout_width="wrap_content"
         android:layout_height="20dp"
         android:layout_centerHorizontal="true"
@@ -24,7 +24,7 @@
     <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/settingsNoConnectionTextView"
+        android:layout_below="@id/settingsNoConnectionView"
         android:padding="@dimen/activity_horizontal_margin"
         android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -34,7 +34,7 @@
 
 
         <TextView
-            android:id="@+id/settingsDescriptionTextView"
+            android:id="@+id/settingsDescriptionView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
@@ -43,77 +43,77 @@
             android:textStyle="bold" />
 
         <View
-            android:id="@+id/settingsDivisor"
+            android:id="@+id/settingsUpperDivisor"
             android:layout_width="fill_parent"
             android:layout_height="2dip"
-            android:layout_below="@id/settingsDescriptionTextView"
+            android:layout_below="@id/settingsDescriptionView"
             android:background="#ff88e0ff" />
 
         <TextView
-            android:id="@+id/deviceTypeTextView"
+            android:id="@+id/settingsDeviceTypeView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_below="@id/settingsDivisor"
+            android:layout_below="@id/settingsUpperDivisor"
             android:layout_marginTop="5dp"
             android:text="@string/choose_device_type"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/updateTypeTextView"
+            android:id="@+id/settingsUpdateTypeView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/updateTypeSpinner"
+            android:layout_alignTop="@+id/settingsUpdateTypeSpinner"
             android:text="@string/choose_update_type"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
-            android:id="@+id/deviceTypeSpinner"
+            android:id="@+id/settingsDeviceTypeSpinner"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@+id/settingsDivisor"
+            android:layout_below="@+id/settingsUpperDivisor"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
-            android:layout_toEndOf="@id/updateTypeTextView"
-            android:layout_toRightOf="@id/updateTypeTextView" />
+            android:layout_toEndOf="@id/settingsUpdateTypeView"
+            android:layout_toRightOf="@id/settingsUpdateTypeView" />
 
         <Spinner
-            android:id="@+id/updateTypeSpinner"
+            android:id="@+id/settingsUpdateTypeSpinner"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/deviceTypeSpinner"
+            android:layout_below="@id/settingsDeviceTypeSpinner"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/updateTypeTextView"
-            android:layout_toRightOf="@id/updateTypeTextView" />
+            android:layout_toEndOf="@id/settingsUpdateTypeView"
+            android:layout_toRightOf="@id/settingsUpdateTypeView" />
 
         <TextView
-            android:id="@+id/settingsDescriptionTextView2"
+            android:id="@+id/settingsDescriptionTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/updateTypeSpinner"
+            android:layout_below="@id/settingsUpdateTypeSpinner"
             android:layout_marginTop="10dp"
             android:text="@string/settings_explanation_update_methods"
             android:textColor="#ff88e0ff"
             android:textStyle="bold" />
 
         <View
-            android:id="@+id/settingsDivisor2"
+            android:id="@+id/settingsLowerDivisor"
             android:layout_width="fill_parent"
             android:layout_height="2dip"
-            android:layout_below="@id/settingsDescriptionTextView2"
+            android:layout_below="@id/settingsDescriptionTextView"
 
             android:background="#ff88e0ff" />
 
 
         <TextView
-            android:id="@+id/settingsSavedTextView"
+            android:id="@+id/settingsSavedView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -124,12 +124,12 @@
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_above="@id/settingsSavedTextView"
-            android:layout_below="@id/settingsDivisor2"
+            android:layout_above="@id/settingsSavedView"
+            android:layout_below="@id/settingsLowerDivisor"
             android:layout_marginBottom="10dp">
 
             <TextView
-                android:id="@+id/updateTypeDescriptionTextView"
+                android:id="@+id/settingsUpdateTypeDescriptionView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -143,7 +143,7 @@
             style="?android:attr/progressBarStyleLarge"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_above="@+id/settingsSavedTextView"
+            android:layout_above="@+id/settingsSavedView"
             android:layout_centerHorizontal="true" />
 
 

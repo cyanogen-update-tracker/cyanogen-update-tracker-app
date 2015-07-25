@@ -49,7 +49,6 @@ public class TutorialStep3Fragment extends Fragment {
             return serverConnector.getDeviceTypeEntities();
         }
 
-        @SuppressWarnings("unchecked")
         @Override
         public void onPostExecute(List<DeviceType> deviceTypeEntities) {
             fillDeviceSettings(deviceTypeEntities);
@@ -58,28 +57,16 @@ public class TutorialStep3Fragment extends Fragment {
     }
 
     private void fillDeviceSettings(List<DeviceType> deviceTypeEntities) {
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.deviceTypeSpinner);
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsDeviceTypeSpinner);
         List<String> deviceNames = new ArrayList<>();
 
         for (DeviceType deviceType : deviceTypeEntities) {
             deviceNames.add(deviceType.getDeviceType());
         }
-        Integer position = null;
-        String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE);
-        if (currentDeviceName != null) {
-            for (int i = 0; i < deviceNames.size(); i++) {
-                if (deviceNames.get(i).equals(currentDeviceName)) {
-                    position = i;
-                }
-            }
-        }
 
         ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, deviceNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        if (position != null) {
-            spinner.setSelection(position);
-        }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {

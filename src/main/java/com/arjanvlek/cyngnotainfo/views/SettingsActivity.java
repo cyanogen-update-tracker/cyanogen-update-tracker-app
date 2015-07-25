@@ -52,7 +52,7 @@ public class SettingsActivity extends AppCompatActivity {
             }
             if (!networkConnectionManager.checkNetworkConnection()) {
                 findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
-                findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.VISIBLE);
+                findViewById(R.id.settingsNoConnectionView).setVisibility(View.VISIBLE);
             }
             new DeviceDataFetcher().execute();
         }
@@ -64,10 +64,10 @@ public class SettingsActivity extends AppCompatActivity {
         super.onResume();
         if (!networkConnectionManager.checkNetworkConnection()) {
             findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
-            findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.VISIBLE);
+            findViewById(R.id.settingsNoConnectionView).setVisibility(View.VISIBLE);
         } else {
             findViewById(R.id.settingsNoConnectionBar).setVisibility(View.GONE);
-            findViewById(R.id.settingsNoConnectionTextView).setVisibility(View.GONE);
+            findViewById(R.id.settingsNoConnectionView).setVisibility(View.GONE);
         }
     }
 
@@ -87,7 +87,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void fillDeviceSettings(List<DeviceType> deviceTypeEntities) {
-        Spinner spinner = (Spinner) findViewById(R.id.deviceTypeSpinner);
+        Spinner spinner = (Spinner) findViewById(R.id.settingsDeviceTypeSpinner);
         List<String> deviceNames = new ArrayList<>();
 
         for (DeviceType deviceType : deviceTypeEntities) {
@@ -176,7 +176,7 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void fillUpdateSettings(ArrayList<String> updateTypes) {
-        Spinner spinner = (Spinner) findViewById(R.id.updateTypeSpinner);
+        Spinner spinner = (Spinner) findViewById(R.id.settingsUpdateTypeSpinner);
         String currentUpdateType = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
         Integer position = null;
         if (currentUpdateType != null) {

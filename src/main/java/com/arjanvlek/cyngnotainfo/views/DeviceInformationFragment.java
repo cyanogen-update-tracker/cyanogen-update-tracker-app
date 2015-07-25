@@ -2,8 +2,6 @@ package com.arjanvlek.cyngnotainfo.views;
 
 import android.app.ActivityManager;
 import android.content.Context;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,18 +13,21 @@ import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 public class DeviceInformationFragment extends Fragment {
     private RelativeLayout rootView;
     private AdView adView;
+    private NetworkConnectionManager networkConnectionManager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         //Inflate the layout for this fragment
         rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_deviceinformation, container, false);
+        networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
         return rootView;
     }
 
@@ -82,7 +83,7 @@ public class DeviceInformationFragment extends Fragment {
         TextView serialNumberView = (TextView) rootView.findViewById(R.id.device_information_serial_number_field);
         serialNumberView.setText(deviceInformationData.getSerialNumber());
 
-        if (checkNetworkConnection()) {
+        if (networkConnectionManager.checkNetworkConnection()) {
             showAds();
         } else {
             hideAds();
@@ -123,15 +124,6 @@ public class DeviceInformationFragment extends Fragment {
 
         // Start loading the ad in the background.
         adView.loadAd(adRequest);
-    }
-
-    private boolean checkNetworkConnection() {
-        ConnectivityManager cm =
-                (ConnectivityManager) getActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        return activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
     }
 
     /**

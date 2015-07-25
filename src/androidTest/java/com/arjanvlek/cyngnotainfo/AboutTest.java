@@ -2,7 +2,6 @@ package com.arjanvlek.cyngnotainfo;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.TextView;
@@ -37,7 +36,7 @@ public class AboutTest extends ActivityInstrumentationTestCase2<AboutActivity> {
         String appLocale = Locale.getDefault().getDisplayLanguage();
 
         // Check if version number is displayed correctly
-        TextView versionNumberView = (TextView)solo.getView(R.id.about_version_number_field);
+        TextView versionNumberView = (TextView)solo.getView(R.id.aboutVersionNumberView);
 
         assertEquals(View.VISIBLE, versionNumberView.getVisibility());
 
@@ -58,14 +57,14 @@ public class AboutTest extends ActivityInstrumentationTestCase2<AboutActivity> {
 
         // Check if the about line is displayed correctly
         String aboutDescription = getActivity().getString(R.string.about_description);
-        TextView aboutDescriptionView = (TextView)solo.getView(R.id.aboutText2);
+        TextView aboutDescriptionView = (TextView)solo.getView(R.id.aboutSlogan);
 
         assertEquals(View.VISIBLE, aboutDescriptionView.getVisibility());
         assertEquals(aboutDescription, aboutDescriptionView.getText());
 
         // Check if the about story is displayed correctly
         String aboutStoryText = getActivity().getString(R.string.about_story).substring(0,100);
-        TextView aboutStoryView = (TextView)solo.getView(R.id.about_story_field);
+        TextView aboutStoryView = (TextView)solo.getView(R.id.aboutBackgroundStoryView);
 
         assertEquals(View.VISIBLE, aboutStoryView.getVisibility());
         assertEquals(aboutStoryText, aboutStoryView.getText().toString().substring(0,100));
