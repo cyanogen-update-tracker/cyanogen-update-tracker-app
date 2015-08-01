@@ -22,7 +22,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
-        android:id="@+id/updateDescriptionButton"
+        android:id="@+id/updateInformationUpdateDescriptionButton"
         android:layout_below="@+id/updateDescriptionScrollView"
         android:textColor="@color/lightBlue"
         android:background="@android:color/transparent"

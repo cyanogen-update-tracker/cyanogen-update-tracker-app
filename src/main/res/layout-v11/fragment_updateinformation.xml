@@ -28,12 +28,12 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_below="@id/updateInformationNoConnectionBar"
-        android:layout_above="@+id/update_information_banner_field">
+        android:layout_above="@+id/updateInformationAdView">
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
 
-        android:layout_above="@+id/update_information_banner_field">
+        android:layout_above="@+id/updateInformationAdView">
 
         <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:tools="http://schemas.android.com/tools"
@@ -59,7 +59,7 @@
                 android:textColor="@android:color/black"
                 android:textStyle="bold"
                 android:layout_centerHorizontal="true"
-                android:id="@+id/buildNumberLabel"
+                android:id="@+id/updateInformationBuildNumberView"
                 android:layout_marginTop="16dp"
                 android:layout_marginBottom="0dp"
                 android:singleLine="true"
@@ -70,8 +70,8 @@
             <com.github.mikephil.charting.charts.PieChart
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
-                android:id="@+id/rolloutPercentageDiagram"
-                android:layout_below="@+id/buildNumberLabel"
+                android:id="@+id/updateInformationRollOutPercentageDiagram"
+                android:layout_below="@+id/updateInformationBuildNumberView"
                 android:layout_marginTop="11dp"
                 android:contentDescription="@string/description_stats_chart"
                 android:layout_alignParentLeft="true"
@@ -82,13 +82,13 @@
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/buttonTable"
-                android:layout_below="@+id/rolloutPercentageDiagram">
+                android:layout_below="@+id/updateInformationRollOutPercentageDiagram">
                 <TableRow>
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="@string/download"
-                        android:id="@+id/downloadButton"
+                        android:id="@+id/updateInformationDownloadButton"
                         android:textColor="@color/lightBlue"
                         android:enabled="false"
                         style="?android:buttonBarButtonStyle"/>
@@ -128,7 +128,7 @@
                             android:layout_height="50dp"
                             android:layout_marginLeft="10dp"
                             android:layout_marginStart="10dp"
-                            android:id="@+id/downloadSizeLabel"
+                            android:id="@+id/updateInformationDownloadSizeView"
                             android:gravity="center"
                             android:layout_gravity="center_vertical" />
                     </TableRow>
@@ -153,7 +153,7 @@
                             android:layout_marginLeft="10dp"
                             android:layout_marginStart="10dp"
                             android:gravity="center"
-                            android:id="@+id/lastUpdatedLabel"
+                            android:id="@+id/updateInformationUpdatedDataView"
                             android:layout_gravity="center_vertical" />
 
 
@@ -165,7 +165,7 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/updateDescriptionButton"
+            android:id="@+id/updateInformationUpdateDescriptionButton"
             android:text="@string/update_details_header"
             android:layout_below="@+id/tableHost"
             android:layout_centerHorizontal="true"

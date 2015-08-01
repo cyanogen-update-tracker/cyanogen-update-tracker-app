@@ -10,6 +10,7 @@ import android.text.method.LinkMovementMethod;
 import android.view.View;
 import android.widget.TextView;
 
+import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
 import com.arjanvlek.cyngnotainfo.R;
 
@@ -18,18 +19,9 @@ public class AboutActivity extends AppCompatActivity {
     @Override
     public void onCreate(Bundle savedInstanceSate) {
         super.onCreate(savedInstanceSate);
-        String versionNumber = null;
-        try {
-            PackageInfo pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
-            versionNumber = pInfo.versionName;
-        } catch (PackageManager.NameNotFoundException e) {
-            e.printStackTrace();
-        }
+        String versionNumber = BuildConfig.VERSION_NAME;
         setContentView(R.layout.activity_about);
         TextView versionNumberView = (TextView) findViewById(R.id.aboutVersionNumberView);
-        if (versionNumber == null) {
-            versionNumber = DeviceInformationData.UNKNOWN;
-        }
         versionNumberView.setText(getString(R.string.version) + " " + versionNumber);
 
         //Make link clickable

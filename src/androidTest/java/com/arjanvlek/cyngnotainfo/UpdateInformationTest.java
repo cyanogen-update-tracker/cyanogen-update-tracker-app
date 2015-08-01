@@ -2,11 +2,8 @@ package com.arjanvlek.cyngnotainfo;
 
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.graphics.PointF;
 import android.test.ActivityInstrumentationTestCase2;
 import android.text.format.DateFormat;
-import android.view.View;
-import android.widget.EditText;
 import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
@@ -72,7 +69,7 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         // sometimes the screen doesn't go back, so try it again if the test fails
         try {
             // test the update name in the top
-            TextView buildNumberText = (TextView)solo.getView(R.id.buildNumberLabel);
+            TextView buildNumberText = (TextView)solo.getView(R.id.updateInformationBuildNumberView);
             if(appLocale.equals(LOCALE_DUTCH)) {
                 assertEquals(UPDATE_NAME + " voor " + DEVICE_NAME, buildNumberText.getText());
             } else {
@@ -82,7 +79,7 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         catch (Exception e) {
             solo.goBack();
             solo.sleep(1000);
-            TextView buildNumberText = (TextView)solo.getView(R.id.buildNumberLabel);
+            TextView buildNumberText = (TextView)solo.getView(R.id.updateInformationBuildNumberView);
             if(appLocale.equals(LOCALE_DUTCH)) {
                 assertEquals(UPDATE_NAME + " voor " + DEVICE_NAME, buildNumberText.getText());
             } else {
@@ -91,11 +88,11 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         }
 
         // test the download size
-        TextView downloadSizeText = (TextView)solo.getView(R.id.downloadSizeLabel);
+        TextView downloadSizeText = (TextView)solo.getView(R.id.updateInformationDownloadSizeView);
         assertEquals(DOWNLOAD_SIZE, downloadSizeText.getText());
 
         //test the last updated time
-        TextView lastUpdatedText = (TextView)solo.getView(R.id.lastUpdatedLabel);
+        TextView lastUpdatedText = (TextView)solo.getView(R.id.updateInformationUpdatedDataView);
         if(appLocale.equals(LOCALE_DUTCH)) {
             if(DateFormat.is24HourFormat(getActivity().getApplicationContext())) {
                 assertEquals(UPDATED_TIME_DUTCH, lastUpdatedText.getText());
@@ -111,7 +108,7 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         }
 
         // test the roll out percentage
-        PieChart pieChart = (PieChart)solo.getView(R.id.rolloutPercentageDiagram);
+        PieChart pieChart = (PieChart)solo.getView(R.id.updateInformationRollOutPercentageDiagram);
         assertEquals(ROLL_OUT_PERCENTAGE, pieChart.getCenterText());
 
         // test if app has registered successfully for push notifications
@@ -119,7 +116,7 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         assertTrue(gcmPreferences.contains(SettingsManager.PROPERTY_REGISTRATION_ERROR));
         assertFalse(gcmPreferences.getBoolean(SettingsManager.PROPERTY_REGISTRATION_ERROR, false));
 
-        AdView adView = (AdView) solo.getView(R.id.update_information_banner_field);
+        AdView adView = (AdView) solo.getView(R.id.updateInformationAdView);
         assertEquals(getActivity().getString(R.string.update_information_advertising_id), adView.getAdUnitId());
 
 

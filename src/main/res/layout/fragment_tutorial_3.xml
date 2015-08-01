@@ -38,7 +38,7 @@
                 android:textStyle="bold" />
 
             <Spinner
-                android:id="@+id/settingsDeviceTypeSpinner"
+                android:id="@+id/settingsDeviceSpinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
 
@@ -54,7 +54,7 @@
                 android:id="@+id/tut1Text2"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/settingsDeviceTypeSpinner"
+                android:layout_below="@+id/settingsDeviceSpinner"
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginLeft="20dp"

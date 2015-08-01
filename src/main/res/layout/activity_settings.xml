@@ -50,26 +50,26 @@
             android:background="#ff88e0ff" />
 
         <TextView
-            android:id="@+id/settingsDeviceTypeView"
+            android:id="@+id/settingsDeviceView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/settingsUpperDivisor"
             android:layout_marginTop="5dp"
-            android:text="@string/choose_device_type"
+            android:text="@string/choose_device"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
-            android:id="@+id/settingsUpdateTypeView"
+            android:id="@+id/settingsUpdateMethodView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
-            android:layout_alignTop="@+id/settingsUpdateTypeSpinner"
-            android:text="@string/choose_update_type"
+            android:layout_alignTop="@+id/settingsUpdateMethodSpinner"
+            android:text="@string/choose_update_method"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
-            android:id="@+id/settingsDeviceTypeSpinner"
+            android:id="@+id/settingsDeviceSpinner"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
@@ -78,26 +78,26 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
-            android:layout_toEndOf="@id/settingsUpdateTypeView"
-            android:layout_toRightOf="@id/settingsUpdateTypeView" />
+            android:layout_toEndOf="@id/settingsUpdateMethodView"
+            android:layout_toRightOf="@id/settingsUpdateMethodView" />
 
         <Spinner
-            android:id="@+id/settingsUpdateTypeSpinner"
+            android:id="@+id/settingsUpdateMethodSpinner"
             android:layout_width="120dp"
             android:layout_height="wrap_content"
             android:layout_alignParentEnd="true"
             android:layout_alignParentRight="true"
-            android:layout_below="@id/settingsDeviceTypeSpinner"
+            android:layout_below="@id/settingsDeviceSpinner"
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
-            android:layout_toEndOf="@id/settingsUpdateTypeView"
-            android:layout_toRightOf="@id/settingsUpdateTypeView" />
+            android:layout_toEndOf="@id/settingsUpdateMethodView"
+            android:layout_toRightOf="@id/settingsUpdateMethodView" />
 
         <TextView
             android:id="@+id/settingsDescriptionTextView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/settingsUpdateTypeSpinner"
+            android:layout_below="@id/settingsUpdateMethodSpinner"
             android:layout_marginTop="10dp"
             android:text="@string/settings_explanation_update_methods"
             android:textColor="#ff88e0ff"
@@ -129,7 +129,7 @@
             android:layout_marginBottom="10dp">
 
             <TextView
-                android:id="@+id/settingsUpdateTypeDescriptionView"
+                android:id="@+id/settingsUpdateMethodDescriptionView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"

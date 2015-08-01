@@ -1,11 +1,9 @@
 package com.arjanvlek.cyngnotainfo.views;
 
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
-import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,28 +12,25 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.arjanvlek.cyngnotainfo.Model.DeviceType;
-import com.arjanvlek.cyngnotainfo.Model.UpdateLink;
-import com.arjanvlek.cyngnotainfo.Model.UpdateType;
+import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.UpdateDataLink;
+import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;
-import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AbstractActivity {
     private ProgressBar progressBar;
     private SettingsManager settingsManager;
-    private NetworkConnectionManager networkConnectionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         settingsManager = new SettingsManager(getApplicationContext());
-        networkConnectionManager = new NetworkConnectionManager(getApplicationContext());
         progressBar = (ProgressBar) findViewById(R.id.settingsProgressBar);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             try {
@@ -50,51 +45,35 @@ public class SettingsActivity extends AppCompatActivity {
             } catch (Exception ignored) {
 
             }
-            if (!networkConnectionManager.checkNetworkConnection()) {
-                findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
-                findViewById(R.id.settingsNoConnectionView).setVisibility(View.VISIBLE);
-            }
             new DeviceDataFetcher().execute();
         }
     }
 
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (!networkConnectionManager.checkNetworkConnection()) {
-            findViewById(R.id.settingsNoConnectionBar).setVisibility(View.VISIBLE);
-            findViewById(R.id.settingsNoConnectionView).setVisibility(View.VISIBLE);
-        } else {
-            findViewById(R.id.settingsNoConnectionBar).setVisibility(View.GONE);
-            findViewById(R.id.settingsNoConnectionView).setVisibility(View.GONE);
-        }
-    }
-
-    private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<DeviceType>> {
+    private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<Device>> {
 
         @Override
-        public List<DeviceType> doInBackground(Void... voids) {
-            ServerConnector serverConnector = new ServerConnector();
-            return serverConnector.getDeviceTypeEntities();
+        public List<Device> doInBackground(Void... voids) {
+            return getDevices();
         }
 
         @Override
-        public void onPostExecute(List<DeviceType> deviceTypeEntities) {
-            fillDeviceSettings(deviceTypeEntities);
+        public void onPostExecute(List<Device> devices) {
+            fillDeviceSettings(devices);
 
         }
     }
 
-    private void fillDeviceSettings(List<DeviceType> deviceTypeEntities) {
-        Spinner spinner = (Spinner) findViewById(R.id.settingsDeviceTypeSpinner);
+    private void fillDeviceSettings(final List<Device> devices) {
+        Spinner spinner = (Spinner) findViewById(R.id.settingsDeviceSpinner);
         List<String> deviceNames = new ArrayList<>();
 
-        for (DeviceType deviceType : deviceTypeEntities) {
-            deviceNames.add(deviceType.getDeviceType());
+        for (Device device : devices) {
+            deviceNames.add(device.getDeviceName());
         }
+
+        // Set the spinner to the previously selected device.
         Integer position = null;
-        String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE);
+        String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE);
         if (currentDeviceName != null) {
             for (int i = 0; i < deviceNames.size(); i++) {
                 if (deviceNames.get(i).equals(currentDeviceName)) {
@@ -112,86 +91,80 @@ public class SettingsActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String deviceTypeName = (String) adapterView.getItemAtPosition(i);
-                settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE_TYPE, deviceTypeName);
+                String deviceName = (String) adapterView.getItemAtPosition(i);
+                Long deviceId = 0L;
+                for (Device device : devices) {
+                    if (device.getDeviceName().equalsIgnoreCase(deviceName)) {
+                        deviceId = device.getId();
+                    }
+                }
+                settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE, deviceName);
+                settingsManager.saveLongPreference(SettingsManager.PROPERTY_DEVICE_ID, deviceId);
 
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     try {
                         progressBar.setVisibility(View.VISIBLE);
                     } catch (Exception ignored) {
-
                     }
-                    new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceTypeName);
+
+                    new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId);
                 } else {
                     try {
                         progressBar.setVisibility(View.VISIBLE);
                     } catch (Exception ignored) {
 
                     }
-                    new UpdateDataFetcher().execute(deviceTypeName);
+                    new UpdateDataFetcher().execute(deviceId);
                 }
             }
 
             @Override
             public void onNothingSelected(AdapterView<?> adapterView) {
-
             }
-
         });
-
-
     }
 
-    private class UpdateDataFetcher extends AsyncTask<String, Integer, List<UpdateType>> {
+    private class UpdateDataFetcher extends AsyncTask<Long, Integer, List<UpdateMethod>> {
 
         @Override
-        public List<UpdateType> doInBackground(String... strings) {
-            String deviceName = strings[0];
-            String deviceId = null;
-            ServerConnector serverConnector = new ServerConnector();
-            List<DeviceType> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
-            for (DeviceType deviceType : deviceTypeEntities) {
-                if (deviceType.getDeviceType().equals(deviceName)) {
-                    deviceId = String.valueOf(deviceType.getId());
-                }
-            }
-            if (deviceId != null) {
-                if (deviceId.equals("null")) {
-                    deviceId = null;
-                }
-            }
-            return serverConnector.getUpdateTypeEntities(deviceId);
+        public List<UpdateMethod> doInBackground(Long... deviceIds) {
+            long deviceId = deviceIds[0];
+            return getServerConnector().getUpdateMethods(deviceId);
         }
 
         @Override
-        public void onPostExecute(List<UpdateType> updateTypeEntities) {
-            ArrayList<String> updateTypeNames = new ArrayList<>();
-
-            for (UpdateType updateType : updateTypeEntities) {
-                updateTypeNames.add(updateType.getUpdateType());
-            }
-            fillUpdateSettings(updateTypeNames);
+        public void onPostExecute(List<UpdateMethod> updateMethods) {
+            fillUpdateSettings(updateMethods);
 
         }
     }
 
-    private void fillUpdateSettings(ArrayList<String> updateTypes) {
-        Spinner spinner = (Spinner) findViewById(R.id.settingsUpdateTypeSpinner);
-        String currentUpdateType = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
+    private void fillUpdateSettings(final List<UpdateMethod> updateMethods) {
+        Spinner spinner = (Spinner) findViewById(R.id.settingsUpdateMethodSpinner);
+        String currentUpdateMethod = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
         Integer position = null;
-        if (currentUpdateType != null) {
-            for (int i = 0; i < updateTypes.size(); i++) {
-                if (updateTypes.get(i).equals(currentUpdateType)) {
+        if (currentUpdateMethod != null) {
+            for (int i = 0; i < updateMethods.size(); i++) {
+                if (updateMethods.get(i).getUpdateMethod().equals(currentUpdateMethod) || updateMethods.get(i).getUpdateMethodNl().equalsIgnoreCase(currentUpdateMethod)) {
                     position = i;
                 }
             }
         }
-        Resources resources = getResources();
-        ArrayList<String> localizedUpdateTypes = new ArrayList<>();
-        for (String updateType : updateTypes) {
-            localizedUpdateTypes.add(getString(resources.getIdentifier(updateType, "string", getPackageName())));
+        List<String> updateMethodNames = new ArrayList<>();
+        String language = Locale.getDefault().getDisplayLanguage();
+        switch (language) {
+            case "Nederlands":
+                for (UpdateMethod updateMethod : updateMethods) {
+                    updateMethodNames.add(updateMethod.getUpdateMethodNl());
+                }
+                break;
+            default:
+                for (UpdateMethod updateMethod : updateMethods) {
+                    updateMethodNames.add(updateMethod.getUpdateMethod());
+                }
+                break;
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, localizedUpdateTypes);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, updateMethodNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
         if (position != null) {
@@ -201,28 +174,26 @@ public class SettingsActivity extends AppCompatActivity {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String localizedUpdateTypeName = (String) adapterView.getItemAtPosition(i);
-                String updateTypeName;
+                long updateMethodId = 0L;
+                String updateMethodName = (String) adapterView.getItemAtPosition(i);
                 try {
                     progressBar.setVisibility(View.VISIBLE);
                 } catch (Exception ignored) {
-
                 }
-                if (localizedUpdateTypeName.equals(getString(R.string.full_update))) {
-                    updateTypeName = SettingsManager.FULL_UPDATE;
-                } else {
-                    updateTypeName = SettingsManager.INCREMENTAL_UPDATE;
+                //Set update method in preferences.
+                for (UpdateMethod updateMethod : updateMethods) {
+                    if(updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
+                        updateMethodId = updateMethod.getId();
+                    }
                 }
-                //Set update type in preferences.
-                settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateTypeName);
+                    settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethodId);
+                    settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethodName);
                 //Set update link
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE), updateTypeName);
+                    new UpdateDataLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, settingsManager.getLongPreference(SettingsManager.PROPERTY_DEVICE_ID), updateMethodId);
                 } else {
-                    new UpdateLinkSetter().execute(settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE), updateTypeName);
+                    new UpdateDataLinkSetter().execute(settingsManager.getLongPreference(SettingsManager.PROPERTY_DEVICE_ID), updateMethodId);
                 }
-
             }
 
             @Override
@@ -232,62 +203,17 @@ public class SettingsActivity extends AppCompatActivity {
         });
     }
 
-    private class UpdateLinkSetter extends AsyncTask<String, Integer, List<Object>> {
+    private class UpdateDataLinkSetter extends AsyncTask<Long, Integer, UpdateDataLink> {
         @Override
-        public List<Object> doInBackground(String... strings) {
-            String deviceName = strings[0];
-            String updateType = strings[1];
-            String deviceId = null;
-            ServerConnector serverConnector = new ServerConnector();
-            List<DeviceType> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
-            for (DeviceType deviceType : deviceTypeEntities) {
-                if (deviceType.getDeviceType().equals(deviceName)) {
-                    deviceId = String.valueOf(deviceType.getId());
-                }
-            }
-            if (deviceId != null) {
-                if (deviceId.equals("null")) {
-                    deviceId = null;
-                }
-            }
-            List<Object> objects = new ArrayList<>();
-            objects.add(serverConnector.getDeviceTypeEntities());
-            objects.add(serverConnector.getUpdateTypeEntities(deviceId));
-            objects.add(serverConnector.getUpdateLinkEntities());
-            objects.add(deviceName);
-            objects.add(updateType);
-            return objects;
+        public UpdateDataLink doInBackground(Long... deviceAndUpdateData) {
+            Long deviceId = deviceAndUpdateData[0];
+            Long updateMethodId = deviceAndUpdateData[1];
+            return getServerConnector().getUpdateDataLink(deviceId, updateMethodId);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public void onPostExecute(List<Object> entities) {
-            ArrayList<DeviceType> deviceTypeEntities = (ArrayList<DeviceType>) entities.get(0);
-            ArrayList<UpdateType> updateTypeEntities = (ArrayList<UpdateType>) entities.get(1);
-            ArrayList<UpdateLink> updateLinkEntities = (ArrayList<UpdateLink>) entities.get(2);
-            String deviceName = (String) entities.get(3);
-            String updateType = (String) entities.get(4);
-            Long deviceId = null;
-            Long updateTypeId = null;
-            String updateLink = null;
-            for (DeviceType deviceType : deviceTypeEntities) {
-                if (deviceType.getDeviceType().equals(deviceName)) {
-                    deviceId = deviceType.getId();
-                }
-            }
-            for (UpdateType updateTypeEntity : updateTypeEntities) {
-                if (updateTypeEntity.getUpdateType().equals(updateType)) {
-                    updateTypeId = updateTypeEntity.getId();
-                }
-            }
-            if (deviceId != null && updateTypeId != null) {
-                for (UpdateLink updateLinkEntity : updateLinkEntities) {
-                    if (updateLinkEntity.getTracking_device_type_id() == deviceId && updateLinkEntity.getTracking_update_type_id() == updateTypeId) {
-                        updateLink = updateLinkEntity.getInformation_url();
-                    }
-                }
-            }
-            settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_LINK, updateLink);
+        public void onPostExecute(UpdateDataLink updateDataLink) {
+            settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_DATA_LINK, updateDataLink.getUpdateDataUrl());
             try {
                 if (progressBar != null) {
                     progressBar.setVisibility(View.GONE);

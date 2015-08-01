@@ -11,7 +11,6 @@ public class NetworkConnectionManager {
         this.context = context;
     }
 
-
     /**
      * Checks if the device has an active network connection
      *

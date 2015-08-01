@@ -25,7 +25,7 @@ public class UpdateDescriptionTest extends ActivityInstrumentationTestCase2<Main
     }
 
     public void testUpdateDescription() throws Exception{
-        Button updateDescriptionButton = (Button)solo.getView(R.id.updateDescriptionButton);
+        Button updateDescriptionButton = (Button)solo.getView(R.id.updateInformationUpdateDescriptionButton);
         solo.clickOnView(updateDescriptionButton);
         solo.waitForActivity(UpdateDescriptionActivity.class);
         String updateDescription = "This update is just a test!";

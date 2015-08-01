@@ -1,10 +1,8 @@
 package com.arjanvlek.cyngnotainfo.views;
 
-import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,19 +10,22 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.arjanvlek.cyngnotainfo.Model.DeviceType;
-import com.arjanvlek.cyngnotainfo.Model.UpdateLink;
-import com.arjanvlek.cyngnotainfo.Model.UpdateType;
+import com.arjanvlek.cyngnotainfo.Model.UpdateDataLink;
+import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
-public class TutorialStep4Fragment extends Fragment {
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
+
+public class TutorialStep4Fragment extends AbstractFragment {
     private View rootView;
     private SettingsManager settingsManager;
+    private long deviceId;
+    private long updateMethodId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,78 +36,64 @@ public class TutorialStep4Fragment extends Fragment {
 
 
     public void fetchUpdateMethods() {
+        deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE));
+            new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId);
         } else {
-            new UpdateDataFetcher().execute(settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE));
+            new UpdateDataFetcher().execute(deviceId);
         }
     }
 
-    private class UpdateDataFetcher extends AsyncTask<String, Integer, List<UpdateType>> {
+    private class UpdateDataFetcher extends AsyncTask<Long, Integer, List<UpdateMethod>> {
 
         @Override
-        public List<UpdateType> doInBackground(String... strings) {
-            String deviceName = strings[0];
-            String deviceId = null;
-            ServerConnector serverConnector = new ServerConnector();
-            List<DeviceType> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
-            for (DeviceType deviceType : deviceTypeEntities) {
-                if (deviceType.getDeviceType().equals(deviceName)) {
-                    deviceId = String.valueOf(deviceType.getId());
-                }
-            }
-            if (deviceId != null) {
-                if (deviceId.equals("null")) {
-                    deviceId = null;
-                }
-            }
-            return serverConnector.getUpdateTypeEntities(deviceId);
+        public List<UpdateMethod> doInBackground(Long... deviceIds) {
+            long deviceId = deviceIds[0];
+            return getServerConnector().getUpdateMethods(deviceId);
         }
 
         @Override
-        public void onPostExecute(List<UpdateType> updateTypeEntities) {
-            ArrayList<String> updateTypeNames = new ArrayList<>();
-
-            for (UpdateType updateType : updateTypeEntities) {
-                updateTypeNames.add(updateType.getUpdateType());
-            }
-            fillUpdateSettings(updateTypeNames);
+        public void onPostExecute(List<UpdateMethod> updateMethods) {
+            fillUpdateSettings(updateMethods);
         }
     }
 
-    private void fillUpdateSettings(ArrayList<String> updateTypes) {
-        Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsUpdateTypeSpinner);
-        Integer position = 1;
-        Resources resources = getResources();
-        ArrayList<String> localizedUpdateTypes = new ArrayList<>();
-        for (String updateType : updateTypes) {
-            localizedUpdateTypes.add(getString(resources.getIdentifier(updateType, "string", getActivity().getPackageName())));
+    private void fillUpdateSettings(final List<UpdateMethod> updateMethods) {
+        Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsUpdateMethodSpinner);
+        List<String> updateMethodNames = new ArrayList<>();
+        if(Locale.getDefault().getDisplayLanguage().equals("Nederlands")) {
+            for(UpdateMethod updateMethod : updateMethods) {
+                updateMethodNames.add(updateMethod.getUpdateMethodNl());
+            }
         }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, localizedUpdateTypes);
+        else {
+            for(UpdateMethod updateMethod : updateMethods) {
+                updateMethodNames.add(updateMethod.getUpdateMethod());
+            }
+        }
+
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, updateMethodNames);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
-        if (localizedUpdateTypes.size() > 1) {
-            spinner.setSelection(position);
-        }
-
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-
-                String localizedUpdateTypeName = (String) adapterView.getItemAtPosition(i);
-                String updateTypeName;
-                if (localizedUpdateTypeName.equals(getString(R.string.full_update))) {
-                    updateTypeName = SettingsManager.FULL_UPDATE;
-                } else {
-                    updateTypeName = SettingsManager.INCREMENTAL_UPDATE;
+                updateMethodId = 0L;
+                String updateMethodName = (String) adapterView.getItemAtPosition(i);
+                for(UpdateMethod updateMethod : updateMethods) {
+                    if(updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
+                        updateMethodId = updateMethod.getId();
+                    }
                 }
+
                 //Set update type in preferences.
-                settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateTypeName);
+                settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, updateMethodId);
+                settingsManager.savePreference(PROPERTY_UPDATE_METHOD, updateMethodName);
                 //Set update link
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new UpdateLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE), updateTypeName);
+                    new UpdateDataLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId, updateMethodId);
                 } else {
-                    new UpdateLinkSetter().execute(settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE), updateTypeName);
+                    new UpdateDataLinkSetter().execute(deviceId, updateMethodId);
                 }
             }
 
@@ -117,63 +104,18 @@ public class TutorialStep4Fragment extends Fragment {
         });
     }
 
-    private class UpdateLinkSetter extends AsyncTask<String, Integer, List<Object>> {
+    private class UpdateDataLinkSetter extends AsyncTask<Long, Integer, UpdateDataLink> {
 
         @Override
-        public List<Object> doInBackground(String... strings) {
-            String deviceName = strings[0];
-            String updateType = strings[1];
-            String deviceId = null;
-            ServerConnector serverConnector = new ServerConnector();
-            List<DeviceType> deviceTypeEntities = serverConnector.getDeviceTypeEntities();
-            for (DeviceType deviceType : deviceTypeEntities) {
-                if (deviceType.getDeviceType().equals(deviceName)) {
-                    deviceId = String.valueOf(deviceType.getId());
-                }
-            }
-            if (deviceId != null) {
-                if (deviceId.equals("null")) {
-                    deviceId = null;
-                }
-            }
-            List<Object> objects = new ArrayList<>();
-            objects.add(serverConnector.getDeviceTypeEntities());
-            objects.add(serverConnector.getUpdateTypeEntities(deviceId));
-            objects.add(serverConnector.getUpdateLinkEntities());
-            objects.add(deviceName);
-            objects.add(updateType);
-            return objects;
+        public UpdateDataLink doInBackground(Long... params) {
+            long deviceId = params[0];
+            long updateMethodId = params[1];
+            return  getServerConnector().getUpdateDataLink(deviceId, updateMethodId);
         }
 
-        @SuppressWarnings("unchecked")
         @Override
-        public void onPostExecute(List<Object> entities) {
-            ArrayList<DeviceType> deviceTypeEntities = (ArrayList<DeviceType>) entities.get(0);
-            ArrayList<UpdateType> updateTypeEntities = (ArrayList<UpdateType>) entities.get(1);
-            ArrayList<UpdateLink> updateLinkEntities = (ArrayList<UpdateLink>) entities.get(2);
-            String deviceName = (String) entities.get(3);
-            String updateType = (String) entities.get(4);
-            Long deviceId = null;
-            Long updateTypeId = null;
-            String updateLink = null;
-            for (DeviceType deviceType : deviceTypeEntities) {
-                if (deviceType.getDeviceType().equals(deviceName)) {
-                    deviceId = deviceType.getId();
-                }
-            }
-            for (UpdateType updateTypeEntity : updateTypeEntities) {
-                if (updateTypeEntity.getUpdateType().equals(updateType)) {
-                    updateTypeId = updateTypeEntity.getId();
-                }
-            }
-            if (deviceId != null && updateTypeId != null) {
-                for (UpdateLink updateLinkEntity : updateLinkEntities) {
-                    if (updateLinkEntity.getTracking_device_type_id() == deviceId && updateLinkEntity.getTracking_update_type_id() == updateTypeId) {
-                        updateLink = updateLinkEntity.getInformation_url();
-                    }
-                }
-            }
-            settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_LINK, updateLink);
+        public void onPostExecute(UpdateDataLink updateDataLink) {
+            settingsManager.savePreference(PROPERTY_UPDATE_DATA_LINK, updateDataLink.getUpdateDataUrl());
         }
     }
 }

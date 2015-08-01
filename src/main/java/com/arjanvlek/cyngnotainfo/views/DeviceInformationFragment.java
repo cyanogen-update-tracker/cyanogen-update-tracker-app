@@ -21,6 +21,10 @@ public class DeviceInformationFragment extends Fragment {
     private RelativeLayout rootView;
     private AdView adView;
     private NetworkConnectionManager networkConnectionManager;
+    String adsTestId = "7CFCF353FBC40363065F03DFAC7D7EE4";
+    String adsTestId2 = "D9323E61DFC727F573528DB3820F7215";
+    String adsTestId3 = "D732F1B481C5274B05D707AC197B33B2";
+    String adsTestId4 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -106,10 +110,7 @@ public class DeviceInformationFragment extends Fragment {
         // Create an ad request. Check logcat output for the hashed device ID to
         // get test ads on a physical device. e.g.
         // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-        String adsTestId = "7CFCF353FBC40363065F03DFAC7D7EE4";
-        String adsTestId2 = "D9323E61DFC727F573528DB3820F7215";
-        String adsTestId3 = "D732F1B481C5274B05D707AC197B33B2";
-        String adsTestId4 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
+
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(adsTestId)
                 .addTestDevice(adsTestId2)

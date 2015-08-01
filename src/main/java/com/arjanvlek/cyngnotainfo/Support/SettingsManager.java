@@ -7,6 +7,8 @@ import android.content.pm.PackageManager;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
 
+import static com.arjanvlek.cyngnotainfo.GcmRegistrationIntentService.*;
+
 public class SettingsManager {
 
 
@@ -18,16 +20,13 @@ public class SettingsManager {
     public static final String PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE = "offlineUpdateRolloutPercentage";
 
     //Settings properties
-    public static final String FULL_UPDATE = "full_update";
-    public static final String INCREMENTAL_UPDATE = "incremental_update";
-    public static final String PROPERTY_GCM_REG_ID = "registration_id";
-    public static final String PROPERTY_GCM_DEVICE_TYPE = "gcm_device_type";
-    public static final String PROPERTY_GCM_UPDATE_TYPE = "gcm_update_type";
     public static final String PROPERTY_APP_VERSION = "appVersion";
-    public static final String PROPERTY_DEVICE_TYPE = "device_type";
-    public static final String PROPERTY_UPDATE_METHOD = "update_type";
+    public static final String PROPERTY_DEVICE = "device_type"; // Cannot be changed due to older versions of app
+    public static final String PROPERTY_DEVICE_ID = "device_id";
+    public static final String PROPERTY_UPDATE_METHOD = "update_type"; // Cannot be changed due to older versions of app
+    public static final String PROPERTY_UPDATE_METHOD_ID = "update_method_id";
     public static final String PROPERTY_REGISTRATION_ERROR = "registration_error";
-    public static final String PROPERTY_UPDATE_LINK = "update_link";
+    public static final String PROPERTY_UPDATE_DATA_LINK = "update_link"; // Cannot be changed due to older versions of app
 
     private Context context;
 
@@ -37,8 +36,8 @@ public class SettingsManager {
 
 
 
-    public boolean checkIfSettingsAreValid() {
-        return checkPreference(PROPERTY_DEVICE_TYPE) && checkPreference(PROPERTY_UPDATE_METHOD) && checkPreference(PROPERTY_UPDATE_LINK);
+    public boolean checkIfSettingsAreValid() { // TODO duplicate?
+        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD) && checkPreference(PROPERTY_UPDATE_DATA_LINK);
     }
 
 
@@ -64,6 +63,18 @@ public class SettingsManager {
         SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, value);
+        editor.apply();
+    }
+
+    /**
+     * Saves a Long preference to SharedPreferences.
+     * @param key Preference Key
+     * @param value Preference Value
+     */
+    public void saveLongPreference(String key, long value) {
+        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putLong(key, value);
         editor.apply();
     }
 
@@ -97,6 +108,16 @@ public class SettingsManager {
         return preferences.getInt(key, 0);
     }
 
+    /**
+     * Get a String preference from Shared Preferences
+     * @param key Preference Key
+     * @return Preference Value
+     */
+    public long getLongPreference(String key) {
+        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getLong(key, 0);
+    }
+
 
     /**
      * Fetches the Google Cloud Messaging (GCM) preferences which are stored in a separate file.
@@ -125,7 +146,7 @@ public class SettingsManager {
      * @return if the application is set up properly.
      */
     public boolean checkIfDeviceIsSet() {
-        return checkPreference(PROPERTY_DEVICE_TYPE) && checkPreference(PROPERTY_UPDATE_METHOD) && checkPreference(PROPERTY_UPDATE_LINK);
+        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD) && checkPreference(PROPERTY_UPDATE_DATA_LINK);
     }
 
 
@@ -133,24 +154,24 @@ public class SettingsManager {
      * Checks if the registration token for push notifications is still valid.
      * @return returns if the registration token is valid.
      */
-    public boolean checkIfRegistrationIsValid(String deviceType, String updateMethod) {
+    public boolean checkIfRegistrationIsValid(long deviceId, long updateMethodId) {
         final SharedPreferences prefs = getGCMPreferences();
-        String registrationId = prefs.getString(PROPERTY_GCM_REG_ID, "");
-        String registeredDeviceType = prefs.getString(PROPERTY_GCM_DEVICE_TYPE, "");
-        String registeredUpdateType = prefs.getString(PROPERTY_GCM_UPDATE_TYPE, "");
+        String registrationId = prefs.getString(PROPERTY_GCM_REGISTRATION_TOKEN, "");
+        long registeredDeviceId = prefs.getLong(PROPERTY_GCM_DEVICE_ID, Long.MIN_VALUE); //TODO MIGRATION
+        long registeredUpdateMethodId = prefs.getLong(PROPERTY_GCM_UPDATE_METHOD_ID, Long.MIN_VALUE);
 
         // The registration token is empty, so not valid.
-        if (registrationId != null && registrationId.isEmpty()) {
+        if (registrationId.isEmpty()) {
             return false;
         }
 
         // The registration token does not match the registered device type.
-        if (!deviceType.equals(registeredDeviceType)) {
+        if (deviceId != registeredDeviceId) {
             return false;
         }
 
         // The registration token does not match the registered update method.
-        if (!updateMethod.equals(registeredUpdateType)) {
+        if (updateMethodId != registeredUpdateMethodId) {
             return false;
         }
         // Check if app was updated; if so, it must clear the registration ID

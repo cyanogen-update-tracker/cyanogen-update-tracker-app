@@ -10,7 +10,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -25,7 +24,6 @@ import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
@@ -38,10 +36,12 @@ import org.joda.time.DateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UpdateInformationFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
+
+public class UpdateInformationFragment extends AbstractFragment implements SwipeRefreshLayout.OnRefreshListener {
 
     private String deviceName;
-    private String updateLink;
+    private String updateDataLink;
 
     private SwipeRefreshLayout refreshLayout;
 
@@ -51,23 +51,18 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     private SettingsManager settingsManager;
     private NetworkConnectionManager networkConnectionManager;
 
-
     private DateTime refreshedDate;
     private boolean isFetched;
 
-    //Test devices for ads.
-    public static final String ADS_TEST_DEVICE_ID_OWN_DEVICE = "7CFCF353FBC40363065F03DFAC7D7EE4";
-    public static final String ADS_TEST_DEVICE_ID_EMULATOR_1 = "D9323E61DFC727F573528DB3820F7215";
-    public static final String ADS_TEST_DEVICE_ID_EMULATOR_2 = "D732F1B481C5274B05D707AC197B33B2";
-    public static final String ADS_TEST_DEVICE_ID_EMULATOR_3 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         settingsManager = new SettingsManager(getActivity().getApplicationContext());
         networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
-        deviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE);
-        updateLink = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_LINK);
+        deviceName = settingsManager.getPreference(PROPERTY_DEVICE);
+        updateDataLink = settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK);
 
     }
 
@@ -78,12 +73,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         return rootView;
     }
 
-    private boolean checkIfSettingsAreValid() {
-        return settingsManager.checkPreference(SettingsManager.PROPERTY_DEVICE_TYPE)
-                && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_METHOD)
-                && settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_LINK);
-    }
-
     @Override
     public void onStart() {
         super.onStart();
@@ -92,7 +81,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             refreshLayout.setOnRefreshListener(this);
             refreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
         }
-        if (!isFetched && checkIfSettingsAreValid()) {
+        if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
             if (networkConnectionManager.checkNetworkConnection()) {
                 getUpdateInformation();
                 showAds();
@@ -107,7 +96,6 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 showNetworkError();
             }
         }
-
     }
 
     private void hideAds() {
@@ -117,7 +105,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
     }
 
     private void showAds() {
-        adView = (AdView) rootView.findViewById(R.id.update_information_banner_field);
+        adView = (AdView) rootView.findViewById(R.id.updateInformationAdView);
         if (adView != null) {
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
@@ -165,7 +153,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
         if (adView != null) {
             adView.resume();
         }
-        if (refreshedDate != null && isFetched && checkIfSettingsAreValid()) {
+        if (refreshedDate != null && isFetched && settingsManager.checkIfSettingsAreValid()) {
             if (refreshedDate.plusMinutes(5).isBefore(DateTime.now())) {
                 if (networkConnectionManager.checkNetworkConnection()) {
                     getUpdateInformation();
@@ -202,28 +190,28 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
     private CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate() {
         CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
-        cyanogenOTAUpdate.setName(settingsManager.getPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_NAME));
-        cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
-        cyanogenOTAUpdate.setDateUpdated(settingsManager.getPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME));
-        cyanogenOTAUpdate.setDescription(settingsManager.getPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
-        cyanogenOTAUpdate.setRollOutPercentage(settingsManager.getIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE));
+        cyanogenOTAUpdate.setName(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
+        cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
+        cyanogenOTAUpdate.setDateUpdated(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME));
+        cyanogenOTAUpdate.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
+        cyanogenOTAUpdate.setRollOutPercentage(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE));
         return cyanogenOTAUpdate;
     }
 
     public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online) {
         if (cyanogenOTAUpdate != null && isAdded()) {
             generateCircleDiagram(cyanogenOTAUpdate);
-            TextView buildNumberView = (TextView) rootView.findViewById(R.id.buildNumberLabel);
+            TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
             if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
                 buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
             } else {
                 buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.string_for) + " " + deviceName);
             }
 
-            TextView downloadSizeView = (TextView) rootView.findViewById(R.id.downloadSizeLabel);
+            TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
             downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.megabyte));
 
-            TextView updatedDataView = (TextView) rootView.findViewById(R.id.lastUpdatedLabel);
+            TextView updatedDataView = (TextView) rootView.findViewById(R.id.updateInformationUpdatedDataView);
             DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
             String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
             updatedDataView.setText(dateUpdated);
@@ -237,7 +225,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 noConnectionTextField.setVisibility(View.GONE);
 
                 if (cyanogenOTAUpdate.getDownloadUrl() != null) {
-                    Button downloadButton = (Button) rootView.findViewById(R.id.downloadButton);
+                    Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
                     downloadButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
@@ -250,12 +238,12 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
                 //Show the "no connection" bar.
                 noConnectionBar.setVisibility(View.VISIBLE);
                 noConnectionTextField.setVisibility(View.VISIBLE);
-                Button downloadButton = (Button) rootView.findViewById(R.id.downloadButton);
+                Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
                 downloadButton.setEnabled(false);
             }
 
 
-            Button descriptionButton = (Button) rootView.findViewById(R.id.updateDescriptionButton);
+            Button descriptionButton = (Button) rootView.findViewById(R.id.updateInformationUpdateDescriptionButton);
             descriptionButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -266,14 +254,13 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             });
 
             // Save preferences for offline viewing
-            settingsManager.savePreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
-            settingsManager.saveIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
-            settingsManager.saveIntPreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
-            settingsManager.savePreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
-            settingsManager.savePreference(SettingsManager.PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
+            settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
+            settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
 
             // Hide the refreshing icon
-
             if (refreshLayout != null) {
                 if (refreshLayout.isRefreshing()) {
                     refreshLayout.setRefreshing(false);
@@ -302,7 +289,7 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
 
     private void generateCircleDiagram(CyanogenOTAUpdate cyanogenOTAUpdate) {
         if (isAdded()) {
-            PieChart pieChartView = (PieChart) rootView.findViewById(R.id.rolloutPercentageDiagram);
+            PieChart circleDiagram = (PieChart) rootView.findViewById(R.id.updateInformationRollOutPercentageDiagram);
             List<Entry> chartData = new ArrayList<>();
             int percentage = cyanogenOTAUpdate.getRollOutPercentage();
             chartData.add(0, new Entry(percentage, 0));
@@ -321,27 +308,24 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
             PieData pieData = new PieData(xVals, pieDataSet);
             pieData.setDrawValues(false);
             pieData.setValueTextSize(12);
-            pieChartView.setDrawSliceText(false);
-            pieChartView.setCenterText(percentage + "%");
-            pieChartView.setDescription("");
-            Legend legend = pieChartView.getLegend();
+            circleDiagram.setDrawSliceText(false);
+            circleDiagram.setCenterText(percentage + "%");
+            circleDiagram.setDescription("");
+            Legend legend = circleDiagram.getLegend();
             legend.setForm(Legend.LegendForm.CIRCLE);
             legend.setFormSize(10);
             legend.setTextSize(12);
-            pieChartView.setUsePercentValues(true);
-            pieChartView.setData(pieData);
-            pieChartView.setTouchEnabled(false);
+            circleDiagram.setUsePercentValues(true);
+            circleDiagram.setData(pieData);
+            circleDiagram.setTouchEnabled(false);
             if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                pieChartView.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
+                circleDiagram.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
             } else {
-                pieChartView.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+                circleDiagram.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
             }
-            pieChartView.setBackgroundColor(getResources().getColor(R.color.chart_background));
-            pieChartView.invalidate();
-
-
+            circleDiagram.setBackgroundColor(getResources().getColor(R.color.chart_background));
+            circleDiagram.invalidate();
         }
-
     }
 
     @Override
@@ -361,12 +345,9 @@ public class UpdateInformationFragment extends Fragment implements SwipeRefreshL
      */
     private class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOTAUpdate> {
 
-
         @Override
         protected CyanogenOTAUpdate doInBackground(Void... arg0) {
-            ServerConnector serverConnector = new ServerConnector();
-
-            CyanogenOTAUpdate cyanogenOTAUpdate = serverConnector.fetchCyanogenOtaUpdate(updateLink);
+            CyanogenOTAUpdate cyanogenOTAUpdate = getServerConnector().getCyanogenOTAUpdate(updateDataLink);
             if (cyanogenOTAUpdate != null) {
                 return cyanogenOTAUpdate;
 

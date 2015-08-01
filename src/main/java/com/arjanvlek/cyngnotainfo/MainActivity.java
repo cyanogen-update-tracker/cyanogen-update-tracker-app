@@ -28,6 +28,8 @@ import com.arjanvlek.cyngnotainfo.views.UpdateInstallationGuideActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
+
 
 @SuppressWarnings("deprecation")
 public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
@@ -39,9 +41,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     // Used for Google Play Services check
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
-    private String deviceType = "";
+    private String device = "";
+    private long deviceId = 0L;
     private String updateMethod = "";
-    private String updateLink = "";
+    private long updateMethodId = 0L;
+    private String updateDataLink = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -52,9 +56,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         networkConnectionManager = new NetworkConnectionManager(context);
 
         //Fetch currently selected device, update method and update link
-        deviceType = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE_TYPE);
-        updateMethod = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
-        updateLink = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_LINK);
+        device = settingsManager.getPreference(PROPERTY_DEVICE);
+        deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
+        updateMethod = settingsManager.getPreference(PROPERTY_UPDATE_METHOD);
+        updateMethodId = settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID);
+        updateDataLink = settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK);
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -65,7 +71,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        mViewPager = (ViewPager) findViewById(R.id.pager);
+        mViewPager = (ViewPager) findViewById(R.id.mainActivityPager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
         mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
@@ -102,14 +108,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     registerInBackground();
                 }
                 //Check if app needs to re-register for push notifications (like after device type change etc.)
-                if(deviceType != null && updateMethod != null) {
-                    if (!settingsManager.checkIfRegistrationIsValid(deviceType, updateMethod) && networkConnectionManager.checkNetworkConnection()) {
+                if(device != null && updateMethod != null) {
+                    if (!settingsManager.checkIfRegistrationIsValid(deviceId, updateMethodId) && networkConnectionManager.checkNetworkConnection()) {
                         registerInBackground();
                     }
                 }
             }
             //Show the welcome tutorial if no device has been set
-            if (deviceType == null || updateMethod == null || updateLink == null) {
+            if (device == null || updateMethod == null || updateDataLink == null) {
                 Tutorial();
             }
         }
@@ -220,7 +226,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             }
             return null;
         }
-
     }
 
     /**
@@ -277,7 +282,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 GooglePlayServicesUtil.getErrorDialog(resultCode, this,
                         PLAY_SERVICES_RESOLUTION_REQUEST).show();
             } else {
-                System.out.println("This device is not supported.");
                 finish();
             }
             return false;

@@ -3,16 +3,11 @@ package com.arjanvlek.cyngnotainfo;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
-import com.arjanvlek.cyngnotainfo.Model.DeviceType;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
-
-import java.util.List;
 import java.util.Locale;
 
 public class GcmNotificationListenerService extends com.google.android.gms.gcm.GcmListenerService {
@@ -22,56 +17,52 @@ public class GcmNotificationListenerService extends com.google.android.gms.gcm.G
     public static int MAINTENANCE_NOTIFICATION_ID = 3;
 
     /**
-     * Send a notification when a message is received.
+     * Show a notification when a message is received.
      * @param from From who the notification came (not used in this Application).
      * @param data Data bundle containing the message data.
      */
     @Override
     public void onMessageReceived(String from, Bundle data) {
-        sendNotification(data);
-
+        showNotification(data);
     }
 
     /**
      * Displays a GCM notification
      * @param msg Bundle with GCM Notification Data.
      */
-    private void sendNotification(Bundle msg) {
+    private void showNotification(Bundle msg) {
         NotificationManager mNotificationManager = (NotificationManager)
-                this.getSystemService(Context.NOTIFICATION_SERVICE);
+                this.getSystemService(NOTIFICATION_SERVICE);
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
         String message = null;
         String messageType = "none";
         if (msg != null) {
-
-            if (msg.getString("version_number") != null) {
-                String deviceName = getDeviceName(msg.getString("tracking_device_type_id"));
+            if (msg.getString("version_number") != null && msg.getString("device_name") != null) {
+                String deviceName = msg.getString("device_name");
                 message = getString(R.string.notification_version) + " " + msg.getString("version_number") + " " + getString(R.string.notification_is_now_available) + " " + deviceName + "!";
                 messageType = "update";
             } else if (msg.getString("new_device") != null) {
-                String deviceName = getDeviceName(msg.getString("new_device"));
+                String deviceName = msg.getString("new_device");
                 message = getString(R.string.notification_new_device) + " " + deviceName + " " + getString(R.string.nofitication_new_device_2);
                 messageType = "newDevice";
-            } else if (msg.getString("new_device") == null && msg.getString("version_number") == null && msg.getString("maintenance") == null && msg.getString("tracking_device_type_id") != null) {
-                String deviceName = getDeviceName(msg.getString("tracking_device_type_id"));
+            } else if (msg.getString("version_number") == null && msg.getString("device_name") != null) {
+                String deviceName = msg.getString("device_name");
                 message = getString(R.string.notification_unknown_version_number) + " " + deviceName + "!";
                 messageType = "update";
 
-            } else if (msg.getString("maintenance") != null && msg.getString("maintenance_nl") != null) {
+            } else if (msg.getString("server_message") != null && msg.getString("server_message_nl") != null) {
                 String language = Locale.getDefault().getDisplayLanguage();
                 switch (language) {
                     case "Nederlands":
-                        String message1 = msg.getString("maintenance_nl");
-                        message = message1.replace("_", " ");
+                        message = msg.getString("server_message_nl");
                         break;
                     default:
-                        String message2 = msg.getString("maintenance");
-                        message = message2.replace("_", " ");
+                        message = msg.getString("server_message");
                         break;
                 }
-                messageType = "maintenance";
+                messageType = "serverMessage";
             }
         }
         if (message != null) {
@@ -116,10 +107,10 @@ public class GcmNotificationListenerService extends com.google.android.gms.gcm.G
                     mNotificationManager.notify(NEW_DEVICE_NOTIFICATION_ID, mBuilder.build());
                     break;
                 }
-                case "maintenance": {
+                case "serverMessage": {
                     NotificationCompat.Builder mBuilder =
                             new NotificationCompat.Builder(this)
-                                    .setSmallIcon(R.drawable.ic_stat_notification_maintenance)
+                                    .setSmallIcon(R.drawable.ic_stat_notification_general)
                                     .setContentTitle(getString(R.string.app_name))
                                     .setStyle(new NotificationCompat.BigTextStyle()
                                             .bigText(message))
@@ -138,28 +129,5 @@ public class GcmNotificationListenerService extends com.google.android.gms.gcm.G
                 }
             }
         }
-    }
-
-    /**
-     * Gets a device name from the Application Server by supplying an internal Device ID.
-     * @param deviceId Device ID from the database.
-     * @return Device name
-     */
-    private String getDeviceName(String deviceId) {
-        Long deviceIdLong;
-        try {
-            deviceIdLong = Long.parseLong(deviceId);
-        } catch (NumberFormatException ignored) {
-            return null;
-        }
-        String deviceName = null;
-        ServerConnector serverConnector = new ServerConnector();
-        List<DeviceType> deviceTypeList = serverConnector.getDeviceTypeEntities();
-        for (DeviceType deviceType : deviceTypeList) {
-            if (deviceType.getId() == deviceIdLong) {
-                deviceName = deviceType.getDeviceType();
-            }
-        }
-        return deviceName;
     }
 }

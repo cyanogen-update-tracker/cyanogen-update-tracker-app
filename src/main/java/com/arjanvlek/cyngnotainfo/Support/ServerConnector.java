@@ -2,12 +2,13 @@ package com.arjanvlek.cyngnotainfo.Support;
 
 import android.os.AsyncTask;
 import android.os.Build;
+import android.support.annotation.Nullable;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
-import com.arjanvlek.cyngnotainfo.Model.DeviceType;
-import com.arjanvlek.cyngnotainfo.Model.UpdateLink;
-import com.arjanvlek.cyngnotainfo.Model.UpdateType;
+import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.UpdateDataLink;
+import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,187 +22,148 @@ import java.util.ArrayList;
 import java.util.List;
 
 @SuppressWarnings("StatementWithEmptyBody")
-public class ServerConnector implements AsyncTaskResultHelper {
+public class ServerConnector {
 
     public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
-    private final static String SERVER_URL = "** Add the base URL of your API / backend here **";
-    private final static String TEST_SERVER_URL = "http://192.168.178.16/";
-    private final static String DEVICE_TYPE_URL = "check_device_types.php";
-    private final static String UPDATE_TYPE_URL = "check_update_types.php";
-    private final static String UPDATE_LINK_URL = "check_update_links.php";
-    private List<DeviceType> deviceTypeEntities;
-    private List<UpdateType> updateTypeEntities;
-    private List<UpdateLink> updateLinkEntities;
+    private final static String SERVER_URL = "** Add the base URL of your API / backend here **v1/";
+    private final static String TEST_SERVER_URL = "http://cyanogenupdatetracker.com/test/api/v1/";
+    private final static String DEVICES_URL = "devices";
+    private final static String UPDATE_METHOD_URL = "updateMethods";
+    private final static String UPDATE_DATA_LINK_URL = "updateDataLink";
+
+    private List<Device> devices;
+    private List<UpdateMethod> updateMethods;
+    private UpdateDataLink updateDataLink;
     private CyanogenOTAUpdate cyanogenOTAUpdate;
-    private List<DeviceType> offlineDeviceTypeEntities = new ArrayList<>();
-    private List<UpdateType> offlineUpdateTypeEntities = new ArrayList<>();
-    private List<UpdateLink> offlineUpdateLinkEntities = new ArrayList<>();
-    private boolean deviceTypesReady = false;
-    private boolean updateTypesReady = false;
-    private boolean updateLinksReady = false;
-    private boolean cyanogenUpdateReady = false;
+
+    private List<Device> offlineDevices = fillOfflineDevices();
+    private List<UpdateMethod> offlineUpdateMethods = fillOfflineUpdateMethods();
+    private List<UpdateDataLink> offlineUpdateDataLinks = fillOfflineUpdateDataLinks();
+
     private boolean offline = false;
+    private boolean ready = false;
     public static boolean testing = false;
 
-    public ServerConnector() {
-        this.offlineDeviceTypeEntities = fillOfflineDeviceEntities();
-        this.offlineUpdateTypeEntities = fillOfflineUpdateTypeEntities();
-        this.offlineUpdateLinkEntities = fillOfflineUpdateLinkEntities();
-    }
-
-    public List<DeviceType> getDeviceTypeEntities() {
-        fetchDataFromServer fetchDeviceDataFromServer = new fetchDataFromServer();
-        fetchDeviceDataFromServer.asyncTaskResultHelper = this;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            fetchDeviceDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "device");
-        } else {
-            fetchDeviceDataFromServer.execute("device");
+    public List<Device> getDevices() {
+        if(devices == null) {
+            fetchDataFromServer("device", null, null);
+            if (offline) {
+                return offlineDevices;
+            } else {
+                return devices;
+            }
         }
-
-        while (!deviceTypesReady) {
-            // We don't do anything here :)
-        }
-        if (offline) {
-            return offlineDeviceTypeEntities;
-        } else {
-            return deviceTypeEntities;
+        else {
+            return devices;
         }
     }
 
-
-
-    public CyanogenOTAUpdate fetchCyanogenOtaUpdate(String updateInformationUrl) {
-        fetchDataFromCyanogenServer fetchDataFromCyanogenServer = new fetchDataFromCyanogenServer();
-        fetchDataFromCyanogenServer.asyncTaskResultHelper = this;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            fetchDataFromCyanogenServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, updateInformationUrl);
-        } else {
-            fetchDataFromCyanogenServer.execute(updateInformationUrl);
-        }
-
-        while (!cyanogenUpdateReady) {
-            // We don't do anything here :)
-        }
+    public CyanogenOTAUpdate getCyanogenOTAUpdate(String updateInformationUrl) {
+        fetchDataFromServer("cyanogen_update", null, updateInformationUrl);
         if (offline) {
             return null;
         } else {
             return cyanogenOTAUpdate;
         }
-
     }
 
-    public List<UpdateType> getUpdateTypeEntities(String deviceId) {
-        fetchDataFromServer fetchUpdateDataFromServer = new fetchDataFromServer();
-        fetchUpdateDataFromServer.asyncTaskResultHelper = this;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            fetchUpdateDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update", deviceId);
-        } else {
-            fetchUpdateDataFromServer.execute("update", deviceId);
-        }
-        while (!updateTypesReady) {
-            // We don't do anything here :)
-        }
+    public List<UpdateMethod> getUpdateMethods(Long deviceId) {
+        fetchDataFromServer("update", deviceId.toString(), null);
         if (offline) {
-            return offlineUpdateTypeEntities;
+            return offlineUpdateMethods;
         } else {
-            return updateTypeEntities;
+            return updateMethods;
         }
     }
 
-    public List<UpdateLink> getUpdateLinkEntities() {
-        fetchDataFromServer fetchUpdateLinksFromServer = new fetchDataFromServer();
-        fetchUpdateLinksFromServer.asyncTaskResultHelper = this;
-        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            fetchUpdateLinksFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, "update_link");
-        } else {
-            fetchUpdateLinksFromServer.execute("update_link");
-        }
-        while (!updateLinksReady) {
-            // We don't do anything here :)
-        }
+    public UpdateDataLink getUpdateDataLink(Long deviceId, Long updateMethodId) {
+        fetchDataFromServer("update_link", deviceId.toString(), updateMethodId.toString());
         if (offline) {
-            return offlineUpdateLinkEntities;
+            UpdateDataLink offlineUpdateDataLink = null;
+            for(UpdateDataLink updateDataLink : offlineUpdateDataLinks) {
+                if(updateDataLink.getDeviceId() == deviceId && updateDataLink.getUpdateMethodId() == updateMethodId) {
+                    offlineUpdateDataLink = updateDataLink;
+                }
+            }
+            return offlineUpdateDataLink;
         } else {
-            return updateLinkEntities;
+            return updateDataLink;
         }
     }
 
-    private void findAllDeviceTypesFromHtmlResponse(String htmlResponse) {
-        deviceTypeEntities = null;
+    private void findAllDevicesFromHtmlResponse(String htmlResponse) {
+        devices = null;
         if (htmlResponse != null) {
             if (!htmlResponse.isEmpty()) {
-                deviceTypeEntities = new ArrayList<>();
+                devices = new ArrayList<>();
                 try {
                     JSONArray serverResponse = new JSONArray(htmlResponse);
                     for (int i = 0; i < serverResponse.length(); i++) {
-                        DeviceType deviceType = new DeviceType();
-                        JSONObject rawDeviceTypeEntity = serverResponse.getJSONObject(i);
-                        deviceType.setId(rawDeviceTypeEntity.getLong("id"));
-                        deviceType.setDeviceType(rawDeviceTypeEntity.getString("device_type"));
-                        deviceTypeEntities.add(deviceType);
+                        Device device = new Device();
+                        JSONObject rawDevice = serverResponse.getJSONObject(i);
+                        device.setId(rawDevice.getLong("id"));
+                        device.setDeviceName(rawDevice.getString("device_name"));
+                        devices.add(device);
                     }
                 } catch (JSONException e) {
-                    deviceTypeEntities = null;
-                    e.printStackTrace();
+                    // There should never be an exception here; it means an internal server / api error.
+                    offline = true;
                 }
             }
         } else {
             offline = true;
         }
-        deviceTypesReady = true;
     }
 
-
-    private void findAllUpdateTypesFromHtmlResponse(String htmlResponse) {
-        updateTypeEntities = null;
+    private void findAllUpdateMethodsFromHtmlResponse(String htmlResponse) {
+        updateMethods = null;
 
         if (htmlResponse != null) {
             if (!htmlResponse.isEmpty()) {
                 try {
-                    updateTypeEntities = new ArrayList<>();
+                    updateMethods = new ArrayList<>();
                     JSONArray serverResponse = new JSONArray(htmlResponse);
                     for (int i = 0; i < serverResponse.length(); i++) {
-                        UpdateType updateType = new UpdateType();
-                        JSONObject rawUpdateTypeEntity = serverResponse.getJSONObject(i);
-                        updateType.setId(rawUpdateTypeEntity.getLong("id"));
-                        updateType.setUpdateType(rawUpdateTypeEntity.getString("update_type"));
-                        updateTypeEntities.add(updateType);
+                        UpdateMethod updateMethod = new UpdateMethod();
+                        JSONObject rawUpdateMethod = serverResponse.getJSONObject(i);
+                        updateMethod.setId(rawUpdateMethod.getLong("id"));
+                        updateMethod.setUpdateMethod(rawUpdateMethod.getString("update_method"));
+                        updateMethod.setUpdateMethodNl(rawUpdateMethod.getString("update_method_nl"));
+                        updateMethods.add(updateMethod);
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    // There should never be an exception here; it means an internal server / api error.
+                    offline = true;
                 }
             }
         } else {
             offline = true;
         }
-        updateTypesReady = true;
     }
 
-    private void findAllUpdateLinksFromHtmlResponse(String htmlResponse) {
-        updateLinkEntities = null;
+    private void findUpdateDataLinkFromHtmlResponse(String htmlResponse) {
+        updateDataLink = null;
 
         if (htmlResponse != null) {
             if (!htmlResponse.isEmpty()) {
                 try {
-                    updateLinkEntities = new ArrayList<>();
+                    updateDataLink = new UpdateDataLink();
                     JSONArray serverResponse = new JSONArray(htmlResponse);
                     for (int i = 0; i < serverResponse.length(); i++) {
-                        UpdateLink updateLink = new UpdateLink();
-                        JSONObject rawUpdateLinkEntity = serverResponse.getJSONObject(i);
-                        updateLink.setId(rawUpdateLinkEntity.getLong("id"));
-                        updateLink.setTracking_update_type_id(rawUpdateLinkEntity.getLong("tracking_update_type_id"));
-                        updateLink.setTracking_device_type_id(rawUpdateLinkEntity.getLong("tracking_device_type_id"));
-                        updateLink.setInformation_url(rawUpdateLinkEntity.getString("information_url"));
-                        updateLinkEntities.add(updateLink);
+                        JSONObject rawUpdateDataLink = serverResponse.getJSONObject(i);
+                        updateDataLink.setId(rawUpdateDataLink.getLong("id"));
+                        updateDataLink.setUpdateMethodId(rawUpdateDataLink.getLong("update_method_id"));
+                        updateDataLink.setDeviceId(rawUpdateDataLink.getLong("device_id"));
+                        updateDataLink.setUpdateDataUrl(rawUpdateDataLink.getString("update_data_url"));
                     }
                 } catch (JSONException e) {
-                    e.printStackTrace();
+                    // There should never be an exception here; it means an internal server / api error.
+                    offline = true;
                 }
             }
         } else {
             offline = true;
         }
-        updateLinksReady = true;
     }
 
     private void findAllUpdateInformationFromHtmlResponse(String htmlResponse) {
@@ -221,80 +183,68 @@ public class ServerConnector implements AsyncTaskResultHelper {
                     cyanogenOTAUpdate.setName(object.getString("name"));
                     cyanogenOTAUpdate.setModel(object.getString("model"));
                 } catch (JSONException e) {
-                    cyanogenUpdateReady = true;
+                    // No issue here: Sometimes Cyanogen decides not to include a field in the result.
                 }
             }
         } else {
             offline = true;
         }
-        cyanogenUpdateReady = true;
     }
-
-    @Override
-    public void onTaskComplete(String... output) {
-        if (output != null) {
-            String type = output[0];
-            String data = output[1];
-            switch (type) {
-                case "device":
-                    findAllDeviceTypesFromHtmlResponse(data);
-                    break;
-                case "update":
-                    findAllUpdateTypesFromHtmlResponse(data);
-                    break;
-                case "update_link":
-                    findAllUpdateLinksFromHtmlResponse(data);
-                    break;
-                case "information":
-                    findAllUpdateInformationFromHtmlResponse(data);
-                    break;
-            }
+    private synchronized void fetchDataFromServer(String requestType, @Nullable String oldRegistrationToken, @Nullable String cyanogenUpdateDataUrl) {
+        ready = false;
+        offline = false;
+        FetchDataFromServer fetchDataFromServer = new FetchDataFromServer();
+        if (Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
+            fetchDataFromServer.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, requestType, oldRegistrationToken, cyanogenUpdateDataUrl);
         } else {
-            findAllUpdateTypesFromHtmlResponse(null);
-            findAllDeviceTypesFromHtmlResponse(null);
-            findAllUpdateLinksFromHtmlResponse(null);
-            findAllUpdateInformationFromHtmlResponse(null);
+            fetchDataFromServer.execute(requestType, oldRegistrationToken, cyanogenUpdateDataUrl);
         }
-
+        while(!ready) {
+            // we don't do anything here while the server is working!
+        }
     }
-
 
     /**
      * Fetches data from the App Server.
      * @params String array with data type at position zero and optional device id at position 1 (for update information).
      */
-    private class fetchDataFromServer extends AsyncTask<String, Void, String[]> {
-        public AsyncTaskResultHelper asyncTaskResultHelper = null;
-
+    private class FetchDataFromServer extends AsyncTask<String, Void, String[]> {
         @Override
-        protected String[] doInBackground(String... types) {
-            String type = types[0];
-
+        protected String[] doInBackground(String... params) {
+            String type = params[0];
+            String deviceId;
+            String updateMethodId;
             URL requestUrl;
             try {
                 switch (type) {
                     case "device":
                         if(!testing) {
-                            requestUrl = new URL(SERVER_URL + DEVICE_TYPE_URL);
+                            requestUrl = new URL(SERVER_URL + DEVICES_URL);
                         } else{
-                            requestUrl = new URL(TEST_SERVER_URL + DEVICE_TYPE_URL);
+                            requestUrl = new URL(TEST_SERVER_URL + DEVICES_URL);
                         }
                         break;
                     case "update":
-                        String deviceId = types[1];
+                        deviceId = params[1];
                         if(!testing) {
-                            requestUrl = new URL(SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
+                            requestUrl = new URL(SERVER_URL + UPDATE_METHOD_URL + "/" +  deviceId);
                         }
                         else {
-                            requestUrl = new URL(TEST_SERVER_URL + UPDATE_TYPE_URL + "?device_id=" + deviceId);
+                            requestUrl = new URL(TEST_SERVER_URL + UPDATE_METHOD_URL + "/" + deviceId);
                         }
                         break;
                     case "update_link":
+                        deviceId = params[1];
+                        updateMethodId = params[2];
                         if(!testing) {
-                            requestUrl = new URL(SERVER_URL + UPDATE_LINK_URL);
+                            requestUrl = new URL(SERVER_URL + UPDATE_DATA_LINK_URL + "/" + deviceId + "/" + updateMethodId);
                         } else {
-                            requestUrl = new URL(TEST_SERVER_URL + UPDATE_LINK_URL);
+                            requestUrl = new URL(TEST_SERVER_URL + UPDATE_DATA_LINK_URL + "/" + deviceId + "/" + updateMethodId);
                         }
+                        break;
+                    case "cyanogen_update":
+                        String updateDataUrl = params[2];
+                        requestUrl = new URL(updateDataUrl);
                         break;
                     default:
                         return null;
@@ -322,7 +272,6 @@ public class ServerConnector implements AsyncTaskResultHelper {
                     in.close();
                     return typeAndHtmlResponse;
 
-
                 } else {
                     return null;
                 }
@@ -333,158 +282,134 @@ public class ServerConnector implements AsyncTaskResultHelper {
 
         @Override
         protected void onPostExecute(String[] typeAndHtmlResponse) {
-            asyncTaskResultHelper.onTaskComplete(typeAndHtmlResponse);
-        }
-
-    }
-
-    private class fetchDataFromCyanogenServer extends AsyncTask<String, Void, String[]> {
-        public AsyncTaskResultHelper asyncTaskResultHelper = null;
-
-        @Override
-        protected String[] doInBackground(String... updateInformationUrls) {
-            String url = updateInformationUrls[0];
-
-            URL requestUrl;
-            try {
-                requestUrl = new URL(url);
-
-                HttpURLConnection urlConnection = (HttpURLConnection) requestUrl.openConnection();
-
-                //setup request
-                urlConnection.setRequestProperty("User-Agent", USER_AGENT);
-                urlConnection.setConnectTimeout(5000);
-                urlConnection.setReadTimeout(5000);
-
-                int responseCode = urlConnection.getResponseCode();
-                if (responseCode >= 200 && responseCode <= 300) {
-                    BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
-                    String inputLine;
-                    StringBuilder response = new StringBuilder();
-
-                    while ((inputLine = in.readLine()) != null) {
-                        response.append(inputLine);
-                    }
-                    String[] typeAndHtmlResponse = new String[2];
-                    typeAndHtmlResponse[0] = "information";
-                    typeAndHtmlResponse[1] = response.toString();
-                    in.close();
-                    return typeAndHtmlResponse;
-
-
-                } else {
-                    return null;
+            if (typeAndHtmlResponse != null) {
+                String type = typeAndHtmlResponse[0];
+                String data = typeAndHtmlResponse[1];
+                switch (type) {
+                    case "device":
+                        findAllDevicesFromHtmlResponse(data);
+                        break;
+                    case "update":
+                        findAllUpdateMethodsFromHtmlResponse(data);
+                        break;
+                    case "update_link":
+                        findUpdateDataLinkFromHtmlResponse(data);
+                        break;
+                    case "cyanogen_update":
+                        findAllUpdateInformationFromHtmlResponse(data);
                 }
-            } catch (Exception e) {
-                return null;
+            } else {
+                findAllUpdateMethodsFromHtmlResponse(null);
+                findAllDevicesFromHtmlResponse(null);
+                findUpdateDataLinkFromHtmlResponse(null);
+                findAllUpdateInformationFromHtmlResponse(null);
+                findAllUpdateInformationFromHtmlResponse(null);
             }
-        }
-
-        @Override
-        protected void onPostExecute(String[] typeAndHtmlResponse) {
-            asyncTaskResultHelper.onTaskComplete(typeAndHtmlResponse);
+            ready = true;
         }
 
     }
 
-    private List<DeviceType> fillOfflineDeviceEntities() {
-        List<DeviceType> offlineDeviceTypeEntities = new ArrayList<>();
-        DeviceType onePlusOne = new DeviceType();
+    private List<Device> fillOfflineDevices() {
+        List<Device> offlineDevices = new ArrayList<>();
+        Device onePlusOne = new Device();
         onePlusOne.setId(1);
-        onePlusOne.setDeviceType("OnePlus One");
-        DeviceType yuYureka = new DeviceType();
+        onePlusOne.setDeviceName("OnePlus One");
+        Device yuYureka = new Device();
         yuYureka.setId(2);
-        yuYureka.setDeviceType("Yu Yureka");
-        DeviceType oppoN1 = new DeviceType();
+        yuYureka.setDeviceName("Yu Yureka");
+        Device oppoN1 = new Device();
         oppoN1.setId(3);
-        oppoN1.setDeviceType("Oppo N1 Cyanogenmod Edition");
-        DeviceType yuYuphoria = new DeviceType();
+        oppoN1.setDeviceName("Oppo N1 Cyanogenmod Edition");
+        Device yuYuphoria = new Device();
         yuYuphoria.setId(5); // The ID 4 is reserved for the Alcatel Onetouch Hero 2+
-        yuYuphoria.setDeviceType("Yu Yuphoria");
+        yuYuphoria.setDeviceName("Yu Yuphoria");
 
-        offlineDeviceTypeEntities.add(onePlusOne);
-        offlineDeviceTypeEntities.add(yuYureka);
-        offlineDeviceTypeEntities.add(oppoN1);
-        offlineDeviceTypeEntities.add(yuYuphoria);
-        return offlineDeviceTypeEntities;
+        offlineDevices.add(onePlusOne);
+        offlineDevices.add(yuYureka);
+        offlineDevices.add(oppoN1);
+        offlineDevices.add(yuYuphoria);
+        return offlineDevices;
     }
 
-    private List<UpdateType> fillOfflineUpdateTypeEntities() {
-        List<UpdateType> offlineUpdateTypeEntities = new ArrayList<>();
-        UpdateType fullUpdate = new UpdateType();
+    private List<UpdateMethod> fillOfflineUpdateMethods() {
+        List<UpdateMethod> offlineUpdateMethods = new ArrayList<>();
+        UpdateMethod fullUpdate = new UpdateMethod();
         fullUpdate.setId(1);
-        fullUpdate.setUpdateType("full_update");
-        UpdateType incrementalUpdate = new UpdateType();
+        fullUpdate.setUpdateMethod("Full update");
+        fullUpdate.setUpdateMethodNl("Volledige update");
+        UpdateMethod incrementalUpdate = new UpdateMethod();
         incrementalUpdate.setId(2);
-        incrementalUpdate.setUpdateType("incremental_update");
-        offlineUpdateTypeEntities.add(fullUpdate);
-        offlineUpdateTypeEntities.add(incrementalUpdate);
-        return offlineUpdateTypeEntities;
+        incrementalUpdate.setUpdateMethod("Incremental update");
+        incrementalUpdate.setUpdateMethodNl("Incrementele update");
+
+        offlineUpdateMethods.add(incrementalUpdate);
+        offlineUpdateMethods.add(fullUpdate);
+        return offlineUpdateMethods;
     }
 
-    private List<UpdateLink> fillOfflineUpdateLinkEntities() {
-        List<UpdateLink> updateLinkEntities = new ArrayList<>();
+    private List<UpdateDataLink> fillOfflineUpdateDataLinks() {
+        List<UpdateDataLink> updateDataLinks = new ArrayList<>();
 
-        UpdateLink OnePlusOneFullUpdate = new UpdateLink();
+        UpdateDataLink OnePlusOneFullUpdate = new UpdateDataLink();
         OnePlusOneFullUpdate.setId(1);
-        OnePlusOneFullUpdate.setTracking_device_type_id(1);
-        OnePlusOneFullUpdate.setTracking_update_type_id(1);
-        OnePlusOneFullUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=STABLE");
+        OnePlusOneFullUpdate.setDeviceId(1);
+        OnePlusOneFullUpdate.setUpdateMethodId(2);
+        OnePlusOneFullUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=STABLE");
 
-        UpdateLink OnePlusOneIncrementalUpdate = new UpdateLink();
+        UpdateDataLink OnePlusOneIncrementalUpdate = new UpdateDataLink();
         OnePlusOneIncrementalUpdate.setId(2);
-        OnePlusOneIncrementalUpdate.setTracking_device_type_id(1);
-        OnePlusOneIncrementalUpdate.setTracking_update_type_id(2);
-        OnePlusOneIncrementalUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=INCREMENTAL");
+        OnePlusOneIncrementalUpdate.setDeviceId(1);
+        OnePlusOneIncrementalUpdate.setUpdateMethodId(1);
+        OnePlusOneIncrementalUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=bacon&type=INCREMENTAL");
 
-        UpdateLink YuYurekaFullUpdate = new UpdateLink();
+        UpdateDataLink YuYurekaFullUpdate = new UpdateDataLink();
         YuYurekaFullUpdate.setId(3);
-        YuYurekaFullUpdate.setTracking_device_type_id(2);
-        YuYurekaFullUpdate.setTracking_update_type_id(1);
-        YuYurekaFullUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=STABLE");
+        YuYurekaFullUpdate.setDeviceId(2);
+        YuYurekaFullUpdate.setUpdateMethodId(2);
+        YuYurekaFullUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=STABLE");
 
-        UpdateLink YuYurekaIncrementalUpdate = new UpdateLink();
+        UpdateDataLink YuYurekaIncrementalUpdate = new UpdateDataLink();
         YuYurekaIncrementalUpdate.setId(4);
-        YuYurekaIncrementalUpdate.setTracking_device_type_id(2);
-        YuYurekaIncrementalUpdate.setTracking_update_type_id(2);
-        YuYurekaIncrementalUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=INCREMENTAL");
+        YuYurekaIncrementalUpdate.setDeviceId(2);
+        YuYurekaIncrementalUpdate.setUpdateMethodId(1);
+        YuYurekaIncrementalUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=tomato&type=INCREMENTAL");
 
-        UpdateLink N1FullUpdate = new UpdateLink();
+        UpdateDataLink N1FullUpdate = new UpdateDataLink();
         N1FullUpdate.setId(5);
-        N1FullUpdate.setTracking_device_type_id(3);
-        N1FullUpdate.setTracking_update_type_id(1);
-        N1FullUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=STABLE");
+        N1FullUpdate.setDeviceId(3);
+        N1FullUpdate.setUpdateMethodId(2);
+        N1FullUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=STABLE");
 
-        UpdateLink N1IncrementalUpdate = new UpdateLink();
+        UpdateDataLink N1IncrementalUpdate = new UpdateDataLink();
         N1IncrementalUpdate.setId(6);
-        N1IncrementalUpdate.setTracking_device_type_id(3);
-        N1IncrementalUpdate.setTracking_update_type_id(2);
-        N1IncrementalUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=INCREMENTAL");
+        N1IncrementalUpdate.setDeviceId(3);
+        N1IncrementalUpdate.setUpdateMethodId(1);
+        N1IncrementalUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=n1&type=INCREMENTAL");
 
-        UpdateLink YuYuphoriaFullUpdate = new UpdateLink();
+        UpdateDataLink YuYuphoriaFullUpdate = new UpdateDataLink();
         YuYuphoriaFullUpdate.setId(9); //The IDs 7 and 8 are reserved for the Alcatel Onetouch Hero 2+
-        YuYuphoriaFullUpdate.setTracking_device_type_id(5);
-        YuYuphoriaFullUpdate.setTracking_update_type_id(1);
-        YuYuphoriaFullUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=lettuce&type=STABLE");
+        YuYuphoriaFullUpdate.setDeviceId(5);
+        YuYuphoriaFullUpdate.setUpdateMethodId(2);
+        YuYuphoriaFullUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=lettuce&type=STABLE");
 
-        UpdateLink YuYuphoriaIncrementalUpdate = new UpdateLink();
+        UpdateDataLink YuYuphoriaIncrementalUpdate = new UpdateDataLink();
         YuYuphoriaIncrementalUpdate.setId(10);
-        YuYuphoriaIncrementalUpdate.setTracking_device_type_id(5);
-        YuYuphoriaIncrementalUpdate.setTracking_update_type_id(2);
-        YuYuphoriaIncrementalUpdate.setInformation_url("https://fota.cyngn.com/api/v1/update/get_latest?model=lettuce&type=INCREMENTAL");
+        YuYuphoriaIncrementalUpdate.setDeviceId(5);
+        YuYuphoriaIncrementalUpdate.setUpdateMethodId(1);
+        YuYuphoriaIncrementalUpdate.setUpdateDataUrl("https://fota.cyngn.com/api/v1/update/get_latest?model=lettuce&type=INCREMENTAL");
 
-        updateLinkEntities.add(OnePlusOneFullUpdate);
-        updateLinkEntities.add(OnePlusOneIncrementalUpdate);
-        updateLinkEntities.add(YuYurekaFullUpdate);
-        updateLinkEntities.add(YuYurekaIncrementalUpdate);
-        updateLinkEntities.add(N1FullUpdate);
-        updateLinkEntities.add(N1IncrementalUpdate);
-        updateLinkEntities.add(YuYuphoriaFullUpdate);
-        updateLinkEntities.add(YuYuphoriaIncrementalUpdate);
+        updateDataLinks.add(OnePlusOneFullUpdate);
+        updateDataLinks.add(OnePlusOneIncrementalUpdate);
+        updateDataLinks.add(YuYurekaFullUpdate);
+        updateDataLinks.add(YuYurekaIncrementalUpdate);
+        updateDataLinks.add(N1FullUpdate);
+        updateDataLinks.add(N1IncrementalUpdate);
+        updateDataLinks.add(YuYuphoriaFullUpdate);
+        updateDataLinks.add(YuYuphoriaIncrementalUpdate);
 
-        return updateLinkEntities;
+        return updateDataLinks;
 
     }
-
 }
 

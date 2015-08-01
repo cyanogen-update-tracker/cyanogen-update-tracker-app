@@ -3,8 +3,8 @@
     <string name="app_name">Cyanogen Updatetracker</string>
     <string name="action_settings">Apparaat en update-methode</string>
     <string name="at">om</string>
-    <string name="choose_device_type">Apparaat</string>
-    <string name="choose_update_type">Update-methode</string>
+    <string name="choose_device">Apparaat</string>
+    <string name="choose_update_method">Update-methode</string>
     <string name="download">Downloaden</string>
     <string name="downloader_description">Cyanogen OS-update</string>
     <string name="available_update_header">De meest recente systeemupdate is:</string>

@@ -48,8 +48,8 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/headerLabel"
-        android:layout_toLeftOf="@+id/updateDescriptionButton"
-        android:layout_toStartOf="@+id/updateDescriptionButton"
+        android:layout_toLeftOf="@+id/updateInformationUpdateDescriptionButton"
+        android:layout_toStartOf="@+id/updateInformationUpdateDescriptionButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
@@ -59,18 +59,18 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@android:color/black"
         android:textStyle="bold"
-        android:id="@+id/buildNumberLabel"
+        android:id="@+id/updateInformationBuildNumberView"
         android:layout_marginTop="16dp"
         android:layout_marginBottom="0dp"
         android:layout_below="@+id/headerLabel"
-        android:layout_toLeftOf="@+id/updateDescriptionButton"
-        android:layout_toStartOf="@+id/updateDescriptionButton"
+        android:layout_toLeftOf="@+id/updateInformationUpdateDescriptionButton"
+        android:layout_toStartOf="@+id/updateInformationUpdateDescriptionButton"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/updateDescriptionButton"
+        android:id="@+id/updateInformationUpdateDescriptionButton"
         android:text="@string/update_details_header"
         android:background="@android:color/transparent"
         android:textColor="@color/lightBlue"
@@ -96,7 +96,7 @@
     <com.github.mikephil.charting.charts.PieChart
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/rolloutPercentageDiagram"
+        android:id="@+id/updateInformationRollOutPercentageDiagram"
         android:contentDescription="@string/description_stats_chart"
         android:minHeight="200dp" />
     </ScrollView>
@@ -113,7 +113,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/download"
-                android:id="@+id/downloadButton"
+                android:id="@+id/updateInformationDownloadButton"
 
                 android:enabled="false"
                 android:textColor="@color/lightBlue"
@@ -157,7 +157,7 @@
                 android:layout_height="50dp"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
-                android:id="@+id/downloadSizeLabel"
+                android:id="@+id/updateInformationDownloadSizeView"
                 android:gravity="center"
                 android:layout_gravity="center_vertical" />
         </TableRow>
@@ -182,7 +182,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:gravity="center"
-                android:id="@+id/lastUpdatedLabel"
+                android:id="@+id/updateInformationUpdatedDataView"
                 android:layout_gravity="center_vertical" />
 
 

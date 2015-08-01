@@ -42,8 +42,8 @@
     <!-- Settings strings-->
     <string name="settings">Settings</string>
     <string name="action_settings">Device and update method</string>
-    <string name="choose_device_type">Device</string>
-    <string name="choose_update_type">Update method</string>
+    <string name="choose_device">Device</string>
+    <string name="choose_update_method">Update method</string>
     <string name="about">About this app</string>
     <string name="settings_saved">Your settings are automatically saved.</string>
     <string name="settings_explanation_update_methods">Explanation of update methods</string>]
