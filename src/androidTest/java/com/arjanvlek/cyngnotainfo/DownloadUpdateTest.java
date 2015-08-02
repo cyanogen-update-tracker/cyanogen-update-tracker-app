@@ -5,6 +5,7 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
+import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.robotium.solo.Solo;
 
 import java.io.BufferedReader;
@@ -54,7 +55,7 @@ public class DownloadUpdateTest extends ActivityInstrumentationTestCase2<MainAct
         solo.clickOnView(downloadButton);
         solo.sleep(2000);
 
-        File downloadedFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/test.txt");
+        File downloadedFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/downloadTest.txt");
         assertNotNull(downloadedFile);
         FileInputStream fIn = new FileInputStream(downloadedFile);
         BufferedReader myReader = new BufferedReader(
@@ -64,7 +65,7 @@ public class DownloadUpdateTest extends ActivityInstrumentationTestCase2<MainAct
         while ((aDataRow = myReader.readLine()) != null) {
             aBuffer += aDataRow + "\n";
         }
-        assertEquals("This is a test file.\nThe download has succeeded.\n", aBuffer);
+        assertEquals("Thanks for testing :)\n", aBuffer);
 
         // Delete the downloaded file
         assertTrue(downloadedFile.delete());
@@ -72,7 +73,7 @@ public class DownloadUpdateTest extends ActivityInstrumentationTestCase2<MainAct
         // Verify that the file is indeed gone
         try {
             // This *should* give an exception ("file not found").
-            downloadedFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/test.txt");
+            downloadedFile = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/downloadTest.txt");
             new FileInputStream(downloadedFile);
 
         } catch (Exception ignored) {

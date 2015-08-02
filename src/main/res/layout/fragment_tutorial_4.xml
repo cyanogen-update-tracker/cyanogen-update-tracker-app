@@ -18,7 +18,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/startTut1Image1"
+                android:id="@+id/introduction_step_5_image"
                 android:layout_width="300dp"
                 android:layout_height="100dp"
                 android:layout_centerHorizontal="true"
@@ -26,10 +26,10 @@
                 android:src="@drawable/icon_available_updates" />
 
             <TextView
-                android:id="@+id/tut1Text1"
+                android:id="@+id/introduction_step_5_header_text"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/startTut1Image1"
+                android:layout_below="@+id/introduction_step_5_image"
                 android:layout_centerHorizontal="true"
                 android:layout_marginTop="10dp"
                 android:text="@string/introduction_choose_update_method"
@@ -48,10 +48,10 @@
                 android:layout_marginEnd="20dp"
                 android:layout_marginRight="20dp"
                 android:layout_centerHorizontal="true"
-                android:layout_below="@id/tut1Text1" />
+                android:layout_below="@id/introduction_step_5_header_text" />
 
             <TextView
-                android:id="@+id/tut1Text2"
+                android:id="@+id/introduction_step_5_text_block_1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/settingsUpdateMethodSpinner"

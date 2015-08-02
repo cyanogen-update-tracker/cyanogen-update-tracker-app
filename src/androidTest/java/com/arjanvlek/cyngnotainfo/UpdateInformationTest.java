@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.gms.ads.AdView;
 import com.robotium.solo.Solo;
@@ -19,8 +20,8 @@ import java.util.Locale;
  */
 public class UpdateInformationTest extends ActivityInstrumentationTestCase2<MainActivity> {
     private Solo solo;
-    public final static String UPDATE_NAME = "CyanogenTest";
-    public final static String DEVICE_NAME = "Test Device";
+    public final static String UPDATE_NAME = "TestData1";
+    public final static String DEVICE_NAME = "Test Device 1";
     public final static String DOWNLOAD_SIZE = "570 MB";
     public final static String UPDATED_TIME = "6/6/2015 at 11:02 PM";
     public final static String UPDATED_TIME_24_HRS = "6/6/2015 at 23:02";
@@ -35,6 +36,8 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
 
     @Override
     public void setUp() throws Exception{
+        ServerConnector.testing = true;
+        GcmRegistrationIntentService.testing = true;
         solo = new Solo(getInstrumentation(), getActivity());
     }
 
@@ -46,26 +49,11 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
     public void testUpdateInformation() throws Exception {
 
         // Setting up the test
-        ServerConnector.testing = true;
-        GcmRegistrationIntentService.testing = true;
         String appLocale = Locale.getDefault().getDisplayLanguage();
         SharedPreferences gcmPreferences = getActivity().getApplicationContext().getSharedPreferences(MainActivity.class.getSimpleName(),
                 Context.MODE_PRIVATE);
 
 
-        if(appLocale.equals(LOCALE_DUTCH)) {
-            //Kies het testapparaat in Instellingen
-            solo.clickOnMenuItem("Instellingen");
-            solo.sleep(3000);
-            solo.goBack();
-            solo.sleep(1000);
-        } else {
-            //Choose test device in Settings
-            solo.clickOnMenuItem("Settings");
-            solo.sleep(3000);
-            solo.goBack();
-            solo.sleep(1000);
-        }
         // sometimes the screen doesn't go back, so try it again if the test fails
         try {
             // test the update name in the top

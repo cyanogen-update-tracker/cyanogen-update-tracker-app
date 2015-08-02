@@ -75,13 +75,6 @@ public class HelpTest extends ActivityInstrumentationTestCase2<HelpActivity> {
         assertEquals(activity.getString(R.string.help_symbol_stats), helpRollOutPercentageField.getText());
         assertEquals(activity.getString(R.string.help_symbol_download), helpDownloadSizeField.getText());
         assertEquals(activity.getString(R.string.help_symbol_clock), helpServerChangedField.getText());
-
-        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            assertEquals(activity.getDrawable(R.drawable.icon_rollout_diagram), helpRollOutPercentageImage.getDrawable());
-            assertEquals(activity.getDrawable(R.drawable.icon_download_size), helpDownloadSizeImage.getDrawable());
-            assertEquals(activity.getDrawable(R.drawable.icon_last_updated), helpTimeImage.getDrawable());
-        }
-
         assertEquals(activity.getString(R.string.icon), helpRollOutPercentageImage.getContentDescription());
         assertEquals(activity.getString(R.string.icon), helpDownloadSizeImage.getContentDescription());
         assertEquals(activity.getString(R.string.icon), helpTimeImage.getContentDescription());
