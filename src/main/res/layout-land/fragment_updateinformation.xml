@@ -15,7 +15,7 @@
         android:layout_height="20dp"
         android:id="@+id/updateInformationNoConnectionTextView"
         android:textColor="@android:color/white"
-        android:text="@string/no_internet_connection"
+        android:text="@string/error_no_internet_connection"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
         android:visibility="gone"
@@ -44,7 +44,7 @@
         android:layout_centerHorizontal="true"
         android:id="@+id/topView">
     <TextView
-        android:text="@string/available_update_header"
+        android:text="@string/update_information_latest_available_update"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/headerLabel"
@@ -71,7 +71,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/updateInformationUpdateDescriptionButton"
-        android:text="@string/update_details_header"
+        android:text="@string/update_information_update_description_button_text"
         android:background="@android:color/transparent"
         android:textColor="@color/lightBlue"
         android:layout_alignParentTop="true"
@@ -97,7 +97,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/updateInformationRollOutPercentageDiagram"
-        android:contentDescription="@string/description_stats_chart"
+        android:contentDescription="@string/update_information_stats_description"
         android:minHeight="200dp" />
     </ScrollView>
     <TableLayout
@@ -121,7 +121,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="@string/install"
+                android:text="@string/install_guide"
                 android:id="@+id/updateInstallationInstructionsButton"
                 android:enabled="true"
                 android:textAppearance="?android:textAppearanceSmall"

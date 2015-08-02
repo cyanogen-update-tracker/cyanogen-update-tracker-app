@@ -185,10 +185,10 @@ public class GcmRegistrationIntentService extends IntentService {
         editor.putBoolean(PROPERTY_REGISTRATION_ERROR, failed);
         if (failed) {
             try {
-                Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
+                Toast.makeText(this, getString(R.string.error_push_failure), Toast.LENGTH_LONG).show();
             } catch (Exception e) {
                 try {
-                    Toast.makeText(this, getString(R.string.push_failure), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, getString(R.string.error_push_failure), Toast.LENGTH_LONG).show();
                 } catch(Exception ignored) {
 
                 }

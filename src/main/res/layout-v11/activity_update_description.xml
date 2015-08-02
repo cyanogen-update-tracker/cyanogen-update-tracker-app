@@ -26,5 +26,5 @@
         android:textColor="@color/lightBlue"
         style="?android:buttonBarButtonStyle"
         android:onClick="onCloseButtonClicked"
-        android:text="@string/close"/>
+        android:text="@string/update_information_close"/>
 </RelativeLayout>

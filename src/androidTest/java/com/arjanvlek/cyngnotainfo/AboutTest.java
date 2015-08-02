@@ -56,14 +56,14 @@ public class AboutTest extends ActivityInstrumentationTestCase2<AboutActivity> {
         }
 
         // Check if the about line is displayed correctly
-        String aboutDescription = getActivity().getString(R.string.about_description);
+        String aboutDescription = getActivity().getString(R.string.about_app_description);
         TextView aboutDescriptionView = (TextView)solo.getView(R.id.aboutSlogan);
 
         assertEquals(View.VISIBLE, aboutDescriptionView.getVisibility());
         assertEquals(aboutDescription, aboutDescriptionView.getText());
 
         // Check if the about story is displayed correctly
-        String aboutStoryText = getActivity().getString(R.string.about_story).substring(0,100);
+        String aboutStoryText = getActivity().getString(R.string.about_background_story).substring(0,100);
         TextView aboutStoryView = (TextView)solo.getView(R.id.aboutBackgroundStoryView);
 
         assertEquals(View.VISIBLE, aboutStoryView.getVisibility());

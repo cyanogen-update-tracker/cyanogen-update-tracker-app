@@ -17,7 +17,7 @@
             android:layout_width="wrap_content"
             android:layout_height="150dp"
             android:layout_centerHorizontal="true"
-            android:contentDescription="@string/tutorial_image_description"
+            android:contentDescription="@string/install_guide_image_description"
             android:src="@drawable/tutorial_step5" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut3Image1"
             android:layout_centerHorizontal="true"
-            android:text="@string/tutorial_step5_done"
+            android:text="@string/install_guide_step5_done"
             android:textAppearance="?android:textAppearanceLarge"
             android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut3Text1"
             android:layout_marginTop="15dp"
-            android:text="@string/tutorial_step5_check_version"
+            android:text="@string/install_guide_step5_check_version"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey_800" />
 
@@ -46,7 +46,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut2Text2"
             android:layout_marginTop="15dp"
-            android:text="@string/tutorial_step5_settings_app"
+            android:text="@string/install_guide_step5_settings_app"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey_800" />
 
@@ -56,7 +56,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut2Text3"
             android:layout_marginTop="15dp"
-            android:text="@string/tutorial_step5_rate_app"
+            android:text="@string/install_guide_step5_rate_app"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey_800" />
 
@@ -69,7 +69,7 @@
             android:layout_centerHorizontal="true"
             android:background="@android:color/transparent"
             android:onClick="closeTutorial"
-            android:text="@string/tutorial_step5_close_button"
+            android:text="@string/install_guide_step5_close_button"
             android:textColor="@color/lightBlue" />
     </RelativeLayout>
 </ScrollView>

@@ -1,65 +1,56 @@
 <resources>
     <!-- Application title; Main activity title-->
     <string name="app_name">Cyanogen Update Tracker</string>
-    <string name="app_name_launcher">Update\n\rTracker</string>
-    <!-- Installation guide activity title-->
-    <string name="title_activity_update_installation_instructions">Install guide</string>
+    <string name="launcher_app_name">Update\r\nTracker</string>
 
-    <!-- Tab titles-->
-    <string name="title_section1">Update information</string>
-    <string name="title_section2">Device information</string>
+    <!-- Update information strings-->
+    <string name="update_information_header">Update information</string>
+    <string name="update_information_latest_available_update">The latest available system update is:</string>
+    <string name="update_information_update_description_button_text">View update description</string>
+    <string name="update">Update</string>
+    <string name="update_information_for">for</string>
+    <string name="update_information_received_update">Received update&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
+    <string name="update_information_not_received_update">Not received update yet</string>
+    <string name="update_information_stats_description">Image that shows the roll-out progress of the update.</string>
 
-    <!-- Button titles-->
-    <string name="download">Download</string>
-    <string name="install">Install guide</string>
-
-    <!-- Text label / header titles-->
-    <string name="available_update_header">The latest available system update is:</string>
-    <string name="update_details_header">View update description </string>
-    <string name="update_details">Update description</string>
+    <!-- Update description strings -->
+    <string name="update_description">Update description</string>
+    <string name="update_description_not_available">Unfortunately, an update description is not available for this system update.</string>
+    <string name="update_information_close">Close</string>
 
     <!-- Other strings-->
     <string name="icon">Icon</string>
+
+    <!-- Date and time strings -->
     <string name="at">at</string>
-    <string name="string_for">for</string>
-    <string name="unknown">Unknown</string>
-    <string name="gigahertz" translatable="false">GHz</string>
-    <string name="update">Update</string>
-    <string name="updated">Received update&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
-    <string name="not_updated">Not received update yet</string>
-    <string name="full_update">Full update</string>
-    <string name="incremental_update">Incremental update</string>
     <string name="today">Today</string>
     <string name="yesterday">Yesterday</string>
-    <string name="close">Close</string>
-    <string name="description_stats_chart">Image that shows the roll-out progress of the update.</string>
-    <string name="update_details_not_available">Unfortunately, an update description is not available for this system update.</string>
 
     <!-- Downloader strings-->
-    <string name="megabyte">MB</string>
-    <string name="downloading_in_background">Your update will be downloaded in the background…</string>
+    <string name="download">Download</string>
+    <string name="download_size_megabyte">MB</string>
+    <string name="download_in_background">Your update will be downloaded in the background…</string>
+    <string name="download_description">Cyanogen OS Update</string>
 
     <!-- Settings strings-->
     <string name="settings">Settings</string>
-    <string name="action_settings">Device and update method</string>
-    <string name="choose_device">Device</string>
-    <string name="choose_update_method">Update method</string>
-    <string name="about">About this app</string>
+    <string name="settings_header">Device and update method</string>
+    <string name="settings_device">Device</string>
+    <string name="settings_update_method">Update method</string>
     <string name="settings_saved">Your settings are automatically saved.</string>
     <string name="settings_explanation_update_methods">Explanation of update methods</string>]
+    <string name="settings_explanation_incremental_full_update">An incremental update can only be installed if you were running the latest version before this update was released.\n\nA full update can be always be installed - regardless of your current software version running on your device.</string>
     <string name="settings_entered_incorrectly">Please wait while your settings are being saved.</string>
 
     <!-- Error strings-->
-    <string name="app_requires_network">This app requires an active Internet connection</string>
-    <string name="app_requires_network_will_close">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
-    <string name="exit">Exit</string>
-    <string name="push_failure">Unable to connect to the app server. In order to receive notifications about new updates, please try launching the app again. </string>
-    <string name="no_internet_connection">No internet connection.</string>
-
-    <string name="explanation_incremental_stable">An incremental update can only be installed if you were running the latest version before this update was released.\n\nA full update can be always be installed - regardless of your current software version running on your device.</string>
-    <string name="downloader_description">Cyanogen OS Update</string>
+    <string name="error_app_requires_network_connection">This app requires an active Internet connection</string>
+    <string name="error_app_requires_network_connection_message">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
+    <string name="error_exit_button_text">Exit</string>
+    <string name="error_push_failure">Unable to connect to the app server. In order to receive notifications about new updates, please try launching the app again. </string>
+    <string name="error_no_internet_connection">No internet connection.</string>
 
     <!-- First-time tutorial strings -->
+    <string name="introduction_title">Welcome</string>
     <string name="introduction_welcome">Welcome to Cyanogen update tracker!</string>
     <string name="introduction_page_1">This app will allow you to stay informed about the latest Android™  updates for your Cyanogen® OS powered device. \n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_device">Choose your device:</string>
@@ -69,33 +60,36 @@
     <string name="introduction_ready_to_start">You are ready to go!</string>
     <string name="introduction_page_4">Enjoy using this app!\n\nYou can always change your settings by clicking the three dots in the top right corner (or press your Menu button) following a tap on \'change device and update method\'.</string>
     <string name="introduction_close_button">start app</string>
-    <!-- Tutorial strings -->
-    <string name="tutorial_image_description">Tutorial image.</string>
-    <string name="tutorial_step1_download_update">Download the update.</string>
-    <string name="tutorial_step1_explanation">Press the Download button to start the download process. The download will appear in your notifications screen. When it\'s done, you\'ll see a notification like this:</string>
 
-    <string name="tutorial_step2_recovery_mode">Enter Recovery Mode.</string>
-    <string name="tutorial_step2_turn_off_phone">- Turn off your device first.</string>
-    <string name="tutorial_step2_press_buttons">- Press both the power and the volume down button at the same time.</string>
-    <string name="tutorial_step2_wait">- Wait until you see the recovery menu on your screen.</string>
+    <!-- Installation guide strings -->
+    <string name="install_guide">Install guide</string>
+    <string name="install_guide_image_description">Tutorial image.</string>
+    <string name="install_guide_step1_download_update">Download the update.</string>
+    <string name="install_guide_step1_explanation">Press the Download button to start the download process. The download will appear in your notifications screen. When it\'s done, you\'ll see a notification like this:</string>
 
-    <string name="tutorial_step3_apply_update">Apply the downloaded update.</string>
-    <string name="tutorial_step3_recovery_apply">- Within the recovery menu, choose Apply Update.</string>
-    <string name="tutorial_step3_recovery_internal_storage">- Select Choose from Internal Storage.</string>
-    <string name="tutorial_step3_browse_for_update">- Go to 0, Download, and select the zip file matching the tile shown within the app.</string>
+    <string name="install_guide_step2_recovery_mode">Enter Recovery Mode.</string>
+    <string name="install_guide_step2_turn_off_phone">- Turn off your device first.</string>
+    <string name="install_guide_step2_press_buttons">- Press both the power and the volume down button at the same time.</string>
+    <string name="install_guide_step2_wait">- Wait until you see the recovery menu on your screen.</string>
 
-    <string name="tutorial_step4_restart">Restart your device.</string>
-    <string name="tutorial_step4_reboot_now">- Within the recovery menu, choose Reboot System Now.</string>
-    <string name="tutorial_step4_cyanogen_logo">- Your device will show the Cyanogen logo for a long time while it is updating.</string>
-    <string name="tutorial_step4_android_is_upgrading">- After this step, you\'ll see \'Android is upgrading\' while your apps are being optimized.</string>
+    <string name="install_guide_step3_apply_update">Apply the downloaded update.</string>
+    <string name="install_guide_step3_recovery_apply">- Within the recovery menu, choose Apply Update.</string>
+    <string name="install_guide_step3_recovery_internal_storage">- Select Choose from Internal Storage.</string>
+    <string name="install_guide_step3_browse_for_update">- Go to 0, Download, and select the zip file matching the tile shown within the app.</string>
 
-    <string name="tutorial_step5_done">Done. Enjoy your new Cyanogen OS!</string>
-    <string name="tutorial_step5_check_version">- After your device has finished the update process, you can check the version of your system:</string>
-    <string name="tutorial_step5_settings_app">- Go to Settings, About Phone, and check the Cyanogen OS Version.</string>
-    <string name="tutorial_step5_rate_app">- If you like this app, give it 5 stars at Google Play!</string>
-    <string name="tutorial_step5_close_button">Close Installation Guide</string>
+    <string name="install_guide_step4_restart">Restart your device.</string>
+    <string name="install_guide_step4_reboot_now">- Within the recovery menu, choose Reboot System Now.</string>
+    <string name="install_guide_step4_cyanogen_logo">- Your device will show the Cyanogen logo for a long time while it is updating.</string>
+    <string name="install_guide_step4_android_is_upgrading">- After this step, you\'ll see \'Android is upgrading\' while your apps are being optimized.</string>
+
+    <string name="install_guide_step5_done">Done. Enjoy your new Cyanogen OS!</string>
+    <string name="install_guide_step5_check_version">- After your device has finished the update process, you can check the version of your system:</string>
+    <string name="install_guide_step5_settings_app">- Go to Settings, About Phone, and check the Cyanogen OS Version.</string>
+    <string name="install_guide_step5_rate_app">- If you like this app, give it 5 stars at Google Play!</string>
+    <string name="install_guide_step5_close_button">Close Installation Guide</string>
 
     <!-- Device information strings -->
+    <string name="device_information_header">Device information</string>
     <string name="device_information_image_description">Device image</string>
     <string name="device_information_your_device">Your device: </string>
     <string name="device_information_system_on_a_chip">System on a Chip:</string>
@@ -103,27 +97,27 @@
     <string name="device_information_amount_of_memory">Amount of memory:</string>
     <string name="device_information_os_version">System version:</string>
     <string name="device_information_serial_number">Serial number:</string>
+    <string name="device_information_gigahertz" translatable="false">GHz</string>
+    <string name="device_information_unknown">Unknown</string>
 
     <!-- About screen strings -->
-    <string name="version">Version:</string>
-    <string name="rate_app">Rate on Google Play</string>
-    <string name="about_description">An app to track Cyanogen OS updates.</string>
-    <string name="about_story">This app is written by Arjan Vlek, an IT-interested guy living in Zoetermeer, The Netherlands.\n\nThis app is inspired by a website (<a href="http://www.cyanogen-ota-bacon.somee.com">click</a>), which provides similar functionality. This app aims to be more user-friendly and to offer more features.\n\nIf you like my app, please rate it on Google play now:</string>
+    <string name="about">About this app</string>
+    <string name="about_version">Version:</string>
+    <string name="about_rate_app_button_text">Rate on Google Play</string>
+    <string name="about_app_description">An app to track Cyanogen OS updates.</string>
+    <string name="about_background_story">This app is written by Arjan Vlek, an IT-interested guy living in Zoetermeer, The Netherlands.\n\nThis app is inspired by a website (<a href="http://www.cyanogen-ota-bacon.somee.com">click</a>), which provides similar functionality. This app aims to be more user-friendly and to offer more features.\n\nIf you like my app, please rate it on Google play now:</string>
 
+    <!-- Advertisement strings -->
     <string name="update_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
     <string name="device_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
-    <string name="title_activity_settings">Settings</string>
-
 
     <!-- Notification strings -->
     <string name="notification_version">Version</string>
     <string name="notification_is_now_available">is now available for the</string>
     <string name="notification_update_short">Open the app to download the update.</string>
     <string name="notification_new_device">New device released! Updates for the</string>
-    <string name="nofitication_new_device_2">can now be tracked!</string>
+    <string name="notification_new_device_2">can now be tracked!</string>
     <string name="notification_new_device_short">Open the app to choose this device.</string>
-    <string name="title_activity_tutorial">Welcome</string>
-    <string name="title_section3">Update method</string>
     <string name="notification_unknown_version_number">A new version is available for your</string>
 
     <!-- Help strings -->

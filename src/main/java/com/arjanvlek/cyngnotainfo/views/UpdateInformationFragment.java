@@ -203,13 +203,13 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
             generateCircleDiagram(cyanogenOTAUpdate);
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
             if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
-                buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.string_for) + " " + deviceName);
+                buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.update_information_for) + " " + deviceName);
             } else {
-                buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.string_for) + " " + deviceName);
+                buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.update_information_for) + " " + deviceName);
             }
 
             TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-            downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.megabyte));
+            downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.download_size_megabyte));
 
             TextView updatedDataView = (TextView) rootView.findViewById(R.id.updateInformationUpdatedDataView);
             DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
@@ -273,7 +273,7 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(downloadUrl);
         DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setDescription(downloadUrl).setTitle(getString(R.string.downloader_description));
+        request.setDescription(downloadUrl).setTitle(getString(R.string.download_description));
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadName);
         request.setVisibleInDownloadsUi(true);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
@@ -284,7 +284,7 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         }
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
         downloadManager.enqueue(request);
-        Toast.makeText(getActivity(), getString(R.string.downloading_in_background), Toast.LENGTH_LONG).show();
+        Toast.makeText(getActivity(), getString(R.string.download_in_background), Toast.LENGTH_LONG).show();
     }
 
     private void generateCircleDiagram(CyanogenOTAUpdate cyanogenOTAUpdate) {
@@ -297,9 +297,9 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
                 chartData.add(1, new Entry(100 - percentage, 1));
             }
             ArrayList<String> xVals = new ArrayList<>();
-            xVals.add(0, getString(R.string.updated));
+            xVals.add(0, getString(R.string.update_information_received_update));
             if (percentage < 100) {
-                xVals.add(1, getString(R.string.not_updated));
+                xVals.add(1, getString(R.string.update_information_not_received_update));
             }
             PieDataSet pieDataSet = new PieDataSet(chartData, "");
             pieDataSet.setColors(new int[]{getResources().getColor(R.color.lightBlue), getResources().getColor(android.R.color.darker_gray)});

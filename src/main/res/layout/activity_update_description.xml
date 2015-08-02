@@ -27,5 +27,5 @@
         android:textColor="@color/lightBlue"
         android:background="@android:color/transparent"
         android:onClick="onCloseButtonClicked"
-        android:text="@string/close"/>
+        android:text="@string/update_information_close"/>
 </RelativeLayout>

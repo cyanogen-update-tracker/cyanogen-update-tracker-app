@@ -49,9 +49,9 @@ public class DeviceInformationFragment extends Fragment {
         String cpuFreqString = deviceInformationData.getCPU_Frequency();
         TextView cpuFreqView = (TextView) rootView.findViewById(R.id.device_information_cpu_freq_field);
         if (!cpuFreqString.equals(DeviceInformationData.UNKNOWN)) {
-            cpuFreqView.setText(deviceInformationData.getCPU_Frequency() + " " + getString(R.string.gigahertz));
+            cpuFreqView.setText(deviceInformationData.getCPU_Frequency() + " " + getString(R.string.device_information_gigahertz));
         } else {
-            cpuFreqView.setText(getString(R.string.unknown));
+            cpuFreqView.setText(getString(R.string.device_information_unknown));
         }
 
         long totalMemory = 0;
@@ -70,14 +70,14 @@ public class DeviceInformationFragment extends Fragment {
         TextView memoryView = (TextView) rootView.findViewById(R.id.device_information_memory_field);
         if (totalMemory != 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                memoryView.setText(totalMemory + " " + getString(R.string.megabyte));
+                memoryView.setText(totalMemory + " " + getString(R.string.download_size_megabyte));
             } else {
                 View memoryLabel = rootView.findViewById(R.id.device_information_memory_label);
                 memoryLabel.setVisibility(View.GONE);
                 memoryView.setVisibility(View.GONE);
             }
         } else {
-            memoryView.setText(getString(R.string.unknown));
+            memoryView.setText(getString(R.string.device_information_unknown));
         }
 
 

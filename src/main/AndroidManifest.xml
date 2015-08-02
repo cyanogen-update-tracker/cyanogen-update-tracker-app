@@ -30,7 +30,7 @@
         <!-- All screens -->
         <activity
             android:name=".MainActivity"
-            android:label="@string/app_name_launcher">
+            android:label="@string/launcher_app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -39,7 +39,7 @@
         </activity>
         <activity
             android:name=".views.UpdateInstallationGuideActivity"
-            android:label="@string/title_activity_update_installation_instructions"
+            android:label="@string/install_guide"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="updateInstallationInformationActivity" />
@@ -59,7 +59,7 @@
         </activity>
         <activity
             android:name=".views.UpdateDescriptionActivity"
-            android:label="@string/update_details">
+            android:label="@string/update_description">
             <intent-filter>
                 <action android:name="updateDetailsActivity" />
 
@@ -68,7 +68,7 @@
         </activity>
         <activity
             android:name=".views.SettingsActivity"
-            android:label="@string/title_activity_settings"
+            android:label="@string/settings"
             android:parentActivityName=".MainActivity"
             tools:ignore="UnusedAttribute">
             <meta-data
@@ -77,7 +77,7 @@
         </activity>
         <activity
             android:name=".views.TutorialActivity"
-            android:label="@string/title_activity_tutorial"
+            android:label="@string/introduction_title"
             android:parentActivityName=".MainActivity"
             tools:ignore="UnusedAttribute">
             <meta-data

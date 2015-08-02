@@ -18,12 +18,12 @@ public class UpdateDescriptionActivity extends AppCompatActivity {
         try {
             updateDetails = getIntent().getExtras().getString("update-description");
         } catch (NullPointerException e) {
-            updateDetailsField.setText(getString(R.string.update_details_not_available));
+            updateDetailsField.setText(getString(R.string.update_description_not_available));
         }
         if (updateDetails != null && !updateDetails.equals("") && !updateDetails.equals("null")) {
             updateDetailsField.setText(updateDetails);
         } else {
-            updateDetailsField.setText(getString(R.string.update_details_not_available));
+            updateDetailsField.setText(getString(R.string.update_description_not_available));
         }
     }
 

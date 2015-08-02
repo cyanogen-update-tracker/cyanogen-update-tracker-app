@@ -17,7 +17,7 @@
             android:layout_width="260dp"
             android:layout_height="100dp"
             android:layout_centerHorizontal="true"
-            android:contentDescription="@string/tutorial_image_description"
+            android:contentDescription="@string/install_guide_image_description"
             android:src="@drawable/tutorial_step4a" />
 
         <ImageView
@@ -26,7 +26,7 @@
             android:layout_height="100dp"
             android:layout_below="@+id/tut4Image1"
             android:layout_centerHorizontal="true"
-            android:contentDescription="@string/tutorial_image_description"
+            android:contentDescription="@string/install_guide_image_description"
             android:src="@drawable/tutorial_step4b" />
 
         <TextView
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut4Image2"
             android:layout_centerHorizontal="true"
-            android:text="@string/tutorial_step4_restart"
+            android:text="@string/install_guide_step4_restart"
             android:textAppearance="?android:textAppearanceLarge"
             android:textStyle="bold" />
 
@@ -45,7 +45,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut4Text1"
             android:layout_marginTop="15dp"
-            android:text="@string/tutorial_step4_reboot_now"
+            android:text="@string/install_guide_step4_reboot_now"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey_800" />
 
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut4Text2"
             android:layout_marginTop="15dp"
-            android:text="@string/tutorial_step4_cyanogen_logo"
+            android:text="@string/install_guide_step4_cyanogen_logo"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey_800" />
 
@@ -64,7 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut4Text3"
             android:layout_marginTop="15dp"
-            android:text="@string/tutorial_step4_android_is_upgrading"
+            android:text="@string/install_guide_step4_android_is_upgrading"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey_800" />
     </RelativeLayout>

@@ -17,7 +17,7 @@
             android:layout_width="300dp"
             android:layout_height="200dp"
             android:layout_centerHorizontal="true"
-            android:contentDescription="@string/tutorial_image_description"
+            android:contentDescription="@string/install_guide_image_description"
             android:src="@drawable/tutorial_step1a" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut1Image1"
             android:layout_centerHorizontal="true"
-            android:text="@string/tutorial_step1_download_update"
+            android:text="@string/install_guide_step1_download_update"
             android:textAppearance="?android:textAppearanceLarge"
             android:textStyle="bold" />
 
@@ -36,7 +36,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/tut1Text1"
             android:layout_marginTop="20dp"
-            android:text="@string/tutorial_step1_explanation"
+            android:text="@string/install_guide_step1_explanation"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey_800" />
 
@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="100dp"
             android:layout_below="@+id/tut1Text2"
-            android:contentDescription="@string/tutorial_image_description"
+            android:contentDescription="@string/install_guide_image_description"
             android:src="@drawable/tutorial_step1b" />
 
     </RelativeLayout>

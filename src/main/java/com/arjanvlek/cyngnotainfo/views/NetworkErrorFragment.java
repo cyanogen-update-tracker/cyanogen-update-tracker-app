@@ -17,9 +17,9 @@ public class NetworkErrorFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.app_requires_network));
-        builder.setMessage(getString(R.string.app_requires_network_will_close));
-        builder.setPositiveButton(getString(R.string.exit), new DialogInterface.OnClickListener() { // Todo add xml string
+        builder.setTitle(getString(R.string.error_app_requires_network_connection));
+        builder.setMessage(getString(R.string.error_app_requires_network_connection_message));
+        builder.setPositiveButton(getString(R.string.error_exit_button_text), new DialogInterface.OnClickListener() { // Todo add xml string
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();

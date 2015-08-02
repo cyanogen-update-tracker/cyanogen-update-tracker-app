@@ -16,7 +16,7 @@
         android:layout_height="20dp"
         android:layout_centerHorizontal="true"
         android:gravity="center"
-        android:text="@string/no_internet_connection"
+        android:text="@string/error_no_internet_connection"
         android:textColor="@android:color/white"
         android:textStyle="bold"
         android:visibility="gone" />
@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
-            android:text="@string/action_settings"
+            android:text="@string/settings_header"
             android:textColor="#ff88e0ff"
             android:textStyle="bold" />
 
@@ -55,7 +55,7 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/settingsUpperDivisor"
             android:layout_marginTop="5dp"
-            android:text="@string/choose_device"
+            android:text="@string/settings_device"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <TextView
@@ -65,7 +65,7 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true"
             android:layout_alignTop="@+id/settingsUpdateMethodSpinner"
-            android:text="@string/choose_update_method"
+            android:text="@string/settings_update_method"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
         <Spinner
@@ -133,7 +133,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text="@string/explanation_incremental_stable"
+                android:text="@string/settings_explanation_incremental_full_update"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
         </ScrollView>

@@ -18,7 +18,7 @@
         android:layout_height="20dp"
         android:id="@+id/updateInformationNoConnectionTextView"
         android:textColor="@android:color/white"
-        android:text="@string/no_internet_connection"
+        android:text="@string/error_no_internet_connection"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
         android:visibility="gone"
@@ -46,7 +46,7 @@
             tools:context=".MainActivity$PlaceholderFragment">
 
             <TextView
-                android:text="@string/available_update_header"
+                android:text="@string/update_information_latest_available_update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
@@ -73,7 +73,7 @@
                 android:id="@+id/updateInformationRollOutPercentageDiagram"
                 android:layout_below="@+id/updateInformationBuildNumberView"
                 android:layout_marginTop="11dp"
-                android:contentDescription="@string/description_stats_chart"
+                android:contentDescription="@string/update_information_stats_description"
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
@@ -95,7 +95,7 @@
                     <Button
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="@string/install"
+                        android:text="@string/install_guide"
                         android:id="@+id/updateInstallationInstructionsButton"
                         android:enabled="true"
                         android:textColor="@color/lightBlue"
@@ -166,7 +166,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/updateInformationUpdateDescriptionButton"
-            android:text="@string/update_details_header"
+            android:text="@string/update_information_update_description_button_text"
             android:layout_below="@+id/tableHost"
             android:layout_centerHorizontal="true"
             android:textColor="@color/lightBlue"
@@ -180,7 +180,7 @@
         android:layout_centerHorizontal="true"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
-        android:id="@+id/update_information_banner_field"
+        android:id="@+id/updateInformationAdView"
         ads:adSize="BANNER"
         ads:adUnitId="@string/update_information_advertising_id"
         />

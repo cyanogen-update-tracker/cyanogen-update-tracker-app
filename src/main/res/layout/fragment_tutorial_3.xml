@@ -22,7 +22,7 @@
                 android:layout_width="300dp"
                 android:layout_height="100dp"
                 android:layout_centerHorizontal="true"
-                android:contentDescription="@string/tutorial_image_description"
+                android:contentDescription="@string/install_guide_image_description"
                 android:src="@drawable/icon_phone" />
 
             <TextView
