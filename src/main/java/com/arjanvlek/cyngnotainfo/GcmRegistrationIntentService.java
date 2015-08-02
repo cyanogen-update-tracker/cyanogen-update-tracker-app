@@ -23,6 +23,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Locale;
 
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
@@ -58,6 +59,9 @@ public class GcmRegistrationIntentService extends IntentService {
     @Override
     protected void onHandleIntent(Intent intent) {
         SettingsManager settingsManager = new SettingsManager(getApplicationContext());
+        if(checkIfMigrationIsNeeded()) {
+            migrateApp();
+        }
         deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
         updateMethodId = settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID);
 
@@ -84,6 +88,58 @@ public class GcmRegistrationIntentService extends IntentService {
                     GcmPackageReplacedReceiver.completeWakefulIntent(intent);
                 }
             } catch (Exception ignored) {
+
+            }
+        }
+    }
+
+    private boolean checkIfMigrationIsNeeded() {
+        SettingsManager settingsManager = new SettingsManager(getApplicationContext());
+        return settingsManager.checkPreference(PROPERTY_DEVICE) && settingsManager.checkPreference(PROPERTY_UPDATE_METHOD) && settingsManager.checkPreference(PROPERTY_UPDATE_DATA_LINK) && (!settingsManager.checkPreference(PROPERTY_DEVICE_ID) || !settingsManager.checkPreference(PROPERTY_UPDATE_METHOD_ID));
+    }
+
+    /**
+     * Helper method to migrate older versions to the new backend (with IDs);
+     */
+    private void migrateApp() {
+        SettingsManager settingsManager = new SettingsManager(getApplicationContext());
+        String device = settingsManager.getPreference(PROPERTY_DEVICE);
+        String updateMethod = settingsManager.getPreference(PROPERTY_UPDATE_METHOD);
+
+        switch (device) {
+            case "OnePlus One":
+                settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 1L);
+                break;
+            case "Yu Yureka":
+                settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 2L);
+                break;
+            case "Oppo N1 CyanogenMod Edition":
+                settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 3L);
+                break;
+            case "Yu Yuphoria":
+                settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 4L);
+                break;
+        }
+
+        if(updateMethod.equals("full_update")) {
+            settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, 2L);
+            switch(Locale.getDefault().getDisplayLanguage()) {
+                case "Nederlands":
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Volledige update");
+                    break;
+                default:
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Full update");
+
+            }
+        }
+        else if(updateMethod.equals("incremental_update")) {
+            settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, 1L);
+            switch(Locale.getDefault().getDisplayLanguage()) {
+                case "Nederlands":
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Incrementele update");
+                    break;
+                default:
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Incremental update");
 
             }
         }
@@ -248,7 +304,7 @@ public class GcmRegistrationIntentService extends IntentService {
         int appVersion = getAppVersion();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_GCM_REGISTRATION_TOKEN, registrationToken);
-        editor.putLong(PROPERTY_GCM_DEVICE_ID, deviceId); //TODO migration
+        editor.putLong(PROPERTY_GCM_DEVICE_ID, deviceId);
         editor.putLong(PROPERTY_GCM_UPDATE_METHOD_ID, updateMethodId);
         editor.putInt(PROPERTY_APP_VERSION, appVersion);
         editor.apply();
