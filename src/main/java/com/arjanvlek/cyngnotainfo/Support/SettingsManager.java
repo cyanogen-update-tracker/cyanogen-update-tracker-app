@@ -156,7 +156,7 @@ public class SettingsManager {
      */
     public boolean checkIfRegistrationIsValid(long deviceId, long updateMethodId) {
         final SharedPreferences prefs = getGCMPreferences();
-        String registrationId = prefs.getString(PROPERTY_GCM_REGISTRATION_TOKEN, "");
+        String registrationToken = prefs.getString(PROPERTY_GCM_REGISTRATION_TOKEN, "");
         long registeredDeviceId;
         long registeredUpdateMethodId;
 
@@ -171,7 +171,7 @@ public class SettingsManager {
         }
 
         // The registration token is empty, so not valid.
-        if (registrationId.isEmpty()) {
+        if (registrationToken.isEmpty()) {
             return false;
         }
 
