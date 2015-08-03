@@ -117,7 +117,7 @@ public class GcmRegistrationIntentService extends IntentService {
                 settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 3L);
                 break;
             case "Yu Yuphoria":
-                settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 4L);
+                settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 5L); // The Yuphoria has ID 5 in the database due to a reservation for the Alcatel OneTouch Hero 2+
                 break;
         }
 
