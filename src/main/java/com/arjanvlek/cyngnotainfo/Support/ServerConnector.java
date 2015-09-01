@@ -23,7 +23,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings("StatementWithEmptyBody")
 public class ServerConnector {
 
     public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
@@ -336,6 +335,7 @@ public class ServerConnector {
         } else {
             fetchDataFromServer.execute(requestType, oldRegistrationToken, cyanogenUpdateDataUrl);
         }
+        //noinspection StatementWithEmptyBody
         while(!ready) {
             // we don't do anything here while the server is working!
         }
