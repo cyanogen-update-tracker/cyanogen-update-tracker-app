@@ -8,8 +8,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Model.Device;
@@ -21,6 +24,13 @@ import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_RECEIVE_NEW_DEVICE_NOTIFICATIONS;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_RECEIVE_WARNING_NOTIFICATIONS;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_SHOW_APP_UPDATE_MESSAGES;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_SHOW_NEWS_MESSAGES;
 
 public class SettingsActivity extends AbstractActivity {
     private ProgressBar progressBar;
@@ -46,6 +56,120 @@ public class SettingsActivity extends AbstractActivity {
 
             }
             new DeviceDataFetcher().execute();
+        }
+        initSwitches();
+    }
+
+    private void initSwitches() {
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH) {
+            Switch appUpdatesSwitch = (Switch) findViewById(R.id.settingsAppUpdatesSwitch);
+            appUpdatesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_APP_UPDATE_MESSAGES, isChecked);
+                }
+            });
+            appUpdatesSwitch.setChecked(settingsManager.showAppUpdateMessages());
+
+            Switch appMessagesSwitch = (Switch) findViewById(R.id.settingsAppMessagesSwitch);
+            appMessagesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_NEWS_MESSAGES, isChecked);
+                }
+            });
+            appMessagesSwitch.setChecked(settingsManager.showNewsMessages());
+
+            Switch importantPushNotificationsSwitch = (Switch) findViewById(R.id.settingsImportantPushNotificationsSwitch);
+            importantPushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_WARNING_NOTIFICATIONS, isChecked);
+                }
+            });
+            importantPushNotificationsSwitch.setChecked(settingsManager.receiveWarningNotifications());
+
+            Switch newVersionPushNotificationsSwitch = (Switch) findViewById(R.id.settingsNewVersionPushNotificationsSwitch);
+            newVersionPushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS, isChecked);
+                }
+            });
+            newVersionPushNotificationsSwitch.setChecked(settingsManager.receiveSystemUpdateNotifications());
+
+            Switch newDevicePushNotificationsSwitch = (Switch) findViewById(R.id.settingsNewDevicePushNotificationsSwitch);
+            newDevicePushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_NEW_DEVICE_NOTIFICATIONS, isChecked);
+                }
+            });
+            newDevicePushNotificationsSwitch.setChecked(settingsManager.receiveNewDeviceNotifications());
+
+            Switch systemIsUpToDateSwitch = (Switch) findViewById(R.id.settingsSystemIsUpToDateSwitch);
+            systemIsUpToDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE, isChecked);
+                }
+            });
+            systemIsUpToDateSwitch.setChecked(settingsManager.showIfSystemIsUpToDate());
+        }
+        else {
+            CheckBox appUpdatesCheckBox = (CheckBox) findViewById(R.id.settingsAppUpdatesSwitch);
+            appUpdatesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_APP_UPDATE_MESSAGES, isChecked);
+                }
+            });
+            appUpdatesCheckBox.setChecked(settingsManager.showAppUpdateMessages());
+
+            CheckBox appMessagesCheckBox = (CheckBox) findViewById(R.id.settingsAppMessagesSwitch);
+            appMessagesCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_NEWS_MESSAGES, isChecked);
+                }
+            });
+            appMessagesCheckBox.setChecked(settingsManager.showNewsMessages());
+
+            CheckBox importantPushNotificationsCheckBox = (CheckBox) findViewById(R.id.settingsImportantPushNotificationsSwitch);
+            importantPushNotificationsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_WARNING_NOTIFICATIONS, isChecked);
+                }
+            });
+            importantPushNotificationsCheckBox.setChecked(settingsManager.receiveWarningNotifications());
+
+            CheckBox newVersionPushNotificationsCheckBox = (CheckBox) findViewById(R.id.settingsNewVersionPushNotificationsSwitch);
+            newVersionPushNotificationsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS, isChecked);
+                }
+            });
+            newVersionPushNotificationsCheckBox.setChecked(settingsManager.receiveSystemUpdateNotifications());
+
+            CheckBox newDevicePushNotificationsCheckBox = (CheckBox) findViewById(R.id.settingsNewDevicePushNotificationsSwitch);
+            newDevicePushNotificationsCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_NEW_DEVICE_NOTIFICATIONS, isChecked);
+                }
+            });
+            newDevicePushNotificationsCheckBox.setChecked(settingsManager.receiveNewDeviceNotifications());
+
+            CheckBox systemIsUpToDateCheckBox = (CheckBox) findViewById(R.id.settingsSystemIsUpToDateSwitch);
+            systemIsUpToDateCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE, isChecked);
+                }
+            });
+            systemIsUpToDateCheckBox.setChecked(settingsManager.showIfSystemIsUpToDate());
         }
     }
 
@@ -182,12 +306,12 @@ public class SettingsActivity extends AbstractActivity {
                 }
                 //Set update method in preferences.
                 for (UpdateMethod updateMethod : updateMethods) {
-                    if(updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
+                    if (updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
                         updateMethodId = updateMethod.getId();
                     }
                 }
-                    settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethodId);
-                    settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethodName);
+                settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethodId);
+                settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethodName);
                 //Set update link
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
                     new UpdateDataLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, settingsManager.getLongPreference(SettingsManager.PROPERTY_DEVICE_ID), updateMethodId);

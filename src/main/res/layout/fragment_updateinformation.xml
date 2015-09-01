@@ -6,6 +6,81 @@
     android:layout_height="wrap_content"
     tools:context=".MainActivity$PlaceholderFragment">
 
+    <!-- Server error message view -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationServerErrorBar"
+        android:visibility="gone"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationServerErrorTextView"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:gravity="center"/>
+
+    <!-- New app version notification view -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationNewAppNotificationBar"
+        android:visibility="gone"
+        android:layout_below="@id/updateInformationServerErrorBar"
+        android:background="@color/holo_green_light"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationNewAppNotificationTextView"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:layout_below="@id/updateInformationServerErrorBar"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:linksClickable="true"
+        android:gravity="center"/>
+
+    <!-- First server message view -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationFirstServerMessageBar"
+        android:layout_below="@id/updateInformationNewAppNotificationBar"
+        android:visibility="gone"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationFirstServerMessageTextView"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
+        android:layout_below="@id/updateInformationNewAppNotificationBar"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:gravity="center"/>
+
+    <!-- Second server message view -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationSecondServerMessageBar"
+        android:layout_below="@id/updateInformationFirstServerMessageBar"
+        android:visibility="gone"
+        android:background="@color/holo_red_dark"/>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="20dp"
+        android:id="@+id/updateInformationSecondServerMessageTextView"
+        android:textColor="@android:color/white"
+        android:layout_below="@id/updateInformationFirstServerMessageBar"
+        android:textStyle="bold"
+        android:layout_centerHorizontal="true"
+        android:visibility="gone"
+        android:gravity="center"/>
+
+
+    <!-- No connection view -->
     <View
         android:layout_width="match_parent"
         android:layout_height="20dp"
@@ -23,10 +98,12 @@
         android:visibility="gone"
         android:gravity="center"/>
 
+    <!-- Main screen -->
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/updateInformationRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         android:layout_below="@id/updateInformationNoConnectionBar"
         android:layout_above="@+id/updateInformationAdView">
     <ScrollView
@@ -40,7 +117,6 @@
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/activity_horizontal_margin"
             android:paddingRight="@dimen/activity_horizontal_margin"
-            android:paddingTop="@dimen/activity_vertical_margin"
             android:id="@+id/relativeLayout"
             tools:context=".MainActivity$PlaceholderFragment">
 
@@ -48,6 +124,7 @@
                 android:text="@string/update_information_latest_available_update"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/headerLabel" />
 
@@ -175,6 +252,75 @@
 
     </RelativeLayout>
 </ScrollView>
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/updateInformationSystemIsUpToDateRefreshLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:layout_below="@id/updateInformationNoConnectionBar"
+        android:layout_above="@+id/updateInformationAdView">
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/activity_horizontal_margin"
+                android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
+                android:id="@+id/relativeLayout2"
+                tools:context=".MainActivity$PlaceholderFragment">
+
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/updateInformationSystemIsUpToDateHeader"
+                    android:text="@string/update_information_system_is_up_to_date"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:textColor="@android:color/black"
+                    android:textStyle="bold"
+                    android:layout_centerHorizontal="true"/>
+
+                <ImageView
+                    android:layout_width="170dp"
+                    android:layout_height="170dp"
+                    android:id="@+id/updateInformationSystemIsUpToDateImage"
+                    android:layout_below="@id/updateInformationSystemIsUpToDateHeader"
+                    android:layout_marginTop="10dp"
+                    android:layout_centerHorizontal="true"
+
+                    android:contentDescription="@string/icon" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/updateInformationSystemIsUpToDateVersionTextView"
+                    android:layout_below="@id/updateInformationSystemIsUpToDateImage"
+                    android:layout_centerHorizontal="true"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:id="@+id/updateInformationSystemIsUpToDateDateTextView"
+                    android:layout_below="@id/updateInformationSystemIsUpToDateVersionTextView"
+                    android:layout_centerHorizontal="true"/>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/updateInformationSystemIsUpToDateDateTextView"
+                    android:id="@+id/updateInformationSystemIsUpToDateStatisticsButton"
+                    android:text="@string/update_information_view_update_information"
+                    android:background="@android:color/transparent"/>
+
+            </RelativeLayout>
+        </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
     <com.google.android.gms.ads.AdView
         android:layout_width="wrap_content"

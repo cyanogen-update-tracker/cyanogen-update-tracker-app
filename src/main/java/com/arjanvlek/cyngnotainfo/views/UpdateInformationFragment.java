@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.TextUtils;
+import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,6 +21,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.BuildConfig;
+import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
+import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
@@ -33,8 +38,11 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
@@ -50,9 +58,11 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
 
     private SettingsManager settingsManager;
     private NetworkConnectionManager networkConnectionManager;
+    private Context context;
 
     private DateTime refreshedDate;
     private boolean isFetched;
+    private boolean error;
 
 
 
@@ -63,6 +73,7 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
         deviceName = settingsManager.getPreference(PROPERTY_DEVICE);
         updateDataLink = settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK);
+        context = getActivity().getApplicationContext();
 
     }
 
@@ -78,8 +89,11 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         super.onStart();
         if (refreshLayout == null && rootView != null) {
             refreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
+            SwipeRefreshLayout refreshLayoutForUpToDateSystem = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
             refreshLayout.setOnRefreshListener(this);
+            refreshLayoutForUpToDateSystem.setOnRefreshListener(this);
             refreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
+            refreshLayoutForUpToDateSystem.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
         }
         if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
             if (networkConnectionManager.checkNetworkConnection()) {
@@ -180,11 +194,26 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
     }
 
     private void getUpdateInformation() {
-        new GetUpdateInformation().execute();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
+                new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            }
+            if(settingsManager.showNewsMessages()) {
+                new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            }
+        } else {
+            new GetUpdateInformation().execute();
+            if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
+                new GetServerStatus().execute();
+            }
+            if(settingsManager.showNewsMessages()) {
+                new GetServerMessages().execute();
+            }
+        }
     }
 
     private void getOfflineUpdateInformation() {
-
         displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false);
     }
 
@@ -198,74 +227,278 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         return cyanogenOTAUpdate;
     }
 
+    public void displayServerMessages(List<ServerMessage> serverMessages) {
+        if(settingsManager.showNewsMessages() && !error) {
+            rootView.findViewById(R.id.updateInformationFirstServerMessageBar).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationSecondServerMessageBar).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationFirstServerMessageTextView).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationSecondServerMessageTextView).setVisibility(View.GONE);
+            int i = 0;
+            for (ServerMessage message : serverMessages) {
+                // There may never be more than 2 messages displayed in this version of the app.
+                if(!message.isDeviceSpecific() || (message.getDeviceId() == settingsManager.getLongPreference(PROPERTY_DEVICE_ID))) {
+                    View serverMessageBar;
+                    TextView serverMessageTextView;
+                    if (i == 0) {
+                        serverMessageBar = rootView.findViewById(R.id.updateInformationFirstServerMessageBar);
+                        serverMessageTextView = (TextView) rootView.findViewById(R.id.updateInformationFirstServerMessageTextView);
+
+                        View updateInformationScreen = rootView.findViewById(R.id.updateInformationRefreshLayout);
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                        params.addRule(RelativeLayout.BELOW, R.id.updateInformationFirstServerMessageBar);
+                        params.addRule(RelativeLayout.ABOVE, R.id.updateInformationAdView);
+
+                        updateInformationScreen.setLayoutParams(params);
+
+                    } else {
+                        serverMessageBar = rootView.findViewById(R.id.updateInformationSecondServerMessageBar);
+                        serverMessageTextView = (TextView) rootView.findViewById(R.id.updateInformationSecondServerMessageTextView);
+
+                        View updateInformationScreen = rootView.findViewById(R.id.updateInformationRefreshLayout);
+                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
+                                ViewGroup.LayoutParams.WRAP_CONTENT);
+
+                        params.addRule(RelativeLayout.BELOW, R.id.updateInformationSecondServerMessageBar);
+                        params.addRule(RelativeLayout.ABOVE, R.id.updateInformationAdView);
+
+                        updateInformationScreen.setLayoutParams(params);
+                    }
+                    serverMessageBar.setVisibility(View.VISIBLE);
+                    serverMessageTextView.setVisibility(View.VISIBLE);
+
+                    String appLocale = Locale.getDefault().getDisplayLanguage();
+                    if (appLocale.equals("Nederlands")) {
+                        serverMessageTextView.setText(message.getMessageNl());
+                    } else {
+                        serverMessageTextView.setText(message.getMessage());
+                    }
+
+                    switch (message.getPriority()) {
+                        case LOW:
+                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_green_light));
+                            break;
+                        case MEDIUM:
+                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light));
+                            break;
+                        case HIGH:
+                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_red_light));
+                            break;
+                    }
+
+                    if (message.isMarquee()) {
+                        serverMessageTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                        serverMessageTextView.setHorizontallyScrolling(true);
+                        serverMessageTextView.setSingleLine(true);
+                        serverMessageTextView.setMarqueeRepeatLimit(-1); // -1 is forever
+                        serverMessageTextView.setFocusable(true);
+                        serverMessageTextView.setFocusableInTouchMode(true);
+                        serverMessageTextView.requestFocus();
+                        serverMessageTextView.setSelected(true);
+                    }
+                }
+
+                i++;
+            }
+        }
+    }
+
+    public void displayServerStatus(ServerStatus serverStatus) {
+
+        if(serverStatus.getStatus() != ServerStatus.Status.OK) {
+            View serverStatusWarningBar = rootView.findViewById(R.id.updateInformationServerErrorBar);
+            TextView serverStatusWarningTextView = (TextView) rootView.findViewById(R.id.updateInformationServerErrorTextView);
+
+            if(settingsManager.showNewsMessages()) {
+                serverStatusWarningBar.setVisibility(View.VISIBLE);
+                serverStatusWarningTextView.setVisibility(View.VISIBLE);
+            }
+            switch(serverStatus.getStatus()) {
+                case WARNING:
+                    if(settingsManager.showNewsMessages()) {
+                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light));
+                        serverStatusWarningTextView.setText(getString(R.string.server_status_warning));
+                    }
+                    break;
+                case ERROR:
+                    if(settingsManager.showNewsMessages()) {
+                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_red_light));
+                        serverStatusWarningTextView.setText(getString(R.string.server_status_error));
+                    }
+                    break;
+                case MAINTENANCE:
+                    showMaintenanceError();
+                    break;
+                case TAKEN_DOWN:
+                    showAppNotValidError();
+                    break;
+                case UNREACHABLE:
+                    if(settingsManager.showNewsMessages()) {
+                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light));
+                        serverStatusWarningTextView.setText(getString(R.string.server_status_unreachable));
+                    }
+                    break;
+            }
+        }
+        if(settingsManager.showAppUpdateMessages() && !error) {
+            if (!checkIfAppIsUpToDate(serverStatus.getLatestAppVersion())) {
+                View appUpdateNotificationBar = rootView.findViewById(R.id.updateInformationNewAppNotificationBar);
+                TextView appUpdateNotificationTextView = (TextView) rootView.findViewById(R.id.updateInformationNewAppNotificationTextView);
+                appUpdateNotificationBar.setVisibility(View.VISIBLE);
+                appUpdateNotificationTextView.setVisibility(View.VISIBLE);
+
+                appUpdateNotificationTextView.setText(getString(R.string.new_app_version_first, serverStatus.getLatestAppVersion()) + " " + getString(R.string.new_app_version_second));
+                appUpdateNotificationTextView.setLinksClickable(true);
+                appUpdateNotificationTextView.setMovementMethod(LinkMovementMethod.getInstance());
+
+            }
+        }
+    }
+
+    private boolean checkIfAppIsUpToDate(String appVersionFromResult) {
+        String appVersion = BuildConfig.VERSION_NAME;
+        appVersion = appVersion.replace(".", "");
+        appVersionFromResult = appVersionFromResult.replace(".", "");
+        try {
+            int appVersionNumeric = Integer.parseInt(appVersion);
+            int appVersionFromResultNumeric = Integer.parseInt(appVersionFromResult);
+            return appVersionFromResultNumeric <= appVersionNumeric;
+        } catch(Exception e) {
+            return true;
+        }
+    }
+
+
     public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online) {
-        if (cyanogenOTAUpdate != null && isAdded()) {
-            generateCircleDiagram(cyanogenOTAUpdate);
-            TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
-            if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
-                buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.update_information_for) + " " + deviceName);
-            } else {
-                buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.update_information_for) + " " + deviceName);
+        if(cyanogenOTAUpdate != null && checkIfSystemIsUpToDate(cyanogenOTAUpdate.getName(), cyanogenOTAUpdate.getDateCreatedUnix()) && isAdded()) {
+             // switch views
+            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.VISIBLE);
+
+            String cyanogenOSVersion = System.getProperty("ro.cm.display.version", "unsupported");
+            TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
+            versionNumberView.setText("Cyanogen OS" + getString(R.string.update_information_version) + " " + cyanogenOSVersion);
+
+            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
+            TextView dateCheckedView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateDateTextView);
+            if(online) {
+                settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(LocalDateTime.now()));
             }
+            dateCheckedView.setText(settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE));
+        }
+        else {
+            if (cyanogenOTAUpdate != null && isAdded()) {
+                generateCircleDiagram(cyanogenOTAUpdate);
+                rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
+                rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
+                TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
+                if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
+                    buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.update_information_for) + " " + deviceName);
+                } else {
+                    buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.update_information_for) + " " + deviceName);
+                }
 
-            TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-            downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.download_size_megabyte));
+                TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
+                downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.download_size_megabyte));
 
-            TextView updatedDataView = (TextView) rootView.findViewById(R.id.updateInformationUpdatedDataView);
-            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
-            String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
-            updatedDataView.setText(dateUpdated);
+                TextView updatedDataView = (TextView) rootView.findViewById(R.id.updateInformationUpdatedDataView);
+                DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
+                String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
+                updatedDataView.setText(dateUpdated);
 
-            View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
-            TextView noConnectionTextField = (TextView) rootView.findViewById(R.id.updateInformationNoConnectionTextView);
+                View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
+                TextView noConnectionTextField = (TextView) rootView.findViewById(R.id.updateInformationNoConnectionTextView);
 
-            if (online) {
-                // Hide the "no connection" bar.
-                noConnectionBar.setVisibility(View.GONE);
-                noConnectionTextField.setVisibility(View.GONE);
+                if (online) {
+                    // Hide the "no connection" bar.
+                    noConnectionBar.setVisibility(View.GONE);
+                    noConnectionTextField.setVisibility(View.GONE);
 
-                if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+                    if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+                        Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
+                        downloadButton.setOnClickListener(new View.OnClickListener() {
+                            @Override
+                            public void onClick(View v) {
+                                downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                            }
+                        });
+                        downloadButton.setEnabled(true);
+                    }
+                } else {
+                    //Show the "no connection" bar.
+                    noConnectionBar.setVisibility(View.VISIBLE);
+                    noConnectionTextField.setVisibility(View.VISIBLE);
                     Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
-                    downloadButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                        }
-                    });
-                    downloadButton.setEnabled(true);
+                    downloadButton.setEnabled(false);
                 }
+
+
+                Button descriptionButton = (Button) rootView.findViewById(R.id.updateInformationUpdateDescriptionButton);
+                descriptionButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        Intent i = new Intent(getActivity(), UpdateDescriptionActivity.class);
+                        i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
+                        startActivity(i);
+                    }
+                });
+
+                // Save preferences for offline viewing
+                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
+                settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
+                settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
+                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
+                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
+
+                // Hide the refreshing icon
+                if (refreshLayout != null) {
+                    if (refreshLayout.isRefreshing()) {
+                        refreshLayout.setRefreshing(false);
+                    }
+                }
+            }
+        }
+    }
+
+    private boolean checkIfSystemIsUpToDate(String newCyanogenOSVersion, int newDateCreated) {
+        if(settingsManager.showIfSystemIsUpToDate()) {
+            // This grabs Cyanogen OS version from build.prop. As there is no direct SDK way to do this, it has to be done in this way.
+            String cyanogenOSVersion = System.getProperty("ro.cm.display.version", "unsupported");
+            String dateCreated = System.getProperty("ro.build.date.utc", "unsupported");
+            int dateCreatedInt;
+            // if this device is not running Cyanogen OS, mark it as not up-to-date to always display version information.
+            try {
+                if (!dateCreated.equals("unsupported")) {
+                    dateCreatedInt = Integer.parseInt(dateCreated);
+                } else {
+                    dateCreatedInt = -1;
+                }
+
+            } catch (Exception e) {
+                dateCreatedInt = -1;
+            }
+            if (dateCreatedInt != -1 && dateCreatedInt == newDateCreated) {
+                return true;
+            } else if (cyanogenOSVersion.equals("unsupported")) {
+                return false;
             } else {
-                //Show the "no connection" bar.
-                noConnectionBar.setVisibility(View.VISIBLE);
-                noConnectionTextField.setVisibility(View.VISIBLE);
-                Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
-                downloadButton.setEnabled(false);
-            }
-
-
-            Button descriptionButton = (Button) rootView.findViewById(R.id.updateInformationUpdateDescriptionButton);
-            descriptionButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Intent i = new Intent(getActivity(), UpdateDescriptionActivity.class);
-                    i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
-                    startActivity(i);
-                }
-            });
-
-            // Save preferences for offline viewing
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
-            settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
-            settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
-
-            // Hide the refreshing icon
-            if (refreshLayout != null) {
-                if (refreshLayout.isRefreshing()) {
-                    refreshLayout.setRefreshing(false);
+                if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {
+                    return true;
+                } else {
+                    // remove incremental version naming.
+                    newCyanogenOSVersion = newCyanogenOSVersion.replace(" Incremental", "");
+                    if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {
+                        return true;
+                    } else {
+                        newCyanogenOSVersion = newCyanogenOSVersion.replace("-", " ");
+                        return newCyanogenOSVersion.contains(cyanogenOSVersion);
+                    }
                 }
             }
+        }
+        else {
+            return false; // Always show update info if user does not want to see if system is up to date.
         }
     }
 
@@ -279,7 +512,7 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
         } else {
-            //noinspection deprecation
+            //noinspection deprecation as it is only for older Android versions.
             request.setShowRunningNotification(true);
         }
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
@@ -339,6 +572,31 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         }
     }
 
+    private class GetServerStatus extends  AsyncTask<Void, Void, ServerStatus> {
+
+        @Override
+        protected ServerStatus doInBackground(Void... arg0) {
+            return getServerConnector().getServerStatus();
+        }
+
+        @Override
+        protected void onPostExecute(ServerStatus serverStatus) {
+            displayServerStatus(serverStatus);
+        }
+    }
+
+    private class GetServerMessages extends  AsyncTask<Void, Void, List<ServerMessage>> {
+
+        @Override
+        protected List<ServerMessage> doInBackground(Void... arg0) {
+            return getServerConnector().getServerMessages();
+        }
+
+        @Override
+        protected void onPostExecute(List<ServerMessage> serverMessages) {
+            displayServerMessages(serverMessages);
+        }
+    }
 
     /**
      * Async task class to get json by making HTTP call
@@ -375,6 +633,36 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
     private void showNetworkError() {
         DialogFragment networkErrorFragment = new NetworkErrorFragment();
         networkErrorFragment.show(getFragmentManager(), "NetworkError");
+    }
+
+    private void showMaintenanceError() {
+        hideAllInterfaceElements();
+
+        DialogFragment serverMaintenanceErrorFragment = new ServerMaintenanceErrorFragment();
+        serverMaintenanceErrorFragment.show(getFragmentManager(), "MaintenanceError");
+    }
+
+    private void showAppNotValidError() {
+        hideAllInterfaceElements();
+
+        DialogFragment appNotValidErrorFragment = new AppNotValidErrorFragment();
+        appNotValidErrorFragment.show(getFragmentManager(), "AppNotValidError");
+    }
+
+    private void hideAllInterfaceElements() {
+        try {
+            error = true;
+            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationAdView).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationFirstServerMessageBar).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationFirstServerMessageTextView).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationSecondServerMessageBar).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationSecondServerMessageTextView).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationNewAppNotificationBar).setVisibility(View.GONE);
+            rootView.findViewById(R.id.updateInformationNewAppNotificationTextView).setVisibility(View.GONE);
+        } catch (Throwable ignored) {
+        }
     }
 
 }

@@ -7,6 +7,8 @@ import android.support.annotation.Nullable;
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
+import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.Model.UpdateDataLink;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 
@@ -30,11 +32,15 @@ public class ServerConnector {
     private final static String DEVICES_URL = "devices";
     private final static String UPDATE_METHOD_URL = "updateMethods";
     private final static String UPDATE_DATA_LINK_URL = "updateDataLink";
+    private final static String SERVER_STATUS_URL = "serverStatus";
+    private final static String SERVER_MESSAGES_URL = "serverMessages";
 
     private List<Device> devices;
     private List<UpdateMethod> updateMethods;
     private UpdateDataLink updateDataLink;
     private CyanogenOTAUpdate cyanogenOTAUpdate;
+    private ServerStatus serverStatus;
+    private List<ServerMessage> serverMessages;
 
     private List<Device> offlineDevices = fillOfflineDevices();
     private List<UpdateMethod> offlineUpdateMethods = fillOfflineUpdateMethods();
@@ -91,6 +97,16 @@ public class ServerConnector {
         }
     }
 
+    public ServerStatus getServerStatus() {
+        fetchDataFromServer("server_status", null, null);
+        return serverStatus;
+    }
+
+    public List<ServerMessage> getServerMessages() {
+        fetchDataFromServer("server_messages", null, null);
+        return serverMessages;
+    }
+
     private void findAllDevicesFromHtmlResponse(String htmlResponse) {
         devices = null;
         if (htmlResponse != null) {
@@ -109,6 +125,9 @@ public class ServerConnector {
                     // There should never be an exception here; it means an internal server / api error.
                     offline = true;
                 }
+            }
+            else {
+                offline = true;
             }
         } else {
             offline = true;
@@ -136,6 +155,9 @@ public class ServerConnector {
                     offline = true;
                 }
             }
+            else {
+                offline = true;
+            }
         } else {
             offline = true;
         }
@@ -161,8 +183,119 @@ public class ServerConnector {
                     offline = true;
                 }
             }
+            else {
+                offline = true;
+            }
         } else {
             offline = true;
+        }
+    }
+
+    private void findServerStatusFromHtmlResponse(String htmlResponse) {
+        serverStatus = null;
+        if (htmlResponse != null) {
+            if(!htmlResponse.isEmpty()) {
+                try {
+                    serverStatus = new ServerStatus();
+                    JSONArray serverResponse = new JSONArray(htmlResponse);
+                    for(int i = 0; i < serverResponse.length(); i++) {
+                        JSONObject rawServerStatus = serverResponse.getJSONObject(i);
+                        ServerStatus.Status status;
+                        switch(rawServerStatus.getString("status")) {
+                            case "OK":
+                                status = ServerStatus.Status.OK;
+                                break;
+                            case "WARNING":
+                                status = ServerStatus.Status.WARNING;
+                                break;
+                            case "ERROR":
+                                status = ServerStatus.Status.ERROR;
+                                break;
+                            case "TAKEN_DOWN":
+                                status = ServerStatus.Status.TAKEN_DOWN;
+                                break;
+                            case "MAINTENANCE":
+                                status = ServerStatus.Status.MAINTENANCE;
+                                break;
+                            default :
+                                status = ServerStatus.Status.UNREACHABLE;
+                        }
+                        serverStatus.setStatus(status);
+                        serverStatus.setLatestAppVersion(rawServerStatus.getString("latest_app_version"));
+                    }
+                } catch (JSONException e) {
+                    serverStatus = new ServerStatus();
+                    serverStatus.setStatus(ServerStatus.Status.UNREACHABLE);
+                    serverStatus.setLatestAppVersion(BuildConfig.VERSION_NAME); // To prevent incorrect app update messages.
+                }
+            } else {
+                serverStatus = new ServerStatus();
+                serverStatus.setStatus(ServerStatus.Status.UNREACHABLE);
+                serverStatus.setLatestAppVersion(BuildConfig.VERSION_NAME); // To prevent incorrect app update messages.
+            }
+        } else {
+            serverStatus = new ServerStatus();
+            serverStatus.setStatus(ServerStatus.Status.UNREACHABLE);
+            serverStatus.setLatestAppVersion(BuildConfig.VERSION_NAME); // To prevent incorrect app update messages.
+        }
+    }
+
+    private void findServerMessagesFromHtmlResponse(String htmlResponse) {
+        serverMessages = null;
+        if (htmlResponse != null) {
+            if (!htmlResponse.isEmpty()) {
+                try {
+                    serverMessages = new ArrayList<>();
+                    JSONArray serverResponse = new JSONArray(htmlResponse);
+                    for (int i = 0; i < serverResponse.length(); i++) {
+                        ServerMessage serverMessage = new ServerMessage();
+                        JSONObject rawServerMessage = serverResponse.getJSONObject(i);
+                        serverMessage.setId(rawServerMessage.getLong("id"));
+                        serverMessage.setMessage(rawServerMessage.getString("message"));
+                        serverMessage.setMessageNl(rawServerMessage.getString("message_nl"));
+                        String deviceId = rawServerMessage.getString("device_id");
+                        if(deviceId != null && !deviceId.equals("null")) {
+                            serverMessage.setDeviceId(rawServerMessage.getLong("device_id"));
+                        }
+                        ServerMessage.ServerMessagePriority priority;
+                        switch(rawServerMessage.getString("priority")) {
+                            case "LOW":
+                                priority = ServerMessage.ServerMessagePriority.LOW;
+                                break;
+                            case "MEDIUM":
+                                priority = ServerMessage.ServerMessagePriority.MEDIUM;
+                                break;
+                            case "HIGH":
+                                priority = ServerMessage.ServerMessagePriority.HIGH;
+                                break;
+                            default:
+                                priority = ServerMessage.ServerMessagePriority.LOW;
+                                break;
+                        }
+                        serverMessage.setPriority(priority);
+                        switch(rawServerMessage.getString("marquee")) {
+                            case "0":
+                                serverMessage.setMarquee(false);
+                                break;
+                            case "1":
+                                serverMessage.setMarquee(true);
+                                break;
+                            default:
+                                serverMessage.setMarquee(false);
+                                break;
+                        }
+                        serverMessages.add(serverMessage);
+                    }
+                } catch (JSONException e) {
+                    // There should never be an exception here; it means an internal server / api error.
+                    serverMessages = new ArrayList<>();
+                }
+            }
+            else {
+                serverMessages = new ArrayList<>();
+            }
+        } else {
+            serverMessages = new ArrayList<>();
         }
     }
 
@@ -182,9 +315,13 @@ public class ServerConnector {
                     cyanogenOTAUpdate.setRollOutPercentage(object.getInt("rollout_percentage"));
                     cyanogenOTAUpdate.setName(object.getString("name"));
                     cyanogenOTAUpdate.setModel(object.getString("model"));
+                    cyanogenOTAUpdate.setDateCreatedUnix(object.getInt("date_created_unix"));
                 } catch (JSONException e) {
                     // No issue here: Sometimes Cyanogen decides not to include a field in the result.
                 }
+            }
+            else {
+                offline = true;
             }
         } else {
             offline = true;
@@ -228,8 +365,7 @@ public class ServerConnector {
                         deviceId = params[1];
                         if(!testing) {
                             requestUrl = new URL(SERVER_URL + UPDATE_METHOD_URL + "/" +  deviceId);
-                        }
-                        else {
+                        } else {
                             requestUrl = new URL(TEST_SERVER_URL + UPDATE_METHOD_URL + "/" + deviceId);
                         }
                         break;
@@ -240,6 +376,20 @@ public class ServerConnector {
                             requestUrl = new URL(SERVER_URL + UPDATE_DATA_LINK_URL + "/" + deviceId + "/" + updateMethodId);
                         } else {
                             requestUrl = new URL(TEST_SERVER_URL + UPDATE_DATA_LINK_URL + "/" + deviceId + "/" + updateMethodId);
+                        }
+                        break;
+                    case "server_status":
+                        if(!testing) {
+                            requestUrl = new URL(SERVER_URL + SERVER_STATUS_URL);
+                        } else {
+                            requestUrl = new URL(TEST_SERVER_URL + SERVER_STATUS_URL);
+                        }
+                        break;
+                    case "server_messages":
+                        if(!testing) {
+                            requestUrl = new URL(SERVER_URL + SERVER_MESSAGES_URL);
+                        } else {
+                            requestUrl = new URL(TEST_SERVER_URL + SERVER_MESSAGES_URL);
                         }
                         break;
                     case "cyanogen_update":
@@ -294,6 +444,12 @@ public class ServerConnector {
                         break;
                     case "update_link":
                         findUpdateDataLinkFromHtmlResponse(data);
+                        break;
+                    case "server_status":
+                        findServerStatusFromHtmlResponse(data);
+                        break;
+                    case "server_messages":
+                        findServerMessagesFromHtmlResponse(data);
                         break;
                     case "cyanogen_update":
                         findAllUpdateInformationFromHtmlResponse(data);

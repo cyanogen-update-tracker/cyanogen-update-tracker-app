@@ -11,15 +11,15 @@ import android.view.KeyEvent;
 
 import com.arjanvlek.cyngnotainfo.R;
 
-public class NetworkErrorFragment extends DialogFragment {
+public class ServerMaintenanceErrorFragment extends DialogFragment {
 
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(getString(R.string.error_app_requires_network_connection));
-        builder.setMessage(getString(R.string.error_app_requires_network_connection_message));
-        builder.setPositiveButton(getString(R.string.error_exit_button_text), new DialogInterface.OnClickListener() { // Todo add xml string
+        builder.setTitle(getString(R.string.error_maintenance));
+        builder.setMessage(getString(R.string.error_maintenance_message));
+        builder.setPositiveButton(getString(R.string.error_exit_button_text), new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -28,16 +28,16 @@ public class NetworkErrorFragment extends DialogFragment {
 
             }
         }).setCancelable(false)
-                .setOnKeyListener(new DialogInterface.OnKeyListener() {
-                    @Override
-                    public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
-                        if (i == KeyEvent.KEYCODE_BACK) {
-                            getActivity().finish();
-                            System.exit(0);
-                        }
-                        return true;
+            .setOnKeyListener(new DialogInterface.OnKeyListener() {
+                @Override
+                public boolean onKey(DialogInterface dialogInterface, int i, KeyEvent keyEvent) {
+                    if (i == KeyEvent.KEYCODE_BACK) {
+                        getActivity().finish();
+                        System.exit(0);
                     }
-                });
+                    return true;
+                }
+            });
         if (Build.VERSION.SDK_INT >= 17) {
             builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                 @Override
