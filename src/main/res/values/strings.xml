@@ -14,7 +14,7 @@
     <string name="update_information_stats_description">Image that shows the roll-out progress of the update.</string>
     <string name="update_information_system_is_up_to_date">Your system is fully up to date.</string>
     <string name="update_information_view_update_information">View update information</string>
-    <string name="update_information_version"> version</string>
+    <string name="update_information_version">&#160;version</string>
 
     <!-- Update description strings -->
     <string name="update_description">Update description</string>

@@ -258,7 +258,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:layout_below="@id/updateInformationNoConnectionBar"
+        android:layout_below="@id/updateInformationSecondServerMessageBar"
         android:layout_above="@+id/updateInformationAdView">
         <ScrollView
             android:layout_width="match_parent"
@@ -316,7 +316,7 @@
                     android:layout_below="@id/updateInformationSystemIsUpToDateDateTextView"
                     android:id="@+id/updateInformationSystemIsUpToDateStatisticsButton"
                     android:text="@string/update_information_view_update_information"
-                    android:background="@android:color/transparent"/>
+                    style="?attr/buttonBarButtonStyle"/>
 
             </RelativeLayout>
         </ScrollView>
