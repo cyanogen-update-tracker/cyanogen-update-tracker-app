@@ -1,24 +1,18 @@
 package com.arjanvlek.cyngnotainfo;
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.os.Build;
 import android.test.ActivityInstrumentationTestCase2;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.HelpActivity;
 import com.robotium.solo.Solo;
 
-import java.util.Locale;
 
 public class HelpTest extends ActivityInstrumentationTestCase2<HelpActivity> {
 
 
     private Solo solo;
-    public final static String LOCALE_DUTCH = "Nederlands";
 
     public HelpTest() {
         super(HelpActivity.class);
@@ -37,7 +31,6 @@ public class HelpTest extends ActivityInstrumentationTestCase2<HelpActivity> {
     }
 
     public void testHelpScreen() throws Exception {
-        String appLocale = Locale.getDefault().getDisplayLanguage();
 
         TextView helpOverviewField = (TextView) solo.getView(R.id.tut1bText1);
         TextView helpTopField = (TextView) solo.getView(R.id.tut1bText2);

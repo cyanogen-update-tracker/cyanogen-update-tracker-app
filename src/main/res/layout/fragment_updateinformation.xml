@@ -85,6 +85,7 @@
         android:layout_width="match_parent"
         android:layout_height="20dp"
         android:id="@+id/updateInformationNoConnectionBar"
+        android:layout_below="@id/updateInformationSecondServerMessageBar"
         android:visibility="gone"
         android:background="@color/holo_red_dark"/>
     <TextView
@@ -93,6 +94,7 @@
         android:id="@+id/updateInformationNoConnectionTextView"
         android:textColor="@android:color/white"
         android:text="@string/error_no_internet_connection"
+        android:layout_below="@id/updateInformationSecondServerMessageBar"
         android:textStyle="bold"
         android:layout_centerHorizontal="true"
         android:visibility="gone"
@@ -106,13 +108,13 @@
         android:visibility="gone"
         android:layout_below="@id/updateInformationNoConnectionBar"
         android:layout_above="@+id/updateInformationAdView">
-    <ScrollView
+
+        <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         >
 
-        <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
+        <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:paddingLeft="@dimen/activity_horizontal_margin"
@@ -259,7 +261,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:visibility="gone"
-        android:layout_below="@id/updateInformationSecondServerMessageBar"
+        android:layout_below="@id/updateInformationNoConnectionBar"
         android:layout_above="@+id/updateInformationAdView">
         <ScrollView
             android:layout_width="match_parent"
@@ -272,7 +274,6 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
-                android:paddingTop="@dimen/activity_vertical_margin"
                 android:id="@+id/relativeLayout2"
                 tools:context=".MainActivity$PlaceholderFragment">
 
@@ -282,6 +283,7 @@
                     android:layout_height="match_parent"
                     android:id="@+id/updateInformationSystemIsUpToDateHeader"
                     android:text="@string/update_information_system_is_up_to_date"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black"
                     android:textStyle="bold"
@@ -293,6 +295,7 @@
                     android:id="@+id/updateInformationSystemIsUpToDateImage"
                     android:layout_below="@id/updateInformationSystemIsUpToDateHeader"
                     android:layout_marginTop="10dp"
+                    android:src="@drawable/icon_uptodate"
                     android:layout_centerHorizontal="true"
 
                     android:contentDescription="@string/icon" />

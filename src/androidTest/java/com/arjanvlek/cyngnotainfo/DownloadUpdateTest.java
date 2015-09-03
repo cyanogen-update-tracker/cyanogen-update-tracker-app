@@ -5,7 +5,6 @@ import android.test.ActivityInstrumentationTestCase2;
 import android.widget.Button;
 
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
-import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.robotium.solo.Solo;
 
 import java.io.BufferedReader;
