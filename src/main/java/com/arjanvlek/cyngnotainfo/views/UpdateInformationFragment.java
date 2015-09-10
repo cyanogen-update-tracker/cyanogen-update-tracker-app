@@ -285,13 +285,13 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
 
                     switch (message.getPriority()) {
                         case LOW:
-                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_green_light));
+                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_green_light, null));
                             break;
                         case MEDIUM:
-                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light));
+                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light, null));
                             break;
                         case HIGH:
-                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_red_light));
+                            serverMessageBar.setBackgroundColor(getResources().getColor(R.color.holo_red_light, null));
                             break;
                     }
 
@@ -325,13 +325,13 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
             switch(serverStatus.getStatus()) {
                 case WARNING:
                     if(settingsManager.showNewsMessages()) {
-                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light));
+                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light, null));
                         serverStatusWarningTextView.setText(getString(R.string.server_status_warning));
                     }
                     break;
                 case ERROR:
                     if(settingsManager.showNewsMessages()) {
-                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_red_light));
+                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_red_light, null));
                         serverStatusWarningTextView.setText(getString(R.string.server_status_error));
                     }
                     break;
@@ -343,7 +343,7 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
                     break;
                 case UNREACHABLE:
                     if(settingsManager.showNewsMessages()) {
-                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light));
+                        serverStatusWarningBar.setBackgroundColor(getResources().getColor(R.color.holo_orange_light, null));
                         serverStatusWarningTextView.setText(getString(R.string.server_status_unreachable));
                     }
                     break;
@@ -433,68 +433,77 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
         }
         else {
             if (cyanogenOTAUpdate != null && isAdded()) {
-                generateCircleDiagram(cyanogenOTAUpdate);
-                rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
-                TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
-                if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
-                    buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.update_information_for) + " " + deviceName);
-                } else {
-                    buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.update_information_for) + " " + deviceName);
+                if(cyanogenOTAUpdate.getDateUpdated() == null && cyanogenOTAUpdate.getName() == null) {
+                    RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
+                    params.addRule(RelativeLayout.CENTER_HORIZONTAL, RelativeLayout.TRUE);
+                    TextView noUpdateAvailableTextView = new TextView(getContext());
+                    noUpdateAvailableTextView.setText("No System Updates have been released for this device.");
+                    rootView.addView(noUpdateAvailableTextView);
                 }
+                else {
+                    generateCircleDiagram(cyanogenOTAUpdate);
+                    rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
+                    rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
+                    TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
+                    if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
+                        buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.update_information_for) + " " + deviceName);
+                    } else {
+                        buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.update_information_for) + " " + deviceName);
+                    }
 
-                TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-                downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.download_size_megabyte));
+                    TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
+                    downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.download_size_megabyte));
 
-                TextView updatedDataView = (TextView) rootView.findViewById(R.id.updateInformationUpdatedDataView);
-                DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
-                String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
-                updatedDataView.setText(dateUpdated);
+                    TextView updatedDataView = (TextView) rootView.findViewById(R.id.updateInformationUpdatedDataView);
+                    DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
+                    String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
+                    updatedDataView.setText(dateUpdated);
 
-                if (online) {
+                    if (online) {
 
-                    if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+                        if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+                            Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
+                            downloadButton.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                                }
+                            });
+                            downloadButton.setEnabled(true);
+                        }
+                    } else {
                         Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
-                        downloadButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                            }
-                        });
-                        downloadButton.setEnabled(true);
+                        downloadButton.setEnabled(false);
                     }
-                } else {
-                    Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
-                    downloadButton.setEnabled(false);
-                }
 
 
-                Button descriptionButton = (Button) rootView.findViewById(R.id.updateInformationUpdateDescriptionButton);
-                descriptionButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent i = new Intent(getActivity(), UpdateDescriptionActivity.class);
-                        i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
-                        startActivity(i);
+                    Button descriptionButton = (Button) rootView.findViewById(R.id.updateInformationUpdateDescriptionButton);
+                    descriptionButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            Intent i = new Intent(getActivity(), UpdateDescriptionActivity.class);
+                            i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
+                            startActivity(i);
+                        }
+                    });
+
+                    // Save preferences for offline viewing
+                    settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
+                    settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
+                    settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
+                    settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
+                    settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
+
+                    // Hide the refreshing icon
+                    if (updateInformationRefreshLayout != null) {
+                        if (updateInformationRefreshLayout.isRefreshing()) {
+                            updateInformationRefreshLayout.setRefreshing(false);
+                        }
                     }
-                });
-
-                // Save preferences for offline viewing
-                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
-                settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
-                settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
-                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
-                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
-
-                // Hide the refreshing icon
-                if (updateInformationRefreshLayout != null) {
-                    if (updateInformationRefreshLayout.isRefreshing()) {
-                        updateInformationRefreshLayout.setRefreshing(false);
-                    }
-                }
-                if (systemIsUpToDateRefreshLayout != null) {
-                    if (systemIsUpToDateRefreshLayout.isRefreshing()) {
-                        systemIsUpToDateRefreshLayout.setRefreshing(false);
+                    if (systemIsUpToDateRefreshLayout != null) {
+                        if (systemIsUpToDateRefreshLayout.isRefreshing()) {
+                            systemIsUpToDateRefreshLayout.setRefreshing(false);
+                        }
                     }
                 }
             }
@@ -510,6 +519,10 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
 
 //            String cyanogenOSVersion = "TestData2";
             int dateCreatedUtc = systemVersionProperties.getDateCreatedUtc();
+
+            if(newCyanogenOSVersion == null) {
+                return false;
+            }
 
             if (dateCreatedUtc != -1 && dateCreatedUtc == newDateCreated) {
                 return true;
@@ -568,7 +581,7 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
                 xVals.add(1, getString(R.string.update_information_not_received_update));
             }
             PieDataSet pieDataSet = new PieDataSet(chartData, "");
-            pieDataSet.setColors(new int[]{getResources().getColor(R.color.lightBlue), getResources().getColor(android.R.color.darker_gray)});
+            pieDataSet.setColors(new int[]{getResources().getColor(R.color.lightBlue, null), getResources().getColor(android.R.color.darker_gray, null)});
 
 
             PieData pieData = new PieData(xVals, pieDataSet);
@@ -589,7 +602,7 @@ public class UpdateInformationFragment extends AbstractFragment implements Swipe
             } else {
                 circleDiagram.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
             }
-            circleDiagram.setBackgroundColor(getResources().getColor(R.color.chart_background));
+            circleDiagram.setBackgroundColor(getResources().getColor(R.color.chart_background, null));
             circleDiagram.invalidate();
         }
     }
