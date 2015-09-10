@@ -8,7 +8,6 @@ import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
-import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.gms.ads.AdView;
 import com.robotium.solo.Solo;

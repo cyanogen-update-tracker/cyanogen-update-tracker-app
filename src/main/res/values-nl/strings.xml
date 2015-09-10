@@ -96,5 +96,29 @@
     <string name="help_symbol_stats">Toont hoeveel procent gebruikers al toegang heeft tot deze update.</string>
     <string name="help_used_symbols">Gebruikte symoblen:</string>
     <string name="help_top_update">Bovenaan staat welke update momenteel wordt verspreid.</string>
+    <string name="update_information_system_is_up_to_date">Uw systeem is volledig bijgewerkt.</string>
+    <string name="update_information_view_update_information">Bekijk update-informatie</string>
+    <string name="update_information_version">-versie:</string>
+    <string name="server_status_error">Sommige functies werken mogelijk niet zoals verwacht.</string>
+    <string name="server_status_maintenance">Er is momenteel gepland onderhoud op de server. Probeer het straks nog eens!</string>
+    <string name="server_status_taken_down">Deze app kan niet langer meer worden gebruikt. Je kunt proberen de app via Google Play the updaten. Je moet de app nu afsluiten.</string>
+    <string name="server_status_warning">Sommige functies kunnen onverwacht gedrag vertonen.</string>
+    <string name="server_status_unreachable">Het Instellingen-scherm en notificaites werken mogelijk niet zoals verwacht.</string>
+    <string name="new_app_version_first">App-update beschikbaar! Versie <a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s</a></string>
+    <string name="new_app_version_second"> is uitgebracht!</string>
+    <string name="settings_in_app">Nieuws en waarschuwingen</string>
+    <string name="settings_new_app_version">App-update is beschikbaar</string>
+    <string name="settings_push_from_server">Belangrijke waarschuwingen</string>
+    <string name="settings_push_new_version">Systeemupdate is beschikbaar</string>
+    <string name="settings_push_notifications">Stuur mij deze push-meldingen:</string>
+    <string name="settings_server_messages">Toon deze meldingen in de app:</string>
+    <string name="settings_system_hide_when_up_to_date">Mijn systeem up-to-date is</string>
+    <string name="settings_system_up_to_date">Verberg update-informatie wanneer:</string>
+    <string name="settings_push_new_device">Nieuw apparaat wordt ondersteund</string>
+    <string name="error_app_not_valid">Ongeldige app-versie</string>
+    <string name="error_app_not_valid_message">Deze app kan niet langer meer worden gebruikt. Probeer hem te updaten via de Play Store door op Play Store te klikken en vervolgens op Updaten te klikken. Als deze fout blijt, verwijder de app dan en installeer hem opnieuw.</string>
+    <string name="error_maintenance">Serveronderhoud</string>
+    <string name="error_maintenance_message">Een ogenblik geduld terwijl de server wordt onderhouden. De server zal zeer snel weer online zijn.</string>
+    <string name="update_information_last_checked_on">Voor het laatst gecontroleerd om:</string>
 
 </resources>

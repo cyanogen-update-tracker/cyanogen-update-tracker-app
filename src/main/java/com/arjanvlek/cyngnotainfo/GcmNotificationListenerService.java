@@ -8,6 +8,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+
 import java.util.Locale;
 
 public class GcmNotificationListenerService extends com.google.android.gms.gcm.GcmListenerService {
@@ -33,26 +35,27 @@ public class GcmNotificationListenerService extends com.google.android.gms.gcm.G
     private void showNotification(Bundle msg) {
         NotificationManager mNotificationManager = (NotificationManager)
                 this.getSystemService(NOTIFICATION_SERVICE);
+        SettingsManager settingsManager = new SettingsManager(getApplicationContext());
 
         PendingIntent contentIntent = PendingIntent.getActivity(this, 0,
                 new Intent(this, MainActivity.class), 0);
         String message = null;
         String messageType = "none";
         if (msg != null) {
-            if (msg.getString("version_number") != null && msg.getString("device_name") != null) {
+            if (msg.getString("version_number") != null && msg.getString("device_name") != null && settingsManager.receiveSystemUpdateNotifications()) {
                 String deviceName = msg.getString("device_name");
                 message = getString(R.string.notification_version) + " " + msg.getString("version_number") + " " + getString(R.string.notification_is_now_available) + " " + deviceName + "!";
                 messageType = "update";
-            } else if (msg.getString("new_device") != null) {
+            } else if (msg.getString("new_device") != null && settingsManager.receiveNewDeviceNotifications()) {
                 String deviceName = msg.getString("new_device");
                 message = getString(R.string.notification_new_device) + " " + deviceName + " " + getString(R.string.notification_new_device_2);
                 messageType = "newDevice";
-            } else if (msg.getString("version_number") == null && msg.getString("device_name") != null) {
+            } else if (msg.getString("version_number") == null && msg.getString("device_name") != null && settingsManager.receiveSystemUpdateNotifications()) {
                 String deviceName = msg.getString("device_name");
                 message = getString(R.string.notification_unknown_version_number) + " " + deviceName + "!";
                 messageType = "update";
 
-            } else if (msg.getString("server_message") != null && msg.getString("server_message_nl") != null) {
+            } else if (msg.getString("server_message") != null && msg.getString("server_message_nl") != null && settingsManager.receiveWarningNotifications()) {
                 String language = Locale.getDefault().getDisplayLanguage();
                 switch (language) {
                     case "Nederlands":

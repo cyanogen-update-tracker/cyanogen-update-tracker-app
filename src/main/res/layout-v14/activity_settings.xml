@@ -125,7 +125,7 @@
             android:text="@string/settings_new_app_version"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <CheckBox
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/settingsAppUpdatesSwitch"
@@ -144,7 +144,7 @@
             android:text="@string/settings_in_app"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <CheckBox
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/settingsAppMessagesSwitch"
@@ -182,7 +182,7 @@
             android:text="@string/settings_push_from_server"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <CheckBox
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/settingsImportantPushNotificationsSwitch"
@@ -201,7 +201,7 @@
             android:text="@string/settings_push_new_version"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <CheckBox
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/settingsNewVersionPushNotificationsSwitch"
@@ -220,7 +220,7 @@
             android:text="@string/settings_push_new_device"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <CheckBox
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/settingsNewDevicePushNotificationsSwitch"
@@ -257,7 +257,7 @@
             android:text="@string/settings_system_hide_when_up_to_date"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <CheckBox
+        <Switch
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:id="@+id/settingsSystemIsUpToDateSwitch"
@@ -281,7 +281,9 @@
             android:layout_width="fill_parent"
             android:layout_height="2dip"
             android:layout_below="@id/settingsDescriptionTextView"
+
             android:background="#ff88e0ff" />
+
 
         <TextView
             android:id="@+id/settingsUpdateMethodDescriptionView"
@@ -293,13 +295,7 @@
             android:text="@string/settings_explanation_incremental_full_update"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-        <ProgressBar
-            android:id="@+id/settingsProgressBar"
-            style="?android:attr/progressBarStyleLarge"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/settingsUpdateMethodDescriptionView"
-            android:layout_centerHorizontal="true" />
+
 
         <TextView
             android:id="@+id/settingsSavedView"
@@ -311,7 +307,13 @@
             android:layout_below="@id/settingsProgressBar"
             android:textAppearance="?android:attr/textAppearanceMedium" />
 
-
+        <ProgressBar
+            android:id="@+id/settingsProgressBar"
+            style="?android:attr/progressBarStyleLarge"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/settingsUpdateMethodDescriptionView"
+            android:layout_centerHorizontal="true" />
 
 
     </RelativeLayout>

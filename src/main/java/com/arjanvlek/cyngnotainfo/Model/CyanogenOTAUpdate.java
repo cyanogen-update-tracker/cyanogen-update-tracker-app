@@ -3,6 +3,7 @@ package com.arjanvlek.cyngnotainfo.Model;
 public class CyanogenOTAUpdate {
 
     private String dateUpdated;
+    private int dateCreatedUnix;
     private int size;
     private String downloadUrl;
     private String fileName;
@@ -76,4 +77,11 @@ public class CyanogenOTAUpdate {
         this.model = model;
     }
 
+    public int getDateCreatedUnix() {
+        return dateCreatedUnix;
+    }
+
+    public void setDateCreatedUnix(int dateCreatedUnix) {
+        this.dateCreatedUnix = dateCreatedUnix;
+    }
 }

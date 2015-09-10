@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.preference.PreferenceManager;
 
 import com.arjanvlek.cyngnotainfo.MainActivity;
 
@@ -27,6 +28,13 @@ public class SettingsManager {
     public static final String PROPERTY_UPDATE_METHOD_ID = "update_method_id";
     public static final String PROPERTY_REGISTRATION_ERROR = "registration_error";
     public static final String PROPERTY_UPDATE_DATA_LINK = "update_link"; // Cannot be changed due to older versions of app
+    public static final String PROPERTY_UPDATE_CHECKED_DATE = "update_checked_date";
+    public static final String PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS = "receive_system_update_notifications";
+    public static final String PROPERTY_RECEIVE_WARNING_NOTIFICATIONS = "recive_warning_notifications";
+    public static final String PROPERTY_RECEIVE_NEW_DEVICE_NOTIFICATIONS = "receive_new_device_notifications";
+    public static final String PROPERTY_SHOW_NEWS_MESSAGES = "show_news_messages";
+    public static final String PROPERTY_SHOW_APP_UPDATE_MESSAGES = "show_app_update_messages";
+    public static final String PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE = "show_if_system_is_up_to_date";
 
     private Context context;
 
@@ -36,9 +44,40 @@ public class SettingsManager {
 
 
 
-    public boolean checkIfSettingsAreValid() { // TODO duplicate?
+    public boolean checkIfSettingsAreValid() {
         return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD) && checkPreference(PROPERTY_UPDATE_DATA_LINK);
     }
+
+    public boolean receiveSystemUpdateNotifications() {
+        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS, true);
+    }
+
+    public boolean receiveWarningNotifications() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PROPERTY_RECEIVE_WARNING_NOTIFICATIONS, true);
+    }
+
+    public boolean receiveNewDeviceNotifications() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PROPERTY_RECEIVE_NEW_DEVICE_NOTIFICATIONS, true);
+    }
+
+    public boolean showNewsMessages() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PROPERTY_SHOW_NEWS_MESSAGES, true);
+    }
+
+    public boolean showAppUpdateMessages() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PROPERTY_SHOW_APP_UPDATE_MESSAGES, true);
+    }
+
+    public boolean showIfSystemIsUpToDate() {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return prefs.getBoolean(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE, true);
+    }
+
 
 
 
@@ -63,6 +102,18 @@ public class SettingsManager {
         SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, value);
+        editor.apply();
+    }
+
+    /**
+     * Saves a Boolean preference to SharedPreferences.
+     * @param key Preference Key
+     * @param value Preference Value
+     */
+    public void saveBooleanPreference(String key, boolean value) {
+        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(key, value);
         editor.apply();
     }
 

@@ -12,6 +12,10 @@
     <string name="update_information_received_update">Received update&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
     <string name="update_information_not_received_update">Not received update yet</string>
     <string name="update_information_stats_description">Image that shows the roll-out progress of the update.</string>
+    <string name="update_information_system_is_up_to_date">Your system is fully up to date.</string>
+    <string name="update_information_view_update_information">View update information</string>
+    <string name="update_information_version">&#160;version:</string>
+    <string name="update_information_last_checked_on">Last checked on:</string>
 
     <!-- Update description strings -->
     <string name="update_description">Update description</string>
@@ -20,6 +24,17 @@
 
     <!-- Other strings-->
     <string name="icon">Icon</string>
+
+    <!-- Server status warning strings -->
+    <string name="server_status_warning">Some features may work incorrectly.</string>
+    <string name="server_status_error">Some features may not work.</string>
+    <string name="server_status_maintenance">There is currently planned maintenance on the server. Come back later!</string>
+    <string name="server_status_taken_down">This application may no longer be used. You can try updating it to the latest version via Google Play. You have to exit it now.</string>
+    <string name="server_status_unreachable">The Settings screen and notifications might not work correctly.</string>
+
+    <!-- New app version notification strings -->
+    <string name = "new_app_version_first">App update available! Version <a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s</a></string>
+    <string name = "new_app_version_second"> has been released!</string>
 
     <!-- Date and time strings -->
     <string name="at">at</string>
@@ -34,7 +49,7 @@
 
     <!-- Settings strings-->
     <string name="settings">Settings</string>
-    <string name="settings_header">Device and update method</string>
+    <string name="settings_header">Choose your device and update method:</string>
     <string name="settings_device">Device</string>
     <string name="settings_update_method">Update method</string>
     <string name="settings_saved">Your settings are automatically saved.</string>
@@ -42,10 +57,28 @@
     <string name="settings_explanation_incremental_full_update">An incremental update can only be installed if you were running the latest version before this update was released.\n\nA full update can be always be installed - regardless of your current software version running on your device.</string>
     <string name="settings_entered_incorrectly">Please wait while your settings are being saved.</string>
 
+    <string name="settings_server_messages">Show these messages in the app:</string>
+    <string name="settings_in_app">News and warnings</string>
+    <string name="settings_new_app_version">App update is available</string>
+
+    <string name="settings_push_notifications">Send me these push notification:</string>
+    <string name="settings_push_from_server">Important warnings</string>
+    <string name="settings_push_new_version">System update is available</string>
+    <string name="settings_push_new_device">New device is supported</string>
+
+    <string name="settings_system_up_to_date">Hide update information when:</string>
+    <string name="settings_system_hide_when_up_to_date">My system is up to date</string>
+
+
     <!-- Error strings-->
+    <string name="error_maintenance">Server maintenance</string>
+    <string name="error_maintenance_message">Please wait while the server undergoes maintenance. The server will be back online very soon.</string>
+    <string name="error_app_not_valid">Invalid app version</string>
+    <string name="error_app_not_valid_message">This app can no longer be used. Try updating it from Google Play by clicking on Google Play below and then on Update. If this error persists, uninstall the app and reinstall it again.</string>
     <string name="error_app_requires_network_connection">This app requires an active Internet connection</string>
     <string name="error_app_requires_network_connection_message">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
     <string name="error_exit_button_text">Exit</string>
+    <string name="error_google_play_button_text" translatable="false">Google Play</string>
     <string name="error_push_failure">Unable to connect to the app server. In order to receive notifications about new updates, please try launching the app again. </string>
     <string name="error_no_internet_connection">No internet connection.</string>
 
