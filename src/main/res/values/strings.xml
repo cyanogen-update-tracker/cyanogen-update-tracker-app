@@ -13,6 +13,7 @@
     <string name="update_information_not_received_update">Not received update yet</string>
     <string name="update_information_stats_description">Image that shows the roll-out progress of the update.</string>
     <string name="update_information_system_is_up_to_date">Your system is fully up to date.</string>
+    <string name="update_information_no_update_data_available">No update information is available.</string>
     <string name="update_information_view_update_information">View update information</string>
     <string name="update_information_version">&#160;version:</string>
     <string name="update_information_last_checked_on">Last checked on:</string>
@@ -89,7 +90,7 @@
     <string name="introduction_choose_device">Choose your device:</string>
     <string name="introduction_page_2">In order to stay up-to-date, you will need to choose a device from the list shown above.\n\nWhen more devices running Cyanogen OS are released, they\'ll automatically be added and you will be notified!\n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_update_method">Choose your update method:</string>
-    <string name="introduction_page_3">For most of the devices, there are two update methods shown in the list above. These are the full and the incremental update.\n\nAn incremental update can only be installed if you had the latest version before the new update was released. This is the kind of update your phone normally downloads via the Settings app. (recommended)\n\nA full update contains everything and can always be installed on your device. \nAs of lately, Cyanogen decided not to fill in all the details about these updates. Therefore, this update method is currently not recommended to track.\n\nSwipe to the left to continue.</string>
+    <string name="introduction_page_3">For most of the devices, there are two update methods shown in the list above. These are the full and the incremental update.\n\nAn incremental update can only be installed if you had the latest version before the new update was released. This is the kind of update your phone normally downloads via the Settings app. (recommended)\n\nA full update contains everything and can always be installed on your device, but is bigger to download and takes longer to install. Use this to skip versions (like updating from 4.4.x to 5.1).\n\nSwipe to the left to continue.</string>
     <string name="introduction_ready_to_start">You are ready to go!</string>
     <string name="introduction_page_4">Enjoy using this app!\n\nYou can always change your settings by clicking the three dots in the top right corner (or press your Menu button) following a tap on \'change device and update method\'.</string>
     <string name="introduction_close_button">start app</string>

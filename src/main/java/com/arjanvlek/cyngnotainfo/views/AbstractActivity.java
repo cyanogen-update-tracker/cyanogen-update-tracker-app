@@ -2,6 +2,7 @@ package com.arjanvlek.cyngnotainfo.views;
 
 import android.support.v7.app.AppCompatActivity;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
@@ -9,30 +10,23 @@ import java.util.List;
 
 public class AbstractActivity extends AppCompatActivity {
 
-    private List<Device> devices;
     private ServerConnector serverConnector;
-
-    protected List<Device> getDevices() {
-        if(devices != null) {
-            return devices;
-        }
-
-        else {
-            if(serverConnector == null) {
-                serverConnector = new ServerConnector();
-            }
-            devices = serverConnector.getDevices();
-            return devices;
-        }
-    }
+    private ApplicationContext applicationContext;
 
     public ServerConnector getServerConnector() {
+        if(applicationContext == null) {
+            applicationContext = getAppApplicationContext();
+        }
         if(serverConnector == null) {
-            serverConnector = new ServerConnector();
-            return serverConnector;
+            serverConnector = applicationContext.getServerConnector();
         }
-        else {
-            return serverConnector;
+        return serverConnector;
+    }
+
+    protected ApplicationContext getAppApplicationContext() {
+        if(applicationContext == null) {
+            applicationContext = (ApplicationContext)getApplication();
         }
+        return applicationContext;
     }
 }

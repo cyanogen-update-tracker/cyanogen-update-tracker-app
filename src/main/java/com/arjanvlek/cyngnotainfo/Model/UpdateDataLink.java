@@ -6,6 +6,15 @@ public class UpdateDataLink {
     private long deviceId;
     private String updateDataUrl;
 
+    public UpdateDataLink() {}
+
+    public UpdateDataLink(long id, long deviceId, long updateMethodId, String updateDataUrl) {
+        this.id = id;
+        this.deviceId = deviceId;
+        this.updateMethodId = updateMethodId;
+        this.updateDataUrl = updateDataUrl;
+    }
+
     public long getId() {
         return id;
     }

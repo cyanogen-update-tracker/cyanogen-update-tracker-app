@@ -43,7 +43,7 @@ public class TutorialStep3Fragment extends AbstractFragment {
 
         @Override
         protected List<Device> doInBackground(Void... params) {
-            return getServerConnector().getDevices();
+            return getApplicationContext().getServerConnector().getDevices();
         }
 
         @Override

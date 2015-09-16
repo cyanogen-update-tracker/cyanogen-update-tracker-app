@@ -11,6 +11,7 @@ public class CyanogenOTAUpdate {
     private int rollOutPercentage;
     private String name;
     private String model;
+    private boolean updateInformationAvailable;
 
 
     public String getDateUpdated() {
@@ -83,5 +84,13 @@ public class CyanogenOTAUpdate {
 
     public void setDateCreatedUnix(int dateCreatedUnix) {
         this.dateCreatedUnix = dateCreatedUnix;
+    }
+
+    public boolean isUpdateInformationAvailable() {
+        return updateInformationAvailable;
+    }
+
+    public void setUpdateInformationAvailable(boolean updateInformationAvailable) {
+        this.updateInformationAvailable = updateInformationAvailable;
     }
 }

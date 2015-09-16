@@ -49,7 +49,7 @@ public class TutorialStep4Fragment extends AbstractFragment {
         @Override
         public List<UpdateMethod> doInBackground(Long... deviceIds) {
             long deviceId = deviceIds[0];
-            return getServerConnector().getUpdateMethods(deviceId);
+            return getApplicationContext().getServerConnector().getUpdateMethods(deviceId);
         }
 
         @Override
@@ -110,7 +110,7 @@ public class TutorialStep4Fragment extends AbstractFragment {
         public UpdateDataLink doInBackground(Long... params) {
             long deviceId = params[0];
             long updateMethodId = params[1];
-            return  getServerConnector().getUpdateDataLink(deviceId, updateMethodId);
+            return  getApplicationContext().getServerConnector().getUpdateDataLink(deviceId, updateMethodId);
         }
 
         @Override
