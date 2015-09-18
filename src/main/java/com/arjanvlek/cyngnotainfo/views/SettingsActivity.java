@@ -119,7 +119,7 @@ public class SettingsActivity extends AbstractActivity {
 
         @Override
         public List<Device> doInBackground(Void... voids) {
-            return getAppApplicationContext().getDevices();
+            return getAppApplicationContext().getServerConnector().getDevices();
         }
 
         @Override

@@ -48,15 +48,10 @@ public class ServerConnector {
     public static boolean testing = false;
 
     public List<Device> getDevices() {
-        if(devices == null) {
-            fetchDataFromServer("device");
-            if (offline) {
-                return offlineDevices;
-            } else {
-                return devices;
-            }
-        }
-        else {
+        fetchDataFromServer("device");
+        if (offline) {
+            return offlineDevices;
+        } else {
             return devices;
         }
     }
@@ -479,7 +474,7 @@ public class ServerConnector {
         offlineDevices.add(yuYurekaPlus);
         offlineDevices.add(yuYuphoria);
         offlineDevices.add(smartfrenAndromaxQ);
-        offlineDevices.add(yuYunique);
+//        offlineDevices.add(yuYunique);
         offlineDevices.add(zukZ1);
         offlineDevices.add(wileyFoxSwift);
         return offlineDevices;
@@ -533,10 +528,9 @@ public class ServerConnector {
         updateDataLinks.add(SmartfrenAndromaxQIncrementalUpdate);
 //        updateDataLinks.add(YuYuniqueFullUpdate);
 //        updateDataLinks.add(YuYuniqueIncrementalUpdate);
-//        updateDataLinks.add(ZukZ1FullUpdate);
-//        updateDataLinks.add(ZukZ1IncrementalUpdate);
+        updateDataLinks.add(ZukZ1FullUpdate);
+        updateDataLinks.add(ZukZ1IncrementalUpdate);
         // For the Yu Yunique is only a FOTA test file available. This is no real update and therefore this device is disabled.
-        // The ZUK Z1 does not have stable updates yet (only experimental builds), so it is explicitly not added here.
         updateDataLinks.add(WileyFoxSwiftFullUpdate);
         updateDataLinks.add(WileyFoxSwiftIncrementalUpdate);
 
