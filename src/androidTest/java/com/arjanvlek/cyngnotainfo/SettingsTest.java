@@ -72,7 +72,7 @@ public class SettingsTest extends ActivityInstrumentationTestCase2<SettingsActiv
                 assertEquals("Incremental test update", settingsManager.getPreference(PROPERTY_UPDATE_METHOD));
                 break;
         }
-        assertEquals("http://cyanogenupdatetracker.com/test/api/v1/testUpdateData2.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
+        assertEquals("http://cyanogenupdatetracker.com/test/api/v1.1/testUpdateData2.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
 
         // Choose second test device
         solo.clickOnView(deviceSpinner);
@@ -100,7 +100,7 @@ public class SettingsTest extends ActivityInstrumentationTestCase2<SettingsActiv
                 assertEquals("Incremental test update", settingsManager.getPreference(PROPERTY_UPDATE_METHOD));
                 break;
         }
-        assertEquals("http://cyanogenupdatetracker.com/test/api/v1/testUpdateData2.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
+        assertEquals("http://cyanogenupdatetracker.com/test/api/v1.1/testUpdateData2.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
 
         // Choose first device with second update method
         solo.clickOnView(deviceSpinner);
@@ -130,7 +130,7 @@ public class SettingsTest extends ActivityInstrumentationTestCase2<SettingsActiv
                 assertEquals("Full test update", settingsManager.getPreference(PROPERTY_UPDATE_METHOD));
                 break;
         }
-        assertEquals("http://cyanogenupdatetracker.com/test/api/v1/testUpdateData1.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
+        assertEquals("http://cyanogenupdatetracker.com/test/api/v1.1/testUpdateData1.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
 
         // Choose second device with second update method (does not exist)
         solo.clickOnView(deviceSpinner);

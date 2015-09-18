@@ -88,7 +88,7 @@ public class TutorialTest extends ActivityInstrumentationTestCase2<TutorialActiv
             default:
                 assertEquals("Incremental test update", settingsManager.getPreference(PROPERTY_UPDATE_METHOD));
         }
-        assertEquals("http://cyanogenupdatetracker.com/test/api/v1/testUpdateData2.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
+        assertEquals("http://cyanogenupdatetracker.com/test/api/v1.1/testUpdateData2.json", settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK));
 
         swipeToRight();
         solo.sleep(1500);

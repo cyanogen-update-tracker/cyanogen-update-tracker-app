@@ -57,21 +57,14 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         try {
             // test the update name in the top
             TextView buildNumberText = (TextView)solo.getView(R.id.updateInformationBuildNumberView);
-            if(appLocale.equals(LOCALE_DUTCH)) {
-                assertEquals(UPDATE_NAME + " voor " + DEVICE_NAME, buildNumberText.getText());
-            } else {
-                assertEquals(UPDATE_NAME + " for " + DEVICE_NAME, buildNumberText.getText());
-            }
+            assertEquals(UPDATE_NAME, buildNumberText.getText());
         }
         catch (Exception e) {
             solo.goBack();
             solo.sleep(1000);
             TextView buildNumberText = (TextView)solo.getView(R.id.updateInformationBuildNumberView);
-            if(appLocale.equals(LOCALE_DUTCH)) {
-                assertEquals(UPDATE_NAME + " voor " + DEVICE_NAME, buildNumberText.getText());
-            } else {
-                assertEquals(UPDATE_NAME + " for " + DEVICE_NAME, buildNumberText.getText());
-            }
+            assertEquals(UPDATE_NAME, buildNumberText.getText());
+
         }
 
         // test the download size
@@ -108,10 +101,10 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
 
 
         // test if the app responds normally to screen rotation
-        for(int i = 0; i< 5; i++) {
-            solo.setActivityOrientation(Solo.LANDSCAPE);
-            solo.setActivityOrientation(Solo.PORTRAIT);
-        }
+//        for(int i = 0; i< 5; i++) {
+//            solo.setActivityOrientation(Solo.LANDSCAPE);
+//            solo.setActivityOrientation(Solo.PORTRAIT);
+//        }
 
 //        // test if the app responds properly without network connection
 //        solo.setMobileData(false);
