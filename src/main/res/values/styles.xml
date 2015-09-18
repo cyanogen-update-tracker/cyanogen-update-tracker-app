@@ -29,6 +29,11 @@
         <item name="actionModeBackground">@drawable/cab_background_top_example</item>
         <item name="actionModeSplitBackground">@drawable/cab_background_bottom_example</item>
         <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Example</item>
+        <item name="colorPrimary">@color/lightBlue</item>
+        <!--   darker variant for the status bar and contextual app bars -->
+        <item name="colorPrimaryDark">@color/lightBlue</item>
+        <!--   theme UI controls like checkboxes and text fields -->
+        <item name="colorAccent">@color/lightBlue</item>
 
 
     </style>

@@ -31,11 +31,11 @@
                 <item name="actionModeCloseButtonStyle">@style/ActionButton.CloseMode.Example</item>
                 <!-- Main theme colors -->
                 <!--   your app branding color for the app bar -->
-                <item name="android:colorPrimary">@color/lightBlue</item>
+                <item name="colorPrimary">@color/lightBlue</item>
                 <!--   darker variant for the status bar and contextual app bars -->
-                <item name="android:colorPrimaryDark">@color/lightBlue</item>
+                <item name="colorPrimaryDark">@color/lightBlue</item>
                 <!--   theme UI controls like checkboxes and text fields -->
-                <item name="android:colorAccent">@color/lightBlue</item>
+                <item name="colorAccent">@color/lightBlue</item>
 
 
         </style>

@@ -433,7 +433,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
                 TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
                 if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
-                    buildNumberView.setText(cyanogenOTAUpdate.getName() + " " + getString(R.string.update_information_for) + " " + deviceName);
+                    buildNumberView.setText(cyanogenOTAUpdate.getName());
                 } else {
                     buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.update_information_for) + " " + deviceName);
                 }
@@ -554,7 +554,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 xVals.add(1, getString(R.string.update_information_not_received_update));
             }
             PieDataSet pieDataSet = new PieDataSet(chartData, "");
-            pieDataSet.setColors(new int[]{ContextCompat.getColor(context, R.color.lightBlue), ContextCompat.getColor(context, android.R.color.darker_gray)});
+            pieDataSet.setColors(new int[]{ContextCompat.getColor(context, R.color.holo_green_dark), ContextCompat.getColor(context, R.color.holo_orange_dark)});
 
             PieData pieData = new PieData(xVals, pieDataSet);
             pieData.setDrawValues(false);
@@ -574,7 +574,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             } else {
                 circleDiagram.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
             }
-            circleDiagram.setBackgroundColor(ContextCompat.getColor(context, R.color.chart_background));
+//            circleDiagram.setBackgroundColor(ContextCompat.getColor(context, R.color.chart_background));
             circleDiagram.invalidate();
         }
     }
