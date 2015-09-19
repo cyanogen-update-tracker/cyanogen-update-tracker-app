@@ -16,3 +16,7 @@
 #   public *;
 #}
 -dontwarn javax.xml.**
+#Due to removal of Apache http components in Android 6.0 these lines have to be added here.
+-dontwarn org.apache.http.**
+-dontwarn android.net.http.AndroidHttpClient
+-dontwarn com.google.android.gms.internal.**
