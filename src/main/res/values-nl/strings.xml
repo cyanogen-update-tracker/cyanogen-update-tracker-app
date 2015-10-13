@@ -121,5 +121,12 @@
     <string name="error_maintenance_message">Een ogenblik geduld terwijl de server wordt onderhouden. De server zal zeer snel weer online zijn.</string>
     <string name="update_information_last_checked_on">Voor het laatst gecontroleerd om:</string>
     <string name="update_information_no_update_data_available">Er is geen update-informatie beschikbaar</string>
+    <string name="downloading">Downloaden…</string>
+    <string name="error_button_retry">Opnieuw</string>
+    <string name="download_error">Fout tijdens downloaden</string>
+    <string name="download_error_close">SLUITEN</string>
+    <string name="download_error_retry">OPNIEUW</string>
+    <string name="download_error_corrupt">Het gedownloade updatebestand is beschadigd! (MD5-controlegetal klopt niet). Probeer het opnieuw te downloaden.</string>
+    <string name="download_error_network">Er was een netwerkprobleem tijdens het downloaden van het. updatebestand. Controleer of je internetverbinding werkt en probeer het opnieuw.</string>
 
 </resources>

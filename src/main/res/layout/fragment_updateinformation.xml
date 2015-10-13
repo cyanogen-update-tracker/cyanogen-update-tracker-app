@@ -155,12 +155,20 @@
                 android:layout_alignParentLeft="true"
                 android:layout_alignParentStart="true" />
 
+            <ProgressBar
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/updateInformationDownloadProgressBar"
+                android:visibility="gone"
+                style="?android:attr/progressBarStyleHorizontal"
+                android:layout_below="@id/updateInformationRollOutPercentageDiagram"/>
+
             <TableLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
                 android:id="@+id/buttonTable"
-                android:layout_below="@+id/updateInformationRollOutPercentageDiagram">
+                android:layout_below="@+id/updateInformationDownloadProgressBar">
                 <TableRow>
                     <Button
                         android:layout_width="wrap_content"

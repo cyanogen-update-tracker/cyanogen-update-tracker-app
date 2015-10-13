@@ -19,6 +19,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +32,7 @@ import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.MD5;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
@@ -41,16 +44,23 @@ import com.google.android.gms.ads.AdView;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
-public class UpdateInformationFragment extends AbstractUpdateInformationFragment implements SwipeRefreshLayout.OnRefreshListener {
+public class UpdateInformationFragment extends AbstractUpdateInformationFragment implements SwipeRefreshLayout.OnRefreshListener, MessageDialog.ErrorDialogListener {
 
     private String deviceName;
 
@@ -446,13 +456,15 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
                 updatedDataView.setText(dateUpdated);
 
-                Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
+                final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
                 if (online) {
                     if (cyanogenOTAUpdate.getDownloadUrl() != null) {
                         downloadButton.setOnClickListener(new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                            new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                                downloadButton.setText(getString(R.string.downloading));
+                                downloadButton.setClickable(false);
                             }
                         });
                         downloadButton.setEnabled(true);
@@ -521,6 +533,162 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
+    @Override
+    public void onDialogRetryButtonClick(DialogFragment dialogFragment) {
+        Button downloadButton = (Button)rootView.findViewById(R.id.updateInformationDownloadButton);
+        new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+        downloadButton.setText(getString(R.string.downloading));
+        downloadButton.setClickable(false);
+        dialogFragment.dismiss();
+    }
+
+    @Override
+    public void onDialogCancelButtonClick(DialogFragment dialogFragment) {
+        dialogFragment.dismiss();
+    }
+
+    @Override
+    public void onDialogGooglePlayButtonClick(DialogFragment dialogFragment) {
+        try {
+            final String appPackageName = BuildConfig.APPLICATION_ID;
+            try {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+            } catch (android.content.ActivityNotFoundException e) {
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+            }
+        } catch (Exception ignored) {
+
+        }
+        dialogFragment.dismiss();
+    }
+
+    /**
+     *
+     */
+    private class UpdateDownloader extends AsyncTask<String, Long, String> {
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            showDownloadProgressBar();
+            getDownloadProgressBar().setIndeterminate(false);
+            getDownloadCancelButton().setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getDownloadButton().setClickable(true);
+                    getDownloadButton().setText(getString(R.string.download));
+                    hideDownloadProgressBar();
+                    cancel(true);
+                }
+            });
+        }
+
+        @Override
+        protected String doInBackground(String... urls) {
+            String filename = urls[1];
+
+            try {
+                int count;
+                URL url = new URL(urls[0]);
+                URLConnection connection = url.openConnection();
+                connection.connect();
+
+                int lengthOfFile = connection.getContentLength();
+
+                InputStream input = new BufferedInputStream(url.openStream());
+                OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
+
+                byte data[] = new byte[1024];
+                long total = 0;
+
+                while ((count = input.read(data)) != -1) {
+                    total += count;
+                    publishProgress((total*100)/lengthOfFile);
+                    output.write(data, 0, count);
+                }
+
+                output.flush();
+                output.close();
+                input.close();
+            } catch (Exception e) {
+                return null;
+            }
+            return filename;
+        }
+
+        protected void onProgressUpdate(Long... progress) {
+            getDownloadProgressBar().setProgress(progress[0].intValue());
+        }
+
+        @Override
+        protected void onPostExecute(String fileName) {
+            if(fileName == null) {
+                showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                getDownloadButton().setClickable(true);
+                getDownloadButton().setText(getString(R.string.download));
+                hideDownloadProgressBar();
+            } else {
+                getDownloadProgressBar().setIndeterminate(true);
+                new DownloadVerifier().execute(fileName);
+            }
+        }
+    }
+
+    private Button getDownloadButton() {
+        return (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
+    }
+
+    private void showDownloadProgressBar() {
+        rootView.findViewById(R.id.downloadProgressTable).setVisibility(View.VISIBLE);
+    }
+
+    private ProgressBar getDownloadProgressBar() {
+        return (ProgressBar) rootView.findViewById(R.id.updateInformationDownloadProgressBar);
+    }
+
+    private ImageButton getDownloadCancelButton() {
+        return (ImageButton) rootView.findViewById(R.id.updateInformationDownloadCancelButton);
+    }
+
+    private void hideDownloadProgressBar() {
+        rootView.findViewById(R.id.downloadProgressTable).setVisibility(View.GONE);
+
+    }
+
+    private class DownloadVerifier extends AsyncTask<String, Integer, Boolean> {
+
+        @Override
+        protected Boolean doInBackground(String... params) {
+            String filename = params[0];
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" + filename);
+            return cyanogenOTAUpdate == null || cyanogenOTAUpdate.getMD5Sum() == null || MD5.checkMD5(cyanogenOTAUpdate.getMD5Sum(), file);
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            if(!result) {
+                showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+            }
+            getDownloadButton().setClickable(true);
+            getDownloadButton().setText(getString(R.string.download));
+            hideDownloadProgressBar();
+        }
+    }
+
+    private void showDownloadError(String title, String errorMessage, String button1, String button2, boolean closable) {
+        DialogFragment errorDialog = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", errorMessage);
+        args.putString("title", title);
+        args.putString("button1", button1);
+        args.putString("button2", button2);
+        args.putBoolean("closable", closable);
+        errorDialog.setArguments(args);
+        errorDialog.setTargetFragment(this, 0);
+        errorDialog.show(getFragmentManager(), "DownloadError");
+    }
+
+    @Deprecated
     private void downloadUpdate(String downloadUrl, String downloadName) {
         DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
         Uri uri = Uri.parse(downloadUrl);
@@ -574,7 +742,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             } else {
                 circleDiagram.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
             }
-//            circleDiagram.setBackgroundColor(ContextCompat.getColor(context, R.color.chart_background));
             circleDiagram.invalidate();
         }
     }
@@ -592,21 +759,38 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     @Override
     protected void showNetworkError() {
-        DialogFragment networkErrorFragment = new NetworkErrorFragment();
-        networkErrorFragment.show(getFragmentManager(), "NetworkError");
+        DialogFragment errorDialog = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", getString(R.string.error_app_requires_network_connection_message));
+        args.putString("title", getString(R.string.error_app_requires_network_connection));
+        args.putString("button1", getString(R.string.download_error_close));
+        args.putBoolean("closable", true);
+        errorDialog.setArguments(args);
+        errorDialog.setTargetFragment(this, 0);
+        errorDialog.show(getFragmentManager(), "NetworkError");
     }
 
     private void showMaintenanceError() {
         hideAllInterfaceElements();
-
-        DialogFragment serverMaintenanceErrorFragment = new ServerMaintenanceErrorFragment();
+        DialogFragment serverMaintenanceErrorFragment = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", getString(R.string.error_maintenance_message));
+        args.putString("title", getString(R.string.error_maintenance));
+        args.putString("button1", getString(R.string.download_error_close));
+        args.putBoolean("closable", false);
         serverMaintenanceErrorFragment.show(getFragmentManager(), "MaintenanceError");
     }
 
     private void showAppNotValidError() {
         hideAllInterfaceElements();
-
-        DialogFragment appNotValidErrorFragment = new AppNotValidErrorFragment();
+        DialogFragment appNotValidErrorFragment = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", getString(R.string.error_app_not_valid_message));
+        args.putString("title", getString(R.string.error_app_not_valid));
+        args.putString("button1", getString(R.string.error_google_play_button_text));
+        args.putString("button2", getString(R.string.download_error_close));
+        args.putBoolean("closable", false);
+        appNotValidErrorFragment.setArguments(args);
         appNotValidErrorFragment.show(getFragmentManager(), "AppNotValidError");
     }
 

@@ -11,6 +11,7 @@ public class CyanogenOTAUpdate {
     private int rollOutPercentage;
     private String name;
     private String model;
+    private String MD5Sum;
     private boolean updateInformationAvailable;
 
 
@@ -92,5 +93,13 @@ public class CyanogenOTAUpdate {
 
     public void setUpdateInformationAvailable(boolean updateInformationAvailable) {
         this.updateInformationAvailable = updateInformationAvailable;
+    }
+
+    public String getMD5Sum() {
+        return MD5Sum;
+    }
+
+    public void setMD5Sum(String MD5Sum) {
+        this.MD5Sum = MD5Sum;
     }
 }

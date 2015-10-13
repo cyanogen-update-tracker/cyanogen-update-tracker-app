@@ -308,6 +308,7 @@ public class ServerConnector {
                     JSONObject object = new JSONObject(htmlResponse);
                     cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
                     cyanogenOTAUpdate.setSize(object.getInt("size"));
+                    cyanogenOTAUpdate.setMD5Sum(object.getString("md5sum"));
                     cyanogenOTAUpdate.setDownloadUrl(object.getString("download_url"));
                     cyanogenOTAUpdate.setFileName(object.getString("filename"));
                     cyanogenOTAUpdate.setDescription(object.getString("description"));

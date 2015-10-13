@@ -44,7 +44,13 @@
 
     <!-- Downloader strings-->
     <string name="download">Download</string>
+    <string name="downloading">Downloading…</string>
+    <string name="download_error">Download Error</string>
+    <string name="download_error_corrupt">The downloaded update file is corrupt! (MD5 Sum Mismatch). Please try downloading it again.</string>
+    <string name="download_error_network">A network error occurred while downloading the update file. Please make sure your Internet connection works and try downloading it again.</string>
     <string name="download_size_megabyte">MB</string>
+    <string name="download_error_close">CLOSE</string>
+    <string name="download_error_retry">RETRY</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen OS Update</string>
 
@@ -72,6 +78,7 @@
 
 
     <!-- Error strings-->
+    <string name="error_button_retry">Retry</string>
     <string name="error_maintenance">Server maintenance</string>
     <string name="error_maintenance_message">Please wait while the server undergoes maintenance. The server will be back online very soon.</string>
     <string name="error_app_not_valid">Invalid app version</string>
