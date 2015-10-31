@@ -1,6 +1,9 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.app.DownloadManager;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.res.Configuration;
@@ -10,6 +13,8 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.app.NotificationCompat;
+import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.TextUtils;
@@ -26,6 +31,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
+import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
@@ -73,7 +79,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     private DateTime refreshedDate;
     private boolean isFetched;
+    private boolean isDownloading;
     private boolean error;
+
+    public static final int NOTfICATION_ID = 1;
 
 
 
@@ -196,6 +205,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
+        if(isDownloading) {
+            NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.cancel(NOTfICATION_ID);
+        }
         if (adView != null) {
             adView.destroy();
         }
@@ -203,7 +216,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     private void getServerData() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            new VerifyUpdateDataLinkAndGetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
                 new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
@@ -211,7 +224,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
         } else {
-            new GetUpdateInformation().execute();
+            new VerifyUpdateDataLinkAndGetUpdateInformation().execute();
             if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
                 new GetServerStatus().execute();
             }
@@ -304,7 +317,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         serverMessageTextView.setSelected(true);
                     }
                 }
-
                 i++;
             }
         }
@@ -566,21 +578,28 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
      *
      */
     private class UpdateDownloader extends AsyncTask<String, Long, String> {
+        int i=0;
 
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
             showDownloadProgressBar();
+            isDownloading = true;
             getDownloadProgressBar().setIndeterminate(false);
             getDownloadCancelButton().setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    getDownloadButton().setClickable(true);
-                    getDownloadButton().setText(getString(R.string.download));
-                    hideDownloadProgressBar();
                     cancel(true);
                 }
             });
+        }
+
+        @Override
+        protected void onCancelled() {
+            getDownloadButton().setClickable(true);
+            getDownloadButton().setText(getString(R.string.download));
+            hideDownloadProgressBar();
+            hideDownloadNotification();
         }
 
         @Override
@@ -617,7 +636,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
 
         protected void onProgressUpdate(Long... progress) {
+            i++;
             getDownloadProgressBar().setProgress(progress[0].intValue());
+            if( i > 100) {
+                showDownloadNotification(progress[0].intValue(), false, false, false);
+                i = 0;
+            }
         }
 
         @Override
@@ -627,8 +651,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 getDownloadButton().setClickable(true);
                 getDownloadButton().setText(getString(R.string.download));
                 hideDownloadProgressBar();
+                isDownloading = false;
             } else {
                 getDownloadProgressBar().setIndeterminate(true);
+                showDownloadNotification(0, true, false, false);
                 new DownloadVerifier().execute(fileName);
             }
         }
@@ -655,6 +681,48 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     }
 
+    private void showDownloadNotification(final Integer progress, final boolean indeterminate, final boolean complete, final boolean failed) {
+        NotificationCompat.Builder builder;
+        if(complete) {
+            builder = new NotificationCompat.Builder(getActivity())
+                    .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                    .setContentTitle(getString(R.string.download_complete))
+                    .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
+        } else if (failed) {
+            builder = new NotificationCompat.Builder(getActivity())
+                    .setSmallIcon(android.R.drawable.stat_sys_download_done)
+                    .setContentTitle(getString(R.string.download_failed))
+                    .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
+
+        } else {
+            builder = new NotificationCompat.Builder(getApplicationContext())
+                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setContentTitle(getString(R.string.downloading))
+                    .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
+        }
+        Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+        TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+        stackBuilder.addParentStack(MainActivity.class);
+        stackBuilder.addNextIntent(resultIntent);
+        PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+        builder.setContentIntent(pendingIntent);
+        if(Build.VERSION.SDK_INT >= 21) {
+            builder.setCategory(Notification.CATEGORY_PROGRESS);
+        }
+        NotificationManager manager = (NotificationManager)getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+        if(!complete && !failed) {
+            builder.setOngoing(true);
+            builder.setProgress(100, progress, indeterminate);
+        }
+        manager.notify(NOTfICATION_ID, builder.build());
+    }
+
+    private void hideDownloadNotification() {
+        NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(NOTfICATION_ID);
+    }
+
+
     private class DownloadVerifier extends AsyncTask<String, Integer, Boolean> {
 
         @Override
@@ -672,6 +740,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             getDownloadButton().setClickable(true);
             getDownloadButton().setText(getString(R.string.download));
             hideDownloadProgressBar();
+            isDownloading = false;
+            if(result) {
+                showDownloadNotification(0, false, true, false);
+            } else {
+                showDownloadNotification(0, false, false, true);
+            }
         }
     }
 
@@ -686,6 +760,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         errorDialog.setArguments(args);
         errorDialog.setTargetFragment(this, 0);
         errorDialog.show(getFragmentManager(), "DownloadError");
+        showDownloadNotification(0, false, false, true);
     }
 
     @Deprecated
@@ -778,6 +853,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         args.putString("title", getString(R.string.error_maintenance));
         args.putString("button1", getString(R.string.download_error_close));
         args.putBoolean("closable", false);
+        serverMaintenanceErrorFragment.setArguments(args);
+        serverMaintenanceErrorFragment.setTargetFragment(this, 0);
         serverMaintenanceErrorFragment.show(getFragmentManager(), "MaintenanceError");
     }
 
@@ -791,6 +868,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         args.putString("button2", getString(R.string.download_error_close));
         args.putBoolean("closable", false);
         appNotValidErrorFragment.setArguments(args);
+        appNotValidErrorFragment.setTargetFragment(this, 0);
         appNotValidErrorFragment.show(getFragmentManager(), "AppNotValidError");
     }
 

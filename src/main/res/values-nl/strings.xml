@@ -126,7 +126,10 @@
     <string name="download_error">Fout tijdens downloaden</string>
     <string name="download_error_close">SLUITEN</string>
     <string name="download_error_retry">OPNIEUW</string>
-    <string name="download_error_corrupt">Het gedownloade updatebestand is beschadigd! (MD5-controlegetal klopt niet). Probeer het opnieuw te downloaden.</string>
+    <string name="download_error_corrupt">Het gedownloade updatebestand is beschadigd! Probeer het opnieuw te downloaden.</string>
     <string name="download_error_network">Er was een netwerkprobleem tijdens het downloaden van het. updatebestand. Controleer of je internetverbinding werkt en probeer het opnieuw.</string>
+    <string name="download_cyanogen_os">Cyanogen OS-versie</string>
+    <string name="download_complete">Download voltooid</string>
+    <string name="download_failed">Downloaden mislukt</string>
 
 </resources>

@@ -46,13 +46,16 @@
     <string name="download">Download</string>
     <string name="downloading">Downloading…</string>
     <string name="download_error">Download Error</string>
-    <string name="download_error_corrupt">The downloaded update file is corrupt! (MD5 Sum Mismatch). Please try downloading it again.</string>
+    <string name="download_error_corrupt">The downloaded update file is corrupt! Please try downloading it again.</string>
     <string name="download_error_network">A network error occurred while downloading the update file. Please make sure your Internet connection works and try downloading it again.</string>
     <string name="download_size_megabyte">MB</string>
     <string name="download_error_close">CLOSE</string>
     <string name="download_error_retry">RETRY</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen OS Update</string>
+    <string name="download_cyanogen_os">Cyanogen OS Version</string>
+    <string name="download_complete">Download complete</string>
+    <string name="download_failed">Download failed</string>
 
     <!-- Settings strings-->
     <string name="settings">Settings</string>

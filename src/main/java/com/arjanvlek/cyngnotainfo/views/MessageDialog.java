@@ -70,7 +70,7 @@ public class MessageDialog extends DialogFragment {
                 }
             });
         }
-        if(button2Text != null && button1Text != null && button1Text.toUpperCase().equals(getString(R.string.error_google_play_button_text))) {
+        if(button2Text != null && button1Text != null && button1Text.equals(getString(R.string.error_google_play_button_text))) {
             builder.setPositiveButton(button1Text, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
