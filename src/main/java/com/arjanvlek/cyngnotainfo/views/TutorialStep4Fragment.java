@@ -72,36 +72,38 @@ public class TutorialStep4Fragment extends AbstractFragment {
             }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, updateMethodNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                updateMethodId = 0L;
-                String updateMethodName = (String) adapterView.getItemAtPosition(i);
-                for(UpdateMethod updateMethod : updateMethods) {
-                    if(updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
-                        updateMethodId = updateMethod.getId();
+        if(getActivity() != null) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, updateMethodNames);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    updateMethodId = 0L;
+                    String updateMethodName = (String) adapterView.getItemAtPosition(i);
+                    for (UpdateMethod updateMethod : updateMethods) {
+                        if (updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
+                            updateMethodId = updateMethod.getId();
+                        }
+                    }
+
+                    //Set update type in preferences.
+                    settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, updateMethodId);
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, updateMethodName);
+                    //Set update link
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        new UpdateDataLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId, updateMethodId);
+                    } else {
+                        new UpdateDataLinkSetter().execute(deviceId, updateMethodId);
                     }
                 }
 
-                //Set update type in preferences.
-                settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, updateMethodId);
-                settingsManager.savePreference(PROPERTY_UPDATE_METHOD, updateMethodName);
-                //Set update link
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new UpdateDataLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId, updateMethodId);
-                } else {
-                    new UpdateDataLinkSetter().execute(deviceId, updateMethodId);
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+
                 }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+            });
+        }
     }
 
     private class UpdateDataLinkSetter extends AsyncTask<Long, Integer, UpdateDataLink> {

@@ -45,9 +45,12 @@
     <!-- Downloader strings-->
     <string name="download">Download</string>
     <string name="downloading">Downloading…</string>
+    <string name="verifying">Verifying…</string>
     <string name="download_error">Download Error</string>
     <string name="download_error_corrupt">The downloaded update file is corrupt! Please try downloading it again.</string>
     <string name="download_error_network">A network error occurred while downloading the update file. Please make sure your Internet connection works and try downloading it again.</string>
+    <string name="download_error_storage">There is insufficient storage space available on your device to save the downloaded update file. Please remove some files and try downloading it again.</string>
+    <string name="download_error_directory">It looks like there is no Downloads directory present on your device. Please try to restart your device and then download the update again.</string>
     <string name="download_size_megabyte">MB</string>
     <string name="download_error_close">CLOSE</string>
     <string name="download_error_retry">RETRY</string>
