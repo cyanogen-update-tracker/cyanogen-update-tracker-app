@@ -1,4 +1,4 @@
-# Cyanogen Update tracker (app)
+# Cyanogen Update Tracker (app)
 Cyanogen Update Tracker app for Android devices
 
 This is the end-user application for Cyanogen Update Tracker.
