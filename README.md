@@ -57,7 +57,7 @@ This project uses Google Cloud messaging and Admob.
 - Please note that Admob is integrated in an old way, so you need to update it in `fragment_updateinformation.xml` and `fragment_deviceinformation.xml` to use the new Google-Services.json file format.
 
 ###Set up the app API Server
-- Follow the guide from the API server project.
+- Follow the guide from the [API server project]: (https://github.com/arjanvlek/android-cyanogen-update-tracker-api).
 - Add the base URL of the API to these files:
 
 ```
