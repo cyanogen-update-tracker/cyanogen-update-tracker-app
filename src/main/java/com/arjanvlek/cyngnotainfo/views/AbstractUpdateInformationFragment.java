@@ -76,7 +76,7 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
         @Override
         protected Void doInBackground(Void... arg0) {
             UpdateDataLink updateDataLink1 = getApplicationContext().getServerConnector().getUpdateDataLink(settingsManager.getLongPreference(SettingsManager.PROPERTY_DEVICE_ID),settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
-            if(!updateDataLink.equals(updateDataLink1.getUpdateDataUrl())) {
+            if(updateDataLink != null && updateDataLink1 != null && !updateDataLink.equals(updateDataLink1.getUpdateDataUrl())) {
                 settingsManager.savePreference(PROPERTY_UPDATE_DATA_LINK, updateDataLink1.getUpdateDataUrl());
                 updateDataLink = updateDataLink1.getUpdateDataUrl();
             }
