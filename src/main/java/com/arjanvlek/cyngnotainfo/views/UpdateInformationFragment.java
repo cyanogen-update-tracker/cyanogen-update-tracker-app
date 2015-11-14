@@ -83,7 +83,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private boolean isDownloading;
     private boolean error;
 
-    public static final int NOTfICATION_ID = 1;
+    public static final int NOTIFICATION_ID = 1;
 
 
 
@@ -212,7 +212,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         super.onDestroy();
         if(isDownloading) {
             NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.cancel(NOTfICATION_ID);
+            manager.cancel(NOTIFICATION_ID);
         }
         if (adView != null) {
             adView.destroy();
@@ -774,16 +774,28 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 builder.setOngoing(true);
                 builder.setProgress(100, progress, indeterminate);
             }
-            manager.notify(NOTfICATION_ID, builder.build());
+            manager.notify(NOTIFICATION_ID, builder.build());
         } catch(Exception e) {
-            NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.cancel(NOTfICATION_ID);
+            try {
+                NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.cancel(NOTIFICATION_ID);
+            } catch(Exception e1) {
+                try {
+                    // If cancelling the notification fails fails (and yes, it happens!), then I assume either that the user's device has a (corrupt) custom firmware or that something is REALLY going wrong.
+                    // We try it once more but now with the Application Context instead of the Activity.
+                    NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    manager.cancel(NOTIFICATION_ID);
+                } catch (Exception ignored) {
+                    // If the last attempt has also failed, well then there's no hope.
+                    // We leave everything as is, but the user will likely be stuck with a download notification that stays until a reboot.
+                }
+            }
         }
     }
 
     private void hideDownloadNotification() {
         NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.cancel(NOTfICATION_ID);
+        manager.cancel(NOTIFICATION_ID);
     }
 
 
