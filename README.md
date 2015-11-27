@@ -29,7 +29,7 @@ git clone https://github.com/arjanvlek/android-cyanogen-update-tracker-app.git
 ```
 
 - Rename the cloned directory to `app`. (this is important!)
-- Move the file `missing-git-files.zip` to the `CyngnOtaInfo` directory (dir above the app directory).
+- Copy the file `missing-git-files.zip` to the `CyngnOtaInfo` directory (dir above the app directory).
 - Extract all the contents of this zip file in the `CyngnOtaInfo` directory.
 
 It should have at least these contents:
