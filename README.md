@@ -50,6 +50,8 @@ Files:
  local.properties (Local SDK settings - will prompt to correct SDK location on first run)
  settings.gradle (Gradle settings)
 ```
+- In Android studio, browse to the CyngnOtaInfo directory and open Build.gradle (not the Build.gradle in the app directory!)
+
 
 ###Adding your API keys
 This project uses Google Cloud messaging and Admob.
