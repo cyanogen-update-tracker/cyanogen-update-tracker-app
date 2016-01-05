@@ -10,7 +10,6 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
-import com.arjanvlek.cyngnotainfo.Model.UpdateDataLink;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
@@ -87,15 +86,9 @@ public class TutorialStep4Fragment extends AbstractFragment {
                         }
                     }
 
-                    //Set update type in preferences.
+                    //Set update method in preferences.
                     settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, updateMethodId);
                     settingsManager.savePreference(PROPERTY_UPDATE_METHOD, updateMethodName);
-                    //Set update link
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                        new UpdateDataLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId, updateMethodId);
-                    } else {
-                        new UpdateDataLinkSetter().execute(deviceId, updateMethodId);
-                    }
                 }
 
                 @Override
@@ -103,21 +96,6 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
                 }
             });
-        }
-    }
-
-    private class UpdateDataLinkSetter extends AsyncTask<Long, Integer, UpdateDataLink> {
-
-        @Override
-        public UpdateDataLink doInBackground(Long... params) {
-            long deviceId = params[0];
-            long updateMethodId = params[1];
-            return  getApplicationContext().getServerConnector().getUpdateDataLink(deviceId, updateMethodId);
-        }
-
-        @Override
-        public void onPostExecute(UpdateDataLink updateDataLink) {
-            settingsManager.savePreference(PROPERTY_UPDATE_DATA_LINK, updateDataLink.getUpdateDataUrl());
         }
     }
 }

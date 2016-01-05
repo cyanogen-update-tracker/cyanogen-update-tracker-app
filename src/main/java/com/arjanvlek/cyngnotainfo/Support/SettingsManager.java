@@ -12,6 +12,8 @@ import static com.arjanvlek.cyngnotainfo.GcmRegistrationIntentService.*;
 
 public class SettingsManager {
 
+    // Permissions properties
+    public static final String PROPERTY_DOWNLOAD_PERMISSION_GRANTED = "download_permission_granted";
 
     //Offline cache properties
     public static final String PROPERTY_OFFLINE_UPDATE_NAME = "offlineUpdateName";
@@ -45,7 +47,7 @@ public class SettingsManager {
 
 
     public boolean checkIfSettingsAreValid() {
-        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD) && checkPreference(PROPERTY_UPDATE_DATA_LINK);
+        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD);
     }
 
     public boolean receiveSystemUpdateNotifications() {
@@ -193,11 +195,11 @@ public class SettingsManager {
     }
 
     /**
-     * Checks if a device, update method and update link have been set.
+     * Checks if a device and update method have been set.
      * @return if the application is set up properly.
      */
     public boolean checkIfDeviceIsSet() {
-        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD) && checkPreference(PROPERTY_UPDATE_DATA_LINK);
+        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD);
     }
 
 
@@ -266,6 +268,13 @@ public class SettingsManager {
         } catch(Exception ignored) {
             return false;
         }
+    }
+
+    public void removePreference(String key) {
+        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(key);
+        editor.apply();
     }
 
 }

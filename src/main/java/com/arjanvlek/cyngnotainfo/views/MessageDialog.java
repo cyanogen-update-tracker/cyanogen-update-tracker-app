@@ -32,7 +32,7 @@ public class MessageDialog extends DialogFragment {
         try {
             errorDialogListener = (ErrorDialogListener) getTargetFragment();
         } catch (ClassCastException e) {
-            throw new ClassCastException("Calling fragment must implement DialogClickListener interface");
+            errorDialogListener = null;
         }
     }
 

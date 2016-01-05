@@ -4,6 +4,9 @@ import java.util.Locale;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -41,11 +44,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     // Used for Google Play Services check
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
 
+    // Permissions constants
+    public final static String DOWNLOAD_PERMISSION = "android.permission.WRITE_EXTERNAL_STORAGE";
+    public final static int PERMISSION_REQUEST_CODE = 200;
+
     private String device = "";
     private long deviceId = 0L;
     private String updateMethod = "";
     private long updateMethodId = 0L;
-    private String updateDataLink = "";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -55,12 +61,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         settingsManager = new SettingsManager(context);
         networkConnectionManager = new NetworkConnectionManager(context);
 
-        //Fetch currently selected device, update method and update link
+        //Fetch currently selected device and update method
         device = settingsManager.getPreference(PROPERTY_DEVICE);
         deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
         updateMethod = settingsManager.getPreference(PROPERTY_UPDATE_METHOD);
         updateMethodId = settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID);
-        updateDataLink = settingsManager.getPreference(PROPERTY_UPDATE_DATA_LINK);
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
@@ -101,7 +106,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         super.onStart();
         // Check if Google Play services are installed on the device
         if (checkPlayServices()) {
-            // Check if a device, update method and update link have been set
+            // Check if a device and update method have been set
             if (settingsManager.checkIfDeviceIsSet()) {
                 //Check if there was a server error during registration for push notifications.
                 if(settingsManager.checkIfRegistrationHasFailed()) {
@@ -115,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 }
             }
             //Show the welcome tutorial if no device has been set
-            if (device == null || updateMethod == null || updateDataLink == null) {
+            if (device == null || updateMethod == null) {
                 Tutorial();
             }
         }
@@ -297,5 +302,30 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private void registerInBackground() {
         Intent intent = new Intent(this,GcmRegistrationIntentService.class);
         startService(intent);
+    }
+
+    // New Android 6.0 permissions methods
+
+    public void requestDownloadPermissions() {
+        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M) {
+            requestPermissions(new String[]{DOWNLOAD_PERMISSION}, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int  permsRequestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        switch (permsRequestCode) {
+            case PERMISSION_REQUEST_CODE:
+                settingsManager.saveBooleanPreference(PROPERTY_DOWNLOAD_PERMISSION_GRANTED, grantResults[0] == PackageManager.PERMISSION_GRANTED);
+        }
+    }
+
+    public boolean hasDownloadPermissions() {
+        //noinspection SimplifiableIfStatement
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            return (checkSelfPermission(DOWNLOAD_PERMISSION) == PackageManager.PERMISSION_GRANTED);
+        } else {
+            return true;
+        }
     }
 }

@@ -46,6 +46,7 @@
     <string name="download">Download</string>
     <string name="downloading">Downloading…</string>
     <string name="verifying">Verifying…</string>
+    <string name="download_permissions">Click Download again after allowing.</string>
     <string name="download_error">Download Error</string>
     <string name="download_error_corrupt">The downloaded update file is corrupt! Please try downloading it again.</string>
     <string name="download_error_network">A network error occurred while downloading the update file. Please make sure your Internet connection works and try downloading it again.</string>

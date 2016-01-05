@@ -15,7 +15,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Model.Device;
-import com.arjanvlek.cyngnotainfo.Model.UpdateDataLink;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
@@ -254,12 +253,6 @@ public class SettingsActivity extends AbstractActivity {
                 }
                 settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethodId);
                 settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethodName);
-                //Set update link
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    new UpdateDataLinkSetter().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, settingsManager.getLongPreference(SettingsManager.PROPERTY_DEVICE_ID), updateMethodId);
-                } else {
-                    new UpdateDataLinkSetter().execute(settingsManager.getLongPreference(SettingsManager.PROPERTY_DEVICE_ID), updateMethodId);
-                }
             }
 
             @Override
@@ -267,27 +260,6 @@ public class SettingsActivity extends AbstractActivity {
 
             }
         });
-    }
-
-    private class UpdateDataLinkSetter extends AsyncTask<Long, Integer, UpdateDataLink> {
-        @Override
-        public UpdateDataLink doInBackground(Long... deviceAndUpdateData) {
-            Long deviceId = deviceAndUpdateData[0];
-            Long updateMethodId = deviceAndUpdateData[1];
-            return getServerConnector().getUpdateDataLink(deviceId, updateMethodId);
-        }
-
-        @Override
-        public void onPostExecute(UpdateDataLink updateDataLink) {
-            settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_DATA_LINK, updateDataLink.getUpdateDataUrl());
-            try {
-                if (progressBar != null) {
-                    progressBar.setVisibility(View.GONE);
-                }
-            } catch (Exception ignored) {
-
-            }
-        }
     }
 
     private void showSettingsWarning() {

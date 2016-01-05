@@ -221,7 +221,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     private void getServerData() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            new VerifyUpdateDataLinkAndGetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+            new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
                 new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
@@ -229,7 +229,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
             }
         } else {
-            new VerifyUpdateDataLinkAndGetUpdateInformation().execute();
+            new GetUpdateInformation().execute();
             if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
                 new GetServerStatus().execute();
             }
@@ -426,7 +426,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             // Hide the refreshing icon
             hideRefreshIcons();
         }
-        else if(cyanogenOTAUpdate != null && checkIfSystemIsUpToDate(cyanogenOTAUpdate.getName(), cyanogenOTAUpdate.getDateCreatedUnix()) && isAdded() && !force) {
+        else if(cyanogenOTAUpdate != null && checkIfSystemIsUpToDate(cyanogenOTAUpdate.getName(), 10000) && isAdded() && !force) {
              // switch views
             rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.VISIBLE);
@@ -481,9 +481,16 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                             @Override
                             public void onClick(View v) {
                                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                                    new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                                    downloadButton.setText(getString(R.string.downloading));
-                                    downloadButton.setClickable(false);
+                                    MainActivity mainActivity = (MainActivity) getActivity();
+                                    if(mainActivity != null) {
+                                        if(mainActivity.hasDownloadPermissions()) {
+                                            new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                                            downloadButton.setText(getString(R.string.downloading));
+                                            downloadButton.setClickable(false);
+                                        } else {
+                                            mainActivity.requestDownloadPermissions();
+                                        }
+                                    }
                                 } else {
                                     //noinspection deprecation as it is only used on older Android versions.
                                     downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());

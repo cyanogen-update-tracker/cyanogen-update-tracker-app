@@ -95,8 +95,14 @@ public class GcmRegistrationIntentService extends IntentService {
 
     private boolean checkIfMigrationIsNeeded() {
         SettingsManager settingsManager = new SettingsManager(getApplicationContext());
-        return settingsManager.checkPreference(PROPERTY_DEVICE) && settingsManager.checkPreference(PROPERTY_UPDATE_METHOD) && settingsManager.checkPreference(PROPERTY_UPDATE_DATA_LINK) && (!settingsManager.checkPreference(PROPERTY_DEVICE_ID) || !settingsManager.checkPreference(PROPERTY_UPDATE_METHOD_ID));
+
+        // Remove update data link if present. This is from the past where Cyanogen provided the update data. Update data is now directly fetched from the API.
+        if(settingsManager.checkPreference(PROPERTY_UPDATE_DATA_LINK)) {
+            settingsManager.removePreference(PROPERTY_UPDATE_DATA_LINK);
+        }
+        return settingsManager.checkPreference(PROPERTY_DEVICE) && settingsManager.checkPreference(PROPERTY_UPDATE_METHOD) && (!settingsManager.checkPreference(PROPERTY_DEVICE_ID) || !settingsManager.checkPreference(PROPERTY_UPDATE_METHOD_ID));
     }
+
 
     /**
      * Helper method to migrate older versions to the new backend (with IDs);
