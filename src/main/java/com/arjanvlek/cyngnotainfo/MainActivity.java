@@ -18,6 +18,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
@@ -316,7 +317,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onRequestPermissionsResult(int  permsRequestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         switch (permsRequestCode) {
             case PERMISSION_REQUEST_CODE:
-                settingsManager.saveBooleanPreference(PROPERTY_DOWNLOAD_PERMISSION_GRANTED, grantResults[0] == PackageManager.PERMISSION_GRANTED);
+                try {
+                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, getString(R.string.download_permissions), Toast.LENGTH_LONG).show();
+                    }
+                } catch (Exception ignored) {
+
+                }
         }
     }
 

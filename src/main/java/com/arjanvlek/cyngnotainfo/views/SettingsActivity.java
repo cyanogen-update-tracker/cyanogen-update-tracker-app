@@ -253,6 +253,13 @@ public class SettingsActivity extends AbstractActivity {
                 }
                 settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethodId);
                 settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethodName);
+                try {
+                    if (progressBar != null) {
+                        progressBar.setVisibility(View.GONE);
+                    }
+                } catch (Exception ignored) {
+
+                }
             }
 
             @Override

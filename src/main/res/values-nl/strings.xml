@@ -134,6 +134,6 @@
     <string name="download_error_storage">Er is onvoldoende opslagruimte op je apparaat beschikbaar om het gedownloade updatebestand op te slaan. Verwijder één of meer bestanden en probeer het opnieuw te downloaden.</string>
     <string name="verifying">Controleren…</string>
     <string name="download_error_directory">Het lijkt erop alsof er geen Downloads-map aanwezig is op uw apparaat. Start het opnieuw op en probeer vervolgens nogmaals te downloaden.</string>
-    <string name="download_permissions">Klik nogmaals op Downloaden na het toestaan.</string>
+    <string name="download_permissions">Klik nogmaals op Downloaden om de update te downloaden.</string>
 
 </resources>
