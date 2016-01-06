@@ -105,7 +105,7 @@
         android:id="@+id/updateInformationRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:layout_below="@id/updateInformationNoConnectionBar"
         android:layout_above="@+id/updateInformationAdView">
 
@@ -145,15 +145,21 @@
                 android:layout_below="@+id/headerLabel"/>
 
 
-            <com.github.mikephil.charting.charts.PieChart
-                android:layout_width="match_parent"
-                android:layout_height="100dp"
-                android:id="@+id/updateInformationRollOutPercentageDiagram"
-                android:layout_below="@+id/updateInformationBuildNumberView"
-                android:layout_marginTop="11dp"
-                android:contentDescription="@string/update_information_stats_description"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true" />
+            <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                android:orientation="vertical" android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/updateDescriptionScrollView">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/updateDescriptionView"
+                    android:layout_marginStart="@dimen/activity_horizontal_margin"
+                    android:layout_marginEnd="@dimen/activity_horizontal_margin"
+                    android:layout_marginTop="@dimen/activity_vertical_margin"
+                    android:layout_marginBottom="@dimen/activity_vertical_margin"
+                    android:textAppearance="?android:textAppearanceLarge"/>
+            </ScrollView>
 
             <ProgressBar
                 android:layout_width="match_parent"
@@ -161,7 +167,7 @@
                 android:id="@+id/updateInformationDownloadProgressBar"
                 android:visibility="gone"
                 style="?android:attr/progressBarStyleHorizontal"
-                android:layout_below="@id/updateInformationRollOutPercentageDiagram"/>
+                android:layout_below="@id/updateDescriptionScrollView"/>
 
             <TableLayout
                 android:layout_width="wrap_content"
@@ -223,47 +229,14 @@
                 </TableLayout>
 
 
-                <TableLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/lastUpdatedTable"
-                    android:layout_below="@+id/downloadSizeTable">
-                    <TableRow>
-                        <ImageView
-                            android:layout_width="50dp"
-                            android:layout_height="50dp"
-                            android:contentDescription="@string/icon"
-
-                            android:src="@drawable/icon_last_updated"/>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="50dp"
-                            android:layout_marginLeft="10dp"
-                            android:layout_marginStart="10dp"
-                            android:gravity="center"
-                            android:id="@+id/updateInformationUpdatedDataView"
-                            android:layout_gravity="center_vertical" />
-
-
-
-                    </TableRow>
-                </TableLayout>
 
             </RelativeLayout>
-        <Button
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/updateInformationUpdateDescriptionButton"
-            android:text="@string/update_information_update_description_button_text"
-            android:layout_below="@+id/tableHost"
-            android:background="@android:color/transparent"
-            android:textColor="@color/lightBlue"
-            android:layout_centerHorizontal="true"/>
 
     </RelativeLayout>
 </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
+    <!-- Up to date view -->
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/updateInformationSystemIsUpToDateRefreshLayout"
         android:layout_width="match_parent"
@@ -334,6 +307,8 @@
             </RelativeLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
+
+    <!-- Ad view -->
     <com.google.android.gms.ads.AdView
         android:layout_width="wrap_content"
         android:layout_centerHorizontal="true"
