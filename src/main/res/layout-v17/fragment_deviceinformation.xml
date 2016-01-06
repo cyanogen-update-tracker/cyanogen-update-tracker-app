@@ -100,9 +100,26 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:id="@+id/device_information_os_ver_label"
+                android:id="@+id/device_information_cyanogen_os_ver_label"
                 android:layout_marginTop="5dp"
                 android:layout_below="@id/device_information_memory_label"
+                android:text="@string/device_information_cyanogen_os_version" />
+
+            <TextView
+                android:id="@+id/device_information_cyanogen_os_ver_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:gravity="end"
+                android:layout_alignParentEnd="true"
+                android:layout_below="@id/device_information_memory_field"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/device_information_os_ver_label"
+                android:layout_marginTop="5dp"
+                android:layout_below="@id/device_information_cyanogen_os_ver_label"
                 android:text="@string/device_information_os_version" />
 
             <TextView
@@ -112,7 +129,7 @@
                 android:layout_marginTop="5dp"
                 android:gravity="end"
                 android:layout_alignParentEnd="true"
-                android:layout_below="@id/device_information_memory_field"/>
+                android:layout_below="@id/device_information_cyanogen_os_ver_field"/>
 
             <TextView
                 android:layout_width="wrap_content"

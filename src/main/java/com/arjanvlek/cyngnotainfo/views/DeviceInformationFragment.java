@@ -17,7 +17,7 @@ import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
-public class DeviceInformationFragment extends Fragment {
+public class DeviceInformationFragment extends AbstractFragment {
     private RelativeLayout rootView;
     private AdView adView;
     private NetworkConnectionManager networkConnectionManager;
@@ -80,6 +80,18 @@ public class DeviceInformationFragment extends Fragment {
             memoryView.setText(getString(R.string.device_information_unknown));
         }
 
+        String cyanogenOSVersion = getSystemVersionProperties().getCyanogenOSVersion();
+
+        TextView cyanogenOsVerView = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_field);
+
+        if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
+            cyanogenOsVerView.setText(getSystemVersionProperties().getCyanogenOSVersion());
+
+        } else {
+            TextView cyanogenOsVerLabel = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_label);
+            cyanogenOsVerLabel.setVisibility(View.GONE);
+            cyanogenOsVerView.setVisibility(View.GONE);
+        }
 
         TextView osVerView = (TextView) rootView.findViewById(R.id.device_information_os_ver_field);
         osVerView.setText(deviceInformationData.getOSVersion());

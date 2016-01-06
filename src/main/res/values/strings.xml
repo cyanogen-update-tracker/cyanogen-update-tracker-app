@@ -5,13 +5,9 @@
 
     <!-- Update information strings-->
     <string name="update_information_header">Update information</string>
-    <string name="update_information_latest_available_update">The latest available system update is:</string>
-    <string name="update_information_update_description_button_text">View update description</string>
+    <string name="update_information_latest_available_update">A new system update is available:</string>
     <string name="update">Update</string>
     <string name="update_information_for">for</string>
-    <string name="update_information_received_update">Received update&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
-    <string name="update_information_not_received_update">Not received update yet</string>
-    <string name="update_information_stats_description">Image that shows the roll-out progress of the update.</string>
     <string name="update_information_system_is_up_to_date">Your system is fully up to date.</string>
     <string name="update_information_no_update_data_available">No update information is available.</string>
     <string name="update_information_view_update_information">View update information</string>
@@ -143,7 +139,8 @@
     <string name="device_information_system_on_a_chip">System on a Chip:</string>
     <string name="device_information_cpu_frequency">Processor Frequency:</string>
     <string name="device_information_amount_of_memory">Amount of memory:</string>
-    <string name="device_information_os_version">System version:</string>
+    <string name="device_information_os_version">Android version:</string>
+    <string name="device_information_cyanogen_os_version">Cyanogen OS version:</string>
     <string name="device_information_serial_number">Serial number:</string>
     <string name="device_information_gigahertz" translatable="false">GHz</string>
     <string name="device_information_unknown">Unknown</string>
@@ -171,11 +168,9 @@
     <!-- Help strings -->
     <string name="help">Help</string>
     <string name="help_how_works_app">Overview of this app:</string>
-    <string name="help_top_update">In the top, the current update for your device is shown.</string>
-    <string name="help_middle_stats">In the middle are the stats, the download button and a button for the installation guide.\n\nBelow these, the download size and the date when the stats were last changed are shown.</string>
-    <string name="help_bottom_description">At the bottom you can find the update description. This description is always in English.\n\nAt the top right you can find the menu. In there are the settings and a help button, which allows you to view this page again.</string>
+    <string name="help_top_update">If a new update is available, its version is displayed in the top.</string>
+    <string name="help_middle_stats">In the middle are the English description, the download button and a button for the installation guide.\n\nBelow these, the download size is shown.</string>
+    <string name="help_bottom_description">At the top right you can find the menu. It contains the settings and a help button, which allows you to view this page again.</string>
     <string name="help_used_symbols">Used symbols:</string>
-    <string name="help_symbol_stats">Shows you how many percent of users have access to this update.</string>
     <string name="help_symbol_download">Shows you the download size of this update.</string>
-    <string name="help_symbol_clock">Shows you the date and time when the update stats were last changed on the server.</string>
 </resources>

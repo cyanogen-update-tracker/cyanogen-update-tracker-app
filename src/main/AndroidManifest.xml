@@ -66,20 +66,6 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".views.UpdateDescriptionActivity"
-            android:label="@string/update_description"
-            android:parentActivityName=".MainActivity"
-            tools:ignore="UnusedAttribute">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
-            <intent-filter>
-                <action android:name="updateDetailsActivity" />
-
-                <category android:name="android.intent.category.default" />
-            </intent-filter>
-        </activity>
-        <activity
             android:name=".views.SettingsActivity"
             android:label="@string/settings"
             android:parentActivityName=".MainActivity"

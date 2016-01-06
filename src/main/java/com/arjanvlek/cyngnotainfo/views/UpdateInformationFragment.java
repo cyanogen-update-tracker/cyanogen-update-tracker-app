@@ -6,7 +6,6 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
@@ -40,11 +39,6 @@ import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.MD5;
-import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
-import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -244,9 +238,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
         cyanogenOTAUpdate.setName(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
         cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
-        cyanogenOTAUpdate.setDateUpdated(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME));
         cyanogenOTAUpdate.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
-        cyanogenOTAUpdate.setRollOutPercentage(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE));
         cyanogenOTAUpdate.setUpdateInformationAvailable(true);
         return cyanogenOTAUpdate;
     }
@@ -406,7 +398,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
             String cyanogenOSVersion = getSystemVersionProperties().getCyanogenOSVersion();
             TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
-            if(!cyanogenOSVersion.equals("unsupported")) {
+            if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
                 versionNumberView.setVisibility(View.VISIBLE);
                 versionNumberView.setText("Cyanogen OS" + getString(R.string.update_information_version) + " " + cyanogenOSVersion);
             } else {
@@ -456,7 +448,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
         else {
             if (cyanogenOTAUpdate != null && isAdded()) {
-                generateCircleDiagram(cyanogenOTAUpdate);
                 rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
                 rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
                 TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
@@ -469,10 +460,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
                 downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.download_size_megabyte));
 
-                TextView updatedDataView = (TextView) rootView.findViewById(R.id.updateInformationUpdatedDataView);
-                DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(getActivity().getApplicationContext(), this);
-                String dateUpdated = dateTimeFormatter.formatDateTime(cyanogenOTAUpdate.getDateUpdated());
-                updatedDataView.setText(dateUpdated);
+                String description = cyanogenOTAUpdate.getDescription();
+                TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
+                descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
 
                 final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
                 if (online) {
@@ -503,21 +493,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     downloadButton.setEnabled(false);
                 }
 
-                Button descriptionButton = (Button) rootView.findViewById(R.id.updateInformationUpdateDescriptionButton);
-                descriptionButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent i = new Intent(getActivity(), UpdateDescriptionActivity.class);
-                        i.putExtra("update-description", cyanogenOTAUpdate.getDescription());
-                        startActivity(i);
-                    }
-                });
-                generateCircleDiagram(cyanogenOTAUpdate);
                 // Save preferences for offline viewing
                 settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
-                settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_ROLLOUT_PERCENTAGE, cyanogenOTAUpdate.getRollOutPercentage());
                 settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
-                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_SERVER_UPDATE_TIME, cyanogenOTAUpdate.getDateUpdated());
                 settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
 
                 // Hide the refreshing icon
@@ -541,7 +519,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
             if (dateCreatedUtc != -1 && dateCreatedUtc == newDateCreated) {
                 return true;
-            } else if (cyanogenOSVersion.equals("unsupported")) {
+            } else if (cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
                 return false;
             } else {
                 if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {
@@ -867,45 +845,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         Toast.makeText(getActivity(), getString(R.string.download_in_background), Toast.LENGTH_LONG).show();
     }
 
-    private void generateCircleDiagram(CyanogenOTAUpdate cyanogenOTAUpdate) {
-        if (isAdded()) {
-            PieChart circleDiagram = (PieChart) rootView.findViewById(R.id.updateInformationRollOutPercentageDiagram);
-            List<Entry> chartData = new ArrayList<>();
-            int percentage = cyanogenOTAUpdate.getRollOutPercentage();
-            chartData.add(0, new Entry(percentage, 0));
-            if (percentage < 100) {
-                chartData.add(1, new Entry(100 - percentage, 1));
-            }
-            ArrayList<String> xVals = new ArrayList<>();
-            xVals.add(0, getString(R.string.update_information_received_update));
-            if (percentage < 100) {
-                xVals.add(1, getString(R.string.update_information_not_received_update));
-            }
-            PieDataSet pieDataSet = new PieDataSet(chartData, "");
-            pieDataSet.setColors(new int[]{ContextCompat.getColor(context, R.color.holo_green_dark), ContextCompat.getColor(context, R.color.holo_orange_dark)});
-
-            PieData pieData = new PieData(xVals, pieDataSet);
-            pieData.setDrawValues(false);
-            pieData.setValueTextSize(12);
-            circleDiagram.setDrawSliceText(false);
-            circleDiagram.setCenterText(percentage + "%");
-            circleDiagram.setDescription("");
-            Legend legend = circleDiagram.getLegend();
-            legend.setForm(Legend.LegendForm.CIRCLE);
-            legend.setFormSize(10);
-            legend.setTextSize(12);
-            circleDiagram.setUsePercentValues(true);
-            circleDiagram.setData(pieData);
-            circleDiagram.setTouchEnabled(false);
-            if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-                circleDiagram.getLegend().setPosition(Legend.LegendPosition.RIGHT_OF_CHART_CENTER);
-            } else {
-                circleDiagram.getLegend().setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
-            }
-            circleDiagram.invalidate();
-        }
-    }
-
     @Override
     public void onRefresh() {
         if (networkConnectionManager.checkNetworkConnection()) {
@@ -982,49 +921,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         else {
             getServerData();
         }
-    }
-
-    private SystemVersionProperties getSystemVersionProperties() {
-        SystemVersionProperties systemVersionProperties = new SystemVersionProperties();
-        String cyanogenOSVersion = "unsupported";
-        String dateCreated = "unsupported";
-        int dateCreatedUtc = -1;
-        try {
-            Process getBuildPropProcess = new ProcessBuilder()
-                    .command("getprop")
-                    .redirectErrorStream(true)
-                    .start();
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(getBuildPropProcess.getInputStream()));
-            String inputLine;
-
-            while ((inputLine = in.readLine()) != null) {
-                if(inputLine.contains("ro.cm.display.version")) {
-                    cyanogenOSVersion = inputLine.replace("[ro.cm.display.version]: ", "");
-                    cyanogenOSVersion = cyanogenOSVersion.replace("[", "");
-                    cyanogenOSVersion = cyanogenOSVersion.replace("]", "");
-                }
-                if(inputLine.contains("ro.build.date.utc")) {
-                    dateCreated = inputLine.replace("[ro.build.date.utc]: ", "");
-                    dateCreated = dateCreated.replace("[", "");
-                    dateCreated = dateCreated.replace("]", "");
-                }
-            }
-            getBuildPropProcess.destroy();
-
-        } catch (IOException e) {
-            Log.e("IOException buildProp", e.getLocalizedMessage());
-        }
-        if(!dateCreated.equals("unsupported")) {
-            try {
-                dateCreatedUtc = Integer.parseInt(dateCreated);
-            } catch (Exception e) {
-                dateCreatedUtc = -1;
-            }
-        }
-        systemVersionProperties.setCyanogenOSVersion(cyanogenOSVersion);
-        systemVersionProperties.setDateCreatedUtc(dateCreatedUtc);
-        return systemVersionProperties;
     }
 
     private void hideRefreshIcons() {

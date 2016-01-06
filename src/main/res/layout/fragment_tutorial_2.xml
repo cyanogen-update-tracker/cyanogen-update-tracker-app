@@ -77,26 +77,12 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <TextView
-                android:id="@+id/tut1bText3"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tut1bText2c"
-                android:layout_centerHorizontal="true"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_toEndOf="@+id/tut1bCircleDiagramImage"
-                android:layout_toRightOf="@+id/tut1bCircleDiagramImage"
-                android:text="@string/help_symbol_stats"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/material_blue_grey_800" />
 
             <TextView
                 android:id="@+id/tut1bText4"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_below="@+id/tut1bText3"
+                android:layout_below="@+id/tut1bText2c"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_marginTop="20dp"
@@ -108,31 +94,6 @@
                 android:textAppearance="?android:textAppearanceMedium"
                 android:textColor="@color/material_blue_grey_800" />
 
-            <TextView
-                android:id="@+id/tut1bText5"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/tut1bText4"
-                android:layout_marginLeft="10dp"
-                android:layout_marginStart="10dp"
-                android:layout_marginTop="20dp"
-                android:layout_toEndOf="@+id/tut1btimeImage"
-                android:layout_toRightOf="@+id/tut1btimeImage"
-                android:text="@string/help_symbol_clock"
-                android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/material_blue_grey_800" />
-
-            <ImageView
-                android:id="@+id/tut1bCircleDiagramImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_above="@+id/tut1bText4"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/tut1bText3"
-                android:contentDescription="@string/icon"
-                android:src="@drawable/icon_rollout_diagram" />
-
             <ImageView
                 android:id="@+id/tut1bdownloadSizeImage"
                 android:layout_width="50dp"
@@ -142,17 +103,6 @@
                 android:layout_alignTop="@+id/tut1bText4"
                 android:contentDescription="@string/icon"
                 android:src="@drawable/icon_download_size" />
-
-            <ImageView
-                android:id="@+id/tut1btimeImage"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
-                android:layout_marginTop="5dp"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/tut1bText5"
-                android:contentDescription="@string/icon"
-                android:src="@drawable/icon_last_updated" />
 
         </RelativeLayout>
     </ScrollView>

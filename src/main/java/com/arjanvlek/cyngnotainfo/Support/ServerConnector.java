@@ -216,13 +216,11 @@ public class ServerConnector {
                     cyanogenOTAUpdate.setUpdateInformationAvailable(true);
                 }
                 JSONObject object = new JSONObject(response);
-                cyanogenOTAUpdate.setDateUpdated(object.getString("date_updated"));
                 cyanogenOTAUpdate.setSize(object.getInt("size"));
                 cyanogenOTAUpdate.setMD5Sum(object.getString("md5sum"));
                 cyanogenOTAUpdate.setDownloadUrl(object.getString("download_url"));
                 cyanogenOTAUpdate.setFileName(object.getString("filename"));
                 cyanogenOTAUpdate.setDescription(object.getString("description"));
-                cyanogenOTAUpdate.setRollOutPercentage(object.getInt("rollout_percentage"));
                 cyanogenOTAUpdate.setName(object.getString("name"));
 
             } catch (JSONException e) {

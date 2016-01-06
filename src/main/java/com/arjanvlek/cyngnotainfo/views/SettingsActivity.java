@@ -129,64 +129,79 @@ public class SettingsActivity extends AbstractActivity {
     }
 
     private void fillDeviceSettings(final List<Device> devices) {
-        Spinner spinner = (Spinner) findViewById(R.id.settingsDeviceSpinner);
-        List<String> deviceNames = new ArrayList<>();
+        if (devices != null) {
+            Spinner spinner = (Spinner) findViewById(R.id.settingsDeviceSpinner);
+            List<String> deviceNames = new ArrayList<>();
 
-        for (Device device : devices) {
-            deviceNames.add(device.getDeviceName());
-        }
-
-        // Set the spinner to the previously selected device.
-        Integer position = null;
-        String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE);
-        if (currentDeviceName != null) {
-            for (int i = 0; i < deviceNames.size(); i++) {
-                if (deviceNames.get(i).equals(currentDeviceName)) {
-                    position = i;
-                }
+            for (Device device : devices) {
+                deviceNames.add(device.getDeviceName());
             }
-        }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, deviceNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        if (position != null) {
-            spinner.setSelection(position);
-        }
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String deviceName = (String) adapterView.getItemAtPosition(i);
-                Long deviceId = 0L;
-                for (Device device : devices) {
-                    if (device.getDeviceName().equalsIgnoreCase(deviceName)) {
-                        deviceId = device.getId();
+            // Set the spinner to the previously selected device.
+            Integer position = null;
+            String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE);
+            if (currentDeviceName != null) {
+                for (int i = 0; i < deviceNames.size(); i++) {
+                    if (deviceNames.get(i).equals(currentDeviceName)) {
+                        position = i;
                     }
-                }
-                settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE, deviceName);
-                settingsManager.saveLongPreference(SettingsManager.PROPERTY_DEVICE_ID, deviceId);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    try {
-                        progressBar.setVisibility(View.VISIBLE);
-                    } catch (Exception ignored) {
-                    }
-
-                    new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId);
-                } else {
-                    try {
-                        progressBar.setVisibility(View.VISIBLE);
-                    } catch (Exception ignored) {
-
-                    }
-                    new UpdateDataFetcher().execute(deviceId);
                 }
             }
 
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, deviceNames);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            if (position != null) {
+                spinner.setSelection(position);
             }
-        });
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    String deviceName = (String) adapterView.getItemAtPosition(i);
+                    Long deviceId = 0L;
+                    for (Device device : devices) {
+                        if (device.getDeviceName().equalsIgnoreCase(deviceName)) {
+                            deviceId = device.getId();
+                        }
+                    }
+                    settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE, deviceName);
+                    settingsManager.saveLongPreference(SettingsManager.PROPERTY_DEVICE_ID, deviceId);
+
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                        try {
+                            progressBar.setVisibility(View.VISIBLE);
+                        } catch (Exception ignored) {
+                        }
+
+                        new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId);
+                    } else {
+                        try {
+                            progressBar.setVisibility(View.VISIBLE);
+                        } catch (Exception ignored) {
+
+                        }
+                        new UpdateDataFetcher().execute(deviceId);
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
+                }
+            });
+        } else {
+            hideDeviceAndUpdateMethodSettings();
+            progressBar.setVisibility(View.GONE);
+
+        }
+    }
+
+    private void hideDeviceAndUpdateMethodSettings() {
+        findViewById(R.id.settingsDeviceSpinner).setVisibility(View.GONE);
+        findViewById(R.id.settingsDeviceView).setVisibility(View.GONE);
+        findViewById(R.id.settingsUpdateMethodSpinner).setVisibility(View.GONE);
+        findViewById(R.id.settingsUpdateMethodView).setVisibility(View.GONE);
+        findViewById(R.id.settingsDescriptionView).setVisibility(View.GONE);
+        findViewById(R.id.settingsUpperDivisor).setVisibility(View.GONE);
     }
 
     private class UpdateDataFetcher extends AsyncTask<Long, Integer, List<UpdateMethod>> {
@@ -205,68 +220,73 @@ public class SettingsActivity extends AbstractActivity {
     }
 
     private void fillUpdateSettings(final List<UpdateMethod> updateMethods) {
-        Spinner spinner = (Spinner) findViewById(R.id.settingsUpdateMethodSpinner);
-        String currentUpdateMethod = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
-        Integer position = null;
-        if (currentUpdateMethod != null) {
-            for (int i = 0; i < updateMethods.size(); i++) {
-                if (updateMethods.get(i).getUpdateMethod().equals(currentUpdateMethod) || updateMethods.get(i).getUpdateMethodNl().equalsIgnoreCase(currentUpdateMethod)) {
-                    position = i;
-                }
-            }
-        }
-        List<String> updateMethodNames = new ArrayList<>();
-        String language = Locale.getDefault().getDisplayLanguage();
-        switch (language) {
-            case "Nederlands":
-                for (UpdateMethod updateMethod : updateMethods) {
-                    updateMethodNames.add(updateMethod.getUpdateMethodNl());
-                }
-                break;
-            default:
-                for (UpdateMethod updateMethod : updateMethods) {
-                    updateMethodNames.add(updateMethod.getUpdateMethod());
-                }
-                break;
-        }
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, updateMethodNames);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinner.setAdapter(adapter);
-        if (position != null) {
-            spinner.setSelection(position);
-        }
-
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                long updateMethodId = 0L;
-                String updateMethodName = (String) adapterView.getItemAtPosition(i);
-                try {
-                    progressBar.setVisibility(View.VISIBLE);
-                } catch (Exception ignored) {
-                }
-                //Set update method in preferences.
-                for (UpdateMethod updateMethod : updateMethods) {
-                    if (updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
-                        updateMethodId = updateMethod.getId();
+        if(updateMethods != null) {
+            Spinner spinner = (Spinner) findViewById(R.id.settingsUpdateMethodSpinner);
+            String currentUpdateMethod = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
+            Integer position = null;
+            if (currentUpdateMethod != null) {
+                for (int i = 0; i < updateMethods.size(); i++) {
+                    if (updateMethods.get(i).getUpdateMethod().equals(currentUpdateMethod) || updateMethods.get(i).getUpdateMethodNl().equalsIgnoreCase(currentUpdateMethod)) {
+                        position = i;
                     }
                 }
-                settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethodId);
-                settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethodName);
-                try {
-                    if (progressBar != null) {
-                        progressBar.setVisibility(View.GONE);
+            }
+            List<String> updateMethodNames = new ArrayList<>();
+            String language = Locale.getDefault().getDisplayLanguage();
+            switch (language) {
+                case "Nederlands":
+                    for (UpdateMethod updateMethod : updateMethods) {
+                        updateMethodNames.add(updateMethod.getUpdateMethodNl());
                     }
-                } catch (Exception ignored) {
+                    break;
+                default:
+                    for (UpdateMethod updateMethod : updateMethods) {
+                        updateMethodNames.add(updateMethod.getUpdateMethod());
+                    }
+                    break;
+            }
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item, updateMethodNames);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+            spinner.setAdapter(adapter);
+            if (position != null) {
+                spinner.setSelection(position);
+            }
+
+            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                @Override
+                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                    long updateMethodId = 0L;
+                    String updateMethodName = (String) adapterView.getItemAtPosition(i);
+                    try {
+                        progressBar.setVisibility(View.VISIBLE);
+                    } catch (Exception ignored) {
+                    }
+                    //Set update method in preferences.
+                    for (UpdateMethod updateMethod : updateMethods) {
+                        if (updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
+                            updateMethodId = updateMethod.getId();
+                        }
+                    }
+                    settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethodId);
+                    settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethodName);
+                    try {
+                        if (progressBar != null) {
+                            progressBar.setVisibility(View.GONE);
+                        }
+                    } catch (Exception ignored) {
+
+                    }
+                }
+
+                @Override
+                public void onNothingSelected(AdapterView<?> adapterView) {
 
                 }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-
-            }
-        });
+            });
+        } else {
+            hideDeviceAndUpdateMethodSettings();
+            progressBar.setVisibility(View.GONE);
+        }
     }
 
     private void showSettingsWarning() {

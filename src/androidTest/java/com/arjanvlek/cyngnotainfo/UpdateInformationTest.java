@@ -3,12 +3,10 @@ package com.arjanvlek.cyngnotainfo;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.test.ActivityInstrumentationTestCase2;
-import android.text.format.DateFormat;
 import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
-import com.github.mikephil.charting.charts.PieChart;
 import com.google.android.gms.ads.AdView;
 import com.robotium.solo.Solo;
 
@@ -71,25 +69,6 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
         TextView downloadSizeText = (TextView)solo.getView(R.id.updateInformationDownloadSizeView);
         assertEquals(DOWNLOAD_SIZE, downloadSizeText.getText());
 
-        //test the last updated time
-        TextView lastUpdatedText = (TextView)solo.getView(R.id.updateInformationUpdatedDataView);
-        if(appLocale.equals(LOCALE_DUTCH)) {
-            if(DateFormat.is24HourFormat(getActivity().getApplicationContext())) {
-                assertEquals(UPDATED_TIME_DUTCH, lastUpdatedText.getText());
-            } else {
-                assertEquals(UPDATED_TIME_DUTCH_12_HRS, lastUpdatedText.getText());
-            }
-        } else {
-            if(DateFormat.is24HourFormat(getActivity().getApplicationContext())) {
-                assertEquals(UPDATED_TIME_24_HRS, lastUpdatedText.getText());
-            } else {
-                assertEquals(UPDATED_TIME, lastUpdatedText.getText());
-            }
-        }
-
-        // test the roll out percentage
-        PieChart pieChart = (PieChart)solo.getView(R.id.updateInformationRollOutPercentageDiagram);
-        assertEquals(ROLL_OUT_PERCENTAGE, pieChart.getCenterText());
 
         // test if app has registered successfully for push notifications
         ServerConnector.testing = true;

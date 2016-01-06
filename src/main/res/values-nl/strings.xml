@@ -7,12 +7,10 @@
     <string name="settings_update_method">Update-methode</string>
     <string name="download">Downloaden</string>
     <string name="download_description">Cyanogen OS-update</string>
-    <string name="update_information_latest_available_update">De meest recente systeemupdate is:</string>
+    <string name="update_information_latest_available_update">Er is een nieuwe systeemupdate beschikbaar:</string>
     <string name="install_guide">Installatiehandleiding</string>
-    <string name="update_information_stats_description">Plaatje met statistieken van de verspreiding van de update</string>
     <string name="update_information_header">Update-informatie</string>
     <string name="device_information_header">Apparaat-informatie</string>
-    <string name="update_information_update_description_button_text">Lees de update-beschrijving</string>
     <string name="update_description_not_available">Helaas, voor deze update is geen updatebeschrijving beschikbaar.</string>
     <string name="error_app_requires_network_connection">Voor deze app is een werkende internetverbinding vereist</string>
     <string name="error_app_requires_network_connection_message">Kan geen update-informatie van de server ophalen. Zorg ervoor dat je een werkende internetverbinding hebt. De app zal nu afsluiten.</string>
@@ -26,8 +24,6 @@
     <string name="update_description">Beschrijving van de update</string>
     <string name="settings_explanation_incremental_full_update">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen.\n\nEen volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je apparaat.</string>
 
-    <string name="update_information_not_received_update">Nog geen update ontvangen</string>
-    <string name="update_information_received_update">Update ontvangen&#160;&#160;&#160;&#160;&#160;&#160;&#160;&#160;</string>
     <string name="update_information_close">Sluiten</string>
     <string name="about">Over deze app</string>
     <string name="install_guide_image_description">Plaatje van de handleiding.</string>
@@ -53,7 +49,7 @@
     <string name="device_information_amount_of_memory">Hoeveelheid geheugen:</string>
     <string name="device_information_cpu_frequency">Frequentie van de processor:</string>
     <string name="device_information_image_description">Plaatje van uw apparaat</string>
-    <string name="device_information_os_version">Systeemversie</string>
+    <string name="device_information_os_version">Android-versie</string>
     <string name="device_information_serial_number">Serienummer</string>
     <string name="device_information_system_on_a_chip">Systeem-op-een-chip</string>
     <string name="device_information_your_device">Uw apparaat:</string>
@@ -89,13 +85,10 @@
     <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
     <string name="error_no_internet_connection">Geen internetverbinding.</string>
     <string name="help_how_works_app">Overzicht van de app:</string>
-    <string name="help_middle_stats">In het midden staan de statistieken, de downloadknop en een knop voor de installatie-handleiding.\n\nHieronder staan de downloadgrootte en de datum van laatste wijziging.</string>
-    <string name="help_bottom_description">Onderaan kun je de update-beschrijving openen. Deze is Engelstalig.\n\nRechtsbovenin staat het menu. Hier staan de instellingen en een Help-knop, waarmee je deze pagina opnieuw kunt openen.</string>
-    <string name="help_symbol_clock">Toont het tijdstip waarop de updatestatus voor het laatst op de server is gewijzigd.</string>
+    <string name="help_middle_stats">In het midden staan de statistieken, de downloadknop en een knop voor de installatie-handleiding.\n\nHieronder staat de downloadgrootte.</string>
     <string name="help_symbol_download">Toont de downloadgrootte van deze update.</string>
-    <string name="help_symbol_stats">Toont hoeveel procent gebruikers al toegang heeft tot deze update.</string>
     <string name="help_used_symbols">Gebruikte symoblen:</string>
-    <string name="help_top_update">Bovenaan staat welke update momenteel wordt verspreid.</string>
+    <string name="help_top_update">Als een nieuwe update beschikbaar is, staat het versienummer bovenin.</string>
     <string name="update_information_system_is_up_to_date">Uw systeem is volledig bijgewerkt.</string>
     <string name="update_information_view_update_information">Bekijk update-informatie</string>
     <string name="update_information_version">-versie:</string>
@@ -135,5 +128,7 @@
     <string name="verifying">Controleren…</string>
     <string name="download_error_directory">Het lijkt erop alsof er geen Downloads-map aanwezig is op uw apparaat. Start het opnieuw op en probeer vervolgens nogmaals te downloaden.</string>
     <string name="download_permissions">Klik nogmaals op Downloaden om de update te downloaden.</string>
+    <string name="device_information_cyanogen_os_version">Cyanogen OS-versie</string>
+    <string name="help_bottom_description">Rechtsbovenin staat het menu. Hierin staan de instellingen en een Help-knop om deze help-pagina opnieuw te bekijken.</string>
 
 </resources>
