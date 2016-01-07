@@ -96,7 +96,7 @@
     <string name="server_status_maintenance">Er is momenteel gepland onderhoud op de server. Probeer het straks nog eens!</string>
     <string name="server_status_taken_down">Deze app kan niet langer meer worden gebruikt. Je kunt proberen de app via Google Play the updaten. Je moet de app nu afsluiten.</string>
     <string name="server_status_warning">Sommige functies kunnen onverwacht gedrag vertonen.</string>
-    <string name="server_status_unreachable">Het Instellingen-scherm en notificaites werken mogelijk niet zoals verwacht.</string>
+    <string name="server_status_unreachable">De server is offline. Probeer de pagina te verversen.</string>
     <string name="new_app_version_first">App-update beschikbaar! Versie <a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s</a></string>
     <string name="new_app_version_second"> is uitgebracht!</string>
     <string name="settings_in_app">Nieuws en waarschuwingen</string>
