@@ -27,7 +27,7 @@
     <string name="server_status_error">Some features may not work.</string>
     <string name="server_status_maintenance">There is currently planned maintenance on the server. Come back later!</string>
     <string name="server_status_taken_down">This application may no longer be used. You can try updating it to the latest version via Google Play. You have to exit it now.</string>
-    <string name="server_status_unreachable">The server can't be reached. Try refreshing the page.</string>
+    <string name="server_status_unreachable">The server can\'t be reached. Try refreshing the page.</string>
 
     <!-- New app version notification strings -->
     <string name = "new_app_version_first">App update available! Version <a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s</a></string>
