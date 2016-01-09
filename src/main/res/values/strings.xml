@@ -53,7 +53,7 @@
     <string name="download_error_retry">RETRY</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen OS Update</string>
-    <string name="cyanogen_os_version">Cyanogen OS Version %1$s</string>
+    <string name="cyanogen_os_version">Cyanogen OS Version: %1$s</string>
     <string name="download_cyanogen_os">Cyanogen OS Version</string>
     <string name="download_complete">Download complete</string>
     <string name="download_failed">Download failed</string>

@@ -27,7 +27,8 @@
         android:name=".ApplicationContext"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/ApplicationTheme">
+        android:theme="@style/ApplicationTheme"
+        tools:ignore="GoogleAppIndexingWarning">
 
         <!-- All screens -->
         <activity
@@ -79,6 +80,7 @@
             android:name=".views.TutorialActivity"
             android:label="@string/introduction_title"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
@@ -88,6 +90,7 @@
             android:name=".views.HelpActivity"
             android:label="@string/help"
             android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
             tools:ignore="UnusedAttribute">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

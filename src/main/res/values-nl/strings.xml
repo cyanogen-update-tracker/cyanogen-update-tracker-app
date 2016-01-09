@@ -131,6 +131,6 @@
     <string name="device_information_cyanogen_os_version">Cyanogen OS-versie:</string>
     <string name="help_bottom_description">Rechtsbovenin staat het menu. Hierin staan de instellingen en een Help-knop om deze help-pagina opnieuw te bekijken.</string>
     <string name="update_information_file_name">Bestandsnaam: %1$s</string>
-    <string name="cyanogen_os_version">Cyanogen OS-versie %1$s</string>
+    <string name="cyanogen_os_version">Cyanogen OS-versie: %1$s</string>
 
 </resources>

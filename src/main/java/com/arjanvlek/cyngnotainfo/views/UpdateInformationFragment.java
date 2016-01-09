@@ -236,6 +236,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
         cyanogenOTAUpdate.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
         cyanogenOTAUpdate.setUpdateInformationAvailable(true);
+        cyanogenOTAUpdate.setFileName(settingsManager.getPreference(PROPERTY_OFFLINE_FILE_NAME));
         return cyanogenOTAUpdate;
     }
 
@@ -486,15 +487,18 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                             }
                         });
                         downloadButton.setEnabled(true);
+                        downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
                     }
                 } else {
                     downloadButton.setEnabled(false);
+                    downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
                 }
 
                 // Save preferences for offline viewing
                 settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
                 settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
                 settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
+                settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOTAUpdate.getFileName());
 
                 // Hide the refreshing icon
                 hideRefreshIcons();
@@ -717,20 +721,34 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         NotificationCompat.Builder builder;
         try {
             if (complete) {
+                Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+                stackBuilder.addParentStack(MainActivity.class);
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
                 builder = new NotificationCompat.Builder(getActivity())
                         .setSmallIcon(android.R.drawable.stat_sys_download_done)
                         .setContentTitle(getString(R.string.download_complete))
-                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
+                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName())
+                        .setContentIntent(pendingIntent);
                 try {
                     Toast.makeText(context, getString(R.string.download_complete), Toast.LENGTH_LONG).show();
                 } catch(Exception ignore) {
 
                 }
             } else if (failed) {
+                Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
+                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
+                stackBuilder.addParentStack(MainActivity.class);
+                stackBuilder.addNextIntent(resultIntent);
+                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
                 builder = new NotificationCompat.Builder(getActivity())
                         .setSmallIcon(android.R.drawable.stat_sys_download_done)
                         .setContentTitle(getString(R.string.download_failed))
-                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
+                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName())
+                        .setContentIntent(pendingIntent);
 
             } else if (indeterminate) {
                 builder = new NotificationCompat.Builder(getActivity())
@@ -743,12 +761,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         .setContentTitle(getString(R.string.downloading))
                         .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
             }
-            Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-            TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
-            stackBuilder.addParentStack(MainActivity.class);
-            stackBuilder.addNextIntent(resultIntent);
-            PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-            builder.setContentIntent(pendingIntent);
+
             if (Build.VERSION.SDK_INT >= 21) {
                 builder.setCategory(Notification.CATEGORY_PROGRESS);
             }
@@ -861,7 +874,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         args.putString("message", getString(R.string.error_app_requires_network_connection_message));
         args.putString("title", getString(R.string.error_app_requires_network_connection));
         args.putString("button1", getString(R.string.download_error_close));
-        args.putBoolean("closable", true);
+        args.putBoolean("closable", false);
         errorDialog.setArguments(args);
         errorDialog.setTargetFragment(this, 0);
         errorDialog.show(getFragmentManager(), "NetworkError");

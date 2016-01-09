@@ -16,6 +16,7 @@ public class SettingsManager {
     public static final String PROPERTY_OFFLINE_UPDATE_NAME = "offlineUpdateName";
     public static final String PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE = "offlineUpdateDownloadSize";
     public static final String PROPERTY_OFFLINE_UPDATE_DESCRIPTION = "offlineUpdateDescription";
+    public static final String PROPERTY_OFFLINE_FILE_NAME = "offlineFileName";
 
     //Settings properties
     public static final String PROPERTY_APP_VERSION = "appVersion";
@@ -257,7 +258,8 @@ public class SettingsManager {
         try {
             return  checkPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION)
                     && checkPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE)
-                    && checkPreference(PROPERTY_OFFLINE_UPDATE_NAME);
+                    && checkPreference(PROPERTY_OFFLINE_UPDATE_NAME)
+                    && checkPreference(PROPERTY_OFFLINE_FILE_NAME);
         } catch(Exception ignored) {
             return false;
         }

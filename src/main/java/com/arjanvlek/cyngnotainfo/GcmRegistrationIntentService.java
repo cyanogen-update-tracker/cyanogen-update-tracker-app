@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -199,8 +200,8 @@ public class GcmRegistrationIntentService extends IntentService {
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 urlConnection.setRequestProperty("Accept", "application/json");
-                urlConnection.setConnectTimeout(5000);
-                urlConnection.setReadTimeout(5000);
+                urlConnection.setConnectTimeout(10000);
+                urlConnection.setReadTimeout(10000);
                 urlConnection.connect();
                 OutputStream out = urlConnection.getOutputStream();
                 byte[] outputBytes = jsonResponse.toString().getBytes();
@@ -247,7 +248,10 @@ public class GcmRegistrationIntentService extends IntentService {
         editor.putBoolean(PROPERTY_REGISTRATION_ERROR, failed);
         if (failed) {
             try {
-                Toast.makeText(this, getString(R.string.error_push_failure), Toast.LENGTH_LONG).show();
+                NetworkConnectionManager networkConnectionManager = new NetworkConnectionManager(getApplicationContext());
+                if(networkConnectionManager.checkNetworkConnection()) { // (Only show this error if there is a network connection, else it is useless.
+                    Toast.makeText(this, getString(R.string.error_push_failure), Toast.LENGTH_LONG).show();
+                }
             } catch (Exception e) {
                 try {
                     Toast.makeText(this, getString(R.string.error_push_failure), Toast.LENGTH_LONG).show();

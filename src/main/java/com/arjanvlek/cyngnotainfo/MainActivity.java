@@ -109,13 +109,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         if (checkPlayServices()) {
             // Check if a device and update method have been set
             if (settingsManager.checkIfDeviceIsSet()) {
-                //Check if there was a server error during registration for push notifications.
-                if(settingsManager.checkIfRegistrationHasFailed() && networkConnectionManager.checkNetworkConnection()) {
-                    registerInBackground();
-                }
-                //Check if app needs to re-register for push notifications (like after device type change etc.)
+                //Check if app needs to register for push notifications (like after device type change etc.)
                 if(device != null && updateMethod != null) {
-                    if (!settingsManager.checkIfRegistrationIsValid(deviceId, updateMethodId) && networkConnectionManager.checkNetworkConnection()) {
+                    if (!settingsManager.checkIfRegistrationIsValid(deviceId, updateMethodId) || settingsManager.checkIfRegistrationHasFailed() && networkConnectionManager.checkNetworkConnection()) {
                         registerInBackground();
                     }
                 }
