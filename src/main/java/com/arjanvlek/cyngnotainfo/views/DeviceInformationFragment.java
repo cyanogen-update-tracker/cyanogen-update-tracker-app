@@ -4,7 +4,6 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -41,7 +40,7 @@ public class DeviceInformationFragment extends AbstractFragment {
         DeviceInformationData deviceInformationData = new DeviceInformationData();
 
         TextView deviceNameView = (TextView) rootView.findViewById(R.id.device_information_header);
-        deviceNameView.setText(deviceInformationData.getDeviceManufacturer() + " " + deviceInformationData.getDeviceName());
+        deviceNameView.setText(String.format(getString(R.string.device_information_device_name),deviceInformationData.getDeviceManufacturer(), deviceInformationData.getDeviceName()));
 
         TextView socView = (TextView) rootView.findViewById(R.id.device_information_soc_field);
         socView.setText(deviceInformationData.getSOC());
@@ -49,7 +48,7 @@ public class DeviceInformationFragment extends AbstractFragment {
         String cpuFreqString = deviceInformationData.getCPU_Frequency();
         TextView cpuFreqView = (TextView) rootView.findViewById(R.id.device_information_cpu_freq_field);
         if (!cpuFreqString.equals(DeviceInformationData.UNKNOWN)) {
-            cpuFreqView.setText(deviceInformationData.getCPU_Frequency() + " " + getString(R.string.device_information_gigahertz));
+            cpuFreqView.setText(String.format(getString(R.string.device_information_gigahertz), deviceInformationData.getCPU_Frequency()));
         } else {
             cpuFreqView.setText(getString(R.string.device_information_unknown));
         }
@@ -70,7 +69,7 @@ public class DeviceInformationFragment extends AbstractFragment {
         TextView memoryView = (TextView) rootView.findViewById(R.id.device_information_memory_field);
         if (totalMemory != 0) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                memoryView.setText(totalMemory + " " + getString(R.string.download_size_megabyte));
+                memoryView.setText(String.format(getString(R.string.download_size_megabyte), totalMemory));
             } else {
                 View memoryLabel = rootView.findViewById(R.id.device_information_memory_label);
                 memoryLabel.setVisibility(View.GONE);

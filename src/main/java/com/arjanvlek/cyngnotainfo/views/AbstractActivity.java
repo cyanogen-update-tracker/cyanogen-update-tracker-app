@@ -3,10 +3,7 @@ package com.arjanvlek.cyngnotainfo.views;
 import android.support.v7.app.AppCompatActivity;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
-import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
-
-import java.util.List;
 
 public class AbstractActivity extends AppCompatActivity {
 

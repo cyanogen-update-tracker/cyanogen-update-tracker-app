@@ -19,8 +19,9 @@
     <string name="today">Vandaag</string>
     <string name="yesterday">Gisteren</string>
     <string name="update_information_for">voor</string>
-    <string name="download_size_megabyte">MB</string>
+    <string name="download_size_megabyte">%1$d MB</string>
     <string name="update">Update</string>
+    <string name="unknown_update_name">Update for %1$s</string>
     <string name="update_description">Beschrijving van de update</string>
     <string name="settings_explanation_incremental_full_update">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen.\n\nEen volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je apparaat.</string>
 
@@ -49,15 +50,15 @@
     <string name="device_information_amount_of_memory">Hoeveelheid geheugen:</string>
     <string name="device_information_cpu_frequency">Frequentie van de processor:</string>
     <string name="device_information_image_description">Plaatje van uw apparaat</string>
-    <string name="device_information_os_version">Android-versie</string>
-    <string name="device_information_serial_number">Serienummer</string>
-    <string name="device_information_system_on_a_chip">Systeem-op-een-chip</string>
+    <string name="device_information_os_version">Android-versie:</string>
+    <string name="device_information_serial_number">Serienummer:</string>
+    <string name="device_information_system_on_a_chip">Systeem-op-een-chip:</string>
     <string name="device_information_your_device">Uw apparaat:</string>
     <string name="icon">Icoon</string>
     <string name="device_information_unknown">Onbekend</string>
     <string name="about_app_description">Een app om Cyanogen OS-updates te volgen.</string>
     <string name="about_rate_app_button_text">Beoordeel op Google Play</string>
-    <string name="about_version">Versie:</string>
+    <string name="about_version">Versie: %1$s</string>
     <string name="about_background_story">Deze app is gemaakt door Arjan Vlek, een IT-student uit Zoetermeer.\n\nDeze app is geïnspireerd door een website (<a href="http://www.cyanogen-ota-bacon.somee.com">klik</a>) die momenteel ongeveer hetzelfde biedt. Deze app probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
     <string name="settings_saved">Uw instellingen worden automatisch opgeslagen.</string>
     <string name="settings_explanation_update_methods">Toelichting op de update-methodes</string>
@@ -85,7 +86,7 @@
     <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
     <string name="error_no_internet_connection">Geen internetverbinding.</string>
     <string name="help_how_works_app">Overzicht van de app:</string>
-    <string name="help_middle_stats">In het midden staan de statistieken, de downloadknop en een knop voor de installatie-handleiding.\n\nHieronder staat de downloadgrootte.</string>
+    <string name="help_middle_stats">In het midden staan de Engelstalige beschrijving, de downloadknop en een knop voor de installatie-handleiding.\n\nHieronder staat de downloadgrootte.</string>
     <string name="help_symbol_download">Toont de downloadgrootte van deze update.</string>
     <string name="help_used_symbols">Gebruikte symoblen:</string>
     <string name="help_top_update">Als een nieuwe update beschikbaar is, staat het versienummer bovenin.</string>
@@ -97,8 +98,7 @@
     <string name="server_status_taken_down">Deze app kan niet langer meer worden gebruikt. Je kunt proberen de app via Google Play the updaten. Je moet de app nu afsluiten.</string>
     <string name="server_status_warning">Sommige functies kunnen onverwacht gedrag vertonen.</string>
     <string name="server_status_unreachable">De server is offline. Probeer de pagina te verversen.</string>
-    <string name="new_app_version_first">App-update beschikbaar! Versie <a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s</a></string>
-    <string name="new_app_version_second"> is uitgebracht!</string>
+    <string name="new_app_version">App-update beschikbaar! Versie &lt;a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s&lt;/a> is uitgebracht!</string>
     <string name="settings_in_app">Nieuws en waarschuwingen</string>
     <string name="settings_new_app_version">App-update is beschikbaar</string>
     <string name="settings_push_from_server">Belangrijke waarschuwingen</string>
@@ -112,7 +112,7 @@
     <string name="error_app_not_valid_message">Deze app kan niet langer meer worden gebruikt. Probeer hem te updaten via de Play Store door op Play Store te klikken en vervolgens op Updaten te klikken. Als deze fout blijt, verwijder de app dan en installeer hem opnieuw.</string>
     <string name="error_maintenance">Serveronderhoud</string>
     <string name="error_maintenance_message">Een ogenblik geduld terwijl de server wordt onderhouden. De server zal zeer snel weer online zijn.</string>
-    <string name="update_information_last_checked_on">Voor het laatst gecontroleerd om:</string>
+    <string name="update_information_last_checked_on">Voor het laatst gecontroleerd om: %1$s</string>
     <string name="update_information_no_update_data_available">Er is geen update-informatie beschikbaar</string>
     <string name="downloading">Downloaden…</string>
     <string name="error_button_retry">Opnieuw</string>
@@ -128,7 +128,9 @@
     <string name="verifying">Controleren…</string>
     <string name="download_error_directory">Het lijkt erop alsof er geen Downloads-map aanwezig is op uw apparaat. Start het opnieuw op en probeer vervolgens nogmaals te downloaden.</string>
     <string name="download_permissions">Klik nogmaals op Downloaden om de update te downloaden.</string>
-    <string name="device_information_cyanogen_os_version">Cyanogen OS-versie</string>
+    <string name="device_information_cyanogen_os_version">Cyanogen OS-versie:</string>
     <string name="help_bottom_description">Rechtsbovenin staat het menu. Hierin staan de instellingen en een Help-knop om deze help-pagina opnieuw te bekijken.</string>
+    <string name="update_information_file_name">Bestandsnaam: %1$s</string>
+    <string name="cyanogen_os_version">Cyanogen OS-versie %1$s</string>
 
 </resources>

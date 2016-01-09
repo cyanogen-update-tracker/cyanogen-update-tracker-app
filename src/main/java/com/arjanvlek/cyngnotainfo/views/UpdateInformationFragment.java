@@ -17,6 +17,7 @@ import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.view.LayoutInflater;
@@ -360,8 +361,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 appUpdateNotificationBar.setVisibility(View.VISIBLE);
                 appUpdateNotificationTextView.setVisibility(View.VISIBLE);
 
-                appUpdateNotificationTextView.setText(getString(R.string.new_app_version_first, serverStatus.getLatestAppVersion()) + " " + getString(R.string.new_app_version_second));
-                appUpdateNotificationTextView.setLinksClickable(true);
+                appUpdateNotificationTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
                 appUpdateNotificationTextView.setMovementMethod(LinkMovementMethod.getInstance());
             }
         }
@@ -395,7 +395,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
             if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
                 versionNumberView.setVisibility(View.VISIBLE);
-                versionNumberView.setText("Cyanogen OS" + getString(R.string.update_information_version) + " " + cyanogenOSVersion);
+                versionNumberView.setText(String.format(getString(R.string.cyanogen_os_version), cyanogenOSVersion));
             } else {
                 versionNumberView.setVisibility(View.GONE);
             }
@@ -409,7 +409,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             if(online) {
                 settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(LocalDateTime.now()));
             }
-            dateCheckedView.setText(getString(R.string.update_information_last_checked_on) + " " + settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE));
+            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE)));
             // Hide the refreshing icon
             hideRefreshIcons();
         }
@@ -420,7 +420,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
             String cyanogenOSVersion = getSystemVersionProperties().getCyanogenOSVersion();
             TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
-            versionNumberView.setText("Cyanogen OS" + getString(R.string.update_information_version) + " " + cyanogenOSVersion);
+            versionNumberView.setText(String.format(getString(R.string.cyanogen_os_version), cyanogenOSVersion));
 
             Button updateInformationButton = (Button) rootView.findViewById(R.id.updateInformationSystemIsUpToDateStatisticsButton);
             updateInformationButton.setText(getString(R.string.update_information_view_update_information));
@@ -437,7 +437,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             if(online) {
                 settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(LocalDateTime.now()));
             }
-            dateCheckedView.setText(getString(R.string.update_information_last_checked_on) + " " + settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE));
+            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE) ));
             // Hide the refreshing icon
             hideRefreshIcons();
         }
@@ -449,15 +449,18 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
                     buildNumberView.setText(cyanogenOTAUpdate.getName());
                 } else {
-                    buildNumberView.setText(getString(R.string.update) + " " + getString(R.string.update_information_for) + " " + deviceName);
+                    buildNumberView.setText(String.format(getString(R.string.unknown_update_name), deviceName));
                 }
 
                 TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-                downloadSizeView.setText((cyanogenOTAUpdate.getSize() / 1048576) + " " + getString(R.string.download_size_megabyte));
+                downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), (cyanogenOTAUpdate.getSize()) / 1048576));
 
                 String description = cyanogenOTAUpdate.getDescription();
                 TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
                 descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
+
+                TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
+                fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOTAUpdate.getFileName()));
 
                 final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
                 if (online) {

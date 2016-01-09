@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 
 import java.io.BufferedReader;
 import java.io.IOException;

@@ -19,7 +19,7 @@ public class AboutActivity extends AppCompatActivity {
         String versionNumber = BuildConfig.VERSION_NAME;
         setContentView(R.layout.activity_about);
         TextView versionNumberView = (TextView) findViewById(R.id.aboutVersionNumberView);
-        versionNumberView.setText(getString(R.string.about_version) + " " + versionNumber);
+        versionNumberView.setText(String.format(getString(R.string.about_version), versionNumber));
 
         //Make link clickable
         TextView storyView = (TextView) findViewById(R.id.aboutBackgroundStoryView);

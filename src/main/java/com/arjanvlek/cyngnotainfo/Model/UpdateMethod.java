@@ -2,14 +2,6 @@ package com.arjanvlek.cyngnotainfo.Model;
 
 public class UpdateMethod {
 
-    public UpdateMethod() {}
-
-    public UpdateMethod(long id, String updateMethod, String updateMethodNl) {
-        this.id = id;
-        this.updateMethod = updateMethod;
-        this.updateMethodNl = updateMethodNl;
-    }
-
     private long id;
     private String updateMethod;
     private String updateMethodNl;

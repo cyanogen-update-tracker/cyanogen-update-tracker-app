@@ -38,7 +38,7 @@ public class ServerConnector {
     private ServerStatus serverStatus;
     private List<ServerMessage> serverMessages;
 
-    public static boolean testing = false;
+    public static boolean testing = true;
 
     public List<Device> getDevices() {
         fetchDataFromServer(DEVICES);

@@ -12,7 +12,8 @@
     <string name="update_information_no_update_data_available">No update information is available.</string>
     <string name="update_information_view_update_information">View update information</string>
     <string name="update_information_version">&#160;version:</string>
-    <string name="update_information_last_checked_on">Last checked on:</string>
+    <string name="update_information_last_checked_on">Last checked on: %1$s</string>
+    <string name="update_information_file_name">File name: %1$s</string>
 
     <!-- Update description strings -->
     <string name="update_description">Update description</string>
@@ -30,8 +31,7 @@
     <string name="server_status_unreachable">The server can\'t be reached. Try refreshing the page.</string>
 
     <!-- New app version notification strings -->
-    <string name = "new_app_version_first">App update available! Version <a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s</a></string>
-    <string name = "new_app_version_second"> has been released!</string>
+    <string name = "new_app_version">App update available! Version &lt;a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s&lt;/a> has been released!</string>
 
     <!-- Date and time strings -->
     <string name="at">at</string>
@@ -48,11 +48,12 @@
     <string name="download_error_network">A network error occurred while downloading the update file. Please make sure your Internet connection works and try downloading it again.</string>
     <string name="download_error_storage">There is insufficient storage space available on your device to save the downloaded update file. Please remove some files and try downloading it again.</string>
     <string name="download_error_directory">It looks like there is no Downloads directory present on your device. Please try to restart your device and then download the update again.</string>
-    <string name="download_size_megabyte">MB</string>
+    <string name="download_size_megabyte">%1$d MB</string>
     <string name="download_error_close">CLOSE</string>
     <string name="download_error_retry">RETRY</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen OS Update</string>
+    <string name="cyanogen_os_version">Cyanogen OS Version %1$s</string>
     <string name="download_cyanogen_os">Cyanogen OS Version</string>
     <string name="download_complete">Download complete</string>
     <string name="download_failed">Download failed</string>
@@ -142,12 +143,13 @@
     <string name="device_information_os_version">Android version:</string>
     <string name="device_information_cyanogen_os_version">Cyanogen OS version:</string>
     <string name="device_information_serial_number">Serial number:</string>
-    <string name="device_information_gigahertz" translatable="false">GHz</string>
+    <string name="device_information_gigahertz" translatable="false">%1$s GHz</string>
     <string name="device_information_unknown">Unknown</string>
+    <string name="device_information_device_name">%1$s %2$s</string>
 
     <!-- About screen strings -->
     <string name="about">About this app</string>
-    <string name="about_version">Version:</string>
+    <string name="about_version">Version: %1$s</string>
     <string name="about_rate_app_button_text">Rate on Google Play</string>
     <string name="about_app_description">An app to track Cyanogen OS updates.</string>
     <string name="about_background_story">This app is written by Arjan Vlek, an IT-interested guy living in Zoetermeer, The Netherlands.\n\nThis app is inspired by a website (<a href="http://www.cyanogen-ota-bacon.somee.com">click</a>), which provides similar functionality. This app aims to be more user-friendly and to offer more features.\n\nIf you like my app, please rate it on Google play now:</string>
@@ -173,4 +175,5 @@
     <string name="help_bottom_description">At the top right you can find the menu. It contains the settings and a help button, which allows you to view this page again.</string>
     <string name="help_used_symbols">Used symbols:</string>
     <string name="help_symbol_download">Shows you the download size of this update.</string>
+    <string name="unknown_update_name">Update voor %1$s</string>
 </resources>

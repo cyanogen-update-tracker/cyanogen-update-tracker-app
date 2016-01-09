@@ -23,7 +23,6 @@ import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 public class TutorialStep4Fragment extends AbstractFragment {
     private View rootView;
     private SettingsManager settingsManager;
-    private long deviceId;
     private long updateMethodId;
 
     @Override
@@ -35,7 +34,7 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
 
     public void fetchUpdateMethods() {
-        deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
+        long deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
             new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId);
         } else {

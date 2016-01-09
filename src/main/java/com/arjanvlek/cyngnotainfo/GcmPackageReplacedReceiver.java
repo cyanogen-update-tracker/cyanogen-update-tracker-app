@@ -8,10 +8,9 @@ import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 
 public class GcmPackageReplacedReceiver extends WakefulBroadcastReceiver {
 
-    private NetworkConnectionManager networkConnectionManager;
     @Override
     public void onReceive(Context context, Intent intent) {
-        networkConnectionManager = new NetworkConnectionManager(context);
+        NetworkConnectionManager networkConnectionManager = new NetworkConnectionManager(context);
         if(networkConnectionManager.checkNetworkConnection()) {
             if (intent != null && intent.getAction().equals(Intent.ACTION_MY_PACKAGE_REPLACED)) {
                 // invalidate the current GCM registration id, and re-register with GCM server using the GcmRegistrationIntentService
