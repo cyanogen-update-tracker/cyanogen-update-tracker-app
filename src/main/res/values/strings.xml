@@ -5,6 +5,7 @@
 
     <!-- Update information strings-->
     <string name="update_information_header">Update information</string>
+    <string name="update_information_header_short">Update info</string>
     <string name="update_information_latest_available_update">A new system update is available:</string>
     <string name="update">Update</string>
     <string name="update_information_for">for</string>
@@ -135,6 +136,7 @@
 
     <!-- Device information strings -->
     <string name="device_information_header">Device information</string>
+    <string name="device_information_header_short">Device info</string>
     <string name="device_information_image_description">Device image</string>
     <string name="device_information_your_device">Your device: </string>
     <string name="device_information_system_on_a_chip">System on a Chip:</string>
@@ -145,7 +147,7 @@
     <string name="device_information_serial_number">Serial number:</string>
     <string name="device_information_gigahertz" translatable="false">%1$s GHz</string>
     <string name="device_information_unknown">Unknown</string>
-    <string name="device_information_device_name">%1$s %2$s</string>
+    <string name="device_information_device_name" translatable="false">%1$s %2$s</string>
 
     <!-- About screen strings -->
     <string name="about">About this app</string>

@@ -1,7 +1,5 @@
 package com.arjanvlek.cyngnotainfo;
 
-import java.util.Locale;
-
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
@@ -199,12 +197,12 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         @Override
         public CharSequence getPageTitle(int position) {
-            Locale l = Locale.getDefault();
+            boolean MorHigher = Build.VERSION.SDK_INT >= Build.VERSION_CODES.M;
             switch (position) {
                 case 0:
-                    return getString(R.string.update_information_header).toUpperCase(l);
+                    return MorHigher ? getString(R.string.update_information_header_short) : getString(R.string.update_information_header);
                 case 1:
-                    return getString(R.string.device_information_header).toUpperCase(l);
+                    return MorHigher ? getString(R.string.device_information_header_short) : getString(R.string.device_information_header);
             }
             return null;
         }

@@ -71,7 +71,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private DateTime refreshedDate;
     private boolean isFetched;
     private boolean isDownloading;
-    private boolean error;
 
     public static final int NOTIFICATION_ID = 1;
 
@@ -241,7 +240,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
     public void displayServerMessages(List<ServerMessage> serverMessages) {
-        if(serverMessages != null && settingsManager.showNewsMessages() && !error) {
+        if(serverMessages != null && settingsManager.showNewsMessages()) {
             rootView.findViewById(R.id.updateInformationFirstServerMessageBar).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationSecondServerMessageBar).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationFirstServerMessageTextView).setVisibility(View.GONE);
@@ -249,7 +248,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             int i = 0;
             for (ServerMessage message : serverMessages) {
                 // There may never be more than 2 messages displayed in this version of the app.
-                if(!message.isDeviceSpecific() || (message.getDeviceId() == settingsManager.getLongPreference(PROPERTY_DEVICE_ID))) {
+                if(!message.isDeviceSpecific() || (message.getDeviceId() == settingsManager.getLongPreference(PROPERTY_DEVICE_ID) && (message.getUpdateMethodId() == null || message.getUpdateMethodId() == settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID)))) {
                     View serverMessageBar;
                     TextView serverMessageTextView;
                     if (i == 0) {
@@ -355,7 +354,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 }
             }
         }
-        if(serverStatus != null && settingsManager.showAppUpdateMessages() && !error) {
+        if(serverStatus != null && settingsManager.showAppUpdateMessages()) {
             if (!checkIfAppIsUpToDate(serverStatus.getLatestAppVersion()) && isAdded()) {
                 View appUpdateNotificationBar = rootView.findViewById(R.id.updateInformationNewAppNotificationBar);
                 TextView appUpdateNotificationTextView = (TextView) rootView.findViewById(R.id.updateInformationNewAppNotificationTextView);
@@ -909,7 +908,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     private void hideAllInterfaceElements() {
         try {
-            error = true;
             rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationAdView).setVisibility(View.GONE);

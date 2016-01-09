@@ -29,8 +29,8 @@ import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_METHODS;
 public class ServerConnector {
 
     public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
-    public final static String SERVER_URL = "** Add the base URL of your API / backend here **v1.1/";
-    public final static String TEST_SERVER_URL = "http://cyanogenupdatetracker.com/test/api/v1.1/";
+    public final static String SERVER_URL = "** Add the base URL of your API / backend here **v2/";
+    public final static String TEST_SERVER_URL = "http://cyanogenupdatetracker.com/test/api/v2/";
 
     private List<Device> devices;
     private List<UpdateMethod> updateMethods;
@@ -38,7 +38,7 @@ public class ServerConnector {
     private ServerStatus serverStatus;
     private List<ServerMessage> serverMessages;
 
-    public static boolean testing = false;
+    public static boolean testing = true;
 
     public List<Device> getDevices() {
         fetchDataFromServer(DEVICES);
@@ -162,6 +162,10 @@ public class ServerConnector {
                     String deviceId = rawServerMessage.getString("device_id");
                     if(deviceId != null && !deviceId.equals("null")) {
                         serverMessage.setDeviceId(rawServerMessage.getLong("device_id"));
+                    }
+                    String updateMethodId = rawServerMessage.getString("update_method_id");
+                    if(updateMethodId != null && !updateMethodId.equals("null")) {
+                        serverMessage.setUpdateMethodId(rawServerMessage.getLong("update_method_id"));
                     }
                     ServerMessage.ServerMessagePriority priority;
                     switch(rawServerMessage.getString("priority")) {

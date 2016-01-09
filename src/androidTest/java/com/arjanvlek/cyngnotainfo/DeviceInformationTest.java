@@ -35,10 +35,18 @@ public class DeviceInformationTest extends ActivityInstrumentationTestCase2<Main
         String appLocale = Locale.getDefault().getDisplayLanguage();
 
         // Go to Device Information tab
-        if(appLocale.equals(LOCALE_DUTCH)) {
-            solo.clickOnText("APPARAAT-INFORMATIE");
+        if(Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            if (appLocale.equals(LOCALE_DUTCH)) {
+                solo.clickOnText("Apparaat-informatie");
+            } else {
+                solo.clickOnText("Device information");
+            }
         } else {
-            solo.clickOnText("DEVICE INFORMATION");
+            if(appLocale.equals(LOCALE_DUTCH)) {
+                solo.clickOnText("Apparaat-info");
+            } else {
+                solo.clickOnText("Device info");
+            }
         }
 
         // We can only test the Android system version, as the other variables vary per device or emulator.

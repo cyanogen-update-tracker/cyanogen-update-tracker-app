@@ -5,6 +5,7 @@ public class ServerMessage {
     private String message;
     private String messageNl;
     private Long deviceId;
+    private Long updateMethodId;
     private ServerMessagePriority priority;
     private boolean marquee;
 
@@ -42,6 +43,14 @@ public class ServerMessage {
 
     public void setDeviceId(long deviceId) {
         this.deviceId = deviceId;
+    }
+
+    public Long getUpdateMethodId() {
+        return updateMethodId;
+    }
+
+    public void setUpdateMethodId(Long updateMethodId) {
+        this.updateMethodId = updateMethodId;
     }
 
     public ServerMessagePriority getPriority() {
