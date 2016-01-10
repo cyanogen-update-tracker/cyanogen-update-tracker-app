@@ -413,7 +413,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             // Hide the refreshing icon
             hideRefreshIcons();
         }
-        else if(cyanogenOTAUpdate != null && checkIfSystemIsUpToDate(cyanogenOTAUpdate.getName(), 10000) && isAdded() && !force) {
+        else if(cyanogenOTAUpdate != null && checkIfSystemIsUpToDate(cyanogenOTAUpdate.getName(), -1) && isAdded() && !force) {
              // switch views
             rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.VISIBLE);
@@ -730,7 +730,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         .setSmallIcon(android.R.drawable.stat_sys_download_done)
                         .setContentTitle(getString(R.string.download_complete))
                         .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName())
-                        .setContentIntent(pendingIntent);
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
                 try {
                     Toast.makeText(context, getString(R.string.download_complete), Toast.LENGTH_LONG).show();
                 } catch(Exception ignore) {
@@ -747,7 +748,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         .setSmallIcon(android.R.drawable.stat_sys_download_done)
                         .setContentTitle(getString(R.string.download_failed))
                         .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName())
-                        .setContentIntent(pendingIntent);
+                        .setContentIntent(pendingIntent)
+                        .setAutoCancel(true);
 
             } else if (indeterminate) {
                 builder = new NotificationCompat.Builder(getActivity())
