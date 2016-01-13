@@ -38,7 +38,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/install_guide_step2_turn_off_phone"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="@color/material_blue_grey" />
 
         <TextView
             android:id="@+id/tut2Text3"
@@ -48,7 +48,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/install_guide_step2_press_buttons"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="@color/material_blue_grey" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -57,6 +57,6 @@
             android:layout_marginTop="20dp"
             android:text="@string/install_guide_step2_wait"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="@color/material_blue_grey" />
     </RelativeLayout>
 </ScrollView>

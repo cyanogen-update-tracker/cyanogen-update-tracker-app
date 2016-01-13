@@ -1,5 +1,6 @@
 package com.arjanvlek.cyngnotainfo.views;
 
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 
@@ -31,7 +32,8 @@ public abstract class AbstractFragment extends Fragment{
     protected SystemVersionProperties getSystemVersionProperties() {
         SystemVersionProperties systemVersionProperties = new SystemVersionProperties();
         String cyanogenOSVersion = NO_CYANOGEN_OS;
-        String dateCreated = NO_CYANOGEN_OS;
+        String securityPatchDate = NO_CYANOGEN_OS;
+        String dateCreated;
         int dateCreatedUtc = -1;
         try {
             Process getBuildPropProcess = new ProcessBuilder()
@@ -52,6 +54,20 @@ public abstract class AbstractFragment extends Fragment{
                     dateCreated = inputLine.replace("[ro.build.date.utc]: ", "");
                     dateCreated = dateCreated.replace("[", "");
                     dateCreated = dateCreated.replace("]", "");
+                    try {
+                        dateCreatedUtc = Integer.parseInt(dateCreated);
+                    } catch (Exception e) {
+                        dateCreatedUtc = -1;
+                    }
+                }
+                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    securityPatchDate = Build.VERSION.SECURITY_PATCH;
+                } else {
+                    if(inputLine.contains("ro.build.version.security_patch")) {
+                        securityPatchDate = inputLine.replace("[ro.build.version.security_patch]: ", "");
+                        securityPatchDate = securityPatchDate.replace("[", "");
+                        securityPatchDate = securityPatchDate.replace("]", "");
+                    }
                 }
             }
             getBuildPropProcess.destroy();
@@ -59,14 +75,8 @@ public abstract class AbstractFragment extends Fragment{
         } catch (IOException e) {
             Log.e("IOException buildProp", e.getLocalizedMessage());
         }
-        if(!dateCreated.equals(NO_CYANOGEN_OS)) {
-            try {
-                dateCreatedUtc = Integer.parseInt(dateCreated);
-            } catch (Exception e) {
-                dateCreatedUtc = -1;
-            }
-        }
         systemVersionProperties.setCyanogenOSVersion(cyanogenOSVersion);
+        systemVersionProperties.setSecurityPatchDate(securityPatchDate);
         systemVersionProperties.setDateCreatedUtc(dateCreatedUtc);
         return systemVersionProperties;
     }

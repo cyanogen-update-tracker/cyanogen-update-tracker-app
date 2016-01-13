@@ -143,6 +143,7 @@
     <string name="device_information_cpu_frequency">Processor Frequency:</string>
     <string name="device_information_amount_of_memory">Amount of memory:</string>
     <string name="device_information_os_version">Android version:</string>
+    <string name="device_information_patch_level_version">Security patch date:</string>
     <string name="device_information_cyanogen_os_version">Cyanogen OS version:</string>
     <string name="device_information_serial_number">Serial number:</string>
     <string name="device_information_gigahertz" translatable="false">%1$s GHz</string>

@@ -11,6 +11,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
+import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.google.android.gms.ads.AdRequest;
@@ -79,12 +80,12 @@ public class DeviceInformationFragment extends AbstractFragment {
             memoryView.setText(getString(R.string.device_information_unknown));
         }
 
-        String cyanogenOSVersion = getSystemVersionProperties().getCyanogenOSVersion();
+        SystemVersionProperties systemVersionProperties = getSystemVersionProperties();
 
         TextView cyanogenOsVerView = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_field);
 
-        if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
-            cyanogenOsVerView.setText(getSystemVersionProperties().getCyanogenOSVersion());
+        if(!systemVersionProperties.getCyanogenOSVersion().equals(NO_CYANOGEN_OS)) {
+            cyanogenOsVerView.setText(systemVersionProperties.getCyanogenOSVersion());
 
         } else {
             TextView cyanogenOsVerLabel = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_label);
@@ -94,6 +95,16 @@ public class DeviceInformationFragment extends AbstractFragment {
 
         TextView osVerView = (TextView) rootView.findViewById(R.id.device_information_os_ver_field);
         osVerView.setText(deviceInformationData.getOSVersion());
+
+        TextView osPatchDateView = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_field);
+
+        if(!systemVersionProperties.getSecurityPatchDate().equals(NO_CYANOGEN_OS)) {
+            osPatchDateView.setText(systemVersionProperties.getSecurityPatchDate());
+        } else {
+            TextView osPatchDateLabel = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_label);
+            osPatchDateLabel.setVisibility(View.GONE);
+            osPatchDateView.setVisibility(View.GONE);
+        }
 
         TextView serialNumberView = (TextView) rootView.findViewById(R.id.device_information_serial_number_field);
         serialNumberView.setText(deviceInformationData.getSerialNumber());

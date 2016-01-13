@@ -28,4 +28,6 @@
     <color name="holo_gray_bright">#33CCCCCC</color>
 
     <color name="dark_grey">#ee999999</color>
+
+    <color name="material_blue_grey">#ff37474f</color>
 </resources>

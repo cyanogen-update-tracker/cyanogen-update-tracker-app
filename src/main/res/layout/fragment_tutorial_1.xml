@@ -50,7 +50,7 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/introduction_page_1"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/material_blue_grey_800" />
+                android:textColor="@color/material_blue_grey" />
 
 
         </RelativeLayout>

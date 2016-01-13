@@ -134,5 +134,6 @@
     <string name="cyanogen_os_version">Cyanogen OS-versie: %1$s</string>
     <string name="device_information_header_short">Apparaat-info</string>
     <string name="update_information_header_short">Update-info</string>
+    <string name="device_information_patch_level_version">Datum beveiligingspatch:</string>
 
 </resources>

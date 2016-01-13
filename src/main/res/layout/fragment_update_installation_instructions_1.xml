@@ -38,7 +38,7 @@
             android:layout_marginTop="20dp"
             android:text="@string/install_guide_step1_explanation"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="@color/material_blue_grey" />
 
         <ImageView
             android:layout_width="match_parent"

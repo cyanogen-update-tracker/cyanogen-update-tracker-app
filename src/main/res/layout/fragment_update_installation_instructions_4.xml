@@ -47,7 +47,7 @@
             android:layout_marginTop="15dp"
             android:text="@string/install_guide_step4_reboot_now"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="@color/material_blue_grey" />
 
         <TextView
             android:id="@+id/tut4Text3"
@@ -57,7 +57,7 @@
             android:layout_marginTop="15dp"
             android:text="@string/install_guide_step4_cyanogen_logo"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="@color/material_blue_grey" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -66,6 +66,6 @@
             android:layout_marginTop="15dp"
             android:text="@string/install_guide_step4_android_is_upgrading"
             android:textAppearance="?android:textAppearanceMedium"
-            android:textColor="@color/material_blue_grey_800" />
+            android:textColor="@color/material_blue_grey" />
     </RelativeLayout>
 </ScrollView>

@@ -39,7 +39,7 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/help_top_update"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/material_blue_grey_800" />
+                android:textColor="@color/material_blue_grey" />
 
             <TextView
                 android:id="@+id/tut1bText2a"
@@ -51,7 +51,7 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/help_middle_stats"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/material_blue_grey_800" />
+                android:textColor="@color/material_blue_grey" />
 
             <TextView
                 android:id="@+id/tut1bText2b"
@@ -63,7 +63,7 @@
                 android:layout_marginTop="20dp"
                 android:text="@string/help_bottom_description"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/material_blue_grey_800" />
+                android:textColor="@color/material_blue_grey" />
 
             <TextView
                 android:id="@+id/tut1bText2c"
@@ -92,7 +92,7 @@
                 android:minHeight="50dp"
                 android:text="@string/help_symbol_download"
                 android:textAppearance="?android:textAppearanceMedium"
-                android:textColor="@color/material_blue_grey_800" />
+                android:textColor="@color/material_blue_grey" />
 
             <ImageView
                 android:id="@+id/tut1bdownloadSizeImage"
