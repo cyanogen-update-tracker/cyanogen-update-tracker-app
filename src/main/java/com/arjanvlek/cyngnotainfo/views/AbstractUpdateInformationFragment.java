@@ -2,11 +2,14 @@ package com.arjanvlek.cyngnotainfo.views;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 
+import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 
+import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 
@@ -35,8 +38,6 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
     protected abstract boolean displayUpdateInformation(CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean force);
 
     protected abstract CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate();
-
-    protected abstract void showNetworkError();
 
     protected class GetServerStatus extends AsyncTask<Void, Void, ServerStatus> {
 
@@ -78,20 +79,66 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
                     return buildOfflineCyanogenOTAUpdate();
                 } else {
                     showNetworkError();
+                    return null;
                 }
             }
-            return null;
         }
 
         @Override
         protected void onPostExecute(CyanogenOTAUpdate result) {
             super.onPostExecute(result);
             cyanogenOTAUpdate = result;
-            if (networkConnectionManager.checkNetworkConnection()) {
-                displayUpdateInformation(result, true, false);
-            } else {
-                displayUpdateInformation(result, false, false);
-            }
+            displayUpdateInformation(result, networkConnectionManager.checkNetworkConnection(), false);
+        }
+    }
+
+    protected void showNetworkError() {
+        DialogFragment errorDialog = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", getString(R.string.error_app_requires_network_connection_message));
+        args.putString("title", getString(R.string.error_app_requires_network_connection));
+        args.putString("button1", getString(R.string.download_error_close));
+        args.putBoolean("closable", false);
+        errorDialog.setArguments(args);
+        errorDialog.setTargetFragment(this, 0);
+        errorDialog.show(getFragmentManager(), "NetworkError");
+    }
+
+    protected void showMaintenanceError() {
+        DialogFragment serverMaintenanceErrorFragment = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", getString(R.string.error_maintenance_message));
+        args.putString("title", getString(R.string.error_maintenance));
+        args.putString("button1", getString(R.string.download_error_close));
+        args.putBoolean("closable", false);
+        serverMaintenanceErrorFragment.setArguments(args);
+        serverMaintenanceErrorFragment.setTargetFragment(this, 0);
+        serverMaintenanceErrorFragment.show(getFragmentManager(), "MaintenanceError");
+    }
+
+    protected void showAppNotValidError() {
+        DialogFragment appNotValidErrorFragment = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", getString(R.string.error_app_not_valid_message));
+        args.putString("title", getString(R.string.error_app_not_valid));
+        args.putString("button1", getString(R.string.error_google_play_button_text));
+        args.putString("button2", getString(R.string.download_error_close));
+        args.putBoolean("closable", false);
+        appNotValidErrorFragment.setArguments(args);
+        appNotValidErrorFragment.setTargetFragment(this, 0);
+        appNotValidErrorFragment.show(getFragmentManager(), "AppNotValidError");
+    }
+
+    protected boolean checkIfAppIsUpToDate(String appVersionFromResult) {
+        String appVersion = BuildConfig.VERSION_NAME;
+        appVersion = appVersion.replace(".", "");
+        appVersionFromResult = appVersionFromResult.replace(".", "");
+        try {
+            int appVersionNumeric = Integer.parseInt(appVersion);
+            int appVersionFromResultNumeric = Integer.parseInt(appVersionFromResult);
+            return appVersionFromResultNumeric <= appVersionNumeric;
+        } catch(Exception e) {
+            return true;
         }
     }
 }

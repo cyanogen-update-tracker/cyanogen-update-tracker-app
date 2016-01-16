@@ -129,7 +129,7 @@ public class SettingsActivity extends AbstractActivity {
     }
 
     private void fillDeviceSettings(final List<Device> devices) {
-        if (devices != null) {
+        if (devices != null && !devices.isEmpty()) {
             Spinner spinner = (Spinner) findViewById(R.id.settingsDeviceSpinner);
             List<String> deviceNames = new ArrayList<>();
 
@@ -220,7 +220,7 @@ public class SettingsActivity extends AbstractActivity {
     }
 
     private void fillUpdateSettings(final List<UpdateMethod> updateMethods) {
-        if(updateMethods != null) {
+        if(updateMethods != null && !updateMethods.isEmpty()) {
             Spinner spinner = (Spinner) findViewById(R.id.settingsUpdateMethodSpinner);
             String currentUpdateMethod = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
             Integer position = null;

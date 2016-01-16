@@ -309,8 +309,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         serverMessageTextView.requestFocus();
                         serverMessageTextView.setSelected(true);
                     }
+                    i++;
                 }
-                i++;
             }
         }
     }
@@ -368,12 +368,19 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
 
-    public boolean displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean displayInfoWhenUpToDate) {
+    public boolean displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, final boolean online, boolean displayInfoWhenUpToDate) {
+        // Abort if no update data is found or if the fragment is not attached to its activity to prevent crashes.
         if(cyanogenOTAUpdate == null || !isAdded()) {
             return false;
         }
+
+        // Display the "No connection" bar depending on the network status of the device.
         View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
         TextView noConnectionTextField = (TextView) rootView.findViewById(R.id.updateInformationNoConnectionTextView);
+
+        View updateInformationLayout = rootView.findViewById(R.id.updateInformationRefreshLayout);
+        View systemIsUpToDateLayout = rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
+
         if(online) {
             if(noConnectionBar != null) {
                 noConnectionBar.setVisibility(View.GONE);
@@ -389,11 +396,14 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 noConnectionTextField.setVisibility(View.VISIBLE);
             }
         }
-        if(!cyanogenOTAUpdate.isUpdateInformationAvailable()) {
-            // switch views
-            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.VISIBLE);
 
+        // Display the "System is up to date" screen if the system is up to date and if "View update information" is NOT clicked, or if no update information is available.
+        if((systemIsUpToDate(cyanogenOTAUpdate.getName()) && !displayInfoWhenUpToDate) || !cyanogenOTAUpdate.isUpdateInformationAvailable()) {
+            // Show "System is up to date" view.
+            updateInformationLayout.setVisibility(View.GONE);
+            systemIsUpToDateLayout.setVisibility(View.VISIBLE);
+
+            // Set current Cyanogen OS version if found.
             String cyanogenOSVersion = getSystemVersionProperties().getCyanogenOSVersion();
             TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
             if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
@@ -401,48 +411,43 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 versionNumberView.setText(String.format(getString(R.string.cyanogen_os_version), cyanogenOSVersion));
             } else {
                 versionNumberView.setVisibility(View.GONE);
+                versionNumberView.setVisibility(View.GONE);
             }
 
+            // Set "No Update Information Is Available" button.
             Button updateInformationButton = (Button) rootView.findViewById(R.id.updateInformationSystemIsUpToDateStatisticsButton);
-            updateInformationButton.setText(getString(R.string.update_information_no_update_data_available));
-            updateInformationButton.setClickable(false);
-
-            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
-            TextView dateCheckedView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateDateTextView);
-            if(online) {
-                settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(LocalDateTime.now()));
+            if(!cyanogenOTAUpdate.isUpdateInformationAvailable()) {
+                updateInformationButton.setText(getString(R.string.update_information_no_update_data_available));
+                updateInformationButton.setClickable(false);
+            } else {
+                updateInformationButton.setText(getString(R.string.update_information_view_update_information));
+                updateInformationButton.setClickable(true);
+                updateInformationButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        displayUpdateInformation(cyanogenOTAUpdate, online, true);
+                    }
+                });
             }
+
+            // Save last time checked if online.
+            if(online) {
+                DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
+                settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(DateTime.now()));
+            }
+
+            // Show last time checked.
+            TextView dateCheckedView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateDateTextView);
             dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE)));
         }
-        else if(systemIsUpToDate(cyanogenOTAUpdate.getName()) && !displayInfoWhenUpToDate) {
-             // switch views
-            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.VISIBLE);
 
-            String cyanogenOSVersion = getSystemVersionProperties().getCyanogenOSVersion();
-            TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
-            versionNumberView.setText(String.format(getString(R.string.cyanogen_os_version), cyanogenOSVersion));
-
-            Button updateInformationButton = (Button) rootView.findViewById(R.id.updateInformationSystemIsUpToDateStatisticsButton);
-            updateInformationButton.setText(getString(R.string.update_information_view_update_information));
-            updateInformationButton.setClickable(true);
-            updateInformationButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    showUpdateInformationIfUpToDate();
-                }
-            });
-
-            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
-            TextView dateCheckedView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateDateTextView);
-            if(online) {
-                settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(LocalDateTime.now()));
-            }
-            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE)));
-        }
+        // Display the "Update information" screen if an update is available or if View Update Information is clicked on an up to date device.
         else {
-            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
-            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
+            // Show "System update available" view.
+            updateInformationLayout.setVisibility(View.VISIBLE);
+            systemIsUpToDateLayout.setVisibility(View.GONE);
+
+            // Display available update version number.
             TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
             if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
                 buildNumberView.setText(cyanogenOTAUpdate.getName());
@@ -450,18 +455,22 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 buildNumberView.setText(String.format(getString(R.string.unknown_update_name), deviceName));
             }
 
+            // Display download size.
             TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
             downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), (cyanogenOTAUpdate.getSize()) / 1048576));
 
+            // Display update description.
             String description = cyanogenOTAUpdate.getDescription();
             TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
             descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
 
+            // Display update file name.
             TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
             fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOTAUpdate.getFileName()));
 
             final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
 
+            // Activate download button or make it gray if offline.
             if (online) {
                 if (cyanogenOTAUpdate.getDownloadUrl() != null) {
                     downloadButton.setOnClickListener(new View.OnClickListener() {
@@ -492,6 +501,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
             }
 
+            // Format top title based on system version installed.
             TextView headerLabel = (TextView) rootView.findViewById(R.id.headerLabel);
             Button updateInstallationGuideButton = (Button) rootView.findViewById(R.id.updateInstallationInstructionsButton);
             View downloadSizeTable = rootView.findViewById(R.id.buttonTable);
@@ -517,12 +527,14 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             }
 
 
-            // Save preferences for offline viewing
+            // Save update data for offline viewing
             settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
             settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
             settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
             settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOTAUpdate.getFileName());
         }
+
+        // Hide the refreshing icon if it is present.
         hideRefreshIcons();
         return true;
     }
@@ -886,72 +898,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    @Override
-    protected void showNetworkError() {
-        DialogFragment errorDialog = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", getString(R.string.error_app_requires_network_connection_message));
-        args.putString("title", getString(R.string.error_app_requires_network_connection));
-        args.putString("button1", getString(R.string.download_error_close));
-        args.putBoolean("closable", false);
-        errorDialog.setArguments(args);
-        errorDialog.setTargetFragment(this, 0);
-        errorDialog.show(getFragmentManager(), "NetworkError");
-    }
-
-    private void showMaintenanceError() {
-        hideAllInterfaceElements();
-        DialogFragment serverMaintenanceErrorFragment = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", getString(R.string.error_maintenance_message));
-        args.putString("title", getString(R.string.error_maintenance));
-        args.putString("button1", getString(R.string.download_error_close));
-        args.putBoolean("closable", false);
-        serverMaintenanceErrorFragment.setArguments(args);
-        serverMaintenanceErrorFragment.setTargetFragment(this, 0);
-        serverMaintenanceErrorFragment.show(getFragmentManager(), "MaintenanceError");
-    }
-
-    private void showAppNotValidError() {
-        hideAllInterfaceElements();
-        DialogFragment appNotValidErrorFragment = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", getString(R.string.error_app_not_valid_message));
-        args.putString("title", getString(R.string.error_app_not_valid));
-        args.putString("button1", getString(R.string.error_google_play_button_text));
-        args.putString("button2", getString(R.string.download_error_close));
-        args.putBoolean("closable", false);
-        appNotValidErrorFragment.setArguments(args);
-        appNotValidErrorFragment.setTargetFragment(this, 0);
-        appNotValidErrorFragment.show(getFragmentManager(), "AppNotValidError");
-    }
-
-    private void hideAllInterfaceElements() {
-        try {
-            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationAdView).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationFirstServerMessageBar).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationFirstServerMessageTextView).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationSecondServerMessageBar).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationSecondServerMessageTextView).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationNewAppNotificationBar).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationNewAppNotificationTextView).setVisibility(View.GONE);
-        } catch (Throwable ignored) {
-        }
-    }
-
-    private void showUpdateInformationIfUpToDate() {
-        if(cyanogenOTAUpdate != null) {
-            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
-            displayUpdateInformation(cyanogenOTAUpdate, networkConnectionManager.checkNetworkConnection(), true);
-        }
-        else {
-            getServerData();
-        }
-    }
-
     private void hideRefreshIcons() {
         if (updateInformationRefreshLayout != null) {
             if (updateInformationRefreshLayout.isRefreshing()) {
@@ -962,19 +908,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             if (systemIsUpToDateRefreshLayout.isRefreshing()) {
                 systemIsUpToDateRefreshLayout.setRefreshing(false);
             }
-        }
-    }
-
-    private boolean checkIfAppIsUpToDate(String appVersionFromResult) {
-        String appVersion = BuildConfig.VERSION_NAME;
-        appVersion = appVersion.replace(".", "");
-        appVersionFromResult = appVersionFromResult.replace(".", "");
-        try {
-            int appVersionNumeric = Integer.parseInt(appVersion);
-            int appVersionFromResultNumeric = Integer.parseInt(appVersionFromResult);
-            return appVersionFromResultNumeric <= appVersionNumeric;
-        } catch(Exception e) {
-            return true;
         }
     }
 }

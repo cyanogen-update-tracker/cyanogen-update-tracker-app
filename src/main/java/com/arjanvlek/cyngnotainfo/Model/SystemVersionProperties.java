@@ -4,7 +4,6 @@ public class SystemVersionProperties {
 
     private String cyanogenOSVersion;
     private String securityPatchDate;
-    private int dateCreatedUtc;
 
     public String getCyanogenOSVersion() {
         return cyanogenOSVersion;

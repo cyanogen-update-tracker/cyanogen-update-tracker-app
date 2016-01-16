@@ -1,5 +1,7 @@
 package com.arjanvlek.cyngnotainfo.Model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class ServerMessage {
     private long id;
     private String message;
@@ -33,6 +35,7 @@ public class ServerMessage {
         return messageNl;
     }
 
+    @JsonProperty("message_nl")
     public void setMessageNl(String messageNl) {
         this.messageNl = messageNl;
     }
@@ -41,7 +44,8 @@ public class ServerMessage {
         return deviceId;
     }
 
-    public void setDeviceId(long deviceId) {
+    @JsonProperty("device_id")
+    public void setDeviceId(Long deviceId) {
         this.deviceId = deviceId;
     }
 
@@ -49,6 +53,7 @@ public class ServerMessage {
         return updateMethodId;
     }
 
+    @JsonProperty("update_method_id")
     public void setUpdateMethodId(Long updateMethodId) {
         this.updateMethodId = updateMethodId;
     }
@@ -65,8 +70,8 @@ public class ServerMessage {
         return marquee;
     }
 
-    public void setMarquee(boolean marquee) {
-        this.marquee = marquee;
+    public void setMarquee(String marquee) {
+        this.marquee = marquee.equals("1");
     }
 
     public boolean isDeviceSpecific() {
