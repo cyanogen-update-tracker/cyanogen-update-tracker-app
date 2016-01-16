@@ -32,7 +32,7 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
 
     protected abstract void displayServerMessages(List<ServerMessage> serverMessages);
 
-    protected abstract void displayUpdateInformation(CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean force);
+    protected abstract boolean displayUpdateInformation(CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean force);
 
     protected abstract CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate();
 

@@ -21,12 +21,4 @@ public class SystemVersionProperties {
     public void setSecurityPatchDate(String securityPatchDate) {
         this.securityPatchDate = securityPatchDate;
     }
-
-    public int getDateCreatedUtc() {
-        return dateCreatedUtc;
-    }
-
-    public void setDateCreatedUtc(int dateCreatedUtc) {
-        this.dateCreatedUtc = dateCreatedUtc;
-    }
 }

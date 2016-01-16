@@ -368,7 +368,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
 
-    public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean force) {
+    public boolean displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean displayInfoWhenUpToDate) {
+        if(cyanogenOTAUpdate == null || !isAdded()) {
+            return false;
+        }
         View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
         TextView noConnectionTextField = (TextView) rootView.findViewById(R.id.updateInformationNoConnectionTextView);
         if(online) {
@@ -386,7 +389,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 noConnectionTextField.setVisibility(View.VISIBLE);
             }
         }
-        if(cyanogenOTAUpdate != null && !cyanogenOTAUpdate.isUpdateInformationAvailable()) {
+        if(!cyanogenOTAUpdate.isUpdateInformationAvailable()) {
             // switch views
             rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.VISIBLE);
@@ -410,10 +413,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(LocalDateTime.now()));
             }
             dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE)));
-            // Hide the refreshing icon
-            hideRefreshIcons();
         }
-        else if(cyanogenOTAUpdate != null && checkIfSystemIsUpToDate(cyanogenOTAUpdate.getName(), -1) && isAdded() && !force) {
+        else if(systemIsUpToDate(cyanogenOTAUpdate.getName()) && !displayInfoWhenUpToDate) {
              // switch views
             rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.GONE);
             rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.VISIBLE);
@@ -437,90 +438,107 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             if(online) {
                 settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(LocalDateTime.now()));
             }
-            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE) ));
-            // Hide the refreshing icon
-            hideRefreshIcons();
+            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE)));
         }
         else {
-            if (cyanogenOTAUpdate != null && isAdded()) {
-                rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
-                rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
-                TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
-                if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
-                    buildNumberView.setText(cyanogenOTAUpdate.getName());
-                } else {
-                    buildNumberView.setText(String.format(getString(R.string.unknown_update_name), deviceName));
-                }
-
-                TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-                downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), (cyanogenOTAUpdate.getSize()) / 1048576));
-
-                String description = cyanogenOTAUpdate.getDescription();
-                TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
-                descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
-
-                TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
-                fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOTAUpdate.getFileName()));
-
-                final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
-                if (online) {
-                    if (cyanogenOTAUpdate.getDownloadUrl() != null) {
-                        downloadButton.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                                    MainActivity mainActivity = (MainActivity) getActivity();
-                                    if(mainActivity != null) {
-                                        if(mainActivity.hasDownloadPermissions()) {
-                                            new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                                            downloadButton.setText(getString(R.string.downloading));
-                                            downloadButton.setClickable(false);
-                                        } else {
-                                            mainActivity.requestDownloadPermissions();
-                                        }
-                                    }
-                                } else {
-                                    //noinspection deprecation as it is only used on older Android versions.
-                                    downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                                }
-                            }
-                        });
-                        downloadButton.setEnabled(true);
-                        downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
-                    }
-                } else {
-                    downloadButton.setEnabled(false);
-                    downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
-                }
-
-                // Save preferences for offline viewing
-                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
-                settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
-                settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
-                settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOTAUpdate.getFileName());
-
-                // Hide the refreshing icon
-                hideRefreshIcons();
+            rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(View.VISIBLE);
+            rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(View.GONE);
+            TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
+            if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
+                buildNumberView.setText(cyanogenOTAUpdate.getName());
+            } else {
+                buildNumberView.setText(String.format(getString(R.string.unknown_update_name), deviceName));
             }
+
+            TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
+            downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), (cyanogenOTAUpdate.getSize()) / 1048576));
+
+            String description = cyanogenOTAUpdate.getDescription();
+            TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
+            descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
+
+            TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
+            fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOTAUpdate.getFileName()));
+
+            final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
+
+            if (online) {
+                if (cyanogenOTAUpdate.getDownloadUrl() != null) {
+                    downloadButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                                MainActivity mainActivity = (MainActivity) getActivity();
+                                if(mainActivity != null) {
+                                    if(mainActivity.hasDownloadPermissions()) {
+                                        new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                                        downloadButton.setText(getString(R.string.downloading));
+                                        downloadButton.setClickable(false);
+                                    } else {
+                                        mainActivity.requestDownloadPermissions();
+                                    }
+                                }
+                            } else {
+                                //noinspection deprecation as it is only used on older Android versions.
+                                downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                            }
+                        }
+                    });
+                    downloadButton.setEnabled(true);
+                    downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
+                }
+            } else {
+                downloadButton.setEnabled(false);
+                downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+            }
+
+            TextView headerLabel = (TextView) rootView.findViewById(R.id.headerLabel);
+            Button updateInstallationGuideButton = (Button) rootView.findViewById(R.id.updateInstallationInstructionsButton);
+            View downloadSizeTable = rootView.findViewById(R.id.buttonTable);
+            View downloadSizeImage = rootView.findViewById(R.id.downloadSizeImage);
+
+
+            if(displayInfoWhenUpToDate) {
+                headerLabel.setText(getString(R.string.update_information_installed_update));
+                downloadButton.setVisibility(View.GONE);
+                updateInstallationGuideButton.setVisibility(View.GONE);
+                fileNameView.setVisibility(View.GONE);
+                downloadSizeTable.setVisibility(View.GONE);
+                downloadSizeImage.setVisibility(View.GONE);
+                downloadSizeView.setVisibility(View.GONE);
+            } else {
+                headerLabel.setText(getString(R.string.update_information_latest_available_update));
+                downloadButton.setVisibility(View.VISIBLE);
+                updateInstallationGuideButton.setVisibility(View.VISIBLE);
+                fileNameView.setVisibility(View.VISIBLE);
+                downloadSizeTable.setVisibility(View.VISIBLE);
+                downloadSizeImage.setVisibility(View.VISIBLE);
+                downloadSizeView.setVisibility(View.VISIBLE);
+            }
+
+
+            // Save preferences for offline viewing
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
+            settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
+            settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOTAUpdate.getFileName());
         }
+        hideRefreshIcons();
+        return true;
     }
 
-    private boolean checkIfSystemIsUpToDate(String newCyanogenOSVersion, int newDateCreated) {
+    private boolean systemIsUpToDate(String newCyanogenOSVersion) {
         if(settingsManager.showIfSystemIsUpToDate()) {
             // This grabs Cyanogen OS version from build.prop. As there is no direct SDK way to do this, it has to be done in this way.
             SystemVersionProperties systemVersionProperties = getSystemVersionProperties();
 
             String cyanogenOSVersion = systemVersionProperties.getCyanogenOSVersion();
 
-            int dateCreatedUtc = systemVersionProperties.getDateCreatedUtc();
-
             if(newCyanogenOSVersion == null) {
                 return false;
             }
 
-            if (dateCreatedUtc != -1 && dateCreatedUtc == newDateCreated) {
-                return true;
-            } else if (cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
+            if (cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
                 return false;
             } else {
                 if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {

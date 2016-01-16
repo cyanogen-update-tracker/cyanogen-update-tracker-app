@@ -7,6 +7,7 @@
     <string name="update_information_header">Update information</string>
     <string name="update_information_header_short">Update info</string>
     <string name="update_information_latest_available_update">A new system update is available:</string>
+    <string name="update_information_installed_update">You have currently installed:</string>
     <string name="update">Update</string>
     <string name="update_information_for">for</string>
     <string name="update_information_system_is_up_to_date">Your system is fully up to date.</string>

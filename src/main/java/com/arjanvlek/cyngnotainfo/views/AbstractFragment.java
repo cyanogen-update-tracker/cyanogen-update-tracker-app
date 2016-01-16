@@ -33,8 +33,6 @@ public abstract class AbstractFragment extends Fragment{
         SystemVersionProperties systemVersionProperties = new SystemVersionProperties();
         String cyanogenOSVersion = NO_CYANOGEN_OS;
         String securityPatchDate = NO_CYANOGEN_OS;
-        String dateCreated;
-        int dateCreatedUtc = -1;
         try {
             Process getBuildPropProcess = new ProcessBuilder()
                     .command("getprop")
@@ -50,16 +48,7 @@ public abstract class AbstractFragment extends Fragment{
                     cyanogenOSVersion = cyanogenOSVersion.replace("[", "");
                     cyanogenOSVersion = cyanogenOSVersion.replace("]", "");
                 }
-                if(inputLine.contains("ro.build.date.utc")) {
-                    dateCreated = inputLine.replace("[ro.build.date.utc]: ", "");
-                    dateCreated = dateCreated.replace("[", "");
-                    dateCreated = dateCreated.replace("]", "");
-                    try {
-                        dateCreatedUtc = Integer.parseInt(dateCreated);
-                    } catch (Exception e) {
-                        dateCreatedUtc = -1;
-                    }
-                }
+
                 if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                     securityPatchDate = Build.VERSION.SECURITY_PATCH;
                 } else {
@@ -77,7 +66,6 @@ public abstract class AbstractFragment extends Fragment{
         }
         systemVersionProperties.setCyanogenOSVersion(cyanogenOSVersion);
         systemVersionProperties.setSecurityPatchDate(securityPatchDate);
-        systemVersionProperties.setDateCreatedUtc(dateCreatedUtc);
         return systemVersionProperties;
     }
 

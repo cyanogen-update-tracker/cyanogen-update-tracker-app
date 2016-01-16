@@ -135,5 +135,6 @@
     <string name="device_information_header_short">Apparaat-info</string>
     <string name="update_information_header_short">Update-info</string>
     <string name="device_information_patch_level_version">Datum beveiligingspatch:</string>
+    <string name="update_information_installed_update">Je hebt momenteel geïnstalleerd:</string>
 
 </resources>
