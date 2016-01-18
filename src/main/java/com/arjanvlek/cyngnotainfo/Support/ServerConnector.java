@@ -25,7 +25,7 @@ public class ServerConnector {
 
     public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
     public final static String SERVER_URL = "** Add the base URL of your API / backend here **v2/";
-    public final static String TEST_SERVER_URL = "http://cyanogenupdatetracker.com/test/api/v2/";
+    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v2/";
 
     private ObjectMapper objectMapper;
 
