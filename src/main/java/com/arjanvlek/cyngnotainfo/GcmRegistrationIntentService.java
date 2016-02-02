@@ -311,20 +311,11 @@ public class GcmRegistrationIntentService extends IntentService {
      */
     private void storeRegistrationToken(String registrationToken) {
         final SharedPreferences prefs = getGCMPreferences();
-        int appVersion = getAppVersion();
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(PROPERTY_GCM_REGISTRATION_TOKEN, registrationToken);
         editor.putLong(PROPERTY_GCM_DEVICE_ID, deviceId);
         editor.putLong(PROPERTY_GCM_UPDATE_METHOD_ID, updateMethodId);
-        editor.putInt(PROPERTY_APP_VERSION, appVersion);
+        editor.putInt(PROPERTY_APP_VERSION, BuildConfig.VERSION_CODE);
         editor.apply();
     }
-
-    /**
-     * @return Application's version code from the {@code BuildConfig}.
-     */
-    private static int getAppVersion() {
-       return BuildConfig.VERSION_CODE;
-    }
-
 }

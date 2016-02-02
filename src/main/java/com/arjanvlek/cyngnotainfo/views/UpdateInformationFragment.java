@@ -43,7 +43,6 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -700,8 +699,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     showDownloadNotification(0,false, false, true);
                 }
             } else if(fileName.equals("NO_DOWNLOAD_DIR_ERR")) {
-                if(isAdded()) {
-                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_directory), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                if(isAdded() && !makeDownloadDirectory()) {
+                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_directory), getString(R.string.download_error_close), null, true);
                     getDownloadButton().setClickable(true);
                     getDownloadButton().setText(getString(R.string.download));
                     hideDownloadProgressBar();
@@ -909,5 +908,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 systemIsUpToDateRefreshLayout.setRefreshing(false);
             }
         }
+    }
+
+    private boolean makeDownloadDirectory() {
+        File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
+        return downloadDirectory.mkdirs();
     }
 }
