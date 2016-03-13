@@ -7,6 +7,7 @@ public class UpdateMethod {
     private long id;
     private String updateMethod;
     private String updateMethodNl;
+    private boolean recommended;
 
     public long getId() {
         return id;
@@ -34,5 +35,13 @@ public class UpdateMethod {
     @JsonProperty("update_method_nl")
     public void setUpdateMethodNl(String updateMethodNl) {
         this.updateMethodNl = updateMethodNl;
+    }
+
+    public boolean isRecommended() {
+        return recommended;
+    }
+
+    public void setRecommended(String recommended) {
+        this.recommended = (recommended != null && recommended.equals("1"));
     }
 }

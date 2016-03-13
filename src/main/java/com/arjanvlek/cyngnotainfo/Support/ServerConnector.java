@@ -24,8 +24,8 @@ import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_METHODS;
 public class ServerConnector {
 
     public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
-    public final static String SERVER_URL = "** Add the base URL of your API / backend here **v2/";
-    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v2/";
+    public final static String SERVER_URL = "** Add the base URL of your API / backend here **v2.1/";
+    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v2.1/";
 
     private ObjectMapper objectMapper;
 
@@ -33,7 +33,7 @@ public class ServerConnector {
         this.objectMapper = new ObjectMapper();
     }
 
-    public static boolean testing = false;
+    public static boolean testing = true;
 
     public List<Device> getDevices() {
         return findMultipleFromServerResponse(fetchDataFromServer(DEVICES), Device.class);
@@ -48,7 +48,7 @@ public class ServerConnector {
     }
 
     public ServerStatus getServerStatus() {
-        return findMultipleFromServerResponse(fetchDataFromServer(SERVER_STATUS), ServerStatus.class).get(0); // Bad API implementation!
+        return findOneFromServerResponse(fetchDataFromServer(SERVER_STATUS), ServerStatus.class);
     }
 
     public List<ServerMessage> getServerMessages() {

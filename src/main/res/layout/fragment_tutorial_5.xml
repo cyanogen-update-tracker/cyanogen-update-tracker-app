@@ -6,11 +6,11 @@
 
     <Button
         android:id="@+id/introduction_step_5_close_button"
+        style="?android:buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:background="@android:color/transparent"
         android:onClick="closeInitialTutorial"
         android:text="@string/introduction_close_button"
         android:textColor="@color/lightBlue" />
@@ -68,6 +68,5 @@
 
         </RelativeLayout>
     </ScrollView>
-
 
 </RelativeLayout>

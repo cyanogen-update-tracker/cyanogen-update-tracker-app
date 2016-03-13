@@ -21,6 +21,7 @@ public abstract class AbstractFragment extends Fragment{
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_2 = "D732F1B481C5274B05D707AC197B33B2";
     public static final String ADS_TEST_DEVICE_ID_EMULATOR_3 = "3CFEF5EDED2F2CC6C866A48114EA2ECE";
     public static final String NO_CYANOGEN_OS = "no_cyanogen_os_ver_found";
+    public static SystemVersionProperties SYSTEM_VERSION_PROPERTIES;
 
     public ApplicationContext getApplicationContext() {
         if(applicationContext == null) {
@@ -30,43 +31,48 @@ public abstract class AbstractFragment extends Fragment{
     }
 
     protected SystemVersionProperties getSystemVersionProperties() {
-        SystemVersionProperties systemVersionProperties = new SystemVersionProperties();
-        String cyanogenOSVersion = NO_CYANOGEN_OS;
-        String securityPatchDate = NO_CYANOGEN_OS;
-        try {
-            Process getBuildPropProcess = new ProcessBuilder()
-                    .command("getprop")
-                    .redirectErrorStream(true)
-                    .start();
+        if(SYSTEM_VERSION_PROPERTIES == null) {
+            SystemVersionProperties systemVersionProperties = new SystemVersionProperties();
+            String cyanogenOSVersion = NO_CYANOGEN_OS;
+            String securityPatchDate = NO_CYANOGEN_OS;
+            try {
+                Process getBuildPropProcess = new ProcessBuilder()
+                        .command("getprop")
+                        .redirectErrorStream(true)
+                        .start();
 
-            BufferedReader in = new BufferedReader(new InputStreamReader(getBuildPropProcess.getInputStream()));
-            String inputLine;
+                BufferedReader in = new BufferedReader(new InputStreamReader(getBuildPropProcess.getInputStream()));
+                String inputLine;
 
-            while ((inputLine = in.readLine()) != null) {
-                if(inputLine.contains("ro.cm.display.version")) {
-                    cyanogenOSVersion = inputLine.replace("[ro.cm.display.version]: ", "");
-                    cyanogenOSVersion = cyanogenOSVersion.replace("[", "");
-                    cyanogenOSVersion = cyanogenOSVersion.replace("]", "");
-                }
+                while ((inputLine = in.readLine()) != null) {
+                    if (inputLine.contains("ro.cm.display.version")) {
+                        cyanogenOSVersion = inputLine.replace("[ro.cm.display.version]: ", "");
+                        cyanogenOSVersion = cyanogenOSVersion.replace("[", "");
+                        cyanogenOSVersion = cyanogenOSVersion.replace("]", "");
+                    }
 
-                if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                    securityPatchDate = Build.VERSION.SECURITY_PATCH;
-                } else {
-                    if(inputLine.contains("ro.build.version.security_patch")) {
-                        securityPatchDate = inputLine.replace("[ro.build.version.security_patch]: ", "");
-                        securityPatchDate = securityPatchDate.replace("[", "");
-                        securityPatchDate = securityPatchDate.replace("]", "");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        securityPatchDate = Build.VERSION.SECURITY_PATCH;
+                    } else {
+                        if (inputLine.contains("ro.build.version.security_patch")) {
+                            securityPatchDate = inputLine.replace("[ro.build.version.security_patch]: ", "");
+                            securityPatchDate = securityPatchDate.replace("[", "");
+                            securityPatchDate = securityPatchDate.replace("]", "");
+                        }
                     }
                 }
+                getBuildPropProcess.destroy();
+
+            } catch (IOException e) {
+                Log.e("IOException buildProp", e.getLocalizedMessage());
             }
-            getBuildPropProcess.destroy();
-
-        } catch (IOException e) {
-            Log.e("IOException buildProp", e.getLocalizedMessage());
+            systemVersionProperties.setCyanogenOSVersion(cyanogenOSVersion);
+            systemVersionProperties.setSecurityPatchDate(securityPatchDate);
+            systemVersionProperties.setModelNumber(Build.MODEL);
+            SYSTEM_VERSION_PROPERTIES = systemVersionProperties;
+            return SYSTEM_VERSION_PROPERTIES;
+        } else {
+            return SYSTEM_VERSION_PROPERTIES;
         }
-        systemVersionProperties.setCyanogenOSVersion(cyanogenOSVersion);
-        systemVersionProperties.setSecurityPatchDate(securityPatchDate);
-        return systemVersionProperties;
     }
-
 }

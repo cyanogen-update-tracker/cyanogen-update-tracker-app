@@ -1,6 +1,5 @@
 package com.arjanvlek.cyngnotainfo.views;
 
-import android.app.DownloadManager;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -208,22 +207,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
     private void getServerData() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-            if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
-                new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-            }
-            if(settingsManager.showNewsMessages()) {
-                new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-            }
-        } else {
-            new GetUpdateInformation().execute();
-            if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
-                new GetServerStatus().execute();
-            }
-            if(settingsManager.showNewsMessages()) {
-                new GetServerMessages().execute();
-            }
+        new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
+            new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
+        if(settingsManager.showNewsMessages()) {
+            new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         }
     }
 
@@ -367,10 +356,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
 
-    public boolean displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, final boolean online, boolean displayInfoWhenUpToDate) {
+    public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, final boolean online, boolean displayInfoWhenUpToDate) {
         // Abort if no update data is found or if the fragment is not attached to its activity to prevent crashes.
         if(cyanogenOTAUpdate == null || !isAdded()) {
-            return false;
+            return;
         }
 
         // Display the "No connection" bar depending on the network status of the device.
@@ -475,20 +464,15 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     downloadButton.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View v) {
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                                MainActivity mainActivity = (MainActivity) getActivity();
-                                if(mainActivity != null) {
-                                    if(mainActivity.hasDownloadPermissions()) {
-                                        new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                                        downloadButton.setText(getString(R.string.downloading));
-                                        downloadButton.setClickable(false);
-                                    } else {
-                                        mainActivity.requestDownloadPermissions();
-                                    }
+                            MainActivity mainActivity = (MainActivity) getActivity();
+                            if(mainActivity != null) {
+                                if(mainActivity.hasDownloadPermissions()) {
+                                    new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                                    downloadButton.setText(getString(R.string.downloading));
+                                    downloadButton.setClickable(false);
+                                } else {
+                                    mainActivity.requestDownloadPermissions();
                                 }
-                            } else {
-                                //noinspection deprecation as it is only used on older Android versions.
-                                downloadUpdate(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
                             }
                         }
                     });
@@ -535,7 +519,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
         // Hide the refreshing icon if it is present.
         hideRefreshIcons();
-        return true;
     }
 
     private boolean systemIsUpToDate(String newCyanogenOSVersion) {
@@ -865,25 +848,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         transaction.add(errorDialog, "DownloadError");
         transaction.commitAllowingStateLoss();
         showDownloadNotification(0, false, false, true);
-    }
-
-    @Deprecated
-    private void downloadUpdate(String downloadUrl, String downloadName) {
-        DownloadManager downloadManager = (DownloadManager) getActivity().getSystemService(Context.DOWNLOAD_SERVICE);
-        Uri uri = Uri.parse(downloadUrl);
-        DownloadManager.Request request = new DownloadManager.Request(uri);
-        request.setDescription(downloadUrl).setTitle(getString(R.string.download_description));
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, downloadName);
-        request.setVisibleInDownloadsUi(true);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        } else {
-            //noinspection deprecation as it is only for older Android versions.
-            request.setShowRunningNotification(true);
-        }
-        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI | DownloadManager.Request.NETWORK_MOBILE);
-        downloadManager.enqueue(request);
-        Toast.makeText(getActivity(), getString(R.string.download_in_background), Toast.LENGTH_LONG).show();
     }
 
     @Override

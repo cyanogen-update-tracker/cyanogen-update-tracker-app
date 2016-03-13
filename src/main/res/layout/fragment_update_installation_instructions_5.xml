@@ -62,12 +62,12 @@
 
         <Button
             android:id="@+id/button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_below="@+id/textView"
             android:layout_centerHorizontal="true"
-            android:background="@android:color/transparent"
             android:onClick="closeTutorial"
             android:text="@string/install_guide_step5_close_button"
             android:textColor="@color/lightBlue" />

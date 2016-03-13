@@ -67,6 +67,7 @@
 
     <Button
         android:id="@+id/aboutRateButton"
+        style="?android:buttonBarButtonStyle"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -75,7 +76,6 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginStart="@dimen/activity_horizontal_margin"
-        android:background="@android:color/transparent"
         android:onClick="rateApp"
         android:text="@string/about_rate_app_button_text"
         android:textColor="@color/lightBlue" />

@@ -1,7 +1,6 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,18 +11,18 @@ import android.widget.Spinner;
 
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.CustomDropdown;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
 public class TutorialStep4Fragment extends AbstractFragment {
+
     private View rootView;
     private SettingsManager settingsManager;
-    private long updateMethodId;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -35,11 +34,7 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
     public void fetchUpdateMethods() {
         long deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId);
-        } else {
-            new UpdateDataFetcher().execute(deviceId);
-        }
+        new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, deviceId);
     }
 
     private class UpdateDataFetcher extends AsyncTask<Long, Integer, List<UpdateMethod>> {
@@ -58,36 +53,41 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
     private void fillUpdateSettings(final List<UpdateMethod> updateMethods) {
         Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsUpdateMethodSpinner);
-        List<String> updateMethodNames = new ArrayList<>();
-        if(Locale.getDefault().getDisplayLanguage().equals("Nederlands")) {
-            for(UpdateMethod updateMethod : updateMethods) {
-                updateMethodNames.add(updateMethod.getUpdateMethodNl());
-            }
-        }
-        else {
-            for(UpdateMethod updateMethod : updateMethods) {
-                updateMethodNames.add(updateMethod.getUpdateMethod());
+
+        final List<Integer> recommendedPositions = new ArrayList<>();
+
+        for (int i = 0; i < updateMethods.size(); i++) {
+            if(updateMethods.get(i).isRecommended()) {
+                recommendedPositions.add(i);
             }
         }
 
         if(getActivity() != null) {
-            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, updateMethodNames);
+            ArrayAdapter<UpdateMethod> adapter = new ArrayAdapter<UpdateMethod>(getActivity(), android.R.layout.simple_spinner_item, updateMethods) {
+
+                @Override
+                public View getView(int position, View convertView, ViewGroup parent) {
+                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_item, updateMethods, recommendedPositions, this.getContext());
+                }
+
+                @Override
+                public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item, updateMethods, recommendedPositions, this.getContext());
+                }
+            };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             spinner.setAdapter(adapter);
+            if(recommendedPositions.size() > 0) {
+                spinner.setSelection(recommendedPositions.get(0));
+            }
             spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                 @Override
                 public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    updateMethodId = 0L;
-                    String updateMethodName = (String) adapterView.getItemAtPosition(i);
-                    for (UpdateMethod updateMethod : updateMethods) {
-                        if (updateMethod.getUpdateMethod().equals(updateMethodName) || updateMethod.getUpdateMethodNl().equals(updateMethodName)) {
-                            updateMethodId = updateMethod.getId();
-                        }
-                    }
+                    UpdateMethod updateMethod= (UpdateMethod) adapterView.getItemAtPosition(i);
 
                     //Set update method in preferences.
-                    settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, updateMethodId);
-                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, updateMethodName);
+                    settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, updateMethod.getId());
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, updateMethod.getUpdateMethod());
                 }
 
                 @Override

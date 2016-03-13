@@ -118,12 +118,14 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
-            <RelativeLayout
+            <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
                 android:id="@+id/relativeLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
+                android:paddingTop="@dimen/activity_vertical_margin"
                 tools:context=".MainActivity$PlaceholderFragment">
 
                 <TextView
@@ -131,7 +133,6 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="@dimen/activity_vertical_margin"
                     android:text="@string/update_information_latest_available_update" />
 
                 <TextView
@@ -147,6 +148,7 @@
                     android:textAppearance="?android:attr/textAppearanceMedium"
                     android:textColor="@android:color/black"
                     android:textStyle="bold" />
+
 
                 <TextView
                     android:id="@+id/updateDescriptionView"
@@ -168,39 +170,68 @@
                     android:layout_marginStart="50dp"
                     android:layout_marginTop="@dimen/activity_vertical_margin" />
 
-                <ProgressBar
-                    android:id="@+id/updateInformationDownloadProgressBar"
-                    style="?android:attr/progressBarStyleHorizontal"
+                <TableLayout
+                    android:id="@+id/downloadProgressTable"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/updateFileNameView"
-                    android:visibility="gone" />
+                    android:visibility="gone">
+
+                    <TableRow>
+
+                        <ProgressBar
+                            android:id="@+id/updateInformationDownloadProgressBar"
+                            style="?android:attr/progressBarStyleHorizontal"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="70"
+                            android:visibility="visible" />
+
+                        <ImageButton
+                            android:id="@+id/updateInformationDownloadCancelButton"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginRight="10dp"
+                            android:layout_marginStart="10dp"
+                            android:layout_weight="0"
+                            android:background="@android:color/transparent"
+                            android:contentDescription="@string/icon"
+                            android:src="@drawable/ic_action_highlight_remove" />
+                    </TableRow>
+
+                </TableLayout>
+
 
                 <TableLayout
                     android:id="@+id/buttonTable"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_below="@+id/updateInformationDownloadProgressBar"
+                    android:layout_below="@+id/downloadProgressTable"
                     android:layout_centerHorizontal="true">
 
                     <TableRow>
 
                         <Button
                             android:id="@+id/updateInformationDownloadButton"
+                            style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:background="@android:color/transparent"
                             android:enabled="false"
                             android:text="@string/download"
                             android:textColor="@color/lightBlue" />
 
                         <Button
                             android:id="@+id/updateInstallationInstructionsButton"
+                            style="?android:attr/buttonBarButtonStyle"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginLeft="10dp"
                             android:layout_marginStart="10dp"
-                            android:background="@android:color/transparent"
                             android:enabled="true"
                             android:onClick="UpdateInstructions"
                             android:text="@string/install_guide"
@@ -235,14 +266,12 @@
                         android:layout_toRightOf="@id/downloadSizeImage"
                         android:gravity="center" />
 
-
                 </RelativeLayout>
 
             </RelativeLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <!-- Up to date view -->
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/updateInformationSystemIsUpToDateRefreshLayout"
         android:layout_width="match_parent"
@@ -282,7 +311,8 @@
                     android:layout_height="170dp"
                     android:layout_below="@id/updateInformationSystemIsUpToDateHeader"
                     android:layout_centerHorizontal="true"
-                    android:layout_marginTop="10dp"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginTop="15dp"
                     android:contentDescription="@string/icon"
 
                     android:src="@drawable/icon_uptodate" />
@@ -303,19 +333,17 @@
 
                 <Button
                     android:id="@+id/updateInformationSystemIsUpToDateStatisticsButton"
+                    style="?attr/buttonBarButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_below="@id/updateInformationSystemIsUpToDateDateTextView"
                     android:layout_centerHorizontal="true"
-                    android:background="@android:color/transparent"
-                    android:text="@string/update_information_view_update_information"
-                    android:textColor="@color/lightBlue" />
+                    android:text="@string/update_information_view_update_information" />
 
             </RelativeLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
 
-    <!-- Ad view -->
     <com.google.android.gms.ads.AdView
         android:id="@+id/updateInformationAdView"
         android:layout_width="wrap_content"

@@ -12,6 +12,7 @@ public class Device {
     }
     private long id;
     private String deviceName;
+    private String modelNumber;
 
     public long getId() {
         return id;
@@ -29,5 +30,15 @@ public class Device {
     @JsonProperty("device_name")
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
+    }
+
+    @JsonProperty("model_number")
+    public String getModelNumber() {
+        return modelNumber;
+    }
+
+    @JsonProperty("model_number")
+    public void setModelNumber(String modelNumber) {
+        this.modelNumber = modelNumber;
     }
 }

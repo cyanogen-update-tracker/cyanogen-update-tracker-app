@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
@@ -50,9 +49,9 @@ public class GcmRegistrationIntentService extends IntentService {
     private static final String JSON_PROPERTY_APP_VERSION = "app_version";
 
     //Server URLs
-    public static String SERVER_URL = "** Add the base URL of your API / backend here **v2/registerDevice";
-    public static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v2/registerDevice";
-    public static boolean testing = false;
+    public static String SERVER_URL = "** Add the base URL of your API / backend here **v2.1/registerDevice";
+    public static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v2.1/registerDevice";
+    public static boolean testing = true;
     public GcmRegistrationIntentService() {
         super(TAG);
     }
@@ -161,11 +160,7 @@ public class GcmRegistrationIntentService extends IntentService {
      */
     private void sendRegistrationTokenToServer(String token) {
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-            new RegisterTokenToBackend().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, token, getCurrentRegistrationToken());
-        } else {
-            new RegisterTokenToBackend().execute(token, getCurrentRegistrationToken());
-        }
+        new RegisterTokenToBackend().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, token, getCurrentRegistrationToken());
     }
 
     /**

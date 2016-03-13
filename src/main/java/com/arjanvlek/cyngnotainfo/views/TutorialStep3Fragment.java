@@ -1,7 +1,6 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,12 +11,13 @@ import android.widget.Spinner;
 
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.CustomDropdown;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class TutorialStep3Fragment extends AbstractFragment {
+
     private View rootView;
     private SettingsManager settingsManager;
 
@@ -31,12 +31,7 @@ public class TutorialStep3Fragment extends AbstractFragment {
     @Override
     public void onResume() {
         super.onResume();
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
-            new GetDevices().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
-        }
-        else {
-            new GetDevices().execute();
-        }
+        new GetDevices().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
     }
 
     private class GetDevices extends AsyncTask<Void, Void, List<Device>> {
@@ -54,27 +49,42 @@ public class TutorialStep3Fragment extends AbstractFragment {
 
     private void fillDeviceSettings(final List<Device> devices) {
         Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsDeviceSpinner);
-        List<String> deviceNames = new ArrayList<>();
 
-        for (Device device : devices) {
-            deviceNames.add(device.getDeviceName());
+        int selectedIndex = -1;
+
+        for(int i=0; i<devices.size(); i++) {
+            if(devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(getSystemVersionProperties().getModelNumber())) {
+                selectedIndex = i;
+            }
         }
 
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, deviceNames);
+        final int selection = selectedIndex;
+
+        ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(getActivity(), android.R.layout.simple_spinner_item, devices) {
+
+            @Override
+            public View getView(int position, View convertView, ViewGroup parent) {
+                return CustomDropdown.initCustomDeviceDropdown(position, convertView, parent, android.R.layout.simple_spinner_item, devices, selection, this.getContext());
+            }
+
+            @Override
+            public View getDropDownView(int position, View convertView, ViewGroup parent) {
+                return CustomDropdown.initCustomDeviceDropdown(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item, devices, selection, this.getContext());
+            }
+
+
+    };
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spinner.setAdapter(adapter);
+        if(selectedIndex != -1) {
+            spinner.setSelection(selectedIndex);
+        }
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                String deviceName = (String) adapterView.getItemAtPosition(i);
-                Long deviceId = 0L;
-                for(Device device : devices) {
-                    if(device.getDeviceName().equalsIgnoreCase(deviceName)) {
-                        deviceId = device.getId();
-                    }
-                }
-                settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE, deviceName);
-                settingsManager.saveLongPreference(SettingsManager.PROPERTY_DEVICE_ID, deviceId);
+                Device device = (Device)adapterView.getItemAtPosition(i);
+                settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE, device.getDeviceName());
+                settingsManager.saveLongPreference(SettingsManager.PROPERTY_DEVICE_ID, device.getId());
             }
 
             @Override
