@@ -140,6 +140,7 @@ public class TutorialActivity extends AppCompatActivity {
 
     public void closeInitialTutorial(View view) {
         if (settingsManager.checkIfDeviceIsSet()) {
+            settingsManager.saveBooleanPreference(SettingsManager.PROPERTY_SETUP_DONE, true);
             NavUtils.navigateUpFromSameTask(this);
         } else {
             showSettingsWarning();

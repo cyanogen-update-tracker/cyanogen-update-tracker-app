@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,6 +22,7 @@ import android.widget.Toast;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.views.HelpActivity;
+import com.arjanvlek.cyngnotainfo.views.MessageDialog;
 import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
 import com.arjanvlek.cyngnotainfo.views.AboutActivity;
 import com.arjanvlek.cyngnotainfo.views.DeviceInformationFragment;
@@ -115,9 +117,19 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     }
                 }
             }
-            //Show the welcome tutorial if no device has been set
-            if (device == null || updateMethod == null) {
-                Tutorial();
+
+            // Mark the welcome tutorial as finished if the user is moving from older app version.
+            if(!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE) && settingsManager.checkIfCacheIsAvailable()) {
+                settingsManager.saveBooleanPreference(PROPERTY_SETUP_DONE, true);
+            }
+
+            // Show the welcome tutorial if the app needs to be set up.
+            if(!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE)) {
+                if(networkConnectionManager.checkNetworkConnection()) {
+                    Tutorial();
+                } else {
+                    showNetworkError();
+                }
             }
         }
     }
@@ -127,6 +139,17 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         // Inflate the menu; this adds items to the action bar.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
+    }
+
+    protected void showNetworkError() {
+        DialogFragment errorDialog = new MessageDialog();
+        Bundle args = new Bundle(4);
+        args.putString("message", getString(R.string.error_app_requires_network_connection_message));
+        args.putString("title", getString(R.string.error_app_requires_network_connection));
+        args.putString("button1", getString(R.string.download_error_close));
+        args.putBoolean("closable", false);
+        errorDialog.setArguments(args);
+        errorDialog.show(getSupportFragmentManager(), "NetworkError");
     }
 
 

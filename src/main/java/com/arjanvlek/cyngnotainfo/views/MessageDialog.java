@@ -51,7 +51,9 @@ public class MessageDialog extends DialogFragment {
             builder.setPositiveButton(button1Text, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    errorDialogListener.onDialogCancelButtonClick(MessageDialog.this);
+                    if(errorDialogListener != null) {
+                        errorDialogListener.onDialogCancelButtonClick(MessageDialog.this);
+                    }
                 }
             });
         }

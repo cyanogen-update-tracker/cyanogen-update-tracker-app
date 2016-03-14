@@ -55,43 +55,20 @@
                 android:layout_below="@id/settingsDescriptionView"
                 android:background="#ff88e0ff" />
 
-            <ProgressBar
-                android:id="@+id/settingsDeviceProgressBar"
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:visibility="gone"
-                android:layout_marginTop="8dp"
-                android:layout_below="@id/settingsUpperDivisor"/>
-
             <TextView
                 android:id="@+id/settingsDeviceView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/settingsUpperDivisor"
-                android:layout_toRightOf="@id/settingsDeviceProgressBar"
-                android:layout_toEndOf="@id/settingsDeviceProgressBar"
                 android:layout_marginTop="5dp"
                 android:text="@string/settings_device"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-
-
-            <ProgressBar
-                android:id="@+id/settingsUpdateMethodProgressBar"
-                style="?android:attr/progressBarStyleSmall"
-                android:layout_width="20dp"
-                android:layout_height="20dp"
-                android:visibility="gone"
-                android:layout_marginTop="5dp"
-                android:layout_alignTop="@+id/settingsUpdateMethodSpinner"/>
 
             <TextView
                 android:id="@+id/settingsUpdateMethodView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
 
-                android:layout_toRightOf="@id/settingsUpdateMethodProgressBar"
-                android:layout_toEndOf="@id/settingsUpdateMethodProgressBar"
                 android:layout_alignTop="@+id/settingsUpdateMethodSpinner"
                 android:text="@string/settings_update_method"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
@@ -99,10 +76,8 @@
 
             <Spinner
                 android:id="@+id/settingsDeviceSpinner"
-                android:layout_width="120dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_below="@+id/settingsUpperDivisor"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
@@ -112,15 +87,35 @@
 
             <Spinner
                 android:id="@+id/settingsUpdateMethodSpinner"
-                android:layout_width="120dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:layout_below="@id/settingsDeviceSpinner"
                 android:layout_marginLeft="10dp"
                 android:layout_marginStart="10dp"
                 android:layout_toEndOf="@id/settingsUpdateMethodView"
                 android:layout_toRightOf="@id/settingsUpdateMethodView" />
+
+            <ProgressBar
+                android:id="@+id/settingsDeviceProgressBar"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:visibility="gone"
+                android:layout_marginTop="8dp"
+                android:layout_toRightOf="@id/settingsDeviceSpinner"
+                android:layout_toEndOf="@id/settingsDeviceSpinner"
+                android:layout_below="@id/settingsUpperDivisor"/>
+
+            <ProgressBar
+                android:id="@+id/settingsUpdateMethodProgressBar"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:visibility="gone"
+                android:layout_marginTop="5dp"
+                android:layout_toRightOf="@id/settingsUpdateMethodSpinner"
+                android:layout_toEndOf="@id/settingsUpdateMethodSpinner"
+                android:layout_alignTop="@+id/settingsUpdateMethodSpinner"/>
 
             <TextView
                 android:id="@+id/settingsServerMessagesLabel"

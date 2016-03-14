@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
@@ -23,11 +24,13 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
     private View rootView;
     private SettingsManager settingsManager;
+    private ProgressBar progressBar;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         rootView = inflater.inflate(R.layout.fragment_tutorial_4, container, false);
         settingsManager = new SettingsManager(getActivity().getApplicationContext());
+        progressBar = (ProgressBar) rootView.findViewById(R.id.settingsUpdateMethodProgressBar);
         return rootView;
     }
 
@@ -38,6 +41,15 @@ public class TutorialStep4Fragment extends AbstractFragment {
     }
 
     private class UpdateDataFetcher extends AsyncTask<Long, Integer, List<UpdateMethod>> {
+
+        @Override
+        protected void onPreExecute() {
+            try {
+                progressBar.setVisibility(View.VISIBLE);
+            } catch (Exception ignored) {
+
+            }
+        }
 
         @Override
         public List<UpdateMethod> doInBackground(Long... deviceIds) {
@@ -95,6 +107,12 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
                 }
             });
+
+            try {
+                progressBar.setVisibility(View.GONE);
+            } catch (Exception ignored) {
+
+            }
         }
     }
 }

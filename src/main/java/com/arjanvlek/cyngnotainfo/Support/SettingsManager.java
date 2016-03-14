@@ -33,6 +33,7 @@ public class SettingsManager {
     public static final String PROPERTY_SHOW_NEWS_MESSAGES = "show_news_messages";
     public static final String PROPERTY_SHOW_APP_UPDATE_MESSAGES = "show_app_update_messages";
     public static final String PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE = "show_if_system_is_up_to_date";
+    public static final String PROPERTY_SETUP_DONE = "setup_done";
 
     private Context context;
 
@@ -43,7 +44,7 @@ public class SettingsManager {
 
 
     public boolean checkIfSettingsAreValid() {
-        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD);
+        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD) && getBooleanPreference(PROPERTY_SETUP_DONE);
     }
 
     public boolean receiveSystemUpdateNotifications() {
@@ -155,6 +156,11 @@ public class SettingsManager {
     public int getIntPreference(String key) {
         SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getInt(key, 0);
+    }
+
+    public boolean getBooleanPreference(String key) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getBoolean(key, false);
     }
 
     /**

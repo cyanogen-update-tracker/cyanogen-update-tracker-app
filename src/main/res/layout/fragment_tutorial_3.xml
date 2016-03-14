@@ -40,7 +40,7 @@
 
             <Spinner
                 android:id="@+id/settingsDeviceSpinner"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/introduction_step_5_header_text"
                 android:layout_centerHorizontal="true"
@@ -49,6 +49,17 @@
                 android:layout_marginRight="20dp"
                 android:layout_marginStart="20dp"
                 android:layout_marginTop="10dp" />
+
+            <ProgressBar
+                android:id="@+id/settingsDeviceProgressBar"
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:layout_alignTop="@id/settingsDeviceSpinner"
+                style="?android:attr/progressBarStyleSmall"
+                android:visibility="gone"
+                android:layout_marginTop="5dp"
+                android:layout_toEndOf="@id/settingsDeviceSpinner"
+                android:layout_toRightOf="@id/settingsDeviceSpinner"/>
 
             <TextView
                 android:id="@+id/introduction_step_5_text_block_1"
