@@ -19,7 +19,7 @@
 
     <!-- Update description strings -->
     <string name="update_description">Update description</string>
-    <string name="update_description_not_available">Unfortunately, an update description is not available for this system update.</string>
+    <string name="update_description_not_available" translatable="false">This maintenance release provides bug fixes, performance enhancements, and critical security updates for your device.</string>
     <string name="update_information_close">Close</string>
 
     <!-- Other strings-->
@@ -41,6 +41,7 @@
     <string name="yesterday">Yesterday</string>
 
     <!-- Downloader strings-->
+    <string name="settings_cannot_launch_downloading">You can\'t open the Settings screen while an update is downloading…</string>
     <string name="download">Download</string>
     <string name="downloading">Downloading…</string>
     <string name="verifying">Verifying…</string>

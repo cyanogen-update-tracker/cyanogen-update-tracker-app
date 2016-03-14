@@ -33,7 +33,7 @@ public class ServerConnector {
         this.objectMapper = new ObjectMapper();
     }
 
-    public static boolean testing = true;
+    public static boolean testing = false;
 
     public List<Device> getDevices() {
         return findMultipleFromServerResponse(fetchDataFromServer(DEVICES), Device.class);

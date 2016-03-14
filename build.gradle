@@ -45,11 +45,11 @@ dependencies {
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
     //JSON library
-    compile 'com.fasterxml.jackson.core:jackson-core:2.7.0'
-    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.0'
+    compile 'com.fasterxml.jackson.core:jackson-core:2.7.2'
+    compile 'com.fasterxml.jackson.core:jackson-databind:2.7.2'
     //Date and time library
-    compile 'joda-time:joda-time:2.8.2'
-    compile 'org.joda:joda-convert:1.7'
+    compile 'joda-time:joda-time:2.9.2'
+    compile 'org.joda:joda-convert:1.8.1'
     //Google Play Services libraries
     compile 'com.google.android.gms:play-services-ads:8.4.0'
     compile 'com.google.android.gms:play-services-gcm:8.4.0'

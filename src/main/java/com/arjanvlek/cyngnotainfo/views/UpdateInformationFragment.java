@@ -42,6 +42,7 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.joda.time.DateTime;
+import org.joda.time.LocalDateTime;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -68,7 +69,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     private DateTime refreshedDate;
     private boolean isFetched;
-    private boolean isDownloading;
 
     public static final int NOTIFICATION_ID = 1;
 
@@ -197,7 +197,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(isDownloading) {
+        if(getDownloading()) {
             NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(NOTIFICATION_ID);
         }
@@ -420,13 +420,13 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
             // Save last time checked if online.
             if(online) {
-                DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
-                settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, dateTimeFormatter.formatDateTime(DateTime.now()));
+                settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
             }
 
             // Show last time checked.
             TextView dateCheckedView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateDateTextView);
-            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE)));
+            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
+            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), dateTimeFormatter.formatDateTime(settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE))));
         }
 
         // Display the "Update information" screen if an update is available or if View Update Information is clicked on an up to date device.
@@ -590,7 +590,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         protected void onPreExecute() {
             super.onPreExecute();
             showDownloadProgressBar();
-            isDownloading = true;
+            setDownloading(true);
             getDownloadProgressBar().setIndeterminate(false);
             getDownloadCancelButton().setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -603,6 +603,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     } else {
                         hideDownloadNotification();
                     }
+                    setDownloading(false);
                     cancel(true);
                 }
             });
@@ -664,9 +665,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     getDownloadButton().setClickable(true);
                     getDownloadButton().setText(getString(R.string.download));
                     hideDownloadProgressBar();
-                    isDownloading = false;
+                    setDownloading(false);
                 } else {
-                    isDownloading = false;
+                    setDownloading(false);
                     showDownloadNotification(0,false, false, true);
                 }
 
@@ -676,9 +677,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     getDownloadButton().setClickable(true);
                     getDownloadButton().setText(getString(R.string.download));
                     hideDownloadProgressBar();
-                    isDownloading = false;
+                    setDownloading(false);
                 } else {
-                    isDownloading = false;
+                    setDownloading(false);
                     showDownloadNotification(0,false, false, true);
                 }
             } else if(fileName.equals("NO_DOWNLOAD_DIR_ERR")) {
@@ -687,9 +688,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     getDownloadButton().setClickable(true);
                     getDownloadButton().setText(getString(R.string.download));
                     hideDownloadProgressBar();
-                    isDownloading = false;
+                    setDownloading(false);
                 } else {
-                    isDownloading = false;
+                    setDownloading(false);
+                    execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
                     showDownloadNotification(0,false, false, true);
                 }
             }
@@ -825,7 +827,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             getDownloadButton().setClickable(true);
             getDownloadButton().setText(getString(R.string.download));
             hideDownloadProgressBar();
-            isDownloading = false;
+            setDownloading(false);
             if(result) {
                 showDownloadNotification(0, false, true, false);
             } else {
@@ -877,5 +879,23 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private boolean makeDownloadDirectory() {
         File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
         return downloadDirectory.mkdirs();
+    }
+
+    private void setDownloading(boolean isDownloading) {
+        try {
+            MainActivity mainActivity = (MainActivity) getActivity();
+            mainActivity.setDownloading(isDownloading);
+        } catch (Exception ignored) {
+
+        }
+    }
+
+    private boolean getDownloading() {
+        try {
+            MainActivity activity = (MainActivity) getActivity();
+            return activity.isDownloading();
+        } catch (Exception e) {
+            return false;
+        }
     }
 }

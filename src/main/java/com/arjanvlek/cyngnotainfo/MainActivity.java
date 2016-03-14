@@ -39,6 +39,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private ViewPager mViewPager;
     private SettingsManager settingsManager;
     private NetworkConnectionManager networkConnectionManager;
+    private boolean isDownloading;
 
     // Used for Google Play Services check
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -232,8 +233,16 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      * Opens the settings page.
      */
     private void Settings() {
-        Intent i = new Intent(this, SettingsActivity.class);
-        startActivity(i);
+        if(!isDownloading()) {
+            Intent i = new Intent(this, SettingsActivity.class);
+            startActivity(i);
+        } else {
+            try {
+                Toast.makeText(getBaseContext(), getString(R.string.settings_cannot_launch_downloading), Toast.LENGTH_LONG).show();
+            } catch (Exception ignored) {
+
+            }
+        }
     }
 
     /**
@@ -328,5 +337,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         } else {
             return true;
         }
+    }
+
+    public boolean isDownloading() {
+        return this.isDownloading;
+    }
+
+    public void setDownloading(boolean isDownloading) {
+        this.isDownloading = isDownloading;
     }
 }

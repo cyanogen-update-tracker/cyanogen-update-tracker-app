@@ -11,7 +11,6 @@
     <string name="install_guide">Installatiehandleiding</string>
     <string name="update_information_header">Update-informatie</string>
     <string name="device_information_header">Apparaat-informatie</string>
-    <string name="update_description_not_available">Helaas, voor deze update is geen updatebeschrijving beschikbaar.</string>
     <string name="error_app_requires_network_connection">Voor deze app is een werkende internetverbinding vereist</string>
     <string name="error_app_requires_network_connection_message">Kan geen update-informatie van de server ophalen. Zorg ervoor dat je een werkende internetverbinding hebt. De app zal nu afsluiten.</string>
     <string name="download_in_background">De update zal op de achtergrond worden gedownload…</string>
@@ -136,5 +135,6 @@
     <string name="update_information_header_short">Update-info</string>
     <string name="device_information_patch_level_version">Datum beveiligingspatch:</string>
     <string name="update_information_installed_update">Je hebt momenteel geïnstalleerd:</string>
+    <string name="settings_cannot_launch_downloading">Je kunt het Instellingen-scherm niet openen tijdens het downloaden van een update…</string>
 
 </resources>

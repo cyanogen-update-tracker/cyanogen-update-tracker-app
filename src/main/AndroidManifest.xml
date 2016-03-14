@@ -44,12 +44,18 @@
         <activity
             android:name=".views.UpdateInstallationGuideActivity"
             android:label="@string/install_guide"
-            android:screenOrientation="portrait">
+            android:screenOrientation="portrait"
+            android:parentActivityName=".MainActivity"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
             <intent-filter>
                 <action android:name="updateInstallationInformationActivity" />
 
                 <category android:name="android.intent.category.default" />
             </intent-filter>
+
         </activity>
         <activity
             android:name=".views.AboutActivity"

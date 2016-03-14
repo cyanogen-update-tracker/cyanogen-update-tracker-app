@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.arjanvlek.cyngnotainfo.R;
 
-import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
 import java.text.DateFormat;
@@ -28,7 +27,11 @@ public class DateTimeFormatter {
         this.fragment = fragment;
     }
 
-    public String formatDateTime(DateTime dateTime) {
+    public String formatDateTime(String dateTimeString) {
+        if(dateTimeString == null || dateTimeString.equals("")) {
+            return fragment.getString(R.string.device_information_unknown);
+        }
+        LocalDateTime dateTime = LocalDateTime.parse(dateTimeString);
         DateFormat timeFormat = android.text.format.DateFormat.getTimeFormat(context);
         String formattedTime = timeFormat.format(dateTime.toDate());
 
