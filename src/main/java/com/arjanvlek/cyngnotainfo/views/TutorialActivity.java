@@ -17,6 +17,8 @@ import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 
 public class TutorialActivity extends AppCompatActivity {
+
+    private Fragment step3Fragment;
     private Fragment step4Fragment;
     private SettingsManager settingsManager;
 
@@ -48,6 +50,12 @@ public class TutorialActivity extends AppCompatActivity {
 
             @Override
             public void onPageSelected(int position) {
+                if(position == 2) {
+                    if(step3Fragment != null) {
+                        TutorialStep3Fragment tutorialStep3Fragment = (TutorialStep3Fragment) step3Fragment;
+                        tutorialStep3Fragment.fetchDevices();
+                    }
+                }
                 if (position == 3) {
                     if (step4Fragment != null) {
                         TutorialStep4Fragment tutorialStep4Fragment = (TutorialStep4Fragment) step4Fragment;
@@ -95,7 +103,8 @@ public class TutorialActivity extends AppCompatActivity {
 
     public Fragment newInstance(int sectionNumber) {
         if (sectionNumber == 3) {
-            return new TutorialStep3Fragment();
+            step3Fragment = new TutorialStep3Fragment();
+            return step3Fragment;
         }
         if (sectionNumber == 4) {
             step4Fragment = new TutorialStep4Fragment();

@@ -66,11 +66,22 @@ public class TutorialStep4Fragment extends AbstractFragment {
     private void fillUpdateSettings(final List<UpdateMethod> updateMethods) {
         Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsUpdateMethodSpinner);
 
-        final List<Integer> recommendedPositions = new ArrayList<>();
+        List<Integer> recommendedPositions = new ArrayList<>();
 
         for (int i = 0; i < updateMethods.size(); i++) {
             if(updateMethods.get(i).isRecommended()) {
                 recommendedPositions.add(i);
+            }
+        }
+
+        final List<Integer> recommendedPositionsDefinitive = recommendedPositions;
+
+        if (settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID)) {
+            for(UpdateMethod updateMethod : updateMethods) {
+                if(updateMethod.getId() == settingsManager.getLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID) ){
+                    recommendedPositions = new ArrayList<>();
+                    recommendedPositions.add(updateMethods.indexOf(updateMethod));
+                }
             }
         }
 
@@ -79,12 +90,12 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
                 @Override
                 public View getView(int position, View convertView, ViewGroup parent) {
-                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_item, updateMethods, recommendedPositions, this.getContext());
+                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_item, updateMethods, recommendedPositionsDefinitive, this.getContext());
                 }
 
                 @Override
                 public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item, updateMethods, recommendedPositions, this.getContext());
+                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item, updateMethods, recommendedPositionsDefinitive, this.getContext());
                 }
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);

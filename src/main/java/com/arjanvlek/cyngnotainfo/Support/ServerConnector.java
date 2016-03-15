@@ -80,8 +80,8 @@ public class ServerConnector {
 
             //setup request
             urlConnection.setRequestProperty("User-Agent", USER_AGENT);
-            urlConnection.setConnectTimeout(10000);
-            urlConnection.setReadTimeout(10000);
+            urlConnection.setConnectTimeout(60000);
+            urlConnection.setReadTimeout(60000);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String inputLine;
