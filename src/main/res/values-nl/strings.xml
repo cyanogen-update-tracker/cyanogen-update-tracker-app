@@ -136,5 +136,8 @@
     <string name="device_information_patch_level_version">Datum beveiligingspatch:</string>
     <string name="update_information_installed_update">Je hebt momenteel geïnstalleerd:</string>
     <string name="settings_cannot_launch_downloading">Je kunt het Instellingen-scherm niet openen tijdens het downloaden van een update…</string>
+    <string name="unsupported_device_warning_checkbox_title">Toon dit bericht niet nogmaals</string>
+    <string name="unsupported_device_warning_message">Het lijkt erop dat jouw apparaat geen Cyanogen OS kan draaien. Deze app kan alleen systeemupdates voor apparaten met Cyanogen OS downloaden. \n\nAndere apparaten met CyanogenMod (Custom ROM) worden niet ondersteund.</string>
+    <string name="unsupported_device_warning_title">Niet-ondersteund apparaat</string>
 
 </resources>

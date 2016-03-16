@@ -181,4 +181,9 @@
     <string name="help_used_symbols">Used symbols:</string>
     <string name="help_symbol_download">Shows you the download size of this update.</string>
     <string name="unknown_update_name">Update voor %1$s</string>
+
+    <!-- Unsupported device warning strings -->
+    <string name="unsupported_device_warning_title">Unsupported device</string>
+    <string name="unsupported_device_warning_message">It looks like your device is not able to run Cyanogen OS. Please note that you can only download system updates on devices running Cyanogen OS. \n\nOther devices running CyanogenMod (Custom ROM) are not supported.</string>
+    <string name="unsupported_device_warning_checkbox_title">Don\'t show this message again</string>
 </resources>

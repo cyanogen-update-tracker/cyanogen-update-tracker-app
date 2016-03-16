@@ -1,8 +1,11 @@
 package com.arjanvlek.cyngnotainfo;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -17,8 +20,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.views.HelpActivity;
@@ -31,6 +36,8 @@ import com.arjanvlek.cyngnotainfo.views.UpdateInformationFragment;
 import com.arjanvlek.cyngnotainfo.views.UpdateInstallationGuideActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+
+import java.util.List;
 
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
@@ -62,6 +69,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         Context context = getApplicationContext();
         settingsManager = new SettingsManager(context);
         networkConnectionManager = new NetworkConnectionManager(context);
+
+        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS)) {
+            new CheckUnsupportedDevice().execute();
+        }
 
         //Fetch currently selected device and update method
         device = settingsManager.getPreference(PROPERTY_DEVICE);
@@ -131,6 +142,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                     showNetworkError();
                 }
             }
+
         }
     }
 
@@ -141,7 +153,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         return true;
     }
 
-    protected void showNetworkError() {
+    private void showNetworkError() {
         DialogFragment errorDialog = new MessageDialog();
         Bundle args = new Bundle(4);
         args.putString("message", getString(R.string.error_app_requires_network_connection_message));
@@ -150,6 +162,51 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         args.putBoolean("closable", false);
         errorDialog.setArguments(args);
         errorDialog.show(getSupportFragmentManager(), "NetworkError");
+    }
+
+    private void showUnsupportedDeviceWarning(List<Device> devices) {
+        boolean deviceIsSupported = false;
+        final CheckBox checkBox;
+
+        for(Device device : devices) {
+            if(device.getModelNumber() != null && device.getModelNumber().equals(Build.MODEL)) {
+                deviceIsSupported = true;
+                settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
+            }
+        }
+        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
+            View checkBoxView = View.inflate(MainActivity.this, R.layout.alert_dialog_checkbox, null);
+            checkBox = (CheckBox) checkBoxView.findViewById(R.id.unsupported_device_warning_checkbox);
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setView(checkBoxView);
+            builder.setTitle(getString(R.string.unsupported_device_warning_title));
+            builder.setMessage(getString(R.string.unsupported_device_warning_message));
+
+            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SettingsManager settingsManager = new SettingsManager(getApplicationContext());
+                    settingsManager.saveBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, checkBox.isChecked());
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        }
+
+    }
+
+    private class CheckUnsupportedDevice extends AsyncTask<Void, Void, List<Device>> {
+
+        @Override
+        protected List<Device> doInBackground(Void... params) {
+            ApplicationContext applicationContext = (ApplicationContext) getApplication();
+            return applicationContext.getDevices();
+        }
+
+        @Override
+        protected void onPostExecute(List<Device> devices) {
+            showUnsupportedDeviceWarning(devices);
+        }
     }
 
 

@@ -34,6 +34,7 @@ public class SettingsManager {
     public static final String PROPERTY_SHOW_APP_UPDATE_MESSAGES = "show_app_update_messages";
     public static final String PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE = "show_if_system_is_up_to_date";
     public static final String PROPERTY_SETUP_DONE = "setup_done";
+    public static final String PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS = "ignore_unsupported_device_warnings";
 
     private Context context;
 
