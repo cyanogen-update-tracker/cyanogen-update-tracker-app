@@ -137,7 +137,7 @@ public class SettingsActivity extends AbstractActivity {
                     if (devices.get(i).getDeviceName().equals(currentDeviceName)) {
                         position = i;
                     }
-                    if (devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(Build.MODEL)) {
+                    if (devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(Build.DEVICE)) {
                         tempRecommendedPosition = i;
                     }
                 }

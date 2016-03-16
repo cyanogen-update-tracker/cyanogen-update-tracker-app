@@ -68,7 +68,7 @@ public abstract class AbstractFragment extends Fragment{
             }
             systemVersionProperties.setCyanogenOSVersion(cyanogenOSVersion);
             systemVersionProperties.setSecurityPatchDate(securityPatchDate);
-            systemVersionProperties.setModelNumber(Build.MODEL);
+            systemVersionProperties.setModelNumber(Build.DEVICE);
             SYSTEM_VERSION_PROPERTIES = systemVersionProperties;
             return SYSTEM_VERSION_PROPERTIES;
         } else {

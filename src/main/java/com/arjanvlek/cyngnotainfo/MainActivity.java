@@ -169,7 +169,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         final CheckBox checkBox;
 
         for(Device device : devices) {
-            if(device.getModelNumber() != null && device.getModelNumber().equals(Build.MODEL)) {
+            if(device.getModelNumber() != null && device.getModelNumber().equals(Build.DEVICE)) {
                 deviceIsSupported = true;
                 settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
             }
