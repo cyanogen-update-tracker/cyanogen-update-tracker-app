@@ -51,13 +51,15 @@ public abstract class AbstractFragment extends Fragment{
                         cyanogenOSVersion = cyanogenOSVersion.replace("]", "");
                     }
 
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        securityPatchDate = Build.VERSION.SECURITY_PATCH;
-                    } else {
-                        if (inputLine.contains("ro.build.version.security_patch")) {
-                            securityPatchDate = inputLine.replace("[ro.build.version.security_patch]: ", "");
-                            securityPatchDate = securityPatchDate.replace("[", "");
-                            securityPatchDate = securityPatchDate.replace("]", "");
+                    if(!securityPatchDate.equals(NO_CYANOGEN_OS)) {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            securityPatchDate = Build.VERSION.SECURITY_PATCH;
+                        } else {
+                            if (inputLine.contains("ro.build.version.security_patch")) {
+                                securityPatchDate = inputLine.replace("[ro.build.version.security_patch]: ", "");
+                                securityPatchDate = securityPatchDate.replace("[", "");
+                                securityPatchDate = securityPatchDate.replace("]", "");
+                            }
                         }
                     }
                 }
