@@ -112,7 +112,7 @@
         android:layout_height="match_parent"
         android:layout_above="@+id/updateInformationAdView"
         android:layout_below="@id/updateInformationNoConnectionBar"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <ScrollView
             android:layout_width="match_parent"

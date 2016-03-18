@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         settingsManager = new SettingsManager(context);
         networkConnectionManager = new NetworkConnectionManager(context);
 
-        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS)) {
+        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && networkConnectionManager.checkNetworkConnection()) {
             new CheckUnsupportedDevice().execute();
         }
 
