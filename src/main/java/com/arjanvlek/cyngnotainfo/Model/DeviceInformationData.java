@@ -45,19 +45,7 @@ public class DeviceInformationData {
         if (deviceName != null) {
             this.deviceName = deviceName;
         } else {
-            switch (Build.MODEL) {
-                case "A0001":
-                    this.deviceName = "One";
-                    break;
-                case "YUREKA":
-                    this.deviceName = "Yureka";
-                    break;
-                case "N1":
-                    this.deviceName = "N1 CM Edition";
-                    break;
-                default:
-                    this.deviceName = Build.MODEL;
-            }
+            this.deviceName = Build.DEVICE;
         }
     }
 

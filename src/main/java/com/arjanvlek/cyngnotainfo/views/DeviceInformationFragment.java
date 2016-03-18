@@ -2,20 +2,25 @@ package com.arjanvlek.cyngnotainfo.views;
 
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
+
+import java.util.List;
 
 public class DeviceInformationFragment extends AbstractFragment {
     private RelativeLayout rootView;
@@ -38,10 +43,30 @@ public class DeviceInformationFragment extends AbstractFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
+        displayDeviceInformation(null); // To fast load device information with generic / non-pretty device name.
+        new GetDevices().execute();
+    }
+
+    private void displayDeviceInformation(@Nullable List<Device> devices) {
         DeviceInformationData deviceInformationData = new DeviceInformationData();
 
+        String deviceName = null;
+
+        if(devices != null) {
+            for(Device device : devices) {
+                if(device.getModelNumber() != null && device.getModelNumber().equals(Build.DEVICE)) {
+                    deviceName = device.getDeviceName();
+                }
+            }
+        }
+
+
         TextView deviceNameView = (TextView) rootView.findViewById(R.id.device_information_header);
-        deviceNameView.setText(String.format(getString(R.string.device_information_device_name),deviceInformationData.getDeviceManufacturer(), deviceInformationData.getDeviceName()));
+        if(devices == null || deviceName == null) {
+            deviceNameView.setText(String.format(getString(R.string.device_information_device_name), deviceInformationData.getDeviceManufacturer(), deviceInformationData.getDeviceName()));
+        } else {
+            deviceNameView.setText(deviceName);
+        }
 
         TextView socView = (TextView) rootView.findViewById(R.id.device_information_soc_field);
         socView.setText(deviceInformationData.getSOC());
@@ -114,7 +139,19 @@ public class DeviceInformationFragment extends AbstractFragment {
         } else {
             hideAds();
         }
+    }
 
+    private class GetDevices extends AsyncTask<Void, Void, List<Device>> {
+
+        @Override
+        protected List<Device> doInBackground(Void... params) {
+            return getApplicationContext().getDevices();
+        }
+
+        @Override
+        protected void onPostExecute(List<Device> devices) {
+            displayDeviceInformation(devices);
+        }
     }
 
     private void hideAds() {

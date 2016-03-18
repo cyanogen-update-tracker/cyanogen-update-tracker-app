@@ -1,6 +1,10 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.os.AsyncTask;
+import android.os.Build;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -13,8 +17,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
+import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+
+import java.util.List;
+
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
 
 public class TutorialActivity extends AppCompatActivity {
 
@@ -35,6 +45,11 @@ public class TutorialActivity extends AppCompatActivity {
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
+
+        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS)) {
+            new CheckUnsupportedDevice().execute();
+        }
+
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
@@ -160,5 +175,40 @@ public class TutorialActivity extends AppCompatActivity {
         Toast.makeText(this, getString(R.string.settings_entered_incorrectly), Toast.LENGTH_LONG).show();
     }
 
+    private void showUnsupportedDeviceWarning(List<Device> devices) {
+        boolean deviceIsSupported = false;
 
+        for(Device device : devices) {
+            if(device.getModelNumber() != null && device.getModelNumber().equals(Build.DEVICE)) {
+                deviceIsSupported = true;
+                settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
+            }
+        }
+        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(TutorialActivity.this);
+            builder.setTitle(getString(R.string.unsupported_device_warning_title));
+            builder.setMessage(getString(R.string.unsupported_device_warning_message));
+
+            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        }
+    }
+
+    private class CheckUnsupportedDevice extends AsyncTask<Void, Void, List<Device>> {
+
+        @Override
+        protected List<Device> doInBackground(Void... params) {
+            return ((ApplicationContext) getApplication()).getDevices();
+        }
+
+        @Override
+        protected void onPostExecute(List<Device> devices) {
+            showUnsupportedDeviceWarning(devices);
+        }
+    }
 }

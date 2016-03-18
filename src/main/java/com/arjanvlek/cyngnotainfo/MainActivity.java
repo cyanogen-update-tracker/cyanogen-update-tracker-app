@@ -192,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             });
             builder.show();
         }
-
     }
 
     private class CheckUnsupportedDevice extends AsyncTask<Void, Void, List<Device>> {
