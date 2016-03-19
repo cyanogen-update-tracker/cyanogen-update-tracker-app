@@ -19,6 +19,7 @@ import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 
@@ -176,13 +177,12 @@ public class TutorialActivity extends AppCompatActivity {
     }
 
     private void showUnsupportedDeviceWarning(List<Device> devices) {
-        boolean deviceIsSupported = false;
+        SystemVersionProperties systemVersionProperties = ((ApplicationContext)getApplication()).getSystemVersionProperties();
 
-        for(Device device : devices) {
-            if(device.getModelNumber() != null && device.getModelNumber().equals(Build.DEVICE)) {
-                deviceIsSupported = true;
-                settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
-            }
+        boolean deviceIsSupported = systemVersionProperties.isSupportedDevice(devices);
+
+        if(deviceIsSupported) {
+            settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
         }
         if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
             AlertDialog.Builder builder = new AlertDialog.Builder(TutorialActivity.this);

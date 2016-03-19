@@ -29,6 +29,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
@@ -54,6 +55,7 @@ import java.net.URLConnection;
 import java.util.List;
 import java.util.Locale;
 
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
 public class UpdateInformationFragment extends AbstractUpdateInformationFragment implements SwipeRefreshLayout.OnRefreshListener, MessageDialog.ErrorDialogListener {
@@ -392,7 +394,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             systemIsUpToDateLayout.setVisibility(View.VISIBLE);
 
             // Set current Cyanogen OS version if found.
-            String cyanogenOSVersion = getSystemVersionProperties().getCyanogenOSVersion();
+            String cyanogenOSVersion = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties().getCyanogenOSVersion();
             TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
             if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
                 versionNumberView.setVisibility(View.VISIBLE);
@@ -524,7 +526,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private boolean systemIsUpToDate(String newCyanogenOSVersion) {
         if(settingsManager.showIfSystemIsUpToDate()) {
             // This grabs Cyanogen OS version from build.prop. As there is no direct SDK way to do this, it has to be done in this way.
-            SystemVersionProperties systemVersionProperties = getSystemVersionProperties();
+            SystemVersionProperties systemVersionProperties = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties();
 
             String cyanogenOSVersion = systemVersionProperties.getCyanogenOSVersion();
 

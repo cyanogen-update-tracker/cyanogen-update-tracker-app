@@ -24,6 +24,7 @@ import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.views.HelpActivity;
@@ -165,15 +166,16 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     private void showUnsupportedDeviceWarning(List<Device> devices) {
-        boolean deviceIsSupported = false;
         final CheckBox checkBox;
 
-        for(Device device : devices) {
-            if(device.getModelNumber() != null && device.getModelNumber().equals(Build.DEVICE)) {
-                deviceIsSupported = true;
-                settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
-            }
+        SystemVersionProperties systemVersionProperties = ((ApplicationContext)getApplication()).getSystemVersionProperties();
+
+        boolean deviceIsSupported = systemVersionProperties.isSupportedDevice(devices);
+
+        if(deviceIsSupported) {
+            settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
         }
+
         if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
             View checkBoxView = View.inflate(MainActivity.this, R.layout.alert_dialog_checkbox, null);
             checkBox = (CheckBox) checkBoxView.findViewById(R.id.unsupported_device_warning_checkbox);

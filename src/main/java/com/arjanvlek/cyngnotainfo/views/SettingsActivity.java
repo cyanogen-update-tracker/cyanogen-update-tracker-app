@@ -15,7 +15,9 @@ import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.CustomDropdown;
@@ -132,12 +134,13 @@ public class SettingsActivity extends AbstractActivity {
             Integer position = null;
             int tempRecommendedPosition = -1;
             String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE);
+            SystemVersionProperties systemVersionProperties = ((ApplicationContext)getApplication()).getSystemVersionProperties();
             if (currentDeviceName != null) {
                 for (int i = 0; i < devices.size(); i++) {
                     if (devices.get(i).getDeviceName().equals(currentDeviceName)) {
                         position = i;
                     }
-                    if (devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(Build.DEVICE)) {
+                    if (devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(systemVersionProperties.getCyanogenDeviceCodeName())) {
                         tempRecommendedPosition = i;
                     }
                 }

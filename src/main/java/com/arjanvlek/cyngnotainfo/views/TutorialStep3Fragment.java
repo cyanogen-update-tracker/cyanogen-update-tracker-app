@@ -10,7 +10,9 @@ import android.widget.ArrayAdapter;
 import android.widget.ProgressBar;
 import android.widget.Spinner;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.CustomDropdown;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
@@ -61,9 +63,10 @@ public class TutorialStep3Fragment extends AbstractFragment {
         Spinner spinner = (Spinner) rootView.findViewById(R.id.settingsDeviceSpinner);
 
         int selectedIndex = -1;
+        SystemVersionProperties systemVersionProperties = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties();
 
         for(int i=0; i<devices.size(); i++) {
-            if(devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(getSystemVersionProperties().getModelNumber())) {
+            if(devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(systemVersionProperties.getCyanogenDeviceCodeName())) {
                 selectedIndex = i;
             }
         }

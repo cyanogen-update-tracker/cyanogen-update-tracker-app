@@ -12,6 +12,7 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
@@ -21,6 +22,8 @@ import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import java.util.List;
+
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 
 public class DeviceInformationFragment extends AbstractFragment {
     private RelativeLayout rootView;
@@ -51,10 +54,11 @@ public class DeviceInformationFragment extends AbstractFragment {
         DeviceInformationData deviceInformationData = new DeviceInformationData();
 
         String deviceName = null;
+        SystemVersionProperties systemVersionProperties = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties();
 
         if(devices != null) {
             for(Device device : devices) {
-                if(device.getModelNumber() != null && device.getModelNumber().equals(Build.DEVICE)) {
+                if(device.getModelNumber() != null && device.getModelNumber().equals(systemVersionProperties.getCyanogenDeviceCodeName())) {
                     deviceName = device.getDeviceName();
                 }
             }
@@ -104,8 +108,6 @@ public class DeviceInformationFragment extends AbstractFragment {
         } else {
             memoryView.setText(getString(R.string.device_information_unknown));
         }
-
-        SystemVersionProperties systemVersionProperties = getSystemVersionProperties();
 
         TextView cyanogenOsVerView = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_field);
 
