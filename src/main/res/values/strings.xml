@@ -10,7 +10,7 @@
     <string name="update_information_installed_update">You have currently installed:</string>
     <string name="update">Update</string>
     <string name="update_information_for">for</string>
-    <string name="update_information_system_is_up_to_date">Your system is fully up to date.</string>
+    <string name="update_information_system_is_up_to_date">Your system is up to date.</string>
     <string name="update_information_no_update_data_available">No update information is available.</string>
     <string name="update_information_view_update_information">View update information</string>
     <string name="update_information_version">&#160;version:</string>
@@ -100,11 +100,11 @@
     <!-- First-time tutorial strings -->
     <string name="introduction_title">Welcome</string>
     <string name="introduction_welcome">Welcome to Cyanogen update tracker!</string>
-    <string name="introduction_page_1">This app will allow you to stay informed about the latest Android™  updates for your Cyanogen® OS powered device. \n\nSwipe to the left to continue.</string>
+    <string name="introduction_page_1">This app will allow you to download the latest Android™  updates for your Cyanogen® OS powered device early after release. \n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_device">Choose your device:</string>
-    <string name="introduction_page_2">In order to stay up-to-date, you will need to choose a device from the list shown above.\n\nWhen more devices running Cyanogen OS are released, they\'ll automatically be added and you will be notified!\n\nSwipe to the left to continue.</string>
+    <string name="introduction_page_2">The device to receive updates for is usually automatically selected. If not, select the right device above.\n\nWhen more devices running Cyanogen OS are released, they\'ll automatically be added and you will be notified!\n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_update_method">Choose your update method:</string>
-    <string name="introduction_page_3">For most of the devices, there are two update methods shown in the list above. These are the full and the incremental update.\n\nAn incremental update can only be installed if you had the latest version before the new update was released. This is the kind of update your phone normally downloads via the Settings app. (recommended)\n\nA full update contains everything and can always be installed on your device, but is bigger to download and takes longer to install. Use this to skip versions (like updating from 4.4.x to 5.1).\n\nSwipe to the left to continue.</string>
+    <string name="introduction_page_3">Usually, the incremental update is the right choice here.\n\nAre you using a rooted device or do you skip updates regularly (e.g. you want to update 4.4.4 to 5.1)? Select Full update.\n\nSwipe to the left to continue.</string>
     <string name="introduction_ready_to_start">You are ready to go!</string>
     <string name="introduction_page_4">Enjoy using this app!\n\nYou can always change your settings by clicking the three dots in the top right corner (or press your Menu button) following a tap on \'change device and update method\'.</string>
     <string name="introduction_close_button">start app</string>
@@ -174,13 +174,13 @@
 
     <!-- Help strings -->
     <string name="help">Help</string>
-    <string name="help_how_works_app">Overview of this app:</string>
-    <string name="help_top_update">If a new update is available, its version is displayed in the top.</string>
-    <string name="help_middle_stats">In the middle are the English description, the download button and a button for the installation guide.\n\nBelow these, the download size is shown.</string>
+    <string name="help_how_works_app">How does the app work?</string>
+    <string name="help_top_update">Version numbers of new updates are displayed in the top.</string>
+    <string name="help_middle_stats">In the middle are the English description, download button and a button for the installation guide.\n\nBelow these, the download size is shown.</string>
     <string name="help_bottom_description">At the top right you can find the menu. It contains the settings and a help button, which allows you to view this page again.</string>
-    <string name="help_used_symbols">Used symbols:</string>
-    <string name="help_symbol_download">Shows you the download size of this update.</string>
-    <string name="unknown_update_name">Update voor %1$s</string>
+    <string name="help_used_symbols">Used icons:</string>
+    <string name="help_symbol_download">Download size of the update.</string>
+    <string name="unknown_update_name">Update for %1$s</string>
 
     <!-- Unsupported device warning strings -->
     <string name="unsupported_device_warning_title">Unsupported device</string>

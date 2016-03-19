@@ -4,7 +4,7 @@
     android:id="@+id/updateInformationFragmentTop"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".MainActivity$PlaceholderFragment">
+    tools:context=".MainActivity">
 
     <!-- Server error message view -->
     <View

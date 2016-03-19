@@ -20,7 +20,7 @@
     <string name="update_information_for">voor</string>
     <string name="download_size_megabyte">%1$d MB</string>
     <string name="update">Update</string>
-    <string name="unknown_update_name">Update for %1$s</string>
+    <string name="unknown_update_name">Update voor %1$s</string>
     <string name="update_description">Beschrijving van de update</string>
     <string name="settings_explanation_incremental_full_update">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen.\n\nEen volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je apparaat.</string>
 
@@ -75,21 +75,21 @@
     <string name="introduction_choose_update_method">Kies je update-methode:</string>
     <string name="introduction_close_button">start de app</string>
     <string name="introduction_page_1">Met deze app ben je altijd op de hoogte van de nieuwste Android™-updates voor jouw Cyanogen® OS-apparaat. \n\nSwipe naar links om verder te gaan.</string>
-    <string name="introduction_page_2">Om up-to-date te blijven, zal je een apparaat uit bovenstaande lijst moeten kiezen.\n\nZodra er meer apparaten met Cyanogen OS verschijnen zullen deze vanzelf worden toegevoegd, je ontvangt hier automatisch een bericht over!\n\nSwipe naar links om verder te gaan.</string>
-    <string name="introduction_page_3">Voor de meeste apparaten zijn er twee update-methodes in de bovenstaande lijst beschikbaar. Dit zijn de volledige en de incrementele update.\n\nEen incrementele update kan enkel worden geïnstalleerd wanneer je over de nieuwste versie beschikte voordat de nieuwste update uit kwam. Deze update krijg je normaal ook via de Instellingen-app op je telefoon binnen. (aanbevolen)\n\nEen volledige update bevat alles en kan altijd op jouw apparaat worden geïnstalleerd. Deze updates zijn groter om te downloaden en doen er langer over om te installeren. Gebruik ze als je versies wilt overslaan (bijvoorbeeld van 4.4.4 naar 5.1.1).\n\nSwipe naar links om door te gaan.</string>
+    <string name="introduction_page_2">Meestal is het juiste apparaat om updates voor te installeren al in de lijst hierboven geselecteerd. Als dit niet zo is, kies het dan hierboven.\n\nZodra er meer apparaten met Cyanogen OS verschijnen zullen deze vanzelf worden toegevoegd, je ontvangt hier automatisch een bericht over!\n\nSwipe naar links om verder te gaan.</string>
+    <string name="introduction_page_3">De Incrementele Update is meestal de juiste keuze.\n\nGebruik je een \"rooted\" apparaat of sla je regelmatig updates over (je wilt bijv. van 4.4.4 naar 5.1.1 updaten)? Kies dan de Volledige Update.\n\nSwipe naar links om door te gaan.</string>
     <string name="introduction_page_4">Veel plezier met het gebruik van deze app!\n\nJe kan je instellingen altijd veranderen door op de drie puntjes rechtsbovenin te klikken (of de Menu-knop te gebruiken) en vervolgens voor \'kies apparaat en update-methode\' te kiezen. </string>
-    <string name="introduction_ready_to_start">Je bent er klaar voor!</string>
+    <string name="introduction_ready_to_start">Klaar!</string>
     <string name="introduction_welcome">Welkom bij Cyanogen updatetracker!</string>
     <string name="introduction_title">Welkom</string>
     <string name="launcher_app_name">Updatetracker</string>
     <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
     <string name="error_no_internet_connection">Geen internetverbinding.</string>
-    <string name="help_how_works_app">Overzicht van de app:</string>
+    <string name="help_how_works_app">Hoe werkt deze app?</string>
     <string name="help_middle_stats">In het midden staan de Engelstalige beschrijving, de downloadknop en een knop voor de installatie-handleiding.\n\nHieronder staat de downloadgrootte.</string>
     <string name="help_symbol_download">Toont de downloadgrootte van deze update.</string>
     <string name="help_used_symbols">Gebruikte symoblen:</string>
     <string name="help_top_update">Als een nieuwe update beschikbaar is, staat het versienummer bovenin.</string>
-    <string name="update_information_system_is_up_to_date">Uw systeem is volledig bijgewerkt.</string>
+    <string name="update_information_system_is_up_to_date">Uw systeem is bijgewerkt.</string>
     <string name="update_information_view_update_information">Bekijk update-informatie</string>
     <string name="update_information_version">-versie:</string>
     <string name="server_status_error">Sommige functies werken mogelijk niet zoals verwacht.</string>
