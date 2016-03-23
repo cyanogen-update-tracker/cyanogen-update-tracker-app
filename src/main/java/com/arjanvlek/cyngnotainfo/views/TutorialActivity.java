@@ -21,13 +21,16 @@ import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+import com.arjanvlek.cyngnotainfo.Support.SupportedDeviceCallback;
+import com.arjanvlek.cyngnotainfo.Support.SupportedDeviceManager;
 
 import java.util.List;
 
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
 
-public class TutorialActivity extends AppCompatActivity {
+public class TutorialActivity extends AppCompatActivity implements SupportedDeviceCallback {
 
     private Fragment step3Fragment;
     private Fragment step4Fragment;
@@ -42,13 +45,15 @@ public class TutorialActivity extends AppCompatActivity {
 
         }
         settingsManager = new SettingsManager(getApplicationContext());
+        NetworkConnectionManager networkConnectionManager = new NetworkConnectionManager(getApplicationContext());
         setContentView(R.layout.activity_tutorial);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
         }
 
-        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS)) {
-            new CheckUnsupportedDevice().execute();
+        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && networkConnectionManager.checkNetworkConnection()) {
+            SupportedDeviceManager supportedDeviceManager = new SupportedDeviceManager(this, ((ApplicationContext)getApplication()));
+            supportedDeviceManager.execute();
         }
 
         // Create the adapter that will return a fragment for each of the three
@@ -86,6 +91,24 @@ public class TutorialActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    @Override
+    public void displayUnsupportedMessage(boolean deviceIsSupported) {
+
+        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(TutorialActivity.this);
+            builder.setTitle(getString(R.string.unsupported_device_warning_title));
+            builder.setMessage(getString(R.string.unsupported_device_warning_message));
+
+            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        }
     }
 
     /**
@@ -174,41 +197,5 @@ public class TutorialActivity extends AppCompatActivity {
 
     private void showSettingsWarning() {
         Toast.makeText(this, getString(R.string.settings_entered_incorrectly), Toast.LENGTH_LONG).show();
-    }
-
-    private void showUnsupportedDeviceWarning(List<Device> devices) {
-        SystemVersionProperties systemVersionProperties = ((ApplicationContext)getApplication()).getSystemVersionProperties();
-
-        boolean deviceIsSupported = systemVersionProperties.isSupportedDevice(devices);
-
-        if(deviceIsSupported) {
-            settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
-        }
-        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(TutorialActivity.this);
-            builder.setTitle(getString(R.string.unsupported_device_warning_title));
-            builder.setMessage(getString(R.string.unsupported_device_warning_message));
-
-            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
-        }
-    }
-
-    private class CheckUnsupportedDevice extends AsyncTask<Void, Void, List<Device>> {
-
-        @Override
-        protected List<Device> doInBackground(Void... params) {
-            return ((ApplicationContext) getApplication()).getDevices();
-        }
-
-        @Override
-        protected void onPostExecute(List<Device> devices) {
-            showUnsupportedDeviceWarning(devices);
-        }
     }
 }

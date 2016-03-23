@@ -5,7 +5,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -23,10 +22,10 @@ import android.view.View;
 import android.widget.CheckBox;
 import android.widget.Toast;
 
-import com.arjanvlek.cyngnotainfo.Model.Device;
-import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+import com.arjanvlek.cyngnotainfo.Support.SupportedDeviceCallback;
+import com.arjanvlek.cyngnotainfo.Support.SupportedDeviceManager;
 import com.arjanvlek.cyngnotainfo.views.HelpActivity;
 import com.arjanvlek.cyngnotainfo.views.MessageDialog;
 import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
@@ -38,13 +37,11 @@ import com.arjanvlek.cyngnotainfo.views.UpdateInstallationGuideActivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import java.util.List;
-
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
+public class MainActivity extends AppCompatActivity implements ActionBar.TabListener, SupportedDeviceCallback {
 
     private ViewPager mViewPager;
     private SettingsManager settingsManager;
@@ -72,7 +69,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         networkConnectionManager = new NetworkConnectionManager(context);
 
         if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && networkConnectionManager.checkNetworkConnection()) {
-            new CheckUnsupportedDevice().execute();
+            SupportedDeviceManager supportedDeviceManager = new SupportedDeviceManager(this, ((ApplicationContext)getApplication()));
+            supportedDeviceManager.execute();
         }
 
         //Fetch currently selected device and update method
@@ -165,52 +163,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         errorDialog.show(getSupportFragmentManager(), "NetworkError");
     }
 
-    private void showUnsupportedDeviceWarning(List<Device> devices) {
-        final CheckBox checkBox;
-
-        SystemVersionProperties systemVersionProperties = ((ApplicationContext)getApplication()).getSystemVersionProperties();
-
-        boolean deviceIsSupported = systemVersionProperties.isSupportedDevice(devices);
-
-        if(deviceIsSupported) {
-            settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
-        }
-
-        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
-            View checkBoxView = View.inflate(MainActivity.this, R.layout.alert_dialog_checkbox, null);
-            checkBox = (CheckBox) checkBoxView.findViewById(R.id.unsupported_device_warning_checkbox);
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
-            builder.setView(checkBoxView);
-            builder.setTitle(getString(R.string.unsupported_device_warning_title));
-            builder.setMessage(getString(R.string.unsupported_device_warning_message));
-
-            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    SettingsManager settingsManager = new SettingsManager(getApplicationContext());
-                    settingsManager.saveBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, checkBox.isChecked());
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
-        }
-    }
-
-    private class CheckUnsupportedDevice extends AsyncTask<Void, Void, List<Device>> {
-
-        @Override
-        protected List<Device> doInBackground(Void... params) {
-            ApplicationContext applicationContext = (ApplicationContext) getApplication();
-            return applicationContext.getDevices();
-        }
-
-        @Override
-        protected void onPostExecute(List<Device> devices) {
-            showUnsupportedDeviceWarning(devices);
-        }
-    }
-
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handles action bar item clicks.
@@ -251,6 +203,30 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
+    }
+
+    @Override
+    public void displayUnsupportedMessage(boolean deviceIsSupported) {
+
+        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
+            View checkBoxView = View.inflate(MainActivity.this, R.layout.alert_dialog_checkbox, null);
+            final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.unsupported_device_warning_checkbox);
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            builder.setView(checkBoxView);
+            builder.setTitle(getString(R.string.unsupported_device_warning_title));
+            builder.setMessage(getString(R.string.unsupported_device_warning_message));
+
+            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    SettingsManager settingsManager = new SettingsManager(getApplicationContext());
+                    settingsManager.saveBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, checkBox.isChecked());
+                    dialog.dismiss();
+                }
+            });
+            builder.show();
+        }
     }
 
 
