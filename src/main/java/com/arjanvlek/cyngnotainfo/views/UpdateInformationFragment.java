@@ -512,11 +512,15 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             }
 
 
+
+        }
+        if(online) {
             // Save update data for offline viewing
             settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
             settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
             settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
             settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOTAUpdate.getFileName());
+            settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
         }
 
         // Hide the refreshing icon if it is present.
@@ -856,7 +860,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     @Override
     public void onRefresh() {
-        if (networkConnectionManager.checkNetworkConnection()) {
+        if(getDownloading()) {
+            hideRefreshIcons();
+        } else if (networkConnectionManager.checkNetworkConnection()) {
             getServerData();
         } else if (settingsManager.checkIfCacheIsAvailable()) {
             displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
