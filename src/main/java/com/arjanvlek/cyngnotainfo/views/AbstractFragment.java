@@ -23,7 +23,11 @@ public abstract class AbstractFragment extends Fragment{
 
     public ApplicationContext getApplicationContext() {
         if(applicationContext == null) {
-            applicationContext = (ApplicationContext)getActivity().getApplication();
+            try {
+                applicationContext = (ApplicationContext) getActivity().getApplication();
+            } catch (Exception e) {
+                applicationContext = new ApplicationContext();
+            }
         }
         return applicationContext;
     }
