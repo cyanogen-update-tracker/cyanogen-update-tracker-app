@@ -28,7 +28,7 @@ import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 public class DeviceInformationFragment extends AbstractFragment {
     private RelativeLayout rootView;
     private AdView adView;
-    private NetworkConnectionManager networkConnectionManager;
+    private NetworkConnectionManager networkConnectionManager = null;
     String adsTestId = "7CFCF353FBC40363065F03DFAC7D7EE4";
     String adsTestId2 = "D9323E61DFC727F573528DB3820F7215";
     String adsTestId3 = "D732F1B481C5274B05D707AC197B33B2";
@@ -39,7 +39,9 @@ public class DeviceInformationFragment extends AbstractFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         //Inflate the layout for this fragment
         rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_deviceinformation, container, false);
-        networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
+        if(isAdded()) {
+            networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
+        }
         return rootView;
     }
 
@@ -54,7 +56,7 @@ public class DeviceInformationFragment extends AbstractFragment {
         DeviceInformationData deviceInformationData = new DeviceInformationData();
 
         String deviceName = null;
-        SystemVersionProperties systemVersionProperties = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties();
+        SystemVersionProperties systemVersionProperties = getApplicationContext().getSystemVersionProperties();
 
         if(devices != null) {
             for(Device device : devices) {
@@ -136,7 +138,7 @@ public class DeviceInformationFragment extends AbstractFragment {
         TextView serialNumberView = (TextView) rootView.findViewById(R.id.device_information_serial_number_field);
         serialNumberView.setText(deviceInformationData.getSerialNumber());
 
-        if (networkConnectionManager.checkNetworkConnection()) {
+        if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection()) {
             showAds();
         } else {
             hideAds();
@@ -147,7 +149,11 @@ public class DeviceInformationFragment extends AbstractFragment {
 
         @Override
         protected List<Device> doInBackground(Void... params) {
-            return getApplicationContext().getDevices();
+            try {
+                return getApplicationContext().getDevices();
+            } catch (Exception e) {
+                return null;
+            }
         }
 
         @Override

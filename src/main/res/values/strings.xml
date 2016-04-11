@@ -94,7 +94,7 @@
     <string name="error_app_requires_network_connection_message">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
     <string name="error_exit_button_text">Exit</string>
     <string name="error_google_play_button_text" translatable="false">Google Play</string>
-    <string name="error_push_failure">Unable to connect to the app server. In order to receive notifications about new updates, please try launching the app again. </string>
+    <string name="error_push_failure">Failed to enable notifications. Please restart the app again after a few minutes.</string>
     <string name="error_no_internet_connection">No internet connection.</string>
 
     <!-- First-time tutorial strings -->

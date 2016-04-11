@@ -81,7 +81,7 @@ public class ApplicationContext extends Application {
                         cyanogenDeviceCodeName = cyanogenDeviceCodeName.replace("]", "");
                     }
 
-                    if(!securityPatchDate.equals(NO_CYANOGEN_OS)) {
+                    if(securityPatchDate.equals(NO_CYANOGEN_OS)) {
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                             securityPatchDate = Build.VERSION.SECURITY_PATCH;
                         } else {

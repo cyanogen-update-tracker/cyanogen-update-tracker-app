@@ -63,7 +63,7 @@
     <string name="settings_explanation_update_methods">Toelichting op de update-methodes</string>
     <string name="settings">Instellingen</string>
     <string name="help">Help</string>
-    <string name="error_push_failure">Geen verbinding mogelijk met de app-server. Als u meldingen over nieuwe updates wilt ontvangen, kunt u de app het beste opnieuw starten.</string>
+    <string name="error_push_failure">Notificaties konden niet worden aangezet. Start de app over enkele minuten opnieuw op.</string>
     <string name="notification_new_device">Nieuw apparaat beschikbaar! Updates voor de</string>
     <string name="notification_new_device_short">Open de app om dit apparaat te kiezen.</string>
     <string name="notification_update_short">Open de app om de update te downloaden.</string>
