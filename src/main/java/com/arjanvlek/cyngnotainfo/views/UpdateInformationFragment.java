@@ -82,7 +82,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         if(settingsManager != null) {
             deviceName = settingsManager.getPreference(PROPERTY_DEVICE);
         }
-        if(getActivity() != null && isAdded()) {
+        if(getActivity() != null) {
             context = getActivity().getApplicationContext();
         }
 

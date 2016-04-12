@@ -39,7 +39,7 @@ public class DeviceInformationFragment extends AbstractFragment {
         super.onCreateView(inflater, container, savedInstanceState);
         //Inflate the layout for this fragment
         rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_deviceinformation, container, false);
-        if(isAdded()) {
+        if(getActivity() != null) {
             networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
         }
         return rootView;
