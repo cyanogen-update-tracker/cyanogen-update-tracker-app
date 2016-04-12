@@ -48,100 +48,104 @@ public class DeviceInformationFragment extends AbstractFragment {
 
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
-        displayDeviceInformation(null); // To fast load device information with generic / non-pretty device name.
-        new GetDevices().execute();
+        if(isAdded()) {
+            displayDeviceInformation(null); // To fast load device information with generic / non-pretty device name.
+            new GetDevices().execute();
+        }
     }
 
     private void displayDeviceInformation(@Nullable List<Device> devices) {
-        DeviceInformationData deviceInformationData = new DeviceInformationData();
+        if(isAdded()) {
+            DeviceInformationData deviceInformationData = new DeviceInformationData();
 
-        String deviceName = null;
-        SystemVersionProperties systemVersionProperties = getApplicationContext().getSystemVersionProperties();
+            String deviceName = null;
+            SystemVersionProperties systemVersionProperties = getApplicationContext().getSystemVersionProperties();
 
-        if(devices != null) {
-            for(Device device : devices) {
-                if(device.getModelNumber() != null && device.getModelNumber().equals(systemVersionProperties.getCyanogenDeviceCodeName())) {
-                    deviceName = device.getDeviceName();
+            if (devices != null) {
+                for (Device device : devices) {
+                    if (device.getModelNumber() != null && device.getModelNumber().equals(systemVersionProperties.getCyanogenDeviceCodeName())) {
+                        deviceName = device.getDeviceName();
+                    }
                 }
             }
-        }
 
 
-        TextView deviceNameView = (TextView) rootView.findViewById(R.id.device_information_header);
-        if(devices == null || deviceName == null) {
-            deviceNameView.setText(String.format(getString(R.string.device_information_device_name), deviceInformationData.getDeviceManufacturer(), deviceInformationData.getDeviceName()));
-        } else {
-            deviceNameView.setText(deviceName);
-        }
-
-        TextView socView = (TextView) rootView.findViewById(R.id.device_information_soc_field);
-        socView.setText(deviceInformationData.getSOC());
-
-        String cpuFreqString = deviceInformationData.getCPU_Frequency();
-        TextView cpuFreqView = (TextView) rootView.findViewById(R.id.device_information_cpu_freq_field);
-        if (!cpuFreqString.equals(DeviceInformationData.UNKNOWN)) {
-            cpuFreqView.setText(String.format(getString(R.string.device_information_gigahertz), deviceInformationData.getCPU_Frequency()));
-        } else {
-            cpuFreqView.setText(getString(R.string.device_information_unknown));
-        }
-
-        long totalMemory = 0;
-        try {
-            ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
-            ActivityManager activityManager = (ActivityManager) getActivity().getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
-            activityManager.getMemoryInfo(mi);
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                totalMemory = mi.totalMem / 1048576L;
+            TextView deviceNameView = (TextView) rootView.findViewById(R.id.device_information_header);
+            if (devices == null || deviceName == null) {
+                deviceNameView.setText(String.format(getString(R.string.device_information_device_name), deviceInformationData.getDeviceManufacturer(), deviceInformationData.getDeviceName()));
             } else {
-                totalMemory = 1;
+                deviceNameView.setText(deviceName);
             }
-        } catch (Exception ignored) {
 
-        }
-        TextView memoryView = (TextView) rootView.findViewById(R.id.device_information_memory_field);
-        if (totalMemory != 0) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                memoryView.setText(String.format(getString(R.string.download_size_megabyte), totalMemory));
+            TextView socView = (TextView) rootView.findViewById(R.id.device_information_soc_field);
+            socView.setText(deviceInformationData.getSOC());
+
+            String cpuFreqString = deviceInformationData.getCPU_Frequency();
+            TextView cpuFreqView = (TextView) rootView.findViewById(R.id.device_information_cpu_freq_field);
+            if (!cpuFreqString.equals(DeviceInformationData.UNKNOWN)) {
+                cpuFreqView.setText(String.format(getString(R.string.device_information_gigahertz), deviceInformationData.getCPU_Frequency()));
             } else {
-                View memoryLabel = rootView.findViewById(R.id.device_information_memory_label);
-                memoryLabel.setVisibility(View.GONE);
-                memoryView.setVisibility(View.GONE);
+                cpuFreqView.setText(getString(R.string.device_information_unknown));
             }
-        } else {
-            memoryView.setText(getString(R.string.device_information_unknown));
-        }
 
-        TextView cyanogenOsVerView = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_field);
+            long totalMemory = 0;
+            try {
+                ActivityManager.MemoryInfo mi = new ActivityManager.MemoryInfo();
+                ActivityManager activityManager = (ActivityManager) getActivity().getBaseContext().getSystemService(Context.ACTIVITY_SERVICE);
+                activityManager.getMemoryInfo(mi);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    totalMemory = mi.totalMem / 1048576L;
+                } else {
+                    totalMemory = 1;
+                }
+            } catch (Exception ignored) {
 
-        if(!systemVersionProperties.getCyanogenOSVersion().equals(NO_CYANOGEN_OS)) {
-            cyanogenOsVerView.setText(systemVersionProperties.getCyanogenOSVersion());
+            }
+            TextView memoryView = (TextView) rootView.findViewById(R.id.device_information_memory_field);
+            if (totalMemory != 0) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    memoryView.setText(String.format(getString(R.string.download_size_megabyte), totalMemory));
+                } else {
+                    View memoryLabel = rootView.findViewById(R.id.device_information_memory_label);
+                    memoryLabel.setVisibility(View.GONE);
+                    memoryView.setVisibility(View.GONE);
+                }
+            } else {
+                memoryView.setText(getString(R.string.device_information_unknown));
+            }
 
-        } else {
-            TextView cyanogenOsVerLabel = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_label);
-            cyanogenOsVerLabel.setVisibility(View.GONE);
-            cyanogenOsVerView.setVisibility(View.GONE);
-        }
+            TextView cyanogenOsVerView = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_field);
 
-        TextView osVerView = (TextView) rootView.findViewById(R.id.device_information_os_ver_field);
-        osVerView.setText(deviceInformationData.getOSVersion());
+            if (!systemVersionProperties.getCyanogenOSVersion().equals(NO_CYANOGEN_OS)) {
+                cyanogenOsVerView.setText(systemVersionProperties.getCyanogenOSVersion());
 
-        TextView osPatchDateView = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_field);
+            } else {
+                TextView cyanogenOsVerLabel = (TextView) rootView.findViewById(R.id.device_information_cyanogen_os_ver_label);
+                cyanogenOsVerLabel.setVisibility(View.GONE);
+                cyanogenOsVerView.setVisibility(View.GONE);
+            }
 
-        if(!systemVersionProperties.getSecurityPatchDate().equals(NO_CYANOGEN_OS)) {
-            osPatchDateView.setText(systemVersionProperties.getSecurityPatchDate());
-        } else {
-            TextView osPatchDateLabel = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_label);
-            osPatchDateLabel.setVisibility(View.GONE);
-            osPatchDateView.setVisibility(View.GONE);
-        }
+            TextView osVerView = (TextView) rootView.findViewById(R.id.device_information_os_ver_field);
+            osVerView.setText(deviceInformationData.getOSVersion());
 
-        TextView serialNumberView = (TextView) rootView.findViewById(R.id.device_information_serial_number_field);
-        serialNumberView.setText(deviceInformationData.getSerialNumber());
+            TextView osPatchDateView = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_field);
 
-        if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection()) {
-            showAds();
-        } else {
-            hideAds();
+            if (!systemVersionProperties.getSecurityPatchDate().equals(NO_CYANOGEN_OS)) {
+                osPatchDateView.setText(systemVersionProperties.getSecurityPatchDate());
+            } else {
+                TextView osPatchDateLabel = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_label);
+                osPatchDateLabel.setVisibility(View.GONE);
+                osPatchDateView.setVisibility(View.GONE);
+            }
+
+            TextView serialNumberView = (TextView) rootView.findViewById(R.id.device_information_serial_number_field);
+            serialNumberView.setText(deviceInformationData.getSerialNumber());
+
+            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection()) {
+                showAds();
+            } else {
+                hideAds();
+            }
         }
     }
 

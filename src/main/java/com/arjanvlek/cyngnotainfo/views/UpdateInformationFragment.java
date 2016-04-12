@@ -79,8 +79,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        deviceName = settingsManager.getPreference(PROPERTY_DEVICE);
-        context = getActivity().getApplicationContext();
+        if(settingsManager != null) {
+            deviceName = settingsManager.getPreference(PROPERTY_DEVICE);
+        }
+        if(getActivity() != null && isAdded()) {
+            context = getActivity().getApplicationContext();
+        }
 
     }
 
@@ -94,7 +98,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void onStart() {
         super.onStart();
-        if (updateInformationRefreshLayout == null && rootView != null) {
+        if (updateInformationRefreshLayout == null && rootView != null && isAdded()) {
             updateInformationRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
             systemIsUpToDateRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
             if(updateInformationRefreshLayout != null) {
@@ -106,7 +110,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 systemIsUpToDateRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
             }
         }
-        if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
+        if (!isFetched && settingsManager.checkIfSettingsAreValid() && isAdded()) {
             if (networkConnectionManager.checkNetworkConnection()) {
                 getServerData();
                 showAds();
@@ -130,7 +134,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
     private void showAds() {
-        adView = (AdView) rootView.findViewById(R.id.updateInformationAdView);
+        if(rootView != null) {
+            adView = (AdView) rootView.findViewById(R.id.updateInformationAdView);
+        }
         if (adView != null) {
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
@@ -178,7 +184,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         if (adView != null) {
             adView.resume();
         }
-        if (refreshedDate != null && isFetched && settingsManager.checkIfSettingsAreValid()) {
+        if (refreshedDate != null && isFetched && settingsManager.checkIfSettingsAreValid() && isAdded()) {
             if (refreshedDate.plusMinutes(5).isBefore(DateTime.now())) {
                 if (networkConnectionManager.checkNetworkConnection()) {
                     getServerData();
@@ -199,7 +205,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(getDownloading()) {
+        if(getDownloading() && isAdded()) {
             NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
             manager.cancel(NOTIFICATION_ID);
         }
