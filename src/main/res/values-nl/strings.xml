@@ -139,5 +139,9 @@
     <string name="unsupported_device_warning_checkbox_title">Toon dit bericht niet nogmaals</string>
     <string name="unsupported_device_warning_message">Het lijkt erop dat jouw apparaat geen Cyanogen OS kan draaien. Deze app kan alleen systeemupdates voor apparaten met Cyanogen OS downloaden. \n\nAndere apparaten met CyanogenMod (Custom ROM) worden niet ondersteund.</string>
     <string name="unsupported_device_warning_title">Niet-ondersteund apparaat</string>
+    <string name="faq">Veelgestelde vragen</string>
+    <string name="faq_menuitem">Veelgest. vragen</string>
+    <string name="faq_no_network">Je hebt een internetverbinding nodig om de pagina met veelgestelde vragen te bekijken.</string>
+    <string name="faq_no_network_title">Geen internetverbinding beschikbaar.</string>
 
 </resources>

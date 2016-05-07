@@ -26,6 +26,7 @@ import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.Support.SupportedDeviceCallback;
 import com.arjanvlek.cyngnotainfo.Support.SupportedDeviceManager;
+import com.arjanvlek.cyngnotainfo.views.FAQActivity;
 import com.arjanvlek.cyngnotainfo.views.HelpActivity;
 import com.arjanvlek.cyngnotainfo.views.MessageDialog;
 import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
@@ -89,16 +90,20 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.mainActivityPager);
-        mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
-            @Override
-            public void onPageSelected(int position) {
-                if (actionBar != null) {
-                    actionBar.setSelectedNavigationItem(position);
+        if(mViewPager != null) {
+            mViewPager.setAdapter(mSectionsPagerAdapter);
+            mViewPager.setOnPageChangeListener(new ViewPager.SimpleOnPageChangeListener() {
+                @Override
+                public void onPageSelected(int position) {
+                    if (actionBar != null) {
+                        actionBar.setSelectedNavigationItem(position);
+                    }
                 }
-            }
-        });
+            });
+        }
+
+
 
         // For each of the sections in the app, add a tab to the action bar.
         for (int i = 0; i < mSectionsPagerAdapter.getCount(); i++) {
@@ -179,6 +184,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
         if (id == R.id.action_help) {
             Help();
+            return true;
+        }
+
+        if (id == R.id.action_faq) {
+            FAQ();
             return true;
         }
 
@@ -323,6 +333,14 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      */
     private void Help() {
         Intent i = new Intent(this, HelpActivity.class);
+        startActivity(i);
+    }
+
+    /**
+     * Opens the faq page.
+     */
+    private void FAQ() {
+        Intent i = new Intent(this, FAQActivity.class);
         startActivity(i);
     }
 

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.arjanvlek.cyngnotainfo">
+    package="com.arjanvlek.cyngnotainfo" >
 
     <!-- Networking permissions for fetching update data -->
     <uses-permission android:name="android.permission.INTERNET" />
@@ -22,19 +22,19 @@
     <uses-permission android:name="com.arjanvlek.cyngnotainfo.permission.C2D_MESSAGE" />
 
     <application
-        android:fullBackupContent="true"
-        android:allowBackup="true"
         android:name=".ApplicationContext"
+        android:allowBackup="true"
+        android:fullBackupContent="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/ApplicationTheme"
-        tools:ignore="GoogleAppIndexingWarning">
+        tools:ignore="GoogleAppIndexingWarning" >
 
         <!-- All screens -->
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:label="@string/launcher_app_name">
+            android:label="@string/launcher_app_name"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -44,28 +44,29 @@
         <activity
             android:name=".views.UpdateInstallationGuideActivity"
             android:label="@string/install_guide"
-            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
-            tools:ignore="UnusedAttribute">
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
+
             <intent-filter>
                 <action android:name="updateInstallationInformationActivity" />
 
                 <category android:name="android.intent.category.default" />
             </intent-filter>
-
         </activity>
         <activity
             android:name=".views.AboutActivity"
             android:label="@string/about"
-            android:screenOrientation="portrait"
             android:parentActivityName=".MainActivity"
-            tools:ignore="UnusedAttribute">
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
+
             <intent-filter>
                 <action android:name="aboutActivity" />
 
@@ -77,7 +78,7 @@
             android:label="@string/settings"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
@@ -87,7 +88,7 @@
             android:label="@string/introduction_title"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
@@ -97,7 +98,7 @@
             android:label="@string/help"
             android:parentActivityName=".MainActivity"
             android:screenOrientation="portrait"
-            tools:ignore="UnusedAttribute">
+            tools:ignore="UnusedAttribute" >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.arjanvlek.cyngnotainfo.MainActivity" />
@@ -113,7 +114,7 @@
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"
             android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
+            android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
@@ -121,30 +122,41 @@
                 <category android:name="com.arjanvlek.cyngnotainfo" />
             </intent-filter>
         </receiver>
-        <receiver android:name=".GcmPackageReplacedReceiver">
+        <receiver android:name=".GcmPackageReplacedReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
             </intent-filter>
         </receiver>
+
         <service
             android:name=".GcmNotificationListenerService"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
             </intent-filter>
         </service>
         <service
             android:name=".GcmInstanceIDListenerService"
-            android:exported="false">
+            android:exported="false" >
             <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
+                <action android:name="com.google.android.gms.iid.InstanceID" />
             </intent-filter>
         </service>
         <service
             android:name=".GcmRegistrationIntentService"
-            android:exported="false">
+            android:exported="false" >
         </service>
 
+        <activity
+            android:name=".views.FAQActivity"
+            android:label="@string/faq"
+            android:parentActivityName=".MainActivity"
+            android:screenOrientation="portrait"
+            tools:ignore="UnusedAttribute">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.arjanvlek.cyngnotainfo.MainActivity" /> >
+        </activity>
     </application>
 
 </manifest>
