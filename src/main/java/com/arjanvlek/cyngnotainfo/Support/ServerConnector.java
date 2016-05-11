@@ -39,8 +39,8 @@ public class ServerConnector {
         return findMultipleFromServerResponse(fetchDataFromServer(DEVICES), Device.class);
     }
 
-    public CyanogenOTAUpdate getCyanogenOTAUpdate(Long deviceId, Long updateMethodId) {
-        return findOneFromServerResponse(fetchDataFromServer(UPDATE_DATA, deviceId.toString(), updateMethodId.toString()), CyanogenOTAUpdate.class);
+    public CyanogenOTAUpdate getCyanogenOTAUpdate(Long deviceId, Long updateMethodId, String incrementalSystemVersion) {
+        return findOneFromServerResponse(fetchDataFromServer(UPDATE_DATA, deviceId.toString(), updateMethodId.toString(), incrementalSystemVersion), CyanogenOTAUpdate.class);
     }
 
     public List<UpdateMethod> getUpdateMethods(Long deviceId) {

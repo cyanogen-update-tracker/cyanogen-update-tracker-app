@@ -10,10 +10,19 @@ import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 
 public class SystemVersionProperties {
 
+    private String incrementalSystemVersion;
     private String cyanogenDeviceCodeName;
     private String cyanogenOSVersion;
     private String securityPatchDate;
     private String modelNumber;
+
+    public String getIncrementalSystemVersion() {
+        return incrementalSystemVersion;
+    }
+
+    public void setIncrementalSystemVersion(String incrementalSystemVersion) {
+        this.incrementalSystemVersion = incrementalSystemVersion;
+    }
 
     public String getCyanogenDeviceCodeName() {
         return cyanogenDeviceCodeName;

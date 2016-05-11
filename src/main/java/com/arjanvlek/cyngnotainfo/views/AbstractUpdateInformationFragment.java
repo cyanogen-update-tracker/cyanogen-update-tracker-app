@@ -9,6 +9,7 @@ import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 
+import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
@@ -68,9 +69,11 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
 
     protected class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOTAUpdate> {
 
+        SystemVersionProperties systemVersionProperties = getApplicationContext().getSystemVersionProperties();
+
         @Override
         protected CyanogenOTAUpdate doInBackground(Void... arg0) {
-            CyanogenOTAUpdate cyanogenOTAUpdate = getApplicationContext().getServerConnector().getCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
+            CyanogenOTAUpdate cyanogenOTAUpdate = getApplicationContext().getServerConnector().getCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID), systemVersionProperties.getIncrementalSystemVersion());
             if (cyanogenOTAUpdate != null) {
                 return cyanogenOTAUpdate;
 

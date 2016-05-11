@@ -23,7 +23,7 @@ public enum ServerRequest {
         @Override
         URL getURL(String... params) throws MalformedURLException {
             String baseUrl = !ServerConnector.testing ? ServerConnector.SERVER_URL : ServerConnector.TEST_SERVER_URL;
-            return new URL(baseUrl + "updateData/" + params[0] + "/" + params[1]);
+            return new URL(baseUrl + "updateData/" + params[0] + "/" + params[1] + "/" + params[2]);
         }
     },
     SERVER_STATUS {

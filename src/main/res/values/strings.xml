@@ -84,13 +84,14 @@
     <string name="settings_system_hide_when_up_to_date">My system is up to date</string>
 
     <!-- FAQ strings -->
-    <string name="faq">Frequently Asked Questions</string>
+    <string name="faq">FAQ page</string>
     <string name="faq_menuitem">FAQ</string>
     <string name="faq_no_network_title">No internet connection available.</string>
     <string name="faq_no_network">You\'ll need an internet connection to view the FAQ page.</string>
 
 
     <!-- Error strings-->
+    <string name="reload">Reload</string>
     <string name="error_button_retry">Retry</string>
     <string name="error_maintenance">Server maintenance</string>
     <string name="error_maintenance_message">Please wait while the server undergoes maintenance. The server will be back online very soon.</string>
