@@ -56,7 +56,6 @@ public class ApplicationContext extends Application {
     public SystemVersionProperties getSystemVersionProperties() {
         if(SYSTEM_VERSION_PROPERTIES_INSTANCE == null) {
             SystemVersionProperties systemVersionProperties = new SystemVersionProperties();
-            String IncrementalSystemVersion = NO_CYANOGEN_OS;
             String cyanogenOSVersion = NO_CYANOGEN_OS;
             String cyanogenDeviceCodeName = NO_CYANOGEN_OS;
             String securityPatchDate = NO_CYANOGEN_OS;
@@ -99,7 +98,6 @@ public class ApplicationContext extends Application {
             } catch (IOException e) {
                 Log.e("IOException buildProp", e.getLocalizedMessage());
             }
-            systemVersionProperties.setIncrementalSystemVersion(Build.VERSION.INCREMENTAL);
             systemVersionProperties.setCyanogenDeviceCodeName(cyanogenDeviceCodeName);
             systemVersionProperties.setCyanogenOSVersion(cyanogenOSVersion);
             systemVersionProperties.setSecurityPatchDate(securityPatchDate);

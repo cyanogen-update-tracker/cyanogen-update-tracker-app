@@ -1,6 +1,7 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 
@@ -69,11 +70,9 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
 
     protected class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOTAUpdate> {
 
-        SystemVersionProperties systemVersionProperties = getApplicationContext().getSystemVersionProperties();
-
         @Override
         protected CyanogenOTAUpdate doInBackground(Void... arg0) {
-            CyanogenOTAUpdate cyanogenOTAUpdate = getApplicationContext().getServerConnector().getCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID), systemVersionProperties.getIncrementalSystemVersion());
+            CyanogenOTAUpdate cyanogenOTAUpdate = getApplicationContext().getServerConnector().getCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID), Build.VERSION.INCREMENTAL);
             if (cyanogenOTAUpdate != null) {
                 return cyanogenOTAUpdate;
 

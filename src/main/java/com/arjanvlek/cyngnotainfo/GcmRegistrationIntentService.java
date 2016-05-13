@@ -49,9 +49,8 @@ public class GcmRegistrationIntentService extends IntentService {
     private static final String JSON_PROPERTY_APP_VERSION = "app_version";
 
     //Server URLs
-    public static String SERVER_URL = "** Add the base URL of your API / backend here **v2.1/registerDevice";
-    public static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v2.1/registerDevice";
-    public static boolean testing = false;
+    public static String SERVER_URL = "** Add the base URL of your API / backend here **v3/registerDevice";
+    public static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3/registerDevice";
     public GcmRegistrationIntentService() {
         super(TAG);
     }
@@ -184,10 +183,10 @@ public class GcmRegistrationIntentService extends IntentService {
                 jsonResponse.put(JSON_PROPERTY_OLD_REGISTRATION_TOKEN, oldRegistrationId);
                 jsonResponse.put(JSON_PROPERTY_APP_VERSION, BuildConfig.VERSION_NAME);
                 URL url;
-                if(!testing) {
-                    url = new URL(SERVER_URL);
-                } else {
+                if(BuildConfig.USE_TEST_SERVER) {
                     url = new URL(TEST_SERVER_URL);
+                } else {
+                    url = new URL(SERVER_URL);
                 }
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);

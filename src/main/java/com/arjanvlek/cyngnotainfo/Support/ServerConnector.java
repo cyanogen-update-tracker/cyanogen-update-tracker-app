@@ -5,6 +5,7 @@ import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
+import com.arjanvlek.cyngnotainfo.Model.UpdateDescription;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.DESCRIPTION;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.DEVICES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_MESSAGES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_STATUS;
@@ -24,8 +26,8 @@ import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_METHODS;
 public class ServerConnector {
 
     public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
-    public final static String SERVER_URL = "** Add the base URL of your API / backend here **v2.1/";
-    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v2.1/";
+    public final static String SERVER_URL = "** Add the base URL of your API / backend here **v3/";
+    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3/";
 
     private ObjectMapper objectMapper;
 
@@ -33,14 +35,16 @@ public class ServerConnector {
         this.objectMapper = new ObjectMapper();
     }
 
-    public static boolean testing = false;
-
     public List<Device> getDevices() {
         return findMultipleFromServerResponse(fetchDataFromServer(DEVICES), Device.class);
     }
 
     public CyanogenOTAUpdate getCyanogenOTAUpdate(Long deviceId, Long updateMethodId, String incrementalSystemVersion) {
         return findOneFromServerResponse(fetchDataFromServer(UPDATE_DATA, deviceId.toString(), updateMethodId.toString(), incrementalSystemVersion), CyanogenOTAUpdate.class);
+    }
+
+    public UpdateDescription getUpdateDescription(Long deviceId, Long updateMethodId) {
+        return findOneFromServerResponse(fetchDataFromServer(DESCRIPTION, deviceId.toString(), updateMethodId.toString()), UpdateDescription.class);
     }
 
     public List<UpdateMethod> getUpdateMethods(Long deviceId) {
