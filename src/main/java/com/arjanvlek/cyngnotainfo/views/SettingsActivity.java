@@ -1,7 +1,6 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.SwitchCompat;
@@ -59,58 +58,70 @@ public class SettingsActivity extends AbstractActivity {
 
     private void initSwitches() {
         SwitchCompat appUpdatesSwitch = (SwitchCompat) findViewById(R.id.settingsAppUpdatesSwitch);
-        appUpdatesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingsManager.saveBooleanPreference(PROPERTY_SHOW_APP_UPDATE_MESSAGES, isChecked);
-            }
-        });
-        appUpdatesSwitch.setChecked(settingsManager.showAppUpdateMessages());
+        if (appUpdatesSwitch != null) {
+            appUpdatesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_APP_UPDATE_MESSAGES, isChecked);
+                }
+            });
+            appUpdatesSwitch.setChecked(settingsManager.showAppUpdateMessages());
+        }
 
         SwitchCompat appMessagesSwitch = (SwitchCompat) findViewById(R.id.settingsAppMessagesSwitch);
-        appMessagesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingsManager.saveBooleanPreference(PROPERTY_SHOW_NEWS_MESSAGES, isChecked);
-            }
-        });
-        appMessagesSwitch.setChecked(settingsManager.showNewsMessages());
+        if (appMessagesSwitch != null) {
+            appMessagesSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_NEWS_MESSAGES, isChecked);
+                }
+            });
+            appMessagesSwitch.setChecked(settingsManager.showNewsMessages());
+        }
 
         SwitchCompat importantPushNotificationsSwitch = (SwitchCompat) findViewById(R.id.settingsImportantPushNotificationsSwitch);
-        importantPushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_WARNING_NOTIFICATIONS, isChecked);
-            }
-        });
-        importantPushNotificationsSwitch.setChecked(settingsManager.receiveWarningNotifications());
+        if (importantPushNotificationsSwitch != null) {
+            importantPushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_WARNING_NOTIFICATIONS, isChecked);
+                }
+            });
+            importantPushNotificationsSwitch.setChecked(settingsManager.receiveWarningNotifications());
+        }
 
         SwitchCompat newVersionPushNotificationsSwitch = (SwitchCompat) findViewById(R.id.settingsNewVersionPushNotificationsSwitch);
-        newVersionPushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS, isChecked);
-            }
-        });
-        newVersionPushNotificationsSwitch.setChecked(settingsManager.receiveSystemUpdateNotifications());
+        if (newVersionPushNotificationsSwitch != null) {
+            newVersionPushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS, isChecked);
+                }
+            });
+            newVersionPushNotificationsSwitch.setChecked(settingsManager.receiveSystemUpdateNotifications());
+        }
 
         SwitchCompat newDevicePushNotificationsSwitch = (SwitchCompat) findViewById(R.id.settingsNewDevicePushNotificationsSwitch);
-        newDevicePushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_NEW_DEVICE_NOTIFICATIONS, isChecked);
-            }
-        });
-        newDevicePushNotificationsSwitch.setChecked(settingsManager.receiveNewDeviceNotifications());
+        if (newDevicePushNotificationsSwitch != null) {
+            newDevicePushNotificationsSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_RECEIVE_NEW_DEVICE_NOTIFICATIONS, isChecked);
+                }
+            });
+            newDevicePushNotificationsSwitch.setChecked(settingsManager.receiveNewDeviceNotifications());
+        }
 
         SwitchCompat systemIsUpToDateSwitch = (SwitchCompat) findViewById(R.id.settingsSystemIsUpToDateSwitch);
-        systemIsUpToDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                settingsManager.saveBooleanPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE, isChecked);
-            }
-        });
-        systemIsUpToDateSwitch.setChecked(settingsManager.showIfSystemIsUpToDate());
+        if (systemIsUpToDateSwitch != null) {
+            systemIsUpToDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                @Override
+                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE, isChecked);
+                }
+            });
+            systemIsUpToDateSwitch.setChecked(settingsManager.showIfSystemIsUpToDate());
+        }
     }
 
     private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<Device>> {
@@ -161,30 +172,36 @@ public class SettingsActivity extends AbstractActivity {
                 }
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
-            if (position != null) {
-                spinner.setSelection(position);
-            }
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    Device device = (Device) adapterView.getItemAtPosition(i);
-                    settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE, device.getDeviceName());
-                    settingsManager.saveLongPreference(SettingsManager.PROPERTY_DEVICE_ID, device.getId());
 
-                    try {
-                        updateMethodsProgressBar.setVisibility(View.VISIBLE);
-                        progressBar.setVisibility(View.VISIBLE);
-                    } catch (Exception ignored) {
+            if(spinner != null) {
+                spinner.setAdapter(adapter);
+                if (position != null) {
+                    spinner.setSelection(position);
+                }
+
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        Device device = (Device) adapterView.getItemAtPosition(i);
+                        settingsManager.savePreference(SettingsManager.PROPERTY_DEVICE, device.getDeviceName());
+                        settingsManager.saveLongPreference(SettingsManager.PROPERTY_DEVICE_ID, device.getId());
+
+                        try {
+                            updateMethodsProgressBar.setVisibility(View.VISIBLE);
+                            progressBar.setVisibility(View.VISIBLE);
+                        } catch (Exception ignored) {
+                        }
+
+                        new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, device.getId());
                     }
 
-                    new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, device.getId());
-                }
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+                    }
+                });
+            }
 
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-                }
-            });
+
             try {
                 deviceProgressBar.setVisibility(View.GONE);
             } catch (Exception ignored) {
@@ -197,6 +214,7 @@ public class SettingsActivity extends AbstractActivity {
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void hideDeviceAndUpdateMethodSettings() {
         findViewById(R.id.settingsDeviceSpinner).setVisibility(View.GONE);
         findViewById(R.id.settingsDeviceProgressBar).setVisibility(View.GONE);
@@ -252,37 +270,41 @@ public class SettingsActivity extends AbstractActivity {
                 }
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            spinner.setAdapter(adapter);
 
-            if (position != null) {
-                spinner.setSelection(position);
+            if(spinner != null) {
+                spinner.setAdapter(adapter);
+
+                if (position != null) {
+                    spinner.setSelection(position);
+                }
+
+                spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                    @Override
+                    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+                        UpdateMethod updateMethod = (UpdateMethod) adapterView.getItemAtPosition(i);
+                        try {
+                            progressBar.setVisibility(View.VISIBLE);
+                        } catch (Exception ignored) {
+                        }
+
+                        settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethod.getId());
+                        settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethod.getUpdateMethod());
+                        try {
+                            if (progressBar != null) {
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+
+                    @Override
+                    public void onNothingSelected(AdapterView<?> adapterView) {
+
+                    }
+                });
             }
 
-            spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-                @Override
-                public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                    UpdateMethod updateMethod = (UpdateMethod) adapterView.getItemAtPosition(i);
-                    try {
-                        progressBar.setVisibility(View.VISIBLE);
-                    } catch (Exception ignored) {
-                    }
-
-                    settingsManager.saveLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID, updateMethod.getId());
-                    settingsManager.savePreference(SettingsManager.PROPERTY_UPDATE_METHOD, updateMethod.getUpdateMethod());
-                    try {
-                        if (progressBar != null) {
-                            progressBar.setVisibility(View.GONE);
-                        }
-                    } catch (Exception ignored) {
-
-                    }
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> adapterView) {
-
-                }
-            });
             try {
                 updateMethodsProgressBar.setVisibility(View.GONE);
             } catch (Exception ignored) {

@@ -10,7 +10,6 @@ import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 
-import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
@@ -25,6 +24,8 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
     protected SettingsManager settingsManager;
     protected NetworkConnectionManager networkConnectionManager;
     protected CyanogenOTAUpdate cyanogenOTAUpdate;
+
+    public static final String UNABLE_TO_FIND_A_MORE_RECENT_BUILD = "unable to find a more recent build";
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -74,6 +75,9 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
         protected CyanogenOTAUpdate doInBackground(Void... arg0) {
             CyanogenOTAUpdate cyanogenOTAUpdate = getApplicationContext().getServerConnector().getCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID), Build.VERSION.INCREMENTAL);
             if (cyanogenOTAUpdate != null) {
+                if(cyanogenOTAUpdate.getInformation() != null && cyanogenOTAUpdate.getInformation().equals(UNABLE_TO_FIND_A_MORE_RECENT_BUILD) && cyanogenOTAUpdate.isUpdateInformationAvailable() && cyanogenOTAUpdate.isSystemIsUpToDateCheck()) {
+                    cyanogenOTAUpdate = getApplicationContext().getServerConnector().getMostRecentCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
+                }
                 return cyanogenOTAUpdate;
 
             } else {

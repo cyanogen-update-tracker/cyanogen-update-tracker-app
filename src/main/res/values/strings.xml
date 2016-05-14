@@ -130,7 +130,8 @@
     <string name="install_guide_step3_apply_update">Apply the downloaded update.</string>
     <string name="install_guide_step3_recovery_apply">- Within the recovery menu, choose Apply Update.</string>
     <string name="install_guide_step3_recovery_internal_storage">- Select Choose from Internal Storage.</string>
-    <string name="install_guide_step3_browse_for_update">- Go to 0, Download, and select the zip file matching the tile shown within the app.</string>
+    <string name="install_guide_step3_recovery_internal_storage_api23">- Select Choose from Emulated.</string>
+    <string name="install_guide_step3_browse_for_update">- Select "0".\n\n- Scroll down using the volume down key until you find "Download". \n\n- Select "Download".\n\n- Select the zip file with the file name shown within the app.\n\n- Installation starts automatically.</string>
 
     <string name="install_guide_step4_restart">Restart your device.</string>
     <string name="install_guide_step4_reboot_now">- Within the recovery menu, choose Reboot System Now.</string>

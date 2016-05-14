@@ -5,7 +5,6 @@ import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
-import com.arjanvlek.cyngnotainfo.Model.UpdateDescription;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -16,7 +15,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.DESCRIPTION;
+import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.MOST_RECENT_UPDATE_DATA;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.DEVICES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_MESSAGES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_STATUS;
@@ -43,8 +42,8 @@ public class ServerConnector {
         return findOneFromServerResponse(fetchDataFromServer(UPDATE_DATA, deviceId.toString(), updateMethodId.toString(), incrementalSystemVersion), CyanogenOTAUpdate.class);
     }
 
-    public UpdateDescription getUpdateDescription(Long deviceId, Long updateMethodId) {
-        return findOneFromServerResponse(fetchDataFromServer(DESCRIPTION, deviceId.toString(), updateMethodId.toString()), UpdateDescription.class);
+    public CyanogenOTAUpdate getMostRecentCyanogenOTAUpdate(Long deviceId, Long updateMethodId) {
+        return findOneFromServerResponse(fetchDataFromServer(MOST_RECENT_UPDATE_DATA, deviceId.toString(), updateMethodId.toString()), CyanogenOTAUpdate.class);
     }
 
     public List<UpdateMethod> getUpdateMethods(Long deviceId) {

@@ -394,7 +394,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
 
         // Display the "System is up to date" screen if the system is up to date and if "View update information" is NOT clicked, or if no update information is available.
-        if((systemIsUpToDate(cyanogenOTAUpdate.getName()) && !displayInfoWhenUpToDate) || !cyanogenOTAUpdate.isUpdateInformationAvailable()) {
+        if(((cyanogenOTAUpdate.isSystemIsUpToDate(settingsManager)) && !displayInfoWhenUpToDate) || !cyanogenOTAUpdate.isUpdateInformationAvailable()) {
             // Show "System is up to date" view.
             updateInformationLayout.setVisibility(View.GONE);
             systemIsUpToDateLayout.setVisibility(View.VISIBLE);
@@ -453,7 +453,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
             // Display download size.
             TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-            downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), (cyanogenOTAUpdate.getSize()) / 1048576));
+            downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), cyanogenOTAUpdate.getSize()));
 
             // Display update description.
             String description = cyanogenOTAUpdate.getDescription();
@@ -466,27 +466,25 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
             final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
 
-            // Activate download button or make it gray if offline.
-            if (online) {
-                if (cyanogenOTAUpdate.getDownloadUrl() != null) {
-                    downloadButton.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            MainActivity mainActivity = (MainActivity) getActivity();
-                            if(mainActivity != null) {
-                                if(mainActivity.hasDownloadPermissions()) {
-                                    new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                                    downloadButton.setText(getString(R.string.downloading));
-                                    downloadButton.setClickable(false);
-                                } else {
-                                    mainActivity.requestDownloadPermissions();
-                                }
+            // Activate download button, or make it gray when the device is offline or if the update is not downloadable.
+            if (online && cyanogenOTAUpdate.getDownloadUrl() != null) {
+                downloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        MainActivity mainActivity = (MainActivity) getActivity();
+                        if(mainActivity != null) {
+                            if(mainActivity.hasDownloadPermissions()) {
+                                new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                                downloadButton.setText(getString(R.string.downloading));
+                                downloadButton.setClickable(false);
+                            } else {
+                                mainActivity.requestDownloadPermissions();
                             }
                         }
-                    });
-                    downloadButton.setEnabled(true);
-                    downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
-                }
+                    }
+                });
+                downloadButton.setEnabled(true);
+                downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
             } else {
                 downloadButton.setEnabled(false);
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
@@ -531,39 +529,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
         // Hide the refreshing icon if it is present.
         hideRefreshIcons();
-    }
-
-    private boolean systemIsUpToDate(String newCyanogenOSVersion) {
-        if(settingsManager.showIfSystemIsUpToDate()) {
-            // This grabs Cyanogen OS version from build.prop. As there is no direct SDK way to do this, it has to be done in this way.
-            SystemVersionProperties systemVersionProperties = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties();
-
-            String cyanogenOSVersion = systemVersionProperties.getCyanogenOSVersion();
-
-            if(newCyanogenOSVersion == null) {
-                return false;
-            }
-
-            if (cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
-                return false;
-            } else {
-                if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {
-                    return true;
-                } else {
-                    // remove incremental version naming.
-                    newCyanogenOSVersion = newCyanogenOSVersion.replace(" Incremental", "");
-                    if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {
-                        return true;
-                    } else {
-                        newCyanogenOSVersion = newCyanogenOSVersion.replace("-", " ");
-                        return newCyanogenOSVersion.contains(cyanogenOSVersion);
-                    }
-                }
-            }
-        }
-        else {
-            return false; // Always show update info if user does not want to see if system is up to date.
-        }
     }
 
     @Override

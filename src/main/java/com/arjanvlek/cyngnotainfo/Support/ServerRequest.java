@@ -25,10 +25,10 @@ public enum ServerRequest {
             return new URL(getBaseUrl() + "updateData/" + params[0] + "/" + params[1] + "/" + params[2]);
         }
     },
-    DESCRIPTION {
+    MOST_RECENT_UPDATE_DATA {
         @Override
         URL getURL(String... params) throws MalformedURLException {
-            return new URL(getBaseUrl() + "description/" + params[0] + "/" + params[1]);
+            return new URL(getBaseUrl() + "mostRecentUpdateData/" + params[0] + "/" + params[1]);
         }
     },
     SERVER_STATUS {

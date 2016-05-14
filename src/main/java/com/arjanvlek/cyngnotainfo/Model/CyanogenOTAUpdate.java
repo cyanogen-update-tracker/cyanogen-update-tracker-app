@@ -1,5 +1,6 @@
 package com.arjanvlek.cyngnotainfo.Model;
 
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -12,7 +13,9 @@ public class CyanogenOTAUpdate {
     private String description;
     private String name;
     private String MD5Sum;
+    private String information;
     private boolean updateInformationAvailable;
+    private boolean systemIsUpToDate;
 
     public int getSize() {
         return size;
@@ -56,12 +59,39 @@ public class CyanogenOTAUpdate {
         this.name = name;
     }
 
-    public boolean isUpdateInformationAvailable() {
-        return updateInformationAvailable || (downloadUrl != null);
+    public String getInformation() {
+        return information;
     }
 
+    public void setInformation(String information) {
+        this.information = information;
+    }
+
+    public boolean isUpdateInformationAvailable() {
+        return updateInformationAvailable || (name != null);
+    }
+
+    @JsonProperty("update_information_available")
     public void setUpdateInformationAvailable(boolean updateInformationAvailable) {
         this.updateInformationAvailable = updateInformationAvailable;
+    }
+
+    public boolean isSystemIsUpToDate(SettingsManager settingsManager) {
+        //noinspection SimplifiableIfStatement
+        if(settingsManager != null && settingsManager.showIfSystemIsUpToDate()) {
+            return systemIsUpToDate;
+        } else {
+            return false;
+        }
+    }
+
+    public boolean isSystemIsUpToDateCheck() {
+        return systemIsUpToDate;
+    }
+
+    @JsonProperty("system_is_up_to_date")
+    public void setSystemIsUpToDate(boolean systemIsUpToDate) {
+        this.systemIsUpToDate = systemIsUpToDate;
     }
 
     public String getMD5Sum() {

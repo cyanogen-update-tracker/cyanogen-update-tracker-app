@@ -22,7 +22,7 @@
     <string name="update">Update</string>
     <string name="unknown_update_name">Update voor %1$s</string>
     <string name="update_description">Beschrijving van de update</string>
-    <string name="settings_explanation_incremental_full_update">Een incrementle update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen.\n\nEen volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je apparaat.</string>
+    <string name="settings_explanation_incremental_full_update">Een incrementele update kan alleen worden geïnstalleerd als je de laatste versie had voordat deze update verscheen.\n\nEen volledige update kan altijd worden geïnstalleerd - ongeacht de huidge versie op je apparaat.</string>
 
     <string name="update_information_close">Sluiten</string>
     <string name="about">Over deze app</string>
@@ -34,7 +34,7 @@
     <string name="install_guide_step2_turn_off_phone">- Zet uw apparaat eerst uit.</string>
     <string name="install_guide_step2_wait">- Wacht totdat u het recovery-menu op het scherm ziet.</string>
     <string name="install_guide_step3_apply_update">Installeer de gedownloade update.</string>
-    <string name="install_guide_step3_browse_for_update">- Ga naar 0, Download, en kies het zip-bestand met hetelfde updatenummer als wat in de app staat.</string>
+    <string name="install_guide_step3_browse_for_update">- Kies "0".\n\n- Gebruik de volume-omlaag-toets om omlaag te scrollen naar "Download".\n\n- Kies "Download".\n\n- Kies het zip-bestand met dezelfde bestandsnaam als in de app getoond.\n\n- De installatie begint vanzelf.</string>
     <string name="install_guide_step3_recovery_apply">- In het recovery-menu, kies Apply Update.</string>
     <string name="install_guide_step3_recovery_internal_storage">- Kies Choose from Internal Storage.</string>
     <string name="install_guide_step4_android_is_upgrading">- Na deze stap, zult u  \'Android wordt bijgewerkt\' zien, terwijl uw apps worden geoptimaliseerd.</string>
@@ -144,5 +144,6 @@
     <string name="faq_no_network">Je hebt een internetverbinding nodig om de pagina met veelgestelde vragen te bekijken.</string>
     <string name="faq_no_network_title">Geen internetverbinding beschikbaar.</string>
     <string name="reload">Opnieuw laden</string>
+    <string name="install_guide_step3_recovery_internal_storage_api23">- Kies Choose from Emulated.</string>
 
 </resources>
