@@ -370,6 +370,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             return;
         }
 
+        if(!cyanogenOTAUpdate.isSystemIsUpToDateCheck()) {
+            cyanogenOTAUpdate.setSystemIsUpToDate(isSystemUpToDateStringCheck(cyanogenOTAUpdate));
+        }
+
         // Display the "No connection" bar depending on the network status of the device.
         View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
         TextView noConnectionTextField = (TextView) rootView.findViewById(R.id.updateInformationNoConnectionTextView);
@@ -529,6 +533,47 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
         // Hide the refreshing icon if it is present.
         hideRefreshIcons();
+    }
+
+    /**
+     * Additional check if system is up to date by comparing version Strings.
+     * This is needed to show the "System is up to date" message for full updates as incremental (parent) versions are not checked there.
+     * @param cyanogenOTAUpdate CyanogenOTAUpdate that needs to be checked against the current version.
+     * @return True if the system is up to date, false if not.
+     */
+    private boolean isSystemUpToDateStringCheck(CyanogenOTAUpdate cyanogenOTAUpdate) {
+        if(settingsManager.showIfSystemIsUpToDate()) {
+            // This grabs Cyanogen OS version from build.prop. As there is no direct SDK way to do this, it has to be done in this way.
+            SystemVersionProperties systemVersionProperties = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties();
+
+            String cyanogenOSVersion = systemVersionProperties.getCyanogenOSVersion();
+            String newCyanogenOSVersion = cyanogenOTAUpdate.getName();
+
+            if(newCyanogenOSVersion == null || newCyanogenOSVersion.isEmpty()) {
+                return false;
+            }
+
+            if (cyanogenOSVersion == null || cyanogenOSVersion.isEmpty() || cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
+                return false;
+            } else {
+                if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {
+                    return true;
+                } else {
+                    // remove incremental version naming.
+                    newCyanogenOSVersion = newCyanogenOSVersion.replace(" Incremental", "");
+                    if (newCyanogenOSVersion.equals(cyanogenOSVersion)) {
+                        return true;
+                    } else {
+                        newCyanogenOSVersion = newCyanogenOSVersion.replace("-", " ");
+                        cyanogenOSVersion = cyanogenOSVersion.replace("-", " ");
+                        return newCyanogenOSVersion.contains(cyanogenOSVersion);
+                    }
+                }
+            }
+        }
+        else {
+            return false; // Always show update info if user does not want to see if system is up to date.
+        }
     }
 
     @Override
