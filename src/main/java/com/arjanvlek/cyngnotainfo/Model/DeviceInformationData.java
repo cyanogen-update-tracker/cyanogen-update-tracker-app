@@ -2,123 +2,66 @@ package com.arjanvlek.cyngnotainfo.Model;
 
 import android.os.Build;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 
 public class DeviceInformationData {
-    private String DeviceManufacturer;
+    private String deviceManufacturer;
     private String deviceName;
-    private String SOC;
-    private String CPU_Frequency;
-    private String OSVersion;
-    private String SerialNumber;
+    private String soc;
+    private String cpuFrequency;
+    private String osVersion;
+    private String serialNumber;
+
     public static String UNKNOWN = "-";
 
     public DeviceInformationData() {
-        setOSVersion();
-        setCPU_Frequency(null);
-        setSerialNumber();
-        setDeviceManufacturer(null);
-        setDeviceName(null);
-        setSOC(null);
+        this.deviceManufacturer = Build.MANUFACTURER;
+        this.deviceName = Build.DEVICE;
+        this.soc = Build.BOARD;
+        this.osVersion = Build.VERSION.RELEASE;
+        this.serialNumber = Build.SERIAL;
+        this.cpuFrequency = calculateCpuFrequency();
     }
 
     public String getDeviceManufacturer() {
-        return DeviceManufacturer;
-    }
-
-    public void setDeviceManufacturer(String deviceManufacturer) {
-        if (deviceManufacturer != null) {
-            this.DeviceManufacturer = deviceManufacturer;
-        } else {
-            DeviceManufacturer = Build.MANUFACTURER;
-        }
+        return deviceManufacturer;
     }
 
     public String getDeviceName() {
         return deviceName;
     }
 
-    public void setDeviceName(String deviceName) {
-        if (deviceName != null) {
-            this.deviceName = deviceName;
-        } else {
-            this.deviceName = Build.DEVICE;
-        }
+    public String getSoc() {
+        return soc;
     }
 
-    public String getSOC() {
-        return SOC;
+    public String getCpuFrequency() {
+        return cpuFrequency;
     }
 
-    public void setSOC(String SOC) {
-        if (SOC != null) {
-            this.SOC = SOC;
-        } else {
-            this.SOC = Build.BOARD;
-        }
-    }
-
-    public String getCPU_Frequency() {
-        return CPU_Frequency;
-    }
-
-    public void setCPU_Frequency(String CPU_Frequency) {
-        if (CPU_Frequency != null) {
-            this.CPU_Frequency = CPU_Frequency;
-        } else {
-            String cpuMaxFreq = "";
-            RandomAccessFile reader = null;
-            try {
-                reader = new RandomAccessFile("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", "r");
-            } catch (FileNotFoundException e) {
-                this.CPU_Frequency = UNKNOWN;
-            }
-            try {
-                if (reader != null) {
-                    cpuMaxFreq = reader.readLine();
-                }
-            } catch (IOException e) {
-                this.CPU_Frequency = UNKNOWN;
-            }
-            try {
-                if (reader != null) {
-                    reader.close();
-                }
-            } catch (IOException e) {
-                this.CPU_Frequency = UNKNOWN;
-            }
-            int cpuFreqInt = 0;
-            try {
-                cpuFreqInt = Integer.parseInt(cpuMaxFreq);
-            } catch (NumberFormatException e) {
-                this.CPU_Frequency = UNKNOWN;
-            }
-            if (cpuFreqInt != 0) {
-                int cpuFreqMhz = cpuFreqInt / 1000;
-                BigDecimal cpuFreqMhz2 = new BigDecimal(cpuFreqMhz);
-
-                BigDecimal cpuFreqGhz = cpuFreqMhz2.divide(new BigDecimal(1000), 3, BigDecimal.ROUND_DOWN);
-                this.CPU_Frequency = cpuFreqGhz.toString();
-            }
-        }
-    }
-
-    public String getOSVersion() {
-        return OSVersion;
-    }
-
-    public void setOSVersion() {
-        this.OSVersion = Build.VERSION.RELEASE;
+    public String getOsVersion() {
+        return osVersion;
     }
 
     public String getSerialNumber() {
-        return SerialNumber;
+        return serialNumber;
     }
 
-    public void setSerialNumber() {
-        SerialNumber = Build.SERIAL;
+    public String calculateCpuFrequency() {
+        try {
+            RandomAccessFile cpuFrequencyFileReader = new RandomAccessFile("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", "r");
+            String cpuFrequencyString = cpuFrequencyFileReader.readLine();
+
+            cpuFrequencyFileReader.close();
+
+            int cpuFrequency = Integer.parseInt(cpuFrequencyString);
+            cpuFrequency = cpuFrequency / 1000;
+
+            BigDecimal cpuFrequencyGhz = new BigDecimal(cpuFrequency).divide(new BigDecimal(1000), 3, BigDecimal.ROUND_DOWN);
+            return cpuFrequencyGhz.toString();
+        } catch (Exception e) {
+            return UNKNOWN;
+        }
     }
 }

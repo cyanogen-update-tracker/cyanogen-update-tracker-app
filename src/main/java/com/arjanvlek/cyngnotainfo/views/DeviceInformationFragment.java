@@ -12,7 +12,6 @@ import android.view.ViewGroup;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
@@ -78,12 +77,12 @@ public class DeviceInformationFragment extends AbstractFragment {
             }
 
             TextView socView = (TextView) rootView.findViewById(R.id.device_information_soc_field);
-            socView.setText(deviceInformationData.getSOC());
+            socView.setText(deviceInformationData.getSoc());
 
-            String cpuFreqString = deviceInformationData.getCPU_Frequency();
+            String cpuFreqString = deviceInformationData.getCpuFrequency();
             TextView cpuFreqView = (TextView) rootView.findViewById(R.id.device_information_cpu_freq_field);
             if (!cpuFreqString.equals(DeviceInformationData.UNKNOWN)) {
-                cpuFreqView.setText(String.format(getString(R.string.device_information_gigahertz), deviceInformationData.getCPU_Frequency()));
+                cpuFreqView.setText(String.format(getString(R.string.device_information_gigahertz), deviceInformationData.getCpuFrequency()));
             } else {
                 cpuFreqView.setText(getString(R.string.device_information_unknown));
             }
@@ -126,7 +125,7 @@ public class DeviceInformationFragment extends AbstractFragment {
             }
 
             TextView osVerView = (TextView) rootView.findViewById(R.id.device_information_os_ver_field);
-            osVerView.setText(deviceInformationData.getOSVersion());
+            osVerView.setText(deviceInformationData.getOsVersion());
 
             TextView osPatchDateView = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_field);
 
