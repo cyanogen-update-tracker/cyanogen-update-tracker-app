@@ -15,24 +15,48 @@ import com.arjanvlek.cyngnotainfo.R;
  * Usage: Title text, Message text, Positive button text, Negative button text.
  */
 public class MessageDialog extends DialogFragment {
-    private boolean isClosable;
     private ErrorDialogListener errorDialogListener;
 
+    private String title;
+    private String message;
+    private String positiveButtonText;
+    private String negativeButtonText;
+    private boolean closable;
+
+
     public interface ErrorDialogListener {
-        void onDialogRetryButtonClick(DialogFragment dialogFragment);
-        void onDialogCancelButtonClick(DialogFragment dialogFragment);
-        void onDialogGooglePlayButtonClick(DialogFragment dialogFragment);
+        void onDialogPositiveButtonClick(DialogFragment dialogFragment);
+        void onDialogNegativeButtonClick(DialogFragment dialogFragment);
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
+    public MessageDialog setTitle(String title) {
+        this.title = title;
+        return this;
+    }
 
-        try {
-            errorDialogListener = (ErrorDialogListener) getTargetFragment();
-        } catch (ClassCastException e) {
-            errorDialogListener = null;
-        }
+    public MessageDialog setMessage(String message) {
+        this.message = message;
+        return this;
+    }
+
+    public MessageDialog setErrorDialogListener(ErrorDialogListener listener) {
+        errorDialogListener = listener;
+        return this;
+    }
+
+    public MessageDialog setPositiveButtonText(String positiveButtonText) {
+        this.positiveButtonText = positiveButtonText;
+        return this;
+    }
+
+    public MessageDialog setNegativeButtonText(String negativeButtonText) {
+        this.negativeButtonText = negativeButtonText;
+        return this;
+    }
+
+    public MessageDialog setClosable(boolean closable) {
+        this.closable = closable;
+        return this;
     }
 
 
@@ -40,52 +64,34 @@ public class MessageDialog extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        Bundle arguments = getArguments();
-        builder.setTitle(arguments.getString("title"));
-        builder.setMessage(arguments.getString("message"));
-        String button1Text = arguments.getString("button1");
-        String button2Text = arguments.getString("button2");
-        isClosable = arguments.getBoolean("closable");
 
-        if(button2Text == null && button1Text != null) {
-            builder.setPositiveButton(button1Text, new DialogInterface.OnClickListener() {
+        builder.setTitle(title);
+        builder.setMessage(message);
+
+        if(negativeButtonText != null) {
+            builder.setNegativeButton(negativeButtonText, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
                     if(errorDialogListener != null) {
-                        errorDialogListener.onDialogCancelButtonClick(MessageDialog.this);
+                        errorDialogListener.onDialogNegativeButtonClick(MessageDialog.this);
                     }
+                    dismiss();
                 }
             });
         }
-        if(button2Text != null && button1Text != null && button1Text.toUpperCase().equals(getString(R.string.error_button_retry).toUpperCase())) {
-            builder.setPositiveButton(button1Text, new DialogInterface.OnClickListener() {
+        if(positiveButtonText != null) {
+            builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    errorDialogListener.onDialogRetryButtonClick(MessageDialog.this);
-                }
-            });
-            builder.setNegativeButton(button2Text, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    errorDialogListener.onDialogCancelButtonClick(MessageDialog.this);
+                    if(errorDialogListener != null) {
+                        errorDialogListener.onDialogPositiveButtonClick(MessageDialog.this);
+                    }
+                    dismiss();
                 }
             });
         }
-        if(button2Text != null && button1Text != null && button1Text.equals(getString(R.string.error_google_play_button_text))) {
-            builder.setPositiveButton(button1Text, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    errorDialogListener.onDialogGooglePlayButtonClick(MessageDialog.this);
-                }
-            });
-            builder.setNegativeButton(button2Text, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    errorDialogListener.onDialogCancelButtonClick(MessageDialog.this);
-                }
-            });
-        }
-        if(!isClosable) {
+
+        if(!closable) {
             builder.setCancelable(false);
             builder.setOnKeyListener(new DialogInterface.OnKeyListener() {
                 @Override
@@ -114,7 +120,7 @@ public class MessageDialog extends DialogFragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
-        if(!isClosable) {
+        if(!closable) {
             getActivity().finish();
             System.exit(0);
         }

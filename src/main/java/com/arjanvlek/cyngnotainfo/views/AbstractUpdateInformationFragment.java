@@ -1,5 +1,8 @@
 package com.arjanvlek.cyngnotainfo.views;
 
+import android.content.ActivityNotFoundException;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -39,6 +42,10 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
     protected abstract void displayServerMessages(List<ServerMessage> serverMessages);
 
     protected abstract void displayUpdateInformation(CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean force);
+
+    protected abstract void initDownloadManager();
+
+    protected abstract void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate);
 
     protected abstract CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate();
 
@@ -95,42 +102,58 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
             super.onPostExecute(result);
             cyanogenOTAUpdate = result;
             displayUpdateInformation(result, networkConnectionManager.checkNetworkConnection(), false);
+            initDownloadManager();
+            checkIfUpdateIsAlreadyDownloaded(cyanogenOTAUpdate);
         }
     }
 
     protected void showNetworkError() {
-        DialogFragment errorDialog = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", getString(R.string.error_app_requires_network_connection_message));
-        args.putString("title", getString(R.string.error_app_requires_network_connection));
-        args.putString("button1", getString(R.string.download_error_close));
-        args.putBoolean("closable", false);
-        errorDialog.setArguments(args);
+        MessageDialog errorDialog = new MessageDialog()
+                .setTitle(getString(R.string.error_app_requires_network_connection))
+                .setMessage(getString(R.string.error_app_requires_network_connection_message))
+                .setNegativeButtonText(getString(R.string.download_error_close))
+                .setClosable(false);
         errorDialog.setTargetFragment(this, 0);
         errorDialog.show(getFragmentManager(), "NetworkError");
     }
 
     protected void showMaintenanceError() {
-        DialogFragment serverMaintenanceErrorFragment = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", getString(R.string.error_maintenance_message));
-        args.putString("title", getString(R.string.error_maintenance));
-        args.putString("button1", getString(R.string.download_error_close));
-        args.putBoolean("closable", false);
-        serverMaintenanceErrorFragment.setArguments(args);
+        MessageDialog serverMaintenanceErrorFragment = new MessageDialog()
+                .setTitle(getString(R.string.error_maintenance))
+                .setMessage(getString(R.string.error_maintenance_message))
+                .setNegativeButtonText(getString(R.string.download_error_close))
+                .setClosable(false);
         serverMaintenanceErrorFragment.setTargetFragment(this, 0);
         serverMaintenanceErrorFragment.show(getFragmentManager(), "MaintenanceError");
     }
 
     protected void showAppNotValidError() {
-        DialogFragment appNotValidErrorFragment = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", getString(R.string.error_app_not_valid_message));
-        args.putString("title", getString(R.string.error_app_not_valid));
-        args.putString("button1", getString(R.string.error_google_play_button_text));
-        args.putString("button2", getString(R.string.download_error_close));
-        args.putBoolean("closable", false);
-        appNotValidErrorFragment.setArguments(args);
+        MessageDialog appNotValidErrorFragment = new MessageDialog()
+                .setTitle(getString(R.string.error_app_not_valid))
+                .setMessage(getString(R.string.error_app_not_valid_message))
+                .setPositiveButtonText(getString(R.string.error_google_play_button_text))
+                .setNegativeButtonText(getString(R.string.download_error_close))
+                .setClosable(false)
+                .setErrorDialogListener(new MessageDialog.ErrorDialogListener() {
+                    @Override
+                    public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
+                        try {
+                            final String appPackageName = BuildConfig.APPLICATION_ID;
+                            try {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                            } catch (ActivityNotFoundException e) {
+                                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                            }
+                        } catch (Exception ignored) {
+
+                        }
+                    }
+
+                    @Override
+                    public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
+
+                    }
+        });
         appNotValidErrorFragment.setTargetFragment(this, 0);
         appNotValidErrorFragment.show(getFragmentManager(), "AppNotValidError");
     }

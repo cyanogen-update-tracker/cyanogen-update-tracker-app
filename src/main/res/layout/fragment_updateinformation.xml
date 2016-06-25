@@ -203,6 +203,16 @@
                             android:contentDescription="@string/icon"
                             android:src="@drawable/ic_action_highlight_remove" />
                     </TableRow>
+                    <TableRow>
+                        <TextView
+                            android:id="@+id/updateInformationDownloadDetailsView"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center_vertical"
+                            android:layout_marginLeft="10dp"
+                            android:layout_marginStart="10dp"
+                        />
+                    </TableRow>
 
                 </TableLayout>
 

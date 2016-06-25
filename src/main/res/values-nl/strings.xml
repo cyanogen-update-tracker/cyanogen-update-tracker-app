@@ -145,5 +145,15 @@
     <string name="faq_no_network_title">Geen internetverbinding beschikbaar.</string>
     <string name="reload">Opnieuw laden</string>
     <string name="install_guide_step3_recovery_internal_storage_api23">- Kies Choose from Emulated.</string>
+    <string name="downloaded">Gedownload</string>
+    <string name="download_title">Downloaden Cyanogen OS-versie %1$s</string>
+    <string name="download_error_sd_card">Er is geen SD-kaart aanwezig in je apparaat. Plaats een SD-kaart in je apparaat. Probeer hierna de update opnieuw te downloaden.</string>
+    <string name="download_pending">Je download begint zometeen…</string>
+    <string name="download_verifying">Je download wordt nu gecontroleerd…</string>
+    <string name="download_waiting_for_network">Wachten op een netwerkverbinding…</string>
+    <string name="download_waiting_for_wifi">Wachten op een Wi-Fi-verbinding…</string>
+    <string name="download_will_retry_soon">Je download zal zometeen herstarten…</string>
+    <string name="download_paused_unknown">Je download is mogelijk vastgelopen. Probeer opnieuw te downloaden…</string>
+    <string name="update_already_downloaded">De update was al gedownload. Het staat klaar om geïnstalleerd te worden.</string>
 
 </resources>

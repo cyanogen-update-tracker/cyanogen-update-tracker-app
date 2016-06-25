@@ -96,10 +96,10 @@ public class GcmRegistrationIntentService extends IntentService {
         SettingsManager settingsManager = new SettingsManager(getApplicationContext());
 
         // Remove update data link if present. This is from the past where Cyanogen provided the update data. Update data is now directly fetched from the API.
-        if(settingsManager.checkPreference(PROPERTY_UPDATE_DATA_LINK)) {
+        if(settingsManager.containsPreference(PROPERTY_UPDATE_DATA_LINK)) {
             settingsManager.removePreference(PROPERTY_UPDATE_DATA_LINK);
         }
-        return settingsManager.checkPreference(PROPERTY_DEVICE) && settingsManager.checkPreference(PROPERTY_UPDATE_METHOD) && (!settingsManager.checkPreference(PROPERTY_DEVICE_ID) || !settingsManager.checkPreference(PROPERTY_UPDATE_METHOD_ID));
+        return settingsManager.containsPreference(PROPERTY_DEVICE) && settingsManager.containsPreference(PROPERTY_UPDATE_METHOD) && (!settingsManager.containsPreference(PROPERTY_DEVICE_ID) || !settingsManager.containsPreference(PROPERTY_UPDATE_METHOD_ID));
     }
 
 

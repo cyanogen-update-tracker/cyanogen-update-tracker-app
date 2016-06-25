@@ -76,7 +76,7 @@ public class TutorialStep4Fragment extends AbstractFragment {
 
         final List<Integer> recommendedPositionsDefinitive = recommendedPositions;
 
-        if (settingsManager.checkPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID)) {
+        if (settingsManager.containsPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID)) {
             for(UpdateMethod updateMethod : updateMethods) {
                 if(updateMethod.getId() == settingsManager.getLongPreference(SettingsManager.PROPERTY_UPDATE_METHOD_ID) ){
                     recommendedPositions = new ArrayList<>();

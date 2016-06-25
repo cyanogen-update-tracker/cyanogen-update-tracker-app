@@ -2,10 +2,7 @@ package com.arjanvlek.cyngnotainfo.views;
 
 import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -13,7 +10,6 @@ import android.os.Environment;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
-import android.support.v4.app.TaskStackBuilder;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
@@ -30,7 +26,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
-import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
@@ -38,47 +33,56 @@ import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
-import com.arjanvlek.cyngnotainfo.Support.MD5;
+import com.arjanvlek.cyngnotainfo.Support.UpdateDownloadListener;
+import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader;
+import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.DownloadSpeedUnits;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.net.URLConnection;
 import java.util.List;
 import java.util.Locale;
 
+import static android.app.DownloadManager.ERROR_CANNOT_RESUME;
+import static android.app.DownloadManager.ERROR_DEVICE_NOT_FOUND;
+import static android.app.DownloadManager.ERROR_FILE_ALREADY_EXISTS;
+import static android.app.DownloadManager.ERROR_FILE_ERROR;
+import static android.app.DownloadManager.ERROR_HTTP_DATA_ERROR;
+import static android.app.DownloadManager.ERROR_INSUFFICIENT_SPACE;
+import static android.app.DownloadManager.ERROR_TOO_MANY_REDIRECTS;
+import static android.app.DownloadManager.ERROR_UNHANDLED_HTTP_CODE;
+import static android.app.DownloadManager.PAUSED_QUEUED_FOR_WIFI;
+import static android.app.DownloadManager.PAUSED_UNKNOWN;
+import static android.app.DownloadManager.PAUSED_WAITING_FOR_NETWORK;
+import static android.app.DownloadManager.PAUSED_WAITING_TO_RETRY;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
-public class UpdateInformationFragment extends AbstractUpdateInformationFragment implements SwipeRefreshLayout.OnRefreshListener, MessageDialog.ErrorDialogListener {
+public class UpdateInformationFragment extends AbstractUpdateInformationFragment {
 
-    private String deviceName;
 
     private SwipeRefreshLayout updateInformationRefreshLayout;
     private SwipeRefreshLayout systemIsUpToDateRefreshLayout;
-
     private RelativeLayout rootView;
     private AdView adView;
+
     private Context context;
+    private UpdateDownloader updateDownloader;
 
     private DateTime refreshedDate;
     private boolean isFetched;
+    private String deviceName;
 
     public static final int NOTIFICATION_ID = 1;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // SettingsManager is created in the parent class.
         if(settingsManager != null) {
             deviceName = settingsManager.getPreference(PROPERTY_DEVICE);
         }
@@ -98,67 +102,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void onStart() {
         super.onStart();
-        if (updateInformationRefreshLayout == null && rootView != null && isAdded()) {
-            updateInformationRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
-            systemIsUpToDateRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
-            if(updateInformationRefreshLayout != null) {
-                updateInformationRefreshLayout.setOnRefreshListener(this);
-                updateInformationRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
-            }
-            if(systemIsUpToDateRefreshLayout != null) {
-                systemIsUpToDateRefreshLayout.setOnRefreshListener(this);
-                systemIsUpToDateRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
-            }
-        }
-        if (!isFetched && settingsManager.checkIfSettingsAreValid() && isAdded()) {
-            if (networkConnectionManager.checkNetworkConnection()) {
-                getServerData();
-                showAds();
-                refreshedDate = DateTime.now();
-                isFetched = true;
-            } else if (settingsManager.checkIfCacheIsAvailable()) {
-                displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
-                refreshedDate = DateTime.now();
-                isFetched = true;
-            } else {
-                hideAds();
-                showNetworkError();
-            }
-        }
-    }
-
-    private void hideAds() {
-        if (adView != null) {
-            adView.destroy();
-        }
-    }
-
-    private void showAds() {
-        if(rootView != null) {
-            adView = (AdView) rootView.findViewById(R.id.updateInformationAdView);
-        }
-        if (adView != null) {
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
-                    .addKeyword("smartphone")
-                    .addKeyword("tablet")
-                    .addKeyword("games")
-                    .addKeyword("android")
-                    .addKeyword("cyanogen")
-                    .addKeyword("cyanogenmod")
-                    .addKeyword("cyanogenos")
-                    .addKeyword("cyanogen os")
-                    .addKeyword("raspberrypi")
-                    .addKeyword("oneplus")
-                    .addKeyword("yu")
-                    .addKeyword("oppo")
-
-                    .build();
-
-            adView.loadAd(adRequest);
+        if(isAdded()) {
+            initLayout();
+            initData();
         }
     }
 
@@ -214,15 +160,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    private void getServerData() {
-        new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
-            new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        }
-        if(settingsManager.showNewsMessages()) {
-            new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        }
-    }
+
 
     @Override
     protected CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate() {
@@ -357,7 +295,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 appUpdateNotificationBar.setVisibility(View.VISIBLE);
                 appUpdateNotificationTextView.setVisibility(View.VISIBLE);
 
-                appUpdateNotificationTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
+                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
+                    appUpdateNotificationTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion()), Html.FROM_HTML_MODE_LEGACY));
+                } else {
+                    //noinspection deprecation as it is only for older Android versions
+                    appUpdateNotificationTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
+                }
                 appUpdateNotificationTextView.setMovementMethod(LinkMovementMethod.getInstance());
             }
         }
@@ -478,7 +421,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         MainActivity mainActivity = (MainActivity) getActivity();
                         if(mainActivity != null) {
                             if(mainActivity.hasDownloadPermissions()) {
-                                new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
+                                updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+//                                new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
                                 downloadButton.setText(getString(R.string.downloading));
                                 downloadButton.setClickable(false);
                             } else {
@@ -576,160 +520,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    @Override
-    public void onDialogRetryButtonClick(DialogFragment dialogFragment) {
-        Button downloadButton = (Button)rootView.findViewById(R.id.updateInformationDownloadButton);
-        new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-        downloadButton.setText(getString(R.string.downloading));
-        downloadButton.setClickable(false);
-        dialogFragment.dismiss();
-    }
-
-    @Override
-    public void onDialogCancelButtonClick(DialogFragment dialogFragment) {
-        dialogFragment.dismiss();
-    }
-
-    @Override
-    public void onDialogGooglePlayButtonClick(DialogFragment dialogFragment) {
-        try {
-            final String appPackageName = BuildConfig.APPLICATION_ID;
-            try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-            } catch (android.content.ActivityNotFoundException e) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
-            }
-        } catch (Exception ignored) {
-
-        }
-        dialogFragment.dismiss();
-    }
-
-    private class UpdateDownloader extends AsyncTask<String, Long, String> {
-        int i=0;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            showDownloadProgressBar();
-            setDownloading(true);
-            getDownloadProgressBar().setIndeterminate(false);
-            getDownloadCancelButton().setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    if(isAdded()) {
-                        getDownloadButton().setClickable(true);
-                        getDownloadButton().setText(getString(R.string.download));
-                        hideDownloadProgressBar();
-                        hideDownloadNotification();
-                    } else {
-                        hideDownloadNotification();
-                    }
-                    setDownloading(false);
-                    cancel(true);
-                }
-            });
-        }
-
-        @Override
-        protected String doInBackground(String... urls) {
-            String filename = urls[1];
-
-            try {
-                int count;
-                URL url = new URL(urls[0]);
-                URLConnection connection = url.openConnection();
-                connection.connect();
-
-                int lengthOfFile = connection.getContentLength();
-
-                InputStream input = new BufferedInputStream(url.openStream());
-                OutputStream output = new FileOutputStream(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/" + filename);
-
-                byte data[] = new byte[1024];
-                long total = 0;
-
-                while ((count = input.read(data)) != -1) {
-                    total += count;
-                    publishProgress((total*100)/lengthOfFile);
-                    output.write(data, 0, count);
-                }
-
-                output.flush();
-                output.close();
-                input.close();
-            } catch (Exception e) {
-                if(e.getMessage().contains("No space left")) {
-                    return "NO_SPACE_ERR";
-                } else if (e.getMessage().contains("ENOENT")) {
-                    return "NO_DOWNLOAD_DIR_ERR";
-                } else {
-                    return null;
-                }
-            }
-            return filename;
-        }
-
-        protected void onProgressUpdate(Long... progress) {
-            i++;
-            getDownloadProgressBar().setProgress(progress[0].intValue());
-            if( i > 100) {
-                showDownloadNotification(progress[0].intValue(), false, false, false);
-                i = 0;
-            }
-        }
-
-        @Override
-        protected void onPostExecute(String fileName) {
-            if(fileName == null) {
-                if(isAdded()) {
-                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
-                    getDownloadButton().setClickable(true);
-                    getDownloadButton().setText(getString(R.string.download));
-                    hideDownloadProgressBar();
-                    setDownloading(false);
-                } else {
-                    setDownloading(false);
-                    showDownloadNotification(0,false, false, true);
-                }
-
-            } else if(fileName.equals("NO_SPACE_ERR")) {
-                if(isAdded()) {
-                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_storage), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
-                    getDownloadButton().setClickable(true);
-                    getDownloadButton().setText(getString(R.string.download));
-                    hideDownloadProgressBar();
-                    setDownloading(false);
-                } else {
-                    setDownloading(false);
-                    showDownloadNotification(0,false, false, true);
-                }
-            } else if(fileName.equals("NO_DOWNLOAD_DIR_ERR")) {
-                if(isAdded() && !makeDownloadDirectory()) {
-                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_directory), getString(R.string.download_error_close), null, true);
-                    getDownloadButton().setClickable(true);
-                    getDownloadButton().setText(getString(R.string.download));
-                    hideDownloadProgressBar();
-                    setDownloading(false);
-                } else {
-                    setDownloading(false);
-                    execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                    showDownloadNotification(0,false, false, true);
-                }
-            }
-            else {
-                if(isAdded()) {
-                    getDownloadProgressBar().setIndeterminate(true);
-                    getDownloadButton().setText(getString(R.string.verifying));
-                }
-                showDownloadNotification(0, true, false, false);
-                new DownloadVerifier().execute(fileName);
-            }
-        }
-    }
-
     private Button getDownloadButton() {
         return (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
+    }
+
+    private TextView getDownloadStatusText() {
+        return (TextView) rootView.findViewById(R.id.updateInformationDownloadDetailsView);
     }
 
     private void showDownloadProgressBar() {
@@ -752,61 +548,19 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     }
 
-    private void showDownloadNotification(final Integer progress, final boolean indeterminate, final boolean complete, final boolean failed) {
+    private void showVerifyingNotification() {
         NotificationCompat.Builder builder;
         try {
-            if (complete) {
-                Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
-                stackBuilder.addParentStack(MainActivity.class);
-                stackBuilder.addNextIntent(resultIntent);
-                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                builder = new NotificationCompat.Builder(getActivity())
-                        .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                        .setContentTitle(getString(R.string.download_complete))
-                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName())
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true);
-                try {
-                    Toast.makeText(context, getString(R.string.download_complete), Toast.LENGTH_LONG).show();
-                } catch(Exception ignore) {
-
-                }
-            } else if (failed) {
-                Intent resultIntent = new Intent(getApplicationContext(), MainActivity.class);
-                TaskStackBuilder stackBuilder = TaskStackBuilder.create(getApplicationContext());
-                stackBuilder.addParentStack(MainActivity.class);
-                stackBuilder.addNextIntent(resultIntent);
-                PendingIntent pendingIntent = stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-                builder = new NotificationCompat.Builder(getActivity())
-                        .setSmallIcon(android.R.drawable.stat_sys_download_done)
-                        .setContentTitle(getString(R.string.download_failed))
-                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName())
-                        .setContentIntent(pendingIntent)
-                        .setAutoCancel(true);
-
-            } else if (indeterminate) {
                 builder = new NotificationCompat.Builder(getActivity())
                         .setSmallIcon(android.R.drawable.stat_sys_download)
                         .setContentTitle(getString(R.string.verifying))
-                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
-            } else {
-                builder = new NotificationCompat.Builder(getApplicationContext())
-                        .setSmallIcon(android.R.drawable.stat_sys_download)
-                        .setContentTitle(getString(R.string.downloading))
-                        .setContentText(getString(R.string.download_cyanogen_os) + " " + cyanogenOTAUpdate.getName());
-            }
+                        .setOngoing(true)
+                        .setProgress(100, 50, true);
 
             if (Build.VERSION.SDK_INT >= 21) {
                 builder.setCategory(Notification.CATEGORY_PROGRESS);
             }
             NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-            if (!complete && !failed) {
-                builder.setOngoing(true);
-                builder.setProgress(100, progress, indeterminate);
-            }
             manager.notify(NOTIFICATION_ID, builder.build());
         } catch(Exception e) {
             try {
@@ -826,65 +580,35 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    private void hideDownloadNotification() {
+    private void hideVerifyingNotification() {
         NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(NOTIFICATION_ID);
     }
 
 
-    private class DownloadVerifier extends AsyncTask<String, Integer, Boolean> {
+    private void showDownloadError(String title, String message, String positiveButtonText, String negativeButtonText, boolean closable) {
+        MessageDialog errorDialog = new MessageDialog()
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButtonText(positiveButtonText)
+                .setNegativeButtonText(negativeButtonText)
+                .setClosable(closable)
+                .setErrorDialogListener(new MessageDialog.ErrorDialogListener() {
+                    @Override
+                    public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
+                        updateDownloader.cancelDownload();
+                        updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                    }
 
-        @Override
-        protected Boolean doInBackground(String... params) {
-            String filename = params[0];
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + "/" + filename);
-            return cyanogenOTAUpdate == null || cyanogenOTAUpdate.getMD5Sum() == null || MD5.checkMD5(cyanogenOTAUpdate.getMD5Sum(), file);
-        }
+                    @Override
+                    public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
 
-        @Override
-        protected void onPostExecute(Boolean result) {
-            if(!result) {
-                showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
-            }
-            getDownloadButton().setClickable(true);
-            getDownloadButton().setText(getString(R.string.download));
-            hideDownloadProgressBar();
-            setDownloading(false);
-            if(result) {
-                showDownloadNotification(0, false, true, false);
-            } else {
-                showDownloadNotification(0, false, false, true);
-            }
-        }
-    }
-
-    private void showDownloadError(String title, String errorMessage, String button1, String button2, boolean closable) {
-        DialogFragment errorDialog = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", errorMessage);
-        args.putString("title", title);
-        args.putString("button1", button1);
-        args.putString("button2", button2);
-        args.putBoolean("closable", closable);
-        errorDialog.setArguments(args);
+                    }
+                });
         errorDialog.setTargetFragment(this, 0);
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
         transaction.add(errorDialog, "DownloadError");
         transaction.commitAllowingStateLoss();
-        showDownloadNotification(0, false, false, true);
-    }
-
-    @Override
-    public void onRefresh() {
-        if(getDownloading()) {
-            hideRefreshIcons();
-        } else if (networkConnectionManager.checkNetworkConnection()) {
-            getServerData();
-        } else if (settingsManager.checkIfCacheIsAvailable()) {
-            displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
-        } else {
-            showNetworkError();
-        }
     }
 
     private void hideRefreshIcons() {
@@ -898,11 +622,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 systemIsUpToDateRefreshLayout.setRefreshing(false);
             }
         }
-    }
-
-    private boolean makeDownloadDirectory() {
-        File downloadDirectory = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS);
-        return downloadDirectory.mkdirs();
     }
 
     private void setDownloading(boolean isDownloading) {
@@ -921,5 +640,304 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         } catch (Exception e) {
             return false;
         }
+    }
+
+    private void initLayout() {
+        if (updateInformationRefreshLayout == null && rootView != null && isAdded()) {
+            updateInformationRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
+            systemIsUpToDateRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
+            if(updateInformationRefreshLayout != null) {
+                updateInformationRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (networkConnectionManager.checkNetworkConnection()) {
+                            getServerData();
+                        } else if (settingsManager.checkIfCacheIsAvailable()) {
+                            displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
+                        } else {
+                            showNetworkError();
+                        }
+                    }
+                });
+                updateInformationRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
+            }
+            if(systemIsUpToDateRefreshLayout != null) {
+                systemIsUpToDateRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (networkConnectionManager.checkNetworkConnection()) {
+                            getServerData();
+                        } else if (settingsManager.checkIfCacheIsAvailable()) {
+                            displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
+                        } else {
+                            showNetworkError();
+                        }
+                    }
+                });
+                systemIsUpToDateRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
+            }
+        }
+    }
+
+    private void initData() {
+        if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
+            if (networkConnectionManager.checkNetworkConnection()) {
+                getServerData();
+                showAds();
+                refreshedDate = DateTime.now();
+                isFetched = true;
+            } else if (settingsManager.checkIfCacheIsAvailable()) {
+                cyanogenOTAUpdate = buildOfflineCyanogenOTAUpdate();
+                displayUpdateInformation(cyanogenOTAUpdate, false, false);
+                initDownloadManager();
+                refreshedDate = DateTime.now();
+                isFetched = true;
+            } else {
+                hideAds();
+                showNetworkError();
+            }
+        }
+    }
+
+    private void getServerData() {
+        new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
+            new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
+        if(settingsManager.showNewsMessages()) {
+            new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
+    }
+
+
+
+    private void hideAds() {
+        if (adView != null) {
+            adView.destroy();
+        }
+    }
+
+    private void showAds() {
+        if(rootView != null) {
+            adView = (AdView) rootView.findViewById(R.id.updateInformationAdView);
+        }
+        if (adView != null) {
+            AdRequest adRequest = new AdRequest.Builder()
+                    .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
+                    .addKeyword("smartphone")
+                    .addKeyword("tablet")
+                    .addKeyword("games")
+                    .addKeyword("android")
+                    .addKeyword("cyanogen")
+                    .addKeyword("cyanogenmod")
+                    .addKeyword("cyanogenos")
+                    .addKeyword("cyanogen os")
+                    .addKeyword("raspberrypi")
+                    .addKeyword("oneplus")
+                    .addKeyword("yu")
+                    .addKeyword("oppo")
+
+                    .build();
+
+            adView.loadAd(adRequest);
+        }
+    }
+
+    @Override
+    protected void initDownloadManager() {
+        if(isAdded() && updateDownloader == null) {
+            updateDownloader = new UpdateDownloader(getActivity())
+                    .addActionListener(new UpdateDownloadListener() {
+                        @Override
+                        public void onDownloadManagerInit() {
+                            getDownloadCancelButton().setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    updateDownloader.cancelDownload();
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onDownloadStarted(long downloadID) {
+                            if(isAdded()) {
+                                getDownloadButton().setText(getString(R.string.downloading));
+                                getDownloadButton().setClickable(false);
+
+                                showDownloadProgressBar();
+                                setDownloading(true);
+                                getDownloadProgressBar().setIndeterminate(false);
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadPending() {
+                            if(isAdded()) {
+                                showDownloadProgressBar();
+                                getDownloadButton().setText(getString(R.string.downloading));
+                                getDownloadButton().setClickable(false);
+                                TextView downloadStatusText = getDownloadStatusText();
+                                downloadStatusText.setText(getString(R.string.download_pending));
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadProgressUpdate(int progress, long averageNetworkSpeed, DownloadSpeedUnits networkSpeedUnits, long secondsRemaining) {
+                            if(isAdded()) {
+                                showDownloadProgressBar();
+                                getDownloadButton().setText(getString(R.string.downloading));
+                                getDownloadButton().setClickable(false);
+                                getDownloadProgressBar().setIndeterminate(false);
+                                getDownloadProgressBar().setProgress(progress);
+
+                                getDownloadStatusText().setText(progress + "%, " + secondsRemaining + "seconds remaining (" + averageNetworkSpeed + " + " + networkSpeedUnits.getStringValue() + ")");
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadPaused(int statusCode) {
+                            if(isAdded()) {
+                                showDownloadProgressBar();
+                                getDownloadButton().setText(getString(R.string.downloading));
+                                getDownloadButton().setClickable(false);
+
+                                TextView downloadStatusText = getDownloadStatusText();
+                                switch (statusCode) {
+                                    case PAUSED_QUEUED_FOR_WIFI:
+                                        downloadStatusText.setText(getString(R.string.download_waiting_for_wifi));
+                                        break;
+                                    case PAUSED_WAITING_FOR_NETWORK:
+                                        downloadStatusText.setText(getString(R.string.download_waiting_for_network));
+                                        break;
+                                    case PAUSED_WAITING_TO_RETRY:
+                                        downloadStatusText.setText(getString(R.string.download_will_retry_soon));
+                                        break;
+                                    case PAUSED_UNKNOWN:
+                                        downloadStatusText.setText(getString(R.string.download_paused_unknown));
+                                        break;
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadComplete() {
+                            if(isAdded()) {
+                                Toast.makeText(getApplicationContext(), getString(R.string.download_verifying), Toast.LENGTH_LONG).show();
+                            }
+                        }
+
+                        @Override
+                        public void onDownloadCancelled() {
+                            if(isAdded()) {
+                                getDownloadButton().setClickable(true);
+                                getDownloadButton().setText(getString(R.string.download));
+                                hideDownloadProgressBar();
+                            }
+                            setDownloading(false);
+                        }
+
+                        @Override
+                        public void onDownloadError(int statusCode) {
+                            // Treat any HTTP status code exception (lower than 1000) as a network error.
+                            // Handle any other errors according to the error message.
+                            if(isAdded()) {
+                                if (statusCode < 1000) {
+                                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                } else {
+                                    switch (statusCode) {
+                                        case ERROR_UNHANDLED_HTTP_CODE:
+                                        case ERROR_HTTP_DATA_ERROR:
+                                        case ERROR_TOO_MANY_REDIRECTS:
+                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                            break;
+                                        case ERROR_FILE_ERROR:
+                                            updateDownloader.makeDownloadDirectory();
+                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_directory), getString(R.string.download_error_close), null, true);
+                                            break;
+                                        case ERROR_INSUFFICIENT_SPACE:
+                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_storage), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                            break;
+                                        case ERROR_DEVICE_NOT_FOUND:
+                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_sd_card), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                            break;
+                                        case ERROR_CANNOT_RESUME:
+                                            updateDownloader.cancelDownload();
+                                            if (networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null) {
+                                                updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                                            }
+                                        case ERROR_FILE_ALREADY_EXISTS:
+                                            Toast.makeText(getApplicationContext(), getString(R.string.update_already_downloaded), Toast.LENGTH_LONG).show();
+                                            onUpdateDownloaded(true);
+                                    }
+                                }
+
+                                // Make sure the failed download file gets deleted before the user tries to download it again.
+                                updateDownloader.cancelDownload();
+                                hideDownloadProgressBar();
+                                onUpdateDownloaded(false);
+                            }
+                        }
+
+                        @Override
+                        public void onVerifyStarted() {
+                            if(isAdded()) {
+                                getDownloadProgressBar().setIndeterminate(true);
+                                showVerifyingNotification();
+                                getDownloadButton().setText(getString(R.string.verifying));
+                            }
+                        }
+
+                        @Override
+                        public void onVerifyError() {
+                            if(isAdded()) {
+                                showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+                                try {
+                                    //noinspection ResultOfMethodCallIgnored
+                                    file.delete();
+                                } catch (Exception ignored) {
+
+                                }
+                                hideVerifyingNotification();
+                            }
+                        }
+
+                        @Override
+                        public void onVerifyComplete() {
+                            if(isAdded()) {
+                                hideDownloadProgressBar();
+                                hideVerifyingNotification();
+                                onUpdateDownloaded(true);
+                            }
+                        }
+                    });
+            updateDownloader.checkDownloadProgress(cyanogenOTAUpdate);
+        }
+    }
+
+    private void onUpdateDownloaded(boolean updateIsDownloaded) {
+        Button downloadButton = getDownloadButton();
+        setDownloading(!updateIsDownloaded);
+
+        if(updateIsDownloaded) {
+            downloadButton.setEnabled(false);
+            downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+            downloadButton.setClickable(false);
+            downloadButton.setText(getString(R.string.downloaded));
+        } else {
+            downloadButton.setEnabled(true);
+            downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
+            downloadButton.setClickable(true);
+            downloadButton.setText(getString(R.string.download));
+        }
+    }
+
+    @Override
+    public void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate) {
+        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+        onUpdateDownloaded(file.exists());
     }
 }

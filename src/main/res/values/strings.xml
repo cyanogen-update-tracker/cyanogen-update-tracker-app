@@ -43,6 +43,7 @@
     <!-- Downloader strings-->
     <string name="settings_cannot_launch_downloading">You can\'t open the Settings screen while an update is downloading…</string>
     <string name="download">Download</string>
+    <string name="downloaded">Downloaded</string>
     <string name="downloading">Downloading…</string>
     <string name="verifying">Verifying…</string>
     <string name="download_permissions">Click Download again to download the update.</string>
@@ -50,10 +51,19 @@
     <string name="download_error_corrupt">The downloaded update file is corrupt! Please try downloading it again.</string>
     <string name="download_error_network">A network error occurred while downloading the update file. Please make sure your Internet connection works and try downloading it again.</string>
     <string name="download_error_storage">There is insufficient storage space available on your device to save the downloaded update file. Please remove some files and try downloading it again.</string>
+    <string name="download_error_sd_card">There is no SD card present in your device. Please insert an SD card into your device. After you have done so, try downloading the update again.</string>
     <string name="download_error_directory">It looks like there is no external storage available on your device. If you have an SD card, please make sure your device is not connected to a PC and make sure the SD card is configured to be used as external storage.</string>
     <string name="download_size_megabyte">%1$d MB</string>
+    <string name="download_title">Downloading Cyanogen OS version %1$s.</string>
     <string name="download_error_close">CLOSE</string>
     <string name="download_error_retry">RETRY</string>
+    <string name="download_waiting_for_wifi">Waiting for a Wi-Fi connection…</string>
+    <string name="download_will_retry_soon">Your download will re-start soon…</string>
+    <string name="download_pending">Your download will start soon…</string>
+    <string name="download_paused_unknown">Your download may be stuck. Try re-downloading the update…</string>
+    <string name="download_waiting_for_network">Waiting for a network connection…</string>
+    <string name="update_already_downloaded">The update was already downloaded. It is ready to get installed.</string>
+    <string name="download_verifying">Your download will now be verified…</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen OS Update</string>
     <string name="cyanogen_os_version">Cyanogen OS Version: %1$s</string>

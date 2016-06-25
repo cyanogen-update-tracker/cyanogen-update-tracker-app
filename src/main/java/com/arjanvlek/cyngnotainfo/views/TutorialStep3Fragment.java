@@ -73,7 +73,7 @@ public class TutorialStep3Fragment extends AbstractFragment {
 
         final int selection = selectedIndex;
 
-        if (settingsManager.checkPreference(SettingsManager.PROPERTY_DEVICE_ID)) {
+        if (settingsManager.containsPreference(SettingsManager.PROPERTY_DEVICE_ID)) {
             for(Device device : devices) {
                 if(device.getId() == settingsManager.getLongPreference(SettingsManager.PROPERTY_DEVICE_ID) ){
                     selectedIndex = devices.indexOf(device);

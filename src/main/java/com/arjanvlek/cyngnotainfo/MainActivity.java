@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             }
 
             // Mark the welcome tutorial as finished if the user is moving from older app version. This is checked by either having stored update information for offline viewing, or if the last update checked date is set (if user always had up to date system and never viewed update information before).
-            if(!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE) && (settingsManager.checkIfCacheIsAvailable() || settingsManager.checkPreference(PROPERTY_UPDATE_CHECKED_DATE))) {
+            if(!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE) && (settingsManager.checkIfCacheIsAvailable() || settingsManager.containsPreference(PROPERTY_UPDATE_CHECKED_DATE))) {
                 settingsManager.saveBooleanPreference(PROPERTY_SETUP_DONE, true);
             }
 

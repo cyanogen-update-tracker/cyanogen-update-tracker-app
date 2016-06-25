@@ -35,6 +35,7 @@ public class SettingsManager {
     public static final String PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE = "show_if_system_is_up_to_date";
     public static final String PROPERTY_SETUP_DONE = "setup_done";
     public static final String PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS = "ignore_unsupported_device_warnings";
+    public static final String PROPERTY_DOWNLOAD_ID = "download_id";
 
     private Context context;
 
@@ -45,11 +46,11 @@ public class SettingsManager {
 
 
     public boolean checkIfSettingsAreValid() {
-        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD) && getBooleanPreference(PROPERTY_SETUP_DONE);
+        return containsPreference(PROPERTY_DEVICE) && containsPreference(PROPERTY_UPDATE_METHOD) && getBooleanPreference(PROPERTY_SETUP_DONE);
     }
 
     public boolean receiveSystemUpdateNotifications() {
-        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getBoolean(PROPERTY_RECEIVE_SYSTEM_UPDATE_NOTIFICATIONS, true);
     }
 
@@ -87,7 +88,7 @@ public class SettingsManager {
      * @param value Preference Value
      */
     public void savePreference(String key, String value) {
-        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(key, value);
         editor.apply();
@@ -99,7 +100,7 @@ public class SettingsManager {
      * @param value Preference Value
      */
     public void saveIntPreference(String key, int value) {
-        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putInt(key, value);
         editor.apply();
@@ -111,7 +112,7 @@ public class SettingsManager {
      * @param value Preference Value
      */
     public void saveBooleanPreference(String key, boolean value) {
-        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putBoolean(key, value);
         editor.apply();
@@ -122,8 +123,8 @@ public class SettingsManager {
      * @param key Preference Key
      * @param value Preference Value
      */
-    public void saveLongPreference(String key, long value) {
-        SharedPreferences prefs = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+    public void saveLongPreference(String key, Long value) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putLong(key, value);
         editor.apply();
@@ -134,10 +135,22 @@ public class SettingsManager {
      * @param key Preference Key
      * @return Returns if the given key is stored in the preferences.
      */
-    public boolean checkPreference(String key) {
-        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+    public boolean containsPreference(String key) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.contains(key);
     }
+
+    /**
+     * Deletes a preference
+     * @param key Preference Key
+     */
+    public void deletePreference(String key) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.remove(key);
+        editor.apply();
+    }
+
 
     /**
      * Get a String preference from Shared Preferences
@@ -145,7 +158,7 @@ public class SettingsManager {
      * @return Preference Value
      */
     public String getPreference(String key) {
-        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getString(key, null);
     }
 
@@ -155,7 +168,7 @@ public class SettingsManager {
      * @return Preference Value
      */
     public int getIntPreference(String key) {
-        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         return preferences.getInt(key, 0);
     }
 
@@ -170,8 +183,8 @@ public class SettingsManager {
      * @return Preference Value
      */
     public long getLongPreference(String key) {
-        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
-        return preferences.getLong(key, 0);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        return preferences.getLong(key, -1);
     }
 
 
@@ -202,7 +215,7 @@ public class SettingsManager {
      * @return if the application is set up properly.
      */
     public boolean checkIfDeviceIsSet() {
-        return checkPreference(PROPERTY_DEVICE) && checkPreference(PROPERTY_UPDATE_METHOD);
+        return containsPreference(PROPERTY_DEVICE) && containsPreference(PROPERTY_UPDATE_METHOD);
     }
 
 
@@ -263,16 +276,16 @@ public class SettingsManager {
      */
     public boolean checkIfCacheIsAvailable() {
         try {
-            return  checkPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE) // update description may be null; should not be checked.
-                    && checkPreference(PROPERTY_OFFLINE_UPDATE_NAME)
-                    && checkPreference(PROPERTY_OFFLINE_FILE_NAME);
+            return  containsPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE) // update description may be null; should not be checked.
+                    && containsPreference(PROPERTY_OFFLINE_UPDATE_NAME)
+                    && containsPreference(PROPERTY_OFFLINE_FILE_NAME);
         } catch(Exception ignored) {
             return false;
         }
     }
 
     public void removePreference(String key) {
-        SharedPreferences preferences = android.preference.PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor editor = preferences.edit();
         editor.remove(key);
         editor.apply();
