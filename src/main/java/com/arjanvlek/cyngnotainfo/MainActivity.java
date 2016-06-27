@@ -7,7 +7,6 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -47,7 +46,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private ViewPager mViewPager;
     private SettingsManager settingsManager;
     private NetworkConnectionManager networkConnectionManager;
-    private boolean isDownloading;
 
     // Used for Google Play Services check
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -158,13 +156,11 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     }
 
     private void showNetworkError() {
-        DialogFragment errorDialog = new MessageDialog();
-        Bundle args = new Bundle(4);
-        args.putString("message", getString(R.string.error_app_requires_network_connection_message));
-        args.putString("title", getString(R.string.error_app_requires_network_connection));
-        args.putString("button1", getString(R.string.download_error_close));
-        args.putBoolean("closable", false);
-        errorDialog.setArguments(args);
+        MessageDialog errorDialog = new MessageDialog()
+                .setTitle(getString(R.string.error_app_requires_network_connection))
+                .setMessage(getString(R.string.error_app_requires_network_connection_message))
+                .setNegativeButtonText(getString(R.string.download_error_close))
+                .setClosable(false);
         errorDialog.show(getSupportFragmentManager(), "NetworkError");
     }
 
@@ -300,16 +296,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      * Opens the settings page.
      */
     private void Settings() {
-        if(!isDownloading()) {
-            Intent i = new Intent(this, SettingsActivity.class);
-            startActivity(i);
-        } else {
-            try {
-                Toast.makeText(getBaseContext(), getString(R.string.settings_cannot_launch_downloading), Toast.LENGTH_LONG).show();
-            } catch (Exception ignored) {
-
-            }
-        }
+        Intent i = new Intent(this, SettingsActivity.class);
+        startActivity(i);
     }
 
     /**
@@ -412,13 +400,5 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         } else {
             return true;
         }
-    }
-
-    public boolean isDownloading() {
-        return this.isDownloading;
-    }
-
-    public void setDownloading(boolean isDownloading) {
-        this.isDownloading = isDownloading;
     }
 }

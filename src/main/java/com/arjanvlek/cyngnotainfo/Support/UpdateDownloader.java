@@ -10,12 +10,12 @@ import android.os.Environment;
 import android.os.Handler;
 
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
+import com.arjanvlek.cyngnotainfo.Model.DownloadETA;
 import com.arjanvlek.cyngnotainfo.R;
 
 import java.io.File;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import static android.app.DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
 import static android.app.DownloadManager.COLUMN_REASON;
@@ -41,12 +41,16 @@ public class UpdateDownloader {
     private boolean initialized;
     private final SettingsManager settingsManager;
 
-    private List<UpdateDownloadListener> listeners = new ArrayList<>();
+    private UpdateDownloadListener listener;
 
-    private final static int NOT_SET = -1;
+    public final static int NOT_SET = -1;
 
-    private int previouslyDownloadedBytes = NOT_SET;
+    private int previousBytesDownloadedSoFar = NOT_SET;
     private long previousTimeStamp;
+
+    private DownloadSpeedUnits previousSpeedUnits = BYTES;
+    private double previousDownloadSpeed = NOT_SET;
+    private long previousNumberOfSecondsRemaining = NOT_SET;
 
     public UpdateDownloader(Activity baseActivity) {
         this.baseActivity = baseActivity;
@@ -54,8 +58,13 @@ public class UpdateDownloader {
         this.settingsManager = new SettingsManager(baseActivity.getApplicationContext());
     }
 
-    public UpdateDownloader addActionListener(UpdateDownloadListener listener) {
-        this.listeners.add(listener);
+    public UpdateDownloader setUpdateDownloadListener(UpdateDownloadListener listener) {
+        this.listener = listener;
+
+        if(!initialized) {
+            listener.onDownloadManagerInit();
+            initialized = true;
+        }
         return this;
     }
 
@@ -73,35 +82,24 @@ public class UpdateDownloader {
 
         long downloadID = downloadManager.enqueue(request);
 
-        previouslyDownloadedBytes = NOT_SET;
+        previousBytesDownloadedSoFar = NOT_SET;
         settingsManager.saveLongPreference(PROPERTY_DOWNLOAD_ID, downloadID);
 
         checkDownloadProgress(cyanogenOTAUpdate);
 
-        for(UpdateDownloadListener listener : listeners) {
-            listener.onDownloadStarted(downloadID);
-        }
+        listener.onDownloadStarted(downloadID);
     }
 
     public void cancelDownload() {
         if(settingsManager.containsPreference(PROPERTY_DOWNLOAD_ID)) {
             downloadManager.remove(settingsManager.getLongPreference(PROPERTY_DOWNLOAD_ID));
-            previouslyDownloadedBytes = NOT_SET;
-            settingsManager.deletePreference(PROPERTY_DOWNLOAD_ID);
-            for(UpdateDownloadListener listener : listeners) {
-                listener.onDownloadCancelled();
-            }
+            clearUp();
+
+            listener.onDownloadCancelled();
         }
     }
 
     public void checkDownloadProgress(CyanogenOTAUpdate cyanogenOTAUpdate) {
-
-        if(!initialized) {
-            for(UpdateDownloadListener listener : listeners) {
-                listener.onDownloadManagerInit();
-                initialized = true;
-            }
-        }
 
         final long downloadId = settingsManager.getLongPreference(PROPERTY_DOWNLOAD_ID);
 
@@ -114,79 +112,40 @@ public class UpdateDownloader {
                 int status = cursor.getInt(cursor.getColumnIndex(COLUMN_STATUS));
                 switch (status) {
                     case STATUS_PENDING:
-                        for (UpdateDownloadListener listener : listeners) {
-                            listener.onDownloadPending();
-                        }
+                        listener.onDownloadPending();
 
-                        recheckDownloadProgress(cyanogenOTAUpdate, 5);
+                        recheckDownloadProgress(cyanogenOTAUpdate, 1);
                         break;
                     case STATUS_PAUSED:
-                        for (UpdateDownloadListener listener : listeners) {
-                            listener.onDownloadPaused(cursor.getInt(cursor.getColumnIndex(COLUMN_REASON)));
-                        }
+                        listener.onDownloadPaused(cursor.getInt(cursor.getColumnIndex(COLUMN_REASON)));
 
                         recheckDownloadProgress(cyanogenOTAUpdate, 5);
                         break;
                     case STATUS_RUNNING:
 
-                        int currentlyDownloadedBytes = cursor.getInt(cursor.getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                        int totalDownloadSize = cursor.getInt(cursor.getColumnIndex(COLUMN_TOTAL_SIZE_BYTES));
+                        int bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
+                        int totalSizeBytes = cursor.getInt(cursor.getColumnIndex(COLUMN_TOTAL_SIZE_BYTES));
 
-                        long bytesDownloadedInSecond = NOT_SET;
-                        long downloadSpeed = NOT_SET;
-                        long numberOfSecondsRemaining = NOT_SET;
+                        DownloadETA eta = calculateDownloadETA(bytesDownloadedSoFar, totalSizeBytes);
 
-                        DownloadSpeedUnits units = BYTES;
-                        if(previouslyDownloadedBytes != NOT_SET) {
-                            long currentTimeStamp = System.currentTimeMillis();
+                        listener.onDownloadProgressUpdate(eta);
 
-
-                            bytesDownloadedInSecond =  (currentlyDownloadedBytes - previouslyDownloadedBytes) * (currentTimeStamp - previousTimeStamp * 1000) ;
-                            int bytesRemainingToDownload = totalDownloadSize - currentlyDownloadedBytes;
-                            if(bytesDownloadedInSecond != 0) {
-                                numberOfSecondsRemaining = bytesRemainingToDownload / bytesDownloadedInSecond;
-                            }
-                        }
-
-                        if(bytesDownloadedInSecond != NOT_SET) {
-                            if(bytesDownloadedInSecond >= 0 && bytesDownloadedInSecond < 1000) {
-                                downloadSpeed = bytesDownloadedInSecond;
-                                units = BYTES;
-                            } else if(bytesDownloadedInSecond >= 1000 && bytesDownloadedInSecond < 1000000) {
-                                downloadSpeed = new BigDecimal(bytesDownloadedInSecond).setScale(0, ROUND_CEILING).divide(new BigDecimal(1000), ROUND_CEILING).intValue();
-                                units = KILO_BYTES;
-                            } else if(bytesDownloadedInSecond >= 1000000) {
-                                downloadSpeed = new BigDecimal(bytesDownloadedInSecond).setScale(2, ROUND_CEILING).divide(new BigDecimal(1000000), ROUND_CEILING).intValue();
-                                units = MEGA_BYTES;
-                            }
-                        }
-
-                        int progress = (currentlyDownloadedBytes  / totalDownloadSize) * 100;
-
-                        for(UpdateDownloadListener listener : listeners) {
-                            listener.onDownloadProgressUpdate(progress, downloadSpeed, units, numberOfSecondsRemaining);
-                        }
-
-                        previouslyDownloadedBytes = cursor.getInt(cursor.getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
-                        previousTimeStamp = System.currentTimeMillis();
+                        previousBytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
 
                         recheckDownloadProgress(cyanogenOTAUpdate, 1);
 
                         break;
                     case DownloadManager.STATUS_SUCCESSFUL:
-                        for (UpdateDownloadListener listener : listeners) {
-                            listener.onDownloadComplete();
-                        }
-                        previouslyDownloadedBytes = NOT_SET;
-                        settingsManager.deletePreference(PROPERTY_DOWNLOAD_ID);
+                        clearUp();
+
+                        listener.onDownloadComplete();
+
                         verifyDownload(cyanogenOTAUpdate);
                         break;
                     case DownloadManager.STATUS_FAILED:
-                        for (UpdateDownloadListener listener : listeners) {
-                            listener.onDownloadError(cursor.getInt(cursor.getColumnIndex(COLUMN_REASON)));
-                        }
-                        previouslyDownloadedBytes = NOT_SET;
-                        settingsManager.deletePreference(PROPERTY_DOWNLOAD_ID);
+                        clearUp();
+
+                        listener.onDownloadError(cursor.getInt(cursor.getColumnIndex(COLUMN_REASON)));
                         break;
                 }
             }
@@ -211,13 +170,76 @@ public class UpdateDownloader {
         }, (secondsDelay * 1000));
     }
 
+    private void clearUp() {
+        previousTimeStamp = NOT_SET;
+        previousBytesDownloadedSoFar = NOT_SET;
+        previousSpeedUnits = BYTES;
+        previousDownloadSpeed = NOT_SET;
+        previousNumberOfSecondsRemaining = NOT_SET;
+        settingsManager.deletePreference(PROPERTY_DOWNLOAD_ID);
+    }
+
+    private DownloadETA calculateDownloadETA(long bytesDownloadedSoFar, long totalSizeBytes) {
+        double bytesDownloadedInSecond = NOT_SET;
+        double downloadSpeed = NOT_SET;
+        long numberOfSecondsRemaining = NOT_SET;
+
+        DownloadSpeedUnits speedUnits = BYTES;
+        if(previousBytesDownloadedSoFar != NOT_SET) {
+            long currentTimeStamp = System.currentTimeMillis();
+
+            double numberOfElapsedSeconds = TimeUnit.MILLISECONDS.toSeconds(currentTimeStamp - previousTimeStamp);
+
+            if((bytesDownloadedSoFar - previousBytesDownloadedSoFar) > 0) {
+                bytesDownloadedInSecond =  (bytesDownloadedSoFar - previousBytesDownloadedSoFar) / (numberOfElapsedSeconds) ;
+                previousTimeStamp = currentTimeStamp;
+            } else {
+                bytesDownloadedInSecond = 0;
+            }
+
+            long bytesRemainingToDownload = totalSizeBytes - bytesDownloadedSoFar;
+
+            // DownloadManager.query doesn't always have new data. If no new data is available, return the previously stored data to keep the UI showing that.
+            if(bytesDownloadedInSecond >= 1) {
+                numberOfSecondsRemaining = bytesRemainingToDownload / (long)bytesDownloadedInSecond;
+                previousNumberOfSecondsRemaining = numberOfSecondsRemaining;
+            } else {
+                numberOfSecondsRemaining = previousNumberOfSecondsRemaining;
+            }
+        }
+
+        if(bytesDownloadedInSecond != NOT_SET) {
+            if(bytesDownloadedInSecond == 0) {
+                downloadSpeed = previousDownloadSpeed;
+                speedUnits = previousSpeedUnits;
+            }else {
+                if (bytesDownloadedInSecond >= 0 && bytesDownloadedInSecond < 1000) {
+                    downloadSpeed = bytesDownloadedInSecond;
+                    speedUnits = BYTES;
+
+                } else if (bytesDownloadedInSecond >= 1000 && bytesDownloadedInSecond < 1000000) {
+                    downloadSpeed = new BigDecimal(bytesDownloadedInSecond).setScale(0, ROUND_CEILING).divide(new BigDecimal(1000), ROUND_CEILING).doubleValue();
+                    speedUnits = KILO_BYTES;
+                } else if (bytesDownloadedInSecond >= 1000000) {
+                    downloadSpeed = new BigDecimal(bytesDownloadedInSecond).setScale(2, ROUND_CEILING).divide(new BigDecimal(1000000), ROUND_CEILING).doubleValue();
+                    speedUnits = MEGA_BYTES;
+                }
+
+                previousDownloadSpeed = downloadSpeed;
+                previousSpeedUnits = speedUnits;
+            }
+        }
+
+        int progress = (int)((bytesDownloadedSoFar * 100)  / totalSizeBytes);
+
+        return new DownloadETA(downloadSpeed, speedUnits, numberOfSecondsRemaining, progress);
+    }
+
     private class DownloadVerifier extends AsyncTask<CyanogenOTAUpdate, Integer, Boolean> {
 
         @Override
         protected void onPreExecute() {
-            for (UpdateDownloadListener listener : listeners) {
-                listener.onVerifyStarted();
-            }
+            listener.onVerifyStarted();
         }
 
         @Override
@@ -230,13 +252,9 @@ public class UpdateDownloader {
         @Override
         protected void onPostExecute(Boolean result) {
             if (result) {
-                for (UpdateDownloadListener listener : listeners) {
-                    listener.onVerifyComplete();
-                }
+                listener.onVerifyComplete();
             } else {
-                for (UpdateDownloadListener listener : listeners) {
-                    listener.onVerifyError();
-                }
+                listener.onVerifyError();
             }
         }
     }

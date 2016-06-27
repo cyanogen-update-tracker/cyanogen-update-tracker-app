@@ -27,6 +27,7 @@ import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.MainActivity;
+import com.arjanvlek.cyngnotainfo.Model.DownloadETA;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
@@ -60,6 +61,7 @@ import static android.app.DownloadManager.PAUSED_WAITING_FOR_NETWORK;
 import static android.app.DownloadManager.PAUSED_WAITING_TO_RETRY;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
+import static com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.NOT_SET;
 
 public class UpdateInformationFragment extends AbstractUpdateInformationFragment {
 
@@ -151,10 +153,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(getDownloading() && isAdded()) {
-            NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.cancel(NOTIFICATION_ID);
-        }
         if (adView != null) {
             adView.destroy();
         }
@@ -418,17 +416,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        MainActivity mainActivity = (MainActivity) getActivity();
-                        if(mainActivity != null) {
-                            if(mainActivity.hasDownloadPermissions()) {
-                                updateDownloader.downloadUpdate(cyanogenOTAUpdate);
-//                                new UpdateDownloader().execute(cyanogenOTAUpdate.getDownloadUrl(), cyanogenOTAUpdate.getFileName());
-                                downloadButton.setText(getString(R.string.downloading));
-                                downloadButton.setClickable(false);
-                            } else {
-                                mainActivity.requestDownloadPermissions();
-                            }
-                        }
+                       onDownloadButtonClick(downloadButton);
                     }
                 });
                 downloadButton.setEnabled(true);
@@ -624,24 +612,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    private void setDownloading(boolean isDownloading) {
-        try {
-            MainActivity mainActivity = (MainActivity) getActivity();
-            mainActivity.setDownloading(isDownloading);
-        } catch (Exception ignored) {
-
-        }
-    }
-
-    private boolean getDownloading() {
-        try {
-            MainActivity activity = (MainActivity) getActivity();
-            return activity.isDownloading();
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
     private void initLayout() {
         if (updateInformationRefreshLayout == null && rootView != null && isAdded()) {
             updateInformationRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
@@ -750,7 +720,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     protected void initDownloadManager() {
         if(isAdded() && updateDownloader == null) {
             updateDownloader = new UpdateDownloader(getActivity())
-                    .addActionListener(new UpdateDownloadListener() {
+                    .setUpdateDownloadListener(new UpdateDownloadListener() {
                         @Override
                         public void onDownloadManagerInit() {
                             getDownloadCancelButton().setOnClickListener(new View.OnClickListener() {
@@ -768,7 +738,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                 getDownloadButton().setClickable(false);
 
                                 showDownloadProgressBar();
-                                setDownloading(true);
                                 getDownloadProgressBar().setIndeterminate(false);
                             }
                         }
@@ -785,15 +754,19 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         }
 
                         @Override
-                        public void onDownloadProgressUpdate(int progress, long averageNetworkSpeed, DownloadSpeedUnits networkSpeedUnits, long secondsRemaining) {
+                        public void onDownloadProgressUpdate(DownloadETA downloadETA) {
                             if(isAdded()) {
                                 showDownloadProgressBar();
                                 getDownloadButton().setText(getString(R.string.downloading));
                                 getDownloadButton().setClickable(false);
                                 getDownloadProgressBar().setIndeterminate(false);
-                                getDownloadProgressBar().setProgress(progress);
+                                getDownloadProgressBar().setProgress(downloadETA.getProgress());
 
-                                getDownloadStatusText().setText(progress + "%, " + secondsRemaining + "seconds remaining (" + averageNetworkSpeed + " + " + networkSpeedUnits.getStringValue() + ")");
+                                if(downloadETA.getDownloadSpeed() == NOT_SET || downloadETA.getNumberOfSecondsRmaining() == NOT_SET) {
+                                    getDownloadStatusText().setText(downloadETA.getProgress() + " %, Calculating time remaining...");
+                                } else {
+                                    getDownloadStatusText().setText(downloadETA.getProgress() + " %, " + downloadETA.getNumberOfSecondsRmaining() + " seconds remaining (" + downloadETA.getDownloadSpeed() + " " + downloadETA.getSpeedUnits().getStringValue() + ")");
+                                }
                             }
                         }
 
@@ -836,7 +809,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                 getDownloadButton().setText(getString(R.string.download));
                                 hideDownloadProgressBar();
                             }
-                            setDownloading(false);
                         }
 
                         @Override
@@ -887,6 +859,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                 getDownloadProgressBar().setIndeterminate(true);
                                 showVerifyingNotification();
                                 getDownloadButton().setText(getString(R.string.verifying));
+                                getDownloadStatusText().setText("100 %, " + getString(R.string.verifying));
                             }
                         }
 
@@ -919,20 +892,79 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
     private void onUpdateDownloaded(boolean updateIsDownloaded) {
-        Button downloadButton = getDownloadButton();
-        setDownloading(!updateIsDownloaded);
+        final Button downloadButton = getDownloadButton();
 
         if(updateIsDownloaded) {
-            downloadButton.setEnabled(false);
-            downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
-            downloadButton.setClickable(false);
-            downloadButton.setText(getString(R.string.downloaded));
-        } else {
             downloadButton.setEnabled(true);
             downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
             downloadButton.setClickable(true);
+            downloadButton.setText(getString(R.string.downloaded));
+            downloadButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDownloadedButtonClick();
+                }
+            });
+        } else {
+            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null) {
+                downloadButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        onDownloadButtonClick(downloadButton);
+                    }
+                });
+                downloadButton.setEnabled(true);
+                downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
+            } else {
+                downloadButton.setEnabled(false);
+                downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+            }
             downloadButton.setText(getString(R.string.download));
         }
+    }
+
+    private void onDownloadButtonClick(Button downloadButton) {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        if(mainActivity != null) {
+            if(mainActivity.hasDownloadPermissions()) {
+                updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                downloadButton.setText(getString(R.string.downloading));
+                downloadButton.setClickable(false);
+            } else {
+                mainActivity.requestDownloadPermissions();
+            }
+        }
+    }
+
+    private void onDownloadedButtonClick() {
+        MessageDialog dialog = new MessageDialog()
+                .setTitle("Delete update file?")
+                .setMessage("You have already downloaded this update, but not yet installed it. Do you want to delete the downloaded update file?")
+                .setClosable(true)
+                .setPositiveButtonText(getString(R.string.download_error_close))
+                .setNegativeButtonText("Delete")
+                .setErrorDialogListener(new MessageDialog.ErrorDialogListener() {
+                    @Override
+                    public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
+
+                    }
+
+                    @Override
+                    public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
+                        if(cyanogenOTAUpdate != null) {
+                            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+                            if(file.exists()) {
+                                if(file.delete()) {
+                                    checkIfUpdateIsAlreadyDownloaded(cyanogenOTAUpdate);
+                                }
+                            }
+                        }
+                    }
+                });
+        dialog.setTargetFragment(this, 0);
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.add(dialog, "DeleteDownload");
+        transaction.commitAllowingStateLoss();
     }
 
     @Override
