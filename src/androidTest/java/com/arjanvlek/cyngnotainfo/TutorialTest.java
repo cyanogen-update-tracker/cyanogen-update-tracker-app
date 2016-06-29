@@ -24,8 +24,6 @@ public class TutorialTest extends ActivityInstrumentationTestCase2<TutorialActiv
 
     @Override
     public void setUp() throws Exception {
-        ServerConnector.testing = true;
-        GcmRegistrationIntentService.testing = true;
         solo = new Solo(getInstrumentation(), getActivity());
     }
 

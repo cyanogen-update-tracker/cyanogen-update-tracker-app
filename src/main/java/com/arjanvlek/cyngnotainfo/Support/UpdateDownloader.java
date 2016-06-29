@@ -10,7 +10,7 @@ import android.os.Environment;
 import android.os.Handler;
 
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
-import com.arjanvlek.cyngnotainfo.Model.DownloadETA;
+import com.arjanvlek.cyngnotainfo.Model.DownloadProgressData;
 import com.arjanvlek.cyngnotainfo.R;
 
 import java.io.File;
@@ -126,7 +126,7 @@ public class UpdateDownloader {
                         int bytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
                         int totalSizeBytes = cursor.getInt(cursor.getColumnIndex(COLUMN_TOTAL_SIZE_BYTES));
 
-                        DownloadETA eta = calculateDownloadETA(bytesDownloadedSoFar, totalSizeBytes);
+                        DownloadProgressData eta = calculateDownloadETA(bytesDownloadedSoFar, totalSizeBytes);
 
                         listener.onDownloadProgressUpdate(eta);
 
@@ -179,7 +179,7 @@ public class UpdateDownloader {
         settingsManager.deletePreference(PROPERTY_DOWNLOAD_ID);
     }
 
-    private DownloadETA calculateDownloadETA(long bytesDownloadedSoFar, long totalSizeBytes) {
+    private DownloadProgressData calculateDownloadETA(long bytesDownloadedSoFar, long totalSizeBytes) {
         double bytesDownloadedInSecond = NOT_SET;
         double downloadSpeed = NOT_SET;
         long numberOfSecondsRemaining = NOT_SET;
@@ -232,7 +232,7 @@ public class UpdateDownloader {
 
         int progress = (int)((bytesDownloadedSoFar * 100)  / totalSizeBytes);
 
-        return new DownloadETA(downloadSpeed, speedUnits, numberOfSecondsRemaining, progress);
+        return new DownloadProgressData(downloadSpeed, speedUnits, numberOfSecondsRemaining, progress);
     }
 
     private class DownloadVerifier extends AsyncTask<CyanogenOTAUpdate, Integer, Boolean> {

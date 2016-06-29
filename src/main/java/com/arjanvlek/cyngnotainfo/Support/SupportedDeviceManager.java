@@ -6,8 +6,6 @@ import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 
-import org.joda.time.LocalDate;
-
 import java.util.List;
 
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
@@ -38,12 +36,7 @@ public class SupportedDeviceManager extends AsyncTask<Void, Void, List<Device>> 
 
         boolean deviceIsSupported = systemVersionProperties.isSupportedDevice(devices);
 
-        // Delayed activation of unsupported device message system.
-        if(LocalDate.now().isBefore(LocalDate.parse("2016-04-15"))) {
-            deviceIsSupported = true;
-        }
-
-        if(deviceIsSupported && LocalDate.now().isAfter(LocalDate.parse("2016-04-14"))) { // To prevent unnecessary device checks.
+        if(deviceIsSupported) { // To prevent unnecessary device checks.
             SettingsManager settingsManager = new SettingsManager(applicationContext.getApplicationContext());
             settingsManager.saveBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, true);
         }

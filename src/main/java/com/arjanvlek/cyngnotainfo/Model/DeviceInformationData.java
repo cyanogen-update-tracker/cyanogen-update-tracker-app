@@ -13,7 +13,8 @@ public class DeviceInformationData {
     private String osVersion;
     private String serialNumber;
 
-    public static String UNKNOWN = "-";
+    private static final String CPU_FREQUENCY_FILE_PATH = "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq";
+    public static final String UNKNOWN = "-";
 
     public DeviceInformationData() {
         this.deviceManufacturer = Build.MANUFACTURER;
@@ -50,7 +51,7 @@ public class DeviceInformationData {
 
     public String calculateCpuFrequency() {
         try {
-            RandomAccessFile cpuFrequencyFileReader = new RandomAccessFile("/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq", "r");
+            RandomAccessFile cpuFrequencyFileReader = new RandomAccessFile(CPU_FREQUENCY_FILE_PATH, "r");
             String cpuFrequencyString = cpuFrequencyFileReader.readLine();
 
             cpuFrequencyFileReader.close();

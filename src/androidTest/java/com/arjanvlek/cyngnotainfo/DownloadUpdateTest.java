@@ -36,8 +36,6 @@ public class DownloadUpdateTest extends ActivityInstrumentationTestCase2<MainAct
     }
 
     public void testDownloadingUpdate() throws Exception {
-        ServerConnector.testing = true;
-        GcmRegistrationIntentService.testing = true;
         String appLocale = Locale.getDefault().getDisplayLanguage();
         // wait for app to start
         solo.sleep(500);

@@ -1,6 +1,6 @@
 package com.arjanvlek.cyngnotainfo.Support;
 
-import com.arjanvlek.cyngnotainfo.Model.DownloadETA;
+import com.arjanvlek.cyngnotainfo.Model.DownloadProgressData;
 
 public interface UpdateDownloadListener {
 
@@ -8,7 +8,7 @@ public interface UpdateDownloadListener {
 
     void onDownloadStarted(long downloadID);
     void onDownloadPending();
-    void onDownloadProgressUpdate(DownloadETA downloadETA);
+    void onDownloadProgressUpdate(DownloadProgressData downloadProgressData);
     void onDownloadPaused(int statusCode);
     void onDownloadComplete();
     void onDownloadCancelled();

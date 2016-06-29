@@ -134,7 +134,7 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
                 .setPositiveButtonText(getString(R.string.error_google_play_button_text))
                 .setNegativeButtonText(getString(R.string.download_error_close))
                 .setClosable(false)
-                .setErrorDialogListener(new MessageDialog.ErrorDialogListener() {
+                .setDialogListener(new MessageDialog.DialogListener() {
                     @Override
                     public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
                         try {

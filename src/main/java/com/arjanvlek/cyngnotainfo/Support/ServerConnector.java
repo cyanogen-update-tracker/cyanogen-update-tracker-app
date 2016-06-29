@@ -1,5 +1,6 @@
 package com.arjanvlek.cyngnotainfo.Support;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.Device;
@@ -15,6 +16,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.APP_USER_AGENT;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.MOST_RECENT_UPDATE_DATA;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.DEVICES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_MESSAGES;
@@ -24,7 +26,6 @@ import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_METHODS;
 
 public class ServerConnector {
 
-    public final static String USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
     public final static String SERVER_URL = "** Add the base URL of your API / backend here **v3/";
     public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3/";
 
@@ -82,7 +83,7 @@ public class ServerConnector {
             HttpURLConnection urlConnection = (HttpURLConnection) requestUrl.openConnection();
 
             //setup request
-            urlConnection.setRequestProperty("User-Agent", USER_AGENT);
+            urlConnection.setRequestProperty("User-Agent", APP_USER_AGENT);
             urlConnection.setConnectTimeout(60000);
             urlConnection.setReadTimeout(60000);
 

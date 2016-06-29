@@ -9,7 +9,6 @@ import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
-import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
@@ -25,6 +24,9 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Locale;
 
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.APP_USER_AGENT;
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.PACKAGE_REPLACED_KEY;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 
 public class GcmRegistrationIntentService extends IntentService {
@@ -47,10 +49,26 @@ public class GcmRegistrationIntentService extends IntentService {
     private static final String JSON_PROPERTY_UPDATE_METHOD_ID = "update_method_id";
     private static final String JSON_PROPERTY_OLD_REGISTRATION_TOKEN = "old_registration_token";
     private static final String JSON_PROPERTY_APP_VERSION = "app_version";
+    private static final String SUCCESS_JSON_TAG = "success";
 
-    //Server URLs
-    public static String SERVER_URL = "** Add the base URL of your API / backend here **v3/registerDevice";
-    public static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3/registerDevice";
+    //Legacy strings used for migration
+    private static final String LEGACY_DEVICE_ONEPLUS_ONE = "OnePlus One";
+    private static final String LEGACY_DEVICE_YU_YUREKA = "Yu Yureka";
+    private static final String LEGACY_DEVICE_OPPO_N1_CM_EDITION = "Oppo N1 CyanogenMod Edition";
+    private static final String LEGACY_DEVICE_YU_YUPHORIA = "Yu Yuphoria";
+
+    private static final String LEGACY_UPDATE_METHOD_INCREMENTAL_KEY = "incremental_update";
+    private static final String LEGACY_UPDATE_METHOD_INCREMENTAL_VALUE_EN = "Incremental update";
+    private static final String LEGACY_UPDATE_METHOD_INCREMENTAL_VALUE_NL = "Incrementele update";
+    private static final String LEGACY_UPDATE_METHOD_FULL_KEY = "full_update";
+    private static final String LEGACY_UPDATE_METHOD_FULL_VALUE_EN = "Full update";
+    private static final String LEGACY_UPDATE_METHOD_FULL_VALUE_NL = "Volledige update";
+
+
+    //Server URLs and properties
+    public static final String SERVER_URL = "** Add the base URL of your API / backend here **v3/registerDevice";
+    public static final String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3/registerDevice";
+
     public GcmRegistrationIntentService() {
         super(TAG);
     }
@@ -83,7 +101,7 @@ public class GcmRegistrationIntentService extends IntentService {
         //Release the wake lock received when the app has been upgraded.
         if(intent.getExtras() != null) {
             try {
-                if (intent.getExtras().getBoolean("package_upgrade", false)) {
+                if (intent.getExtras().getBoolean(PACKAGE_REPLACED_KEY, false)) {
                     GcmPackageReplacedReceiver.completeWakefulIntent(intent);
                 }
             } catch (Exception ignored) {
@@ -112,39 +130,39 @@ public class GcmRegistrationIntentService extends IntentService {
         String updateMethod = settingsManager.getPreference(PROPERTY_UPDATE_METHOD);
 
         switch (device) {
-            case "OnePlus One":
+            case LEGACY_DEVICE_ONEPLUS_ONE:
                 settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 1L);
                 break;
-            case "Yu Yureka":
+            case LEGACY_DEVICE_YU_YUREKA:
                 settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 2L);
                 break;
-            case "Oppo N1 CyanogenMod Edition":
+            case LEGACY_DEVICE_OPPO_N1_CM_EDITION:
                 settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 3L);
                 break;
-            case "Yu Yuphoria":
+            case LEGACY_DEVICE_YU_YUPHORIA:
                 settingsManager.saveLongPreference(PROPERTY_DEVICE_ID, 5L); // The Yuphoria has ID 5 in the database due to a reservation for the Alcatel OneTouch Hero 2+
                 break;
         }
 
-        if(updateMethod.equals("full_update")) {
+        if(updateMethod.equals(LEGACY_UPDATE_METHOD_FULL_KEY)) {
             settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, 2L);
             switch(Locale.getDefault().getDisplayLanguage()) {
-                case "Nederlands":
-                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Volledige update");
+                case LOCALE_DUTCH:
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, LEGACY_UPDATE_METHOD_FULL_VALUE_NL);
                     break;
                 default:
-                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Full update");
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, LEGACY_UPDATE_METHOD_FULL_VALUE_EN);
 
             }
         }
-        else if(updateMethod.equals("incremental_update")) {
+        else if(updateMethod.equals(LEGACY_UPDATE_METHOD_INCREMENTAL_KEY)) {
             settingsManager.saveLongPreference(PROPERTY_UPDATE_METHOD_ID, 1L);
             switch(Locale.getDefault().getDisplayLanguage()) {
-                case "Nederlands":
-                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Incrementele update");
+                case LOCALE_DUTCH:
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, LEGACY_UPDATE_METHOD_INCREMENTAL_VALUE_NL);
                     break;
                 default:
-                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, "Incremental update");
+                    settingsManager.savePreference(PROPERTY_UPDATE_METHOD, LEGACY_UPDATE_METHOD_INCREMENTAL_VALUE_EN);
 
             }
         }
@@ -190,7 +208,7 @@ public class GcmRegistrationIntentService extends IntentService {
                 }
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
-                urlConnection.setRequestProperty("User-Agent", ServerConnector.USER_AGENT);
+                urlConnection.setRequestProperty("User-Agent", APP_USER_AGENT);
                 urlConnection.setRequestMethod("POST");
                 urlConnection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
                 urlConnection.setRequestProperty("Accept", "application/json");
@@ -220,7 +238,7 @@ public class GcmRegistrationIntentService extends IntentService {
             try {
                 result = new JSONObject(response);
                 System.out.println(result.toString());
-                if (result.getString("success") != null) {
+                if (result.getString(SUCCESS_JSON_TAG) != null) {
                     setRegistrationFailed(false);
                     storeRegistrationToken(registrationToken);
                 } else {

@@ -1,19 +1,23 @@
 package com.arjanvlek.cyngnotainfo.views;
 
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.text.method.LinkMovementMethod;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.R;
 
 public class AboutActivity extends AppCompatActivity {
+
+    private static final String GOOGLE_PLAY_BASE_URL = "market://details?id=";
+    private static final String GOOGLE_PLAY_BROWSER__BASE_URL = "https://play.google.com/store/apps/details?id=";
 
     @Override
     public void onCreate(Bundle savedInstanceSate) {
@@ -32,9 +36,13 @@ public class AboutActivity extends AppCompatActivity {
         try {
             final String appPackageName = getPackageName();
             try {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-            } catch (android.content.ActivityNotFoundException e) {
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_BASE_URL + appPackageName)));
+            } catch (ActivityNotFoundException e) {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(GOOGLE_PLAY_BROWSER__BASE_URL + appPackageName)));
+                } catch (ActivityNotFoundException e1) {
+                    Toast.makeText(getApplicationContext(), getString(R.string.error_unable_to_rate_app), Toast.LENGTH_LONG).show();
+                }
             }
         } catch (Exception ignored) {
 

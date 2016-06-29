@@ -64,6 +64,9 @@
     <string name="download_waiting_for_network">Waiting for a network connection…</string>
     <string name="update_already_downloaded">The update was already downloaded. It is ready to get installed.</string>
     <string name="download_verifying">Your download will now be verified…</string>
+    <string name="download_progress_text_unknown_time_remaining">%1$d %%, Calculating time remaining…</string>
+    <string name="download_progress_text_with_time_remaining">%1$d %%, %2$d:%3$o remaining (%4$.2f %5$s)</string>
+    <string name="download_progress_text_verifying">100 %%, Verifying…</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen OS Update</string>
     <string name="cyanogen_os_version">Cyanogen OS Version: %1$s</string>
@@ -106,13 +109,19 @@
     <string name="error_maintenance">Server maintenance</string>
     <string name="error_maintenance_message">Please wait while the server undergoes maintenance. The server will be back online very soon.</string>
     <string name="error_app_not_valid">Invalid app version</string>
-    <string name="error_app_not_valid_message">This app can no longer be used. Try updating it from Google Play by clicking on Google Play below and then on Update. If this error persists, uninstall the app and reinstall it again.</string>
+    <string name="error_app_not_valid_message">This version of the app can no longer be used. Try updating it from Google Play by clicking on Google Play below and then on Update. If this error persists, uninstall the app and reinstall it again.</string>
     <string name="error_app_requires_network_connection">This app requires an active Internet connection</string>
     <string name="error_app_requires_network_connection_message">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
     <string name="error_exit_button_text">Exit</string>
     <string name="error_google_play_button_text" translatable="false">Google Play</string>
     <string name="error_push_failure">Failed to enable notifications. Please restart the app again after a few minutes.</string>
     <string name="error_no_internet_connection">No internet connection.</string>
+    <string name="error_unable_to_rate_app">You can\'t rate the app, because either the Google Play Store or your web browser is missing.</string>
+
+    <!-- Message strings -->
+    <string name="delete_message_title">Delete update file?</string>
+    <string name="delete_message_contents">You have already downloaded this update, but not yet installed it. Click on "Close" to close this message, then click on "Installation Guide" to view how to install this update. Click on "Delete" to permanently delete the file.</string>
+    <string name="delete_message_delete_button">Delete</string>
 
     <!-- First-time tutorial strings -->
     <string name="introduction_title">Welcome</string>

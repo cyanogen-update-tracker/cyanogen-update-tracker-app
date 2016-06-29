@@ -17,8 +17,6 @@ public class APrepareTest extends ActivityInstrumentationTestCase2<SettingsActiv
 
     @Override
     public void setUp() throws Exception{
-        ServerConnector.testing = true;
-        GcmRegistrationIntentService.testing = true;
         solo = new Solo(getInstrumentation(), getActivity());
         String appLocale = Locale.getDefault().getDisplayLanguage();
         Spinner deviceSpinner = (Spinner)getActivity().findViewById(R.id.settingsDeviceSpinner);

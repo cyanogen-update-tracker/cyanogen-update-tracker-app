@@ -24,8 +24,6 @@ public class SettingsTest extends ActivityInstrumentationTestCase2<SettingsActiv
 
     @Override
     public void setUp() throws Exception{
-        ServerConnector.testing = true;
-        GcmRegistrationIntentService.testing = true;
         solo = new Solo(getInstrumentation(), getActivity());
     }
 

@@ -9,12 +9,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;
 
 import java.util.List;
 import java.util.Locale;
+
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
 
 public class CustomDropdown {
 
@@ -49,7 +52,7 @@ public class CustomDropdown {
         TextView textView = (TextView) convertView.findViewById(android.R.id.text1);
         Locale locale = Locale.getDefault();
         switch(locale.getDisplayLanguage()) {
-            case "Nederlands":
+            case LOCALE_DUTCH:
                 textView.setText(updateMethods.get(position).getUpdateMethodNl());
                 break;
             default:

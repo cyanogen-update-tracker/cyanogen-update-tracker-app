@@ -23,9 +23,7 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
     }
 
     @Override
-    public void setUp() throws Exception{
-        ServerConnector.testing = true;
-        GcmRegistrationIntentService.testing = true;
+    public void setUp() throws Exception {
         solo = new Solo(getInstrumentation(), getActivity());
     }
 
@@ -61,7 +59,6 @@ public class UpdateInformationTest extends ActivityInstrumentationTestCase2<Main
 
 
         // test if app has registered successfully for push notifications
-        ServerConnector.testing = true;
         assertTrue(gcmPreferences.contains(SettingsManager.PROPERTY_REGISTRATION_ERROR));
         assertFalse(gcmPreferences.getBoolean(SettingsManager.PROPERTY_REGISTRATION_ERROR, false));
 

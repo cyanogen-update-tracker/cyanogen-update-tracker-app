@@ -10,13 +10,18 @@ import android.view.View;
 import android.webkit.WebView;
 import android.widget.RelativeLayout;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.APP_USER_AGENT;
+
 public class FAQActivity extends AppCompatActivity {
 
     private NetworkConnectionManager networkConnectionManager;
+
+    private static final String FAQ_SERVER_URL = "https://cyanogenupdatetracker.com/inappfaq";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,9 +98,9 @@ public class FAQActivity extends AppCompatActivity {
                 switchViews(true);
 
                 FAQPageView.getSettings().setJavaScriptEnabled(true);
-                FAQPageView.getSettings().setUserAgentString("Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME);
+                FAQPageView.getSettings().setUserAgentString(APP_USER_AGENT);
                 FAQPageView.clearCache(true);
-                FAQPageView.loadUrl("https://cyanogenupdatetracker.com/inappfaq");
+                FAQPageView.loadUrl(FAQ_SERVER_URL);
             }
 
             if(refreshLayout != null && refreshLayout.isRefreshing()) {

@@ -16,8 +16,6 @@ public class UpdateInstallationGuideTest extends ActivityInstrumentationTestCase
 
     @Override
     public void setUp() throws Exception {
-        ServerConnector.testing = true;
-        GcmRegistrationIntentService.testing = true;
         solo = new Solo(getInstrumentation(), getActivity());
     }
 

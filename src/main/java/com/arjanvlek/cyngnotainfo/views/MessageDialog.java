@@ -9,13 +9,11 @@ import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.view.KeyEvent;
 
-import com.arjanvlek.cyngnotainfo.R;
-
 /**
  * Usage: Title text, Message text, Positive button text, Negative button text.
  */
 public class MessageDialog extends DialogFragment {
-    private ErrorDialogListener errorDialogListener;
+    private DialogListener dialogListener;
 
     private String title;
     private String message;
@@ -24,7 +22,7 @@ public class MessageDialog extends DialogFragment {
     private boolean closable;
 
 
-    public interface ErrorDialogListener {
+    public interface DialogListener {
         void onDialogPositiveButtonClick(DialogFragment dialogFragment);
         void onDialogNegativeButtonClick(DialogFragment dialogFragment);
     }
@@ -39,8 +37,8 @@ public class MessageDialog extends DialogFragment {
         return this;
     }
 
-    public MessageDialog setErrorDialogListener(ErrorDialogListener listener) {
-        errorDialogListener = listener;
+    public MessageDialog setDialogListener(DialogListener listener) {
+        dialogListener = listener;
         return this;
     }
 
@@ -72,8 +70,8 @@ public class MessageDialog extends DialogFragment {
             builder.setNegativeButton(negativeButtonText, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(errorDialogListener != null) {
-                        errorDialogListener.onDialogNegativeButtonClick(MessageDialog.this);
+                    if(dialogListener != null) {
+                        dialogListener.onDialogNegativeButtonClick(MessageDialog.this);
                     }
                     dismiss();
                 }
@@ -83,8 +81,8 @@ public class MessageDialog extends DialogFragment {
             builder.setPositiveButton(positiveButtonText, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    if(errorDialogListener != null) {
-                        errorDialogListener.onDialogPositiveButtonClick(MessageDialog.this);
+                    if(dialogListener != null) {
+                        dialogListener.onDialogPositiveButtonClick(MessageDialog.this);
                     }
                     dismiss();
                 }
@@ -103,7 +101,7 @@ public class MessageDialog extends DialogFragment {
                     return true;
                 }
             });
-            if (Build.VERSION.SDK_INT >= 17) {
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
                 builder.setOnDismissListener(new DialogInterface.OnDismissListener() {
                     @Override
                     public void onDismiss(DialogInterface dialogInterface) {

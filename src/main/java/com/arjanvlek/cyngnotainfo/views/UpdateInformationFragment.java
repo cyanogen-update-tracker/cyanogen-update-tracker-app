@@ -27,7 +27,7 @@ import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.MainActivity;
-import com.arjanvlek.cyngnotainfo.Model.DownloadETA;
+import com.arjanvlek.cyngnotainfo.Model.DownloadProgressData;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
@@ -36,7 +36,6 @@ import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloadListener;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader;
-import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.DownloadSpeedUnits;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -59,6 +58,7 @@ import static android.app.DownloadManager.PAUSED_QUEUED_FOR_WIFI;
 import static android.app.DownloadManager.PAUSED_UNKNOWN;
 import static android.app.DownloadManager.PAUSED_WAITING_FOR_NETWORK;
 import static android.app.DownloadManager.PAUSED_WAITING_TO_RETRY;
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 import static com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.NOT_SET;
@@ -213,7 +213,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     serverMessageTextView.setVisibility(View.VISIBLE);
 
                     String appLocale = Locale.getDefault().getDisplayLanguage();
-                    if (appLocale.equals("Nederlands")) {
+
+                    if (appLocale.equals(LOCALE_DUTCH)) {
                         serverMessageTextView.setText(message.getMessageNl());
                     } else {
                         serverMessageTextView.setText(message.getMessage());
@@ -581,7 +582,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 .setPositiveButtonText(positiveButtonText)
                 .setNegativeButtonText(negativeButtonText)
                 .setClosable(closable)
-                .setErrorDialogListener(new MessageDialog.ErrorDialogListener() {
+                .setDialogListener(new MessageDialog.DialogListener() {
                     @Override
                     public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
                         updateDownloader.cancelDownload();
@@ -754,18 +755,18 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         }
 
                         @Override
-                        public void onDownloadProgressUpdate(DownloadETA downloadETA) {
+                        public void onDownloadProgressUpdate(DownloadProgressData downloadProgressData) {
                             if(isAdded()) {
                                 showDownloadProgressBar();
                                 getDownloadButton().setText(getString(R.string.downloading));
                                 getDownloadButton().setClickable(false);
                                 getDownloadProgressBar().setIndeterminate(false);
-                                getDownloadProgressBar().setProgress(downloadETA.getProgress());
+                                getDownloadProgressBar().setProgress(downloadProgressData.getProgress());
 
-                                if(downloadETA.getDownloadSpeed() == NOT_SET || downloadETA.getNumberOfSecondsRmaining() == NOT_SET) {
-                                    getDownloadStatusText().setText(downloadETA.getProgress() + " %, Calculating time remaining...");
+                                if(downloadProgressData.getDownloadSpeed() == NOT_SET || downloadProgressData.getTimeRemaining() == null) {
+                                    getDownloadStatusText().setText(getString(R.string.download_progress_text_unknown_time_remaining, downloadProgressData.getProgress()));
                                 } else {
-                                    getDownloadStatusText().setText(downloadETA.getProgress() + " %, " + downloadETA.getNumberOfSecondsRmaining() + " seconds remaining (" + downloadETA.getDownloadSpeed() + " " + downloadETA.getSpeedUnits().getStringValue() + ")");
+                                    getDownloadStatusText().setText(getString(R.string.download_progress_text_with_time_remaining, downloadProgressData.getProgress(), downloadProgressData.getTimeRemaining().getMinutes(), downloadProgressData.getTimeRemaining().getSeconds(), downloadProgressData.getDownloadSpeed(), downloadProgressData.getSpeedUnits().getStringValue()));
                                 }
                             }
                         }
@@ -859,7 +860,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                 getDownloadProgressBar().setIndeterminate(true);
                                 showVerifyingNotification();
                                 getDownloadButton().setText(getString(R.string.verifying));
-                                getDownloadStatusText().setText("100 %, " + getString(R.string.verifying));
+                                getDownloadStatusText().setText(getString(R.string.download_progress_text_verifying));
                             }
                         }
 
@@ -938,12 +939,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     private void onDownloadedButtonClick() {
         MessageDialog dialog = new MessageDialog()
-                .setTitle("Delete update file?")
-                .setMessage("You have already downloaded this update, but not yet installed it. Do you want to delete the downloaded update file?")
+                .setTitle(getString(R.string.delete_message_title))
+                .setMessage(getString(R.string.delete_message_contents))
                 .setClosable(true)
                 .setPositiveButtonText(getString(R.string.download_error_close))
-                .setNegativeButtonText("Delete")
-                .setErrorDialogListener(new MessageDialog.ErrorDialogListener() {
+                .setNegativeButtonText(getString(R.string.delete_message_delete_button))
+                .setDialogListener(new MessageDialog.DialogListener() {
                     @Override
                     public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
 

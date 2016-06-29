@@ -20,6 +20,10 @@ public class ApplicationContext extends Application {
     private LocalDateTime deviceFetchDate;
     private ServerConnector serverConnector;
     public static final String NO_CYANOGEN_OS = "no_cyanogen_os_ver_found";
+
+    public static final String APP_USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
+    public static final String PACKAGE_REPLACED_KEY = "package_upgrade";
+    public static final String LOCALE_DUTCH = "Nederlands";
     private static SystemVersionProperties SYSTEM_VERSION_PROPERTIES_INSTANCE;
 
     /**
