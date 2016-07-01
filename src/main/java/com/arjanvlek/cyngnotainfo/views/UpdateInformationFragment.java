@@ -537,14 +537,19 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     }
 
-    private void showVerifyingNotification() {
+    private void showVerifyingNotification(boolean error) {
         NotificationCompat.Builder builder;
         try {
                 builder = new NotificationCompat.Builder(getActivity())
                         .setSmallIcon(android.R.drawable.stat_sys_download)
-                        .setContentTitle(getString(R.string.verifying))
                         .setOngoing(true)
                         .setProgress(100, 50, true);
+
+            if(error) {
+                builder.setContentTitle(getString(R.string.verifying_error));
+            } else {
+                builder.setContentTitle(getString(R.string.verifying));
+            }
 
             if (Build.VERSION.SDK_INT >= 21) {
                 builder.setCategory(Notification.CATEGORY_PROGRESS);
@@ -585,13 +590,13 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 .setDialogListener(new MessageDialog.DialogListener() {
                     @Override
                     public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
-                        updateDownloader.cancelDownload();
-                        updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+
                     }
 
                     @Override
                     public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
-
+                        updateDownloader.cancelDownload();
+                        updateDownloader.downloadUpdate(cyanogenOTAUpdate);
                     }
                 });
         errorDialog.setTargetFragment(this, 0);
@@ -766,7 +771,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                 if(downloadProgressData.getDownloadSpeed() == NOT_SET || downloadProgressData.getTimeRemaining() == null) {
                                     getDownloadStatusText().setText(getString(R.string.download_progress_text_unknown_time_remaining, downloadProgressData.getProgress()));
                                 } else {
-                                    getDownloadStatusText().setText(getString(R.string.download_progress_text_with_time_remaining, downloadProgressData.getProgress(), downloadProgressData.getTimeRemaining().getMinutes(), downloadProgressData.getTimeRemaining().getSeconds(), downloadProgressData.getDownloadSpeed(), downloadProgressData.getSpeedUnits().getStringValue()));
+                                    getDownloadStatusText().setText(getString(R.string.download_progress_text_with_time_remaining, downloadProgressData.getProgress(), downloadProgressData.getTimeRemaining(), downloadProgressData.getDownloadSpeed(), downloadProgressData.getSpeedUnits().getStringValue()));
                                 }
                             }
                         }
@@ -818,39 +823,40 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                             // Handle any other errors according to the error message.
                             if(isAdded()) {
                                 if (statusCode < 1000) {
-                                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                    showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
                                 } else {
                                     switch (statusCode) {
                                         case ERROR_UNHANDLED_HTTP_CODE:
                                         case ERROR_HTTP_DATA_ERROR:
                                         case ERROR_TOO_MANY_REDIRECTS:
-                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_network), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
                                             break;
                                         case ERROR_FILE_ERROR:
                                             updateDownloader.makeDownloadDirectory();
                                             showDownloadError(getString(R.string.download_error), getString(R.string.download_error_directory), getString(R.string.download_error_close), null, true);
                                             break;
                                         case ERROR_INSUFFICIENT_SPACE:
-                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_storage), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_storage), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
                                             break;
                                         case ERROR_DEVICE_NOT_FOUND:
-                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_sd_card), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                            showDownloadError(getString(R.string.download_error), getString(R.string.download_error_sd_card), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
                                             break;
                                         case ERROR_CANNOT_RESUME:
                                             updateDownloader.cancelDownload();
                                             if (networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null) {
                                                 updateDownloader.downloadUpdate(cyanogenOTAUpdate);
                                             }
+                                            break;
                                         case ERROR_FILE_ALREADY_EXISTS:
                                             Toast.makeText(getApplicationContext(), getString(R.string.update_already_downloaded), Toast.LENGTH_LONG).show();
-                                            onUpdateDownloaded(true);
+                                            onUpdateDownloaded(true, false);
                                     }
                                 }
 
                                 // Make sure the failed download file gets deleted before the user tries to download it again.
                                 updateDownloader.cancelDownload();
                                 hideDownloadProgressBar();
-                                onUpdateDownloaded(false);
+                                onUpdateDownloaded(false, true);
                             }
                         }
 
@@ -858,7 +864,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         public void onVerifyStarted() {
                             if(isAdded()) {
                                 getDownloadProgressBar().setIndeterminate(true);
-                                showVerifyingNotification();
+                                showVerifyingNotification(false);
                                 getDownloadButton().setText(getString(R.string.verifying));
                                 getDownloadStatusText().setText(getString(R.string.download_progress_text_verifying));
                             }
@@ -867,7 +873,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         @Override
                         public void onVerifyError() {
                             if(isAdded()) {
-                                showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_retry), getString(R.string.download_error_close), true);
+                                showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
                                 File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
                                 try {
                                     //noinspection ResultOfMethodCallIgnored
@@ -875,7 +881,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                 } catch (Exception ignored) {
 
                                 }
-                                hideVerifyingNotification();
+                                showVerifyingNotification(true);
                             }
                         }
 
@@ -884,7 +890,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                             if(isAdded()) {
                                 hideDownloadProgressBar();
                                 hideVerifyingNotification();
-                                onUpdateDownloaded(true);
+                                onUpdateDownloaded(true, false);
+                                Toast.makeText(getApplicationContext(), getString(R.string.download_complete), Toast.LENGTH_LONG).show();
                             }
                         }
                     });
@@ -892,7 +899,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    private void onUpdateDownloaded(boolean updateIsDownloaded) {
+    private void onUpdateDownloaded(boolean updateIsDownloaded, boolean fileMayBeDeleted) {
         final Button downloadButton = getDownloadButton();
 
         if(updateIsDownloaded) {
@@ -916,6 +923,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 });
                 downloadButton.setEnabled(true);
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
+
+                if(fileMayBeDeleted) {
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+                    //noinspection ResultOfMethodCallIgnored
+                    file.delete();
+                }
             } else {
                 downloadButton.setEnabled(false);
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
@@ -971,6 +984,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate) {
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
-        onUpdateDownloaded(file.exists());
+        onUpdateDownloaded(file.exists(), false);
     }
 }

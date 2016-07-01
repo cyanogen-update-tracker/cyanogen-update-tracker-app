@@ -15,14 +15,14 @@ import com.arjanvlek.cyngnotainfo.R;
 
 import java.io.File;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import static android.app.DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
 import static android.app.DownloadManager.COLUMN_REASON;
 import static android.app.DownloadManager.COLUMN_STATUS;
 import static android.app.DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
-import static android.app.DownloadManager.Request.NETWORK_MOBILE;
-import static android.app.DownloadManager.Request.NETWORK_WIFI;
 import static android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED;
 import static android.app.DownloadManager.STATUS_PAUSED;
 import static android.app.DownloadManager.STATUS_PENDING;
@@ -42,12 +42,12 @@ public class UpdateDownloader {
     private final SettingsManager settingsManager;
 
     private UpdateDownloadListener listener;
+    private List<Double> measurements = new ArrayList<>();
 
     public final static int NOT_SET = -1;
 
-    private int previousBytesDownloadedSoFar = NOT_SET;
+    private long previousBytesDownloadedSoFar = NOT_SET;
     private long previousTimeStamp;
-
     private DownloadSpeedUnits previousSpeedUnits = BYTES;
     private double previousDownloadSpeed = NOT_SET;
     private long previousNumberOfSecondsRemaining = NOT_SET;
@@ -77,8 +77,7 @@ public class UpdateDownloader {
                 .setTitle(baseActivity.getString(R.string.download_title, cyanogenOTAUpdate.getName()))
                 .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
                 .setVisibleInDownloadsUi(false)
-                .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                .setAllowedNetworkTypes(NETWORK_WIFI | NETWORK_MOBILE);
+                .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
         long downloadID = downloadManager.enqueue(request);
 
@@ -180,59 +179,100 @@ public class UpdateDownloader {
     }
 
     private DownloadProgressData calculateDownloadETA(long bytesDownloadedSoFar, long totalSizeBytes) {
-        double bytesDownloadedInSecond = NOT_SET;
+        double bytesDownloadedInSecond;
+        boolean validMeasurement = false;
+
         double downloadSpeed = NOT_SET;
         long numberOfSecondsRemaining = NOT_SET;
+        long averageBytesPerSecond = NOT_SET;
+        long currentTimeStamp = System.currentTimeMillis();
+        long bytesRemainingToDownload = totalSizeBytes - bytesDownloadedSoFar;
 
         DownloadSpeedUnits speedUnits = BYTES;
         if(previousBytesDownloadedSoFar != NOT_SET) {
-            long currentTimeStamp = System.currentTimeMillis();
 
             double numberOfElapsedSeconds = TimeUnit.MILLISECONDS.toSeconds(currentTimeStamp - previousTimeStamp);
 
-            if((bytesDownloadedSoFar - previousBytesDownloadedSoFar) > 0) {
-                bytesDownloadedInSecond =  (bytesDownloadedSoFar - previousBytesDownloadedSoFar) / (numberOfElapsedSeconds) ;
-                previousTimeStamp = currentTimeStamp;
+            if(numberOfElapsedSeconds > 0.0) {
+                bytesDownloadedInSecond = (bytesDownloadedSoFar - previousBytesDownloadedSoFar) / (numberOfElapsedSeconds);
             } else {
                 bytesDownloadedInSecond = 0;
             }
 
-            long bytesRemainingToDownload = totalSizeBytes - bytesDownloadedSoFar;
-
             // DownloadManager.query doesn't always have new data. If no new data is available, return the previously stored data to keep the UI showing that.
-            if(bytesDownloadedInSecond >= 1) {
-                numberOfSecondsRemaining = bytesRemainingToDownload / (long)bytesDownloadedInSecond;
-                previousNumberOfSecondsRemaining = numberOfSecondsRemaining;
+            validMeasurement = bytesDownloadedInSecond > 0 || numberOfElapsedSeconds > 5;
+
+            if (validMeasurement) {
+                // In case of no network, clear all measurements to allow displaying the now-unknown ETA...
+                if (bytesDownloadedInSecond == 0) {
+                    measurements.clear();
+                }
+
+                // Remove old measurements to keep the average calculation based on 5 measurements
+                if (measurements.size() >= 5) {
+                    measurements.subList(0, 1).clear();
+                }
+
+                measurements.add(bytesDownloadedInSecond);
+            }
+
+            // Calculate number of seconds remaining based off average download spead.
+            averageBytesPerSecond = (long) calculateAverageBytesDownloadedInSecond(measurements);
+            if (averageBytesPerSecond > 0) {
+                numberOfSecondsRemaining = bytesRemainingToDownload / averageBytesPerSecond;
             } else {
+                numberOfSecondsRemaining = NOT_SET;
+            }
+        }
+
+        if(averageBytesPerSecond != NOT_SET) {
+            if (averageBytesPerSecond >= 0 && averageBytesPerSecond < 1024) {
+                downloadSpeed = averageBytesPerSecond;
+                speedUnits = BYTES;
+
+            } else if (averageBytesPerSecond >= 1024 && averageBytesPerSecond < 1048576) {
+                downloadSpeed = new BigDecimal(averageBytesPerSecond).setScale(0, ROUND_CEILING).divide(new BigDecimal(1024), ROUND_CEILING).doubleValue();
+                speedUnits = KILO_BYTES;
+            } else if (averageBytesPerSecond >= 1048576) {
+                downloadSpeed = new BigDecimal(averageBytesPerSecond).setScale(2, ROUND_CEILING).divide(new BigDecimal(1048576), ROUND_CEILING).doubleValue();
+                speedUnits = MEGA_BYTES;
+            }
+
+            if(validMeasurement) {
+                previousNumberOfSecondsRemaining = numberOfSecondsRemaining;
+                previousTimeStamp = currentTimeStamp;
+                previousDownloadSpeed = downloadSpeed;
+                previousSpeedUnits = speedUnits;
+            } else {
+                downloadSpeed = previousDownloadSpeed;
+                speedUnits = previousSpeedUnits;
                 numberOfSecondsRemaining = previousNumberOfSecondsRemaining;
             }
         }
 
-        if(bytesDownloadedInSecond != NOT_SET) {
-            if(bytesDownloadedInSecond == 0) {
-                downloadSpeed = previousDownloadSpeed;
-                speedUnits = previousSpeedUnits;
-            }else {
-                if (bytesDownloadedInSecond >= 0 && bytesDownloadedInSecond < 1000) {
-                    downloadSpeed = bytesDownloadedInSecond;
-                    speedUnits = BYTES;
+        previousBytesDownloadedSoFar = bytesDownloadedSoFar;
 
-                } else if (bytesDownloadedInSecond >= 1000 && bytesDownloadedInSecond < 1000000) {
-                    downloadSpeed = new BigDecimal(bytesDownloadedInSecond).setScale(0, ROUND_CEILING).divide(new BigDecimal(1000), ROUND_CEILING).doubleValue();
-                    speedUnits = KILO_BYTES;
-                } else if (bytesDownloadedInSecond >= 1000000) {
-                    downloadSpeed = new BigDecimal(bytesDownloadedInSecond).setScale(2, ROUND_CEILING).divide(new BigDecimal(1000000), ROUND_CEILING).doubleValue();
-                    speedUnits = MEGA_BYTES;
-                }
+        int progress = 0;
 
-                previousDownloadSpeed = downloadSpeed;
-                previousSpeedUnits = speedUnits;
-            }
+        if(totalSizeBytes > 0.0) {
+            progress = (int) ((bytesDownloadedSoFar * 100) / totalSizeBytes);
         }
 
-        int progress = (int)((bytesDownloadedSoFar * 100)  / totalSizeBytes);
-
         return new DownloadProgressData(downloadSpeed, speedUnits, numberOfSecondsRemaining, progress);
+    }
+
+    private double calculateAverageBytesDownloadedInSecond(List<Double> measurements) {
+        if(measurements == null || measurements.isEmpty()) {
+            return 0;
+        } else {
+            double totalBytesDownloadedInSecond = 0;
+
+            for (Double measurementData : measurements) {
+                totalBytesDownloadedInSecond += measurementData;
+            }
+
+            return totalBytesDownloadedInSecond / measurements.size();
+        }
     }
 
     private class DownloadVerifier extends AsyncTask<CyanogenOTAUpdate, Integer, Boolean> {

@@ -156,11 +156,12 @@
     <string name="download_paused_unknown">Je download is mogelijk vastgelopen. Probeer opnieuw te downloaden…</string>
     <string name="update_already_downloaded">De update was al gedownload. Het staat klaar om geïnstalleerd te worden.</string>
     <string name="download_progress_text_unknown_time_remaining">%1$d %%, Resterende tijd berekenen…</string>
-    <string name="download_progress_text_with_time_remaining">%1$d %%, %2$d:%3$o resterend (%4$.2f %5$s)</string>
-    <string name="download_progress_text_verifying">100 %%, Controleren op fouten…</string>
+    <string name="download_progress_text_with_time_remaining">%1$d %%, %2$s resterend (%3$.2f %4$s)</string>
+    <string name="download_progress_text_verifying">100 %, Controleren op fouten…</string>
     <string name="delete_message_delete_button">Verwijder</string>
     <string name="delete_message_title">Verwijder update-bestand?</string>
     <string name="delete_message_contents">Je hebt deze update al gedownload, maar nog niet geïnstalleerd. Klik op "Sluiten" om dit bericht te sluiten, en klik vervolgens op "Installatiehandleiding" voor installatie-instructies. Klik op "Verwijder" om het bestand definitief te verwijderen.</string>
     <string name="error_unable_to_rate_app">Je kunt de app niet beoordelen, omdat de Google Play Store of je webbrowser ontbreekt.</string>
+    <string name="verifying_error">Bestand is beschadigd</string>
 
 </resources>

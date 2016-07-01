@@ -1,12 +1,17 @@
 package com.arjanvlek.cyngnotainfo.Model;
 
+import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.DownloadSpeedUnits;
+
+import java.util.Locale;
+
+import static com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.NOT_SET;
 
 public class DownloadProgressData {
 
     private double downloadSpeed;
     private DownloadSpeedUnits speedUnits;
-    private TimeRemaining timeRemaining;
+    private String timeRemaining;
 
     private int progress;
 
@@ -26,7 +31,7 @@ public class DownloadProgressData {
         return speedUnits;
     }
 
-    public TimeRemaining getTimeRemaining() {
+    public String getTimeRemaining() {
         return timeRemaining;
     }
 
@@ -34,29 +39,11 @@ public class DownloadProgressData {
         return progress;
     }
 
-
-    public class TimeRemaining {
-        private long minutes;
-        private long seconds;
-
-        public TimeRemaining(long minutes, long seconds) {
-            this.minutes = minutes;
-            this.seconds = seconds;
+    private String calculateTimeRemaining(long numberOfSecondsRemaining) {
+        if(numberOfSecondsRemaining == NOT_SET) {
+            return null;
         }
 
-        public long getMinutes() {
-            return minutes;
-        }
-
-        public long getSeconds() {
-            return seconds;
-        }
-    }
-
-    private TimeRemaining calculateTimeRemaining(long numberOfSecondsRemaining) {
-        long minutesRemaining = numberOfSecondsRemaining / 60;
-        long secondsRemaining = numberOfSecondsRemaining - minutesRemaining * 60;
-
-        return new TimeRemaining(minutesRemaining, secondsRemaining);
+        return String.format(Locale.getDefault(), "%02d:%02d", numberOfSecondsRemaining / 60, numberOfSecondsRemaining % 60);
     }
 }

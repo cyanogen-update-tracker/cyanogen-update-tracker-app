@@ -46,6 +46,7 @@
     <string name="downloaded">Downloaded</string>
     <string name="downloading">Downloading…</string>
     <string name="verifying">Verifying…</string>
+    <string name="verifying_error">File is damaged</string>
     <string name="download_permissions">Click Download again to download the update.</string>
     <string name="download_error">Download Error</string>
     <string name="download_error_corrupt">The downloaded update file is corrupt! Please try downloading it again.</string>
@@ -65,8 +66,8 @@
     <string name="update_already_downloaded">The update was already downloaded. It is ready to get installed.</string>
     <string name="download_verifying">Your download will now be verified…</string>
     <string name="download_progress_text_unknown_time_remaining">%1$d %%, Calculating time remaining…</string>
-    <string name="download_progress_text_with_time_remaining">%1$d %%, %2$d:%3$o remaining (%4$.2f %5$s)</string>
-    <string name="download_progress_text_verifying">100 %%, Verifying…</string>
+    <string name="download_progress_text_with_time_remaining">%1$d %%, %2$s remaining (%3$.2f %4$s)</string>
+    <string name="download_progress_text_verifying">100 %, Verifying…</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen OS Update</string>
     <string name="cyanogen_os_version">Cyanogen OS Version: %1$s</string>
