@@ -17,6 +17,7 @@ public class SettingsManager {
     public static final String PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE = "offlineUpdateDownloadSize";
     public static final String PROPERTY_OFFLINE_UPDATE_DESCRIPTION = "offlineUpdateDescription";
     public static final String PROPERTY_OFFLINE_FILE_NAME = "offlineFileName";
+    public static final String PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE = "offlineUpdateInformationAvailable";
 
     //Settings properties
     public static final String PROPERTY_APP_VERSION = "appVersion";

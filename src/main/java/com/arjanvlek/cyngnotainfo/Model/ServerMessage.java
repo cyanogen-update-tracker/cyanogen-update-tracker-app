@@ -77,6 +77,10 @@ public class ServerMessage {
     public boolean isDeviceSpecific() {
         return deviceId != null;
     }
+
+    public boolean isUpdateMethodSpecific() {
+        return updateMethodId != null;
+    }
 }
 
 

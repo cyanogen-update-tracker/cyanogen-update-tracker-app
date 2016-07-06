@@ -6,114 +6,14 @@
     android:layout_height="wrap_content"
     tools:context=".MainActivity">
 
-    <!-- Server error message view -->
-    <View
-        android:id="@+id/updateInformationServerErrorBar"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/updateInformationServerErrorTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-    <!-- New app version notification view -->
-    <View
-        android:id="@+id/updateInformationNewAppNotificationBar"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationServerErrorBar"
-        android:background="@color/holo_green_light"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/updateInformationNewAppNotificationTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationServerErrorBar"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:linksClickable="true"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-    <!-- First server message view -->
-    <View
-        android:id="@+id/updateInformationFirstServerMessageBar"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationNewAppNotificationBar"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/updateInformationFirstServerMessageTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationNewAppNotificationBar"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-    <!-- Second server message view -->
-    <View
-        android:id="@+id/updateInformationSecondServerMessageBar"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationFirstServerMessageBar"
-        android:background="@color/holo_red_dark"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/updateInformationSecondServerMessageTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationFirstServerMessageBar"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
-
-    <!-- No connection view -->
-    <View
-        android:id="@+id/updateInformationNoConnectionBar"
-        android:layout_width="match_parent"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationSecondServerMessageBar"
-        android:background="@color/holo_red_dark"
-        android:visibility="gone" />
-
-    <TextView
-        android:id="@+id/updateInformationNoConnectionTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="20dp"
-        android:layout_below="@id/updateInformationSecondServerMessageBar"
-        android:layout_centerHorizontal="true"
-        android:gravity="center"
-        android:text="@string/error_no_internet_connection"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"
-        android:visibility="gone" />
-
     <!-- Main screen -->
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/updateInformationRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/updateInformationAdView"
-        android:layout_below="@id/updateInformationNoConnectionBar"
         android:visibility="gone">
-
+<!-- TODO SET BELOW value programmatically -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -287,9 +187,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_above="@+id/updateInformationAdView"
-        android:layout_below="@id/updateInformationNoConnectionBar"
         android:visibility="gone">
-
+        <!-- TODO set BELOW value programmatically -->
         <ScrollView
             android:layout_width="match_parent"
             android:layout_height="match_parent">

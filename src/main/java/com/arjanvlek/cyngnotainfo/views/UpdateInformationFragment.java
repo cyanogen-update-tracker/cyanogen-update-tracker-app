@@ -15,6 +15,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.text.Html;
 import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
+import android.util.TypedValue;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,8 +44,11 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import static android.app.DownloadManager.ERROR_CANNOT_RESUME;
 import static android.app.DownloadManager.ERROR_DEVICE_NOT_FOUND;
@@ -58,8 +62,13 @@ import static android.app.DownloadManager.PAUSED_QUEUED_FOR_WIFI;
 import static android.app.DownloadManager.PAUSED_UNKNOWN;
 import static android.app.DownloadManager.PAUSED_WAITING_FOR_NETWORK;
 import static android.app.DownloadManager.PAUSED_WAITING_TO_RETRY;
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
+import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
+import static com.arjanvlek.cyngnotainfo.Model.ServerStatus.Status.OK;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
 import static com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.NOT_SET;
 
@@ -79,6 +88,17 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private String deviceName;
 
     public static final int NOTIFICATION_ID = 1;
+
+    // In app message bar collections and identifiers.
+    private static final String KEY_APP_UPDATE_BARS = "app_update_bars";
+    private static final String KEY_SERVER_ERROR_BARS = "server_error_bars";
+    private static final String KEY_NO_NETWORK_CONNECTION_BARS = "no_network_connection_bars";
+    private static final String KEY_SERVER_MESSAGE_BARS = "server_message_bars";
+    private Map<String, List<Object>> inAppMessageBars = new HashMap<>();
+
+    /*
+      -------------- ANDROID ACTIVITY LIFECYCLE METHODS -------------------
+     */
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -110,9 +130,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    /**
-     * Called when leaving the activity
-     */
     @Override
     public void onPause() {
         super.onPause();
@@ -122,9 +139,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
     }
 
-    /**
-     * Called when re-opening the activity
-     */
     @Override
     public void onResume() {
         super.onResume();
@@ -147,9 +161,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    /**
-     * Called before the activity is destroyed
-     */
     @Override
     public void onDestroy() {
         super.onDestroy();
@@ -158,154 +169,320 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
+    /*
+      -------------- INITIALIZATION / DATA FETCHING METHODS -------------------
+     */
 
-
-    @Override
-    protected CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate() {
-        CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
-        cyanogenOTAUpdate.setName(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
-        cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
-        cyanogenOTAUpdate.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
-        cyanogenOTAUpdate.setUpdateInformationAvailable(true);
-        cyanogenOTAUpdate.setFileName(settingsManager.getPreference(PROPERTY_OFFLINE_FILE_NAME));
-        return cyanogenOTAUpdate;
+    /**
+     * Initializes the layout. Sets refresh listeners for pull-down to refresh and applies the right colors for pull-down to refresh screens.
+     */
+    private void initLayout() {
+        if (updateInformationRefreshLayout == null && rootView != null && isAdded()) {
+            updateInformationRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
+            systemIsUpToDateRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
+            if(updateInformationRefreshLayout != null) {
+                updateInformationRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (networkConnectionManager.checkNetworkConnection()) {
+                            getServerData();
+                        } else if (settingsManager.checkIfCacheIsAvailable()) {
+                            displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
+                        } else {
+                            showNetworkError();
+                        }
+                    }
+                });
+                updateInformationRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
+            }
+            if(systemIsUpToDateRefreshLayout != null) {
+                systemIsUpToDateRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+                    @Override
+                    public void onRefresh() {
+                        if (networkConnectionManager.checkNetworkConnection()) {
+                            getServerData();
+                        } else if (settingsManager.checkIfCacheIsAvailable()) {
+                            displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
+                        } else {
+                            showNetworkError();
+                        }
+                    }
+                });
+                systemIsUpToDateRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
+            }
+        }
     }
 
+    /**
+     * Checks if there is a network connection. If that's the case, start the connections to the backend
+     * If not, build an offline {@link CyanogenOTAUpdate} and display it without trying to reach the server at all
+     * If an offline {@link CyanogenOTAUpdate} is not available, display a "No network connection error message".
+     */
+    private void initData() {
+        if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
+            if (networkConnectionManager.checkNetworkConnection()) {
+                getServerData();
+                showAds();
+                refreshedDate = DateTime.now();
+                isFetched = true;
+            } else if (settingsManager.checkIfCacheIsAvailable()) {
+                cyanogenOTAUpdate = buildOfflineCyanogenOTAUpdate();
+                displayUpdateInformation(cyanogenOTAUpdate, false, false);
+                initDownloadManager();
+                hideAds();
+                refreshedDate = DateTime.now();
+                isFetched = true;
+            } else {
+                hideAds();
+                showNetworkError();
+            }
+        }
+    }
+
+    /**
+     * Fetches all server data. This includes update information, server messages and server status checks
+     */
+    private void getServerData() {
+        new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        if(settingsManager.showNewsMessages()) {
+            new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        }
+    }
+
+
+    /*
+      -------------- METHODS FOR DISPLAYING DATA ON THE FRAGMENT -------------------
+     */
+
+
+    private void displayNoConnectionBar() {
+        // Display the "No connection" bar depending on the network status of the device.
+        List<Object> noConnectionBars = new ArrayList<>(1);
+
+        if(!networkConnectionManager.checkNetworkConnection()) {
+            noConnectionBars.add(new Object());
+        }
+
+        inAppMessageBars.put(KEY_NO_NETWORK_CONNECTION_BARS, noConnectionBars);
+
+        if(areAllServerMessageBarsLoaded()) {
+            displayInAppMessageBars();
+        }
+    }
     public void displayServerMessages(List<ServerMessage> serverMessages) {
+        List<Object> serverMessageBars = new ArrayList<>();
+
         if(serverMessages != null && settingsManager.showNewsMessages()) {
-            rootView.findViewById(R.id.updateInformationFirstServerMessageBar).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationSecondServerMessageBar).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationFirstServerMessageTextView).setVisibility(View.GONE);
-            rootView.findViewById(R.id.updateInformationSecondServerMessageTextView).setVisibility(View.GONE);
-            int i = 0;
-            for (ServerMessage message : serverMessages) {
-                // There may never be more than 2 messages displayed in this version of the app.
-                if(!message.isDeviceSpecific() || (message.getDeviceId() == settingsManager.getLongPreference(PROPERTY_DEVICE_ID) && (message.getUpdateMethodId() == null || message.getUpdateMethodId() == settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID)))) {
-                    View serverMessageBar;
-                    TextView serverMessageTextView;
-                    if (i == 0) {
-                        serverMessageBar = rootView.findViewById(R.id.updateInformationFirstServerMessageBar);
-                        serverMessageTextView = (TextView) rootView.findViewById(R.id.updateInformationFirstServerMessageTextView);
-
-                        View updateInformationScreen = rootView.findViewById(R.id.updateInformationRefreshLayout);
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                        params.addRule(RelativeLayout.BELOW, R.id.updateInformationFirstServerMessageBar);
-                        params.addRule(RelativeLayout.ABOVE, R.id.updateInformationAdView);
-
-                        updateInformationScreen.setLayoutParams(params);
-
-                    } else {
-                        serverMessageBar = rootView.findViewById(R.id.updateInformationSecondServerMessageBar);
-                        serverMessageTextView = (TextView) rootView.findViewById(R.id.updateInformationSecondServerMessageTextView);
-
-                        View updateInformationScreen = rootView.findViewById(R.id.updateInformationRefreshLayout);
-                        RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                                ViewGroup.LayoutParams.WRAP_CONTENT);
-
-                        params.addRule(RelativeLayout.BELOW, R.id.updateInformationSecondServerMessageBar);
-                        params.addRule(RelativeLayout.ABOVE, R.id.updateInformationAdView);
-
-                        updateInformationScreen.setLayoutParams(params);
-                    }
-                    serverMessageBar.setVisibility(View.VISIBLE);
-                    serverMessageTextView.setVisibility(View.VISIBLE);
-
-                    String appLocale = Locale.getDefault().getDisplayLanguage();
-
-                    if (appLocale.equals(LOCALE_DUTCH)) {
-                        serverMessageTextView.setText(message.getMessageNl());
-                    } else {
-                        serverMessageTextView.setText(message.getMessage());
-                    }
-
-                    switch (message.getPriority()) {
-                        case LOW:
-                            serverMessageBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_green_light));
-                            break;
-                        case MEDIUM:
-                            serverMessageBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_orange_light));
-                            break;
-                        case HIGH:
-                            serverMessageBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_red_light));
-                            break;
-                    }
-
-                    if (message.isMarquee()) {
-                        serverMessageTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
-                        serverMessageTextView.setHorizontallyScrolling(true);
-                        serverMessageTextView.setSingleLine(true);
-                        serverMessageTextView.setMarqueeRepeatLimit(-1); // -1 is forever
-                        serverMessageTextView.setFocusable(true);
-                        serverMessageTextView.setFocusableInTouchMode(true);
-                        serverMessageTextView.requestFocus();
-                        serverMessageTextView.setSelected(true);
-                    }
-                    i++;
+            for(ServerMessage serverMessage : serverMessages) {
+                if(!serverMessage.isDeviceSpecific() || (serverMessage.isDeviceSpecific() && serverMessage.getDeviceId() == settingsManager.getLongPreference(PROPERTY_DEVICE_ID) && (!serverMessage.isUpdateMethodSpecific() || (serverMessage.isUpdateMethodSpecific() && serverMessage.getUpdateMethodId() == settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID))))) {
+                    serverMessageBars.add(serverMessage);
                 }
             }
+        }
+        inAppMessageBars.put(KEY_SERVER_MESSAGE_BARS, serverMessageBars);
+
+        if(areAllServerMessageBarsLoaded()) {
+            displayInAppMessageBars();
         }
     }
 
+    /**
+     * Displays the status of the server (warning, error, maintenance or invalid app version)
+     * @param serverStatus Server status data from the backend
+     */
     public void displayServerStatus(ServerStatus serverStatus) {
+        displayNoConnectionBar();
 
-        if(serverStatus != null && serverStatus.getStatus() != ServerStatus.Status.OK) {
-            View serverStatusWarningBar = rootView.findViewById(R.id.updateInformationServerErrorBar);
-            TextView serverStatusWarningTextView = (TextView) rootView.findViewById(R.id.updateInformationServerErrorTextView);
+        List<Object> serverErrorBars = new ArrayList<>(1);
+        List<Object> appUpdateBars = new ArrayList<>(1);
 
-            if(settingsManager.showNewsMessages()) {
-                serverStatusWarningBar.setVisibility(View.VISIBLE);
-                serverStatusWarningTextView.setVisibility(View.VISIBLE);
-            }
-            if(isAdded()) {
-                switch (serverStatus.getStatus()) {
-                    case WARNING:
-                        if (settingsManager.showNewsMessages()) {
-                            serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_orange_light));
-                            serverStatusWarningTextView.setText(getString(R.string.server_status_warning));
-                        }
-                        break;
-                    case ERROR:
-                        if (settingsManager.showNewsMessages()) {
-                            serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_red_light));
-                            serverStatusWarningTextView.setText(getString(R.string.server_status_error));
-                        }
-                        break;
-                    case MAINTENANCE:
-                        showMaintenanceError();
-                        break;
-                    case TAKEN_DOWN:
-                        showAppNotValidError();
-                        break;
-                    case UNREACHABLE:
-                        if (settingsManager.showNewsMessages()) {
-                            serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_orange_light));
-                            serverStatusWarningTextView.setText(getString(R.string.server_status_unreachable));
-                        }
-                        break;
-                }
-            }
+        if(serverStatus != null && isAdded() && serverStatus.getStatus() != OK) {
+            serverErrorBars.add(serverStatus);
         }
-        if(serverStatus != null && settingsManager.showAppUpdateMessages()) {
-            if (!checkIfAppIsUpToDate(serverStatus.getLatestAppVersion()) && isAdded()) {
-                View appUpdateNotificationBar = rootView.findViewById(R.id.updateInformationNewAppNotificationBar);
-                TextView appUpdateNotificationTextView = (TextView) rootView.findViewById(R.id.updateInformationNewAppNotificationTextView);
-                appUpdateNotificationBar.setVisibility(View.VISIBLE);
-                appUpdateNotificationTextView.setVisibility(View.VISIBLE);
 
-                if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-                    appUpdateNotificationTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion()), Html.FROM_HTML_MODE_LEGACY));
+        if(serverStatus != null && settingsManager.showAppUpdateMessages() && !checkIfAppIsUpToDate(serverStatus.getLatestAppVersion())) {
+            appUpdateBars.add(serverStatus);
+        }
+
+        inAppMessageBars.put(KEY_SERVER_ERROR_BARS, serverErrorBars);
+        inAppMessageBars.put(KEY_APP_UPDATE_BARS, appUpdateBars);
+
+        if(areAllServerMessageBarsLoaded()) {
+            displayInAppMessageBars();
+        }
+
+    }
+
+    private int addMessageBar(View view, int numberOfBars) {
+        // Add the message to the update information screen if it is not null.
+        if(rootView != null) {
+            // Set the layout params based on the view count.
+            // First view should go below the app update message bar (if visible)
+            // Consecutive views should go below their parent / previous view.
+            RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
+            params.topMargin = numberOfBars * diPToPixels(20);
+            rootView.addView(view, params);
+            numberOfBars = numberOfBars + 1;
+        }
+        return numberOfBars;
+    }
+
+    private void displayInAppMessageBars() {
+        // TODO make views deletable to allow redrawing them while refreshing
+        // TODO set margins below the last view to put app content on the right place
+        // TODO set order of bars to match previous versions of the app (first network, then app update / server error and finally server message bars.
+        int numberOfBars = 0;
+        ServerMessageView lastServerMessageView = null;
+
+        // Display server message bars / messages
+        List<Object> serverMessageObjects = inAppMessageBars.get(KEY_SERVER_MESSAGE_BARS);
+        for (Object messageObject : serverMessageObjects) {
+            ServerMessage message = (ServerMessage)messageObject;
+            // Create a new server message view and get its contents
+            ServerMessageView serverMessageView = new ServerMessageView(getApplicationContext(), null);
+            View serverMessageBackgroundBar = serverMessageView.getBackgroundBar();
+            TextView serverMessageTextView = serverMessageView.getTextView();
+
+
+            // Set the right locale text of the message in the view.
+            String appLocale = Locale.getDefault().getDisplayLanguage();
+
+            if (appLocale.equals(LOCALE_DUTCH)) {
+                serverMessageTextView.setText(message.getMessageNl());
+            } else {
+                serverMessageTextView.setText(message.getMessage());
+            }
+
+            // Set the background color of the view according to the priority data from the backend.
+            switch (message.getPriority()) {
+                case LOW:
+                    serverMessageBackgroundBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_green_light));
+                    break;
+                case MEDIUM:
+                    serverMessageBackgroundBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_orange_light));
+                    break;
+                case HIGH:
+                    serverMessageBackgroundBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_red_light));
+                    break;
+            }
+
+            // Set the message as moving text if it is marked as being marquee from the backend.
+            if (message.isMarquee()) {
+                serverMessageTextView.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+                serverMessageTextView.setHorizontallyScrolling(true);
+                serverMessageTextView.setSingleLine(true);
+                serverMessageTextView.setMarqueeRepeatLimit(-1); // -1 is forever
+                serverMessageTextView.setFocusable(true);
+                serverMessageTextView.setFocusableInTouchMode(true);
+                serverMessageTextView.requestFocus();
+                serverMessageTextView.setSelected(true);
+            }
+
+            numberOfBars = addMessageBar(serverMessageView, numberOfBars);
+            lastServerMessageView = serverMessageView;
+        }
+
+        // Display server error bars / messages
+        for(Object serverStatusObject : inAppMessageBars.get(KEY_SERVER_ERROR_BARS)) {
+            ServerStatus serverStatus = (ServerStatus)serverStatusObject;
+
+            // Create a new server message view and get its contents
+            ServerMessageView serverStatusView = new ServerMessageView(getApplicationContext(), null);
+            View serverStatusWarningBar = serverStatusView.getBackgroundBar();
+            TextView serverStatusWarningTextView = serverStatusView.getTextView();
+
+            if (settingsManager.showNewsMessages()) {
+                serverStatusWarningBar.setVisibility(VISIBLE);
+                serverStatusWarningTextView.setVisibility(VISIBLE);
+            }
+
+            switch (serverStatus.getStatus()) {
+                case WARNING:
+                    if (settingsManager.showNewsMessages()) {
+                        serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_orange_light));
+                        serverStatusWarningTextView.setText(getString(R.string.server_status_warning));
+                        numberOfBars = addMessageBar(serverStatusView, numberOfBars);
+                        lastServerMessageView = serverStatusView;
+                    }
+                    break;
+                case ERROR:
+                    if (settingsManager.showNewsMessages()) {
+                        serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_red_light));
+                        serverStatusWarningTextView.setText(getString(R.string.server_status_error));
+                        numberOfBars = addMessageBar(serverStatusView, numberOfBars);
+                        lastServerMessageView = serverStatusView;
+                    }
+                    break;
+                case MAINTENANCE:
+                    showMaintenanceError();
+                    break;
+                case TAKEN_DOWN:
+                    showAppNotValidError();
+                    break;
+                case UNREACHABLE:
+                    serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_red_light));
+                    serverStatusWarningTextView.setText(getString(R.string.server_status_unreachable));
+                    numberOfBars = addMessageBar(serverStatusView, numberOfBars);
+                    lastServerMessageView = serverStatusView;
+                    break;
+            }
+
+        }
+
+        // Display the "No connection" bar if no connection is available.
+        for(Object ignored : inAppMessageBars.get(KEY_NO_NETWORK_CONNECTION_BARS)) {
+            ServerMessageView noConnectionError = new ServerMessageView(getApplicationContext(), null);
+            View noConnectionErrorBar = noConnectionError.getBackgroundBar();
+            TextView noConnectionErrorTextView = noConnectionError.getTextView();
+
+            noConnectionErrorBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_red_light));
+            noConnectionErrorTextView.setText(getString(R.string.error_no_internet_connection));
+            numberOfBars = addMessageBar(noConnectionError, numberOfBars);
+            lastServerMessageView = noConnectionError;
+        }
+
+
+        // Display app update message if available
+        for(Object serverStatusObject : inAppMessageBars.get(KEY_APP_UPDATE_BARS)) {
+            ServerStatus serverStatus = (ServerStatus)serverStatusObject;
+            if (isAdded()) {
+                ServerMessageView appUpdateMessageView = new ServerMessageView(getApplicationContext(), null);
+                View appUpdateMessageBar = appUpdateMessageView.getBackgroundBar();
+                TextView appUpdateMessageTextView = appUpdateMessageView.getTextView();
+
+                appUpdateMessageBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_green_light));
+
+                // The text contains an HTML link to the Google Play store to allow quick updating of the app.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                    appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion()), Html.FROM_HTML_MODE_LEGACY));
                 } else {
                     //noinspection deprecation as it is only for older Android versions
-                    appUpdateNotificationTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
+                    appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
                 }
-                appUpdateNotificationTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                // TODO fix exception when clicking on the update link.
+                appUpdateMessageTextView.setMovementMethod(LinkMovementMethod.getInstance());
+                numberOfBars = addMessageBar(appUpdateMessageView, numberOfBars);
+                lastServerMessageView = appUpdateMessageView;
             }
         }
+
+        // Set the margins of the app ui to be below the last added server message bar.
+        if(lastServerMessageView != null) {
+            //TODO set both swipeRefreshLayouts to be below the latest bar.
+        } else {
+            // TODO maybe set swipeRefreshLayouts to be below the top of the screen.
+        }
+
     }
 
-
+    /**
+     * Displays the update information from a {@link CyanogenOTAUpdate} with update information.
+     * @param cyanogenOTAUpdate Update information to display
+     * @param online Whether or not the device has an active network connection
+     * @param displayInfoWhenUpToDate Flag set to show update information anyway, even if the system is up to date.
+     */
+    @Override
     public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, final boolean online, boolean displayInfoWhenUpToDate) {
         // Abort if no update data is found or if the fragment is not attached to its activity to prevent crashes.
         if(cyanogenOTAUpdate == null || !isAdded()) {
@@ -316,156 +493,151 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             cyanogenOTAUpdate.setSystemIsUpToDate(isSystemUpToDateStringCheck(cyanogenOTAUpdate));
         }
 
-        // Display the "No connection" bar depending on the network status of the device.
-        View noConnectionBar = rootView.findViewById(R.id.updateInformationNoConnectionBar);
-        TextView noConnectionTextField = (TextView) rootView.findViewById(R.id.updateInformationNoConnectionTextView);
-
-        View updateInformationLayout = rootView.findViewById(R.id.updateInformationRefreshLayout);
-        View systemIsUpToDateLayout = rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
-
-        if(online) {
-            if(noConnectionBar != null) {
-                noConnectionBar.setVisibility(View.GONE);
-            }
-            if(noConnectionTextField != null) {
-                noConnectionTextField.setVisibility(View.GONE);
-            }
-        } else {
-            if(noConnectionBar != null) {
-                noConnectionBar.setVisibility(View.VISIBLE);
-            }
-            if(noConnectionTextField != null) {
-                noConnectionTextField.setVisibility(View.VISIBLE);
-            }
-        }
-
-        // Display the "System is up to date" screen if the system is up to date and if "View update information" is NOT clicked, or if no update information is available.
         if(((cyanogenOTAUpdate.isSystemIsUpToDate(settingsManager)) && !displayInfoWhenUpToDate) || !cyanogenOTAUpdate.isUpdateInformationAvailable()) {
-            // Show "System is up to date" view.
-            updateInformationLayout.setVisibility(View.GONE);
-            systemIsUpToDateLayout.setVisibility(View.VISIBLE);
-
-            // Set current Cyanogen OS version if found.
-            String cyanogenOSVersion = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties().getCyanogenOSVersion();
-            TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
-            if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
-                versionNumberView.setVisibility(View.VISIBLE);
-                versionNumberView.setText(String.format(getString(R.string.cyanogen_os_version), cyanogenOSVersion));
-            } else {
-                versionNumberView.setVisibility(View.GONE);
-                versionNumberView.setVisibility(View.GONE);
-            }
-
-            // Set "No Update Information Is Available" button.
-            Button updateInformationButton = (Button) rootView.findViewById(R.id.updateInformationSystemIsUpToDateStatisticsButton);
-            if(!cyanogenOTAUpdate.isUpdateInformationAvailable()) {
-                updateInformationButton.setText(getString(R.string.update_information_no_update_data_available));
-                updateInformationButton.setClickable(false);
-            } else {
-                updateInformationButton.setText(getString(R.string.update_information_view_update_information));
-                updateInformationButton.setClickable(true);
-                updateInformationButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        displayUpdateInformation(cyanogenOTAUpdate, online, true);
-                    }
-                });
-            }
-
-            // Save last time checked if online.
-            if(online) {
-                settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
-            }
-
-            // Show last time checked.
-            TextView dateCheckedView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateDateTextView);
-            DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
-            dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), dateTimeFormatter.formatDateTime(settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE))));
+            displayUpdateInformationWhenUpToDate(cyanogenOTAUpdate, online);
+        } else {
+            displayUpdateInformationWhenNotUpToDate(cyanogenOTAUpdate, online, displayInfoWhenUpToDate);
         }
 
-        // Display the "Update information" screen if an update is available or if View Update Information is clicked on an up to date device.
-        else {
-            // Show "System update available" view.
-            updateInformationLayout.setVisibility(View.VISIBLE);
-            systemIsUpToDateLayout.setVisibility(View.GONE);
-
-            // Display available update version number.
-            TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
-            if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
-                buildNumberView.setText(cyanogenOTAUpdate.getName());
-            } else {
-                buildNumberView.setText(String.format(getString(R.string.unknown_update_name), deviceName));
-            }
-
-            // Display download size.
-            TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-            downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), cyanogenOTAUpdate.getSize()));
-
-            // Display update description.
-            String description = cyanogenOTAUpdate.getDescription();
-            TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
-            descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
-
-            // Display update file name.
-            TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
-            fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOTAUpdate.getFileName()));
-
-            final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
-
-            // Activate download button, or make it gray when the device is offline or if the update is not downloadable.
-            if (online && cyanogenOTAUpdate.getDownloadUrl() != null) {
-                downloadButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                       onDownloadButtonClick(downloadButton);
-                    }
-                });
-                downloadButton.setEnabled(true);
-                downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
-            } else {
-                downloadButton.setEnabled(false);
-                downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
-            }
-
-            // Format top title based on system version installed.
-            TextView headerLabel = (TextView) rootView.findViewById(R.id.headerLabel);
-            Button updateInstallationGuideButton = (Button) rootView.findViewById(R.id.updateInstallationInstructionsButton);
-            View downloadSizeTable = rootView.findViewById(R.id.buttonTable);
-            View downloadSizeImage = rootView.findViewById(R.id.downloadSizeImage);
-
-
-            if(displayInfoWhenUpToDate) {
-                headerLabel.setText(getString(R.string.update_information_installed_update));
-                downloadButton.setVisibility(View.GONE);
-                updateInstallationGuideButton.setVisibility(View.GONE);
-                fileNameView.setVisibility(View.GONE);
-                downloadSizeTable.setVisibility(View.GONE);
-                downloadSizeImage.setVisibility(View.GONE);
-                downloadSizeView.setVisibility(View.GONE);
-            } else {
-                headerLabel.setText(getString(R.string.update_information_latest_available_update));
-                downloadButton.setVisibility(View.VISIBLE);
-                updateInstallationGuideButton.setVisibility(View.VISIBLE);
-                fileNameView.setVisibility(View.VISIBLE);
-                downloadSizeTable.setVisibility(View.VISIBLE);
-                downloadSizeImage.setVisibility(View.VISIBLE);
-                downloadSizeView.setVisibility(View.VISIBLE);
-            }
-
-
-
-        }
         if(online) {
             // Save update data for offline viewing
             settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
             settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
             settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
             settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOTAUpdate.getFileName());
+            settingsManager.saveBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE, cyanogenOTAUpdate.isUpdateInformationAvailable());
             settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
         }
 
         // Hide the refreshing icon if it is present.
         hideRefreshIcons();
+    }
+
+    private void displayUpdateInformationWhenUpToDate(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online) {
+        // Show "System is up to date" view.
+        rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(GONE);
+        rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(VISIBLE);
+
+        // Set the current Cyanogen OS version if available.
+        String cyanogenOSVersion = ((ApplicationContext)getActivity().getApplication()).getSystemVersionProperties().getCyanogenOSVersion();
+        TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
+        if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
+            versionNumberView.setVisibility(VISIBLE);
+            versionNumberView.setText(String.format(getString(R.string.cyanogen_os_version), cyanogenOSVersion));
+        } else {
+            versionNumberView.setVisibility(GONE);
+        }
+
+        // Set "No Update Information Is Available" button if needed.
+        Button updateInformationButton = (Button) rootView.findViewById(R.id.updateInformationSystemIsUpToDateStatisticsButton);
+        if(!cyanogenOTAUpdate.isUpdateInformationAvailable()) {
+            updateInformationButton.setText(getString(R.string.update_information_no_update_data_available));
+            updateInformationButton.setClickable(false);
+        } else {
+            updateInformationButton.setText(getString(R.string.update_information_view_update_information));
+            updateInformationButton.setClickable(true);
+            updateInformationButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    displayUpdateInformation(cyanogenOTAUpdate, true, true);
+                }
+            });
+        }
+
+        // Save last time checked if online.
+        if(online) {
+            settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
+        }
+
+        // Show last time checked.
+        TextView dateCheckedView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateDateTextView);
+        DateTimeFormatter dateTimeFormatter = new DateTimeFormatter(context, this);
+        dateCheckedView.setText(String.format(getString(R.string.update_information_last_checked_on), dateTimeFormatter.formatDateTime(settingsManager.getPreference(PROPERTY_UPDATE_CHECKED_DATE))));
+
+    }
+
+    private void displayUpdateInformationWhenNotUpToDate(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean displayInfoWhenUpToDate) {
+        // Show "System update available" view.
+        rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(VISIBLE);
+        rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(GONE);
+
+        // Display available update version number.
+        TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
+        if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
+            buildNumberView.setText(cyanogenOTAUpdate.getName());
+        } else {
+            buildNumberView.setText(String.format(getString(R.string.unknown_update_name), deviceName));
+        }
+
+        // Display download size.
+        TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
+        downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), cyanogenOTAUpdate.getSize()));
+
+        // Display update description.
+        String description = cyanogenOTAUpdate.getDescription();
+        TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
+        descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
+
+        // Display update file name.
+        TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
+        fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOTAUpdate.getFileName()));
+
+        final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
+
+        // Activate download button, or make it gray when the device is offline or if the update is not downloadable.
+        if (online && cyanogenOTAUpdate.getDownloadUrl() != null) {
+            downloadButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onDownloadButtonClick(downloadButton);
+                }
+            });
+            downloadButton.setEnabled(true);
+            downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
+        } else {
+            downloadButton.setEnabled(false);
+            downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+        }
+
+        // Format top title based on system version installed.
+        TextView headerLabel = (TextView) rootView.findViewById(R.id.headerLabel);
+        Button updateInstallationGuideButton = (Button) rootView.findViewById(R.id.updateInstallationInstructionsButton);
+        View downloadSizeTable = rootView.findViewById(R.id.buttonTable);
+        View downloadSizeImage = rootView.findViewById(R.id.downloadSizeImage);
+
+
+        if(displayInfoWhenUpToDate) {
+            headerLabel.setText(getString(R.string.update_information_installed_update));
+            downloadButton.setVisibility(GONE);
+            updateInstallationGuideButton.setVisibility(GONE);
+            fileNameView.setVisibility(GONE);
+            downloadSizeTable.setVisibility(GONE);
+            downloadSizeImage.setVisibility(GONE);
+            downloadSizeView.setVisibility(GONE);
+        } else {
+            headerLabel.setText(getString(R.string.update_information_latest_available_update));
+            downloadButton.setVisibility(VISIBLE);
+            updateInstallationGuideButton.setVisibility(VISIBLE);
+            fileNameView.setVisibility(VISIBLE);
+            downloadSizeTable.setVisibility(VISIBLE);
+            downloadSizeImage.setVisibility(VISIBLE);
+            downloadSizeView.setVisibility(VISIBLE);
+        }
+    }
+
+    /**
+     * Builds a {@link CyanogenOTAUpdate} class based on the data that was stored when the device was online.
+     * @return CyanogenOTAUpdate with data from the latest succesful fetch.
+     */
+    @Override
+    protected CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate() {
+        CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
+        cyanogenOTAUpdate.setName(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
+        cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
+        cyanogenOTAUpdate.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
+        cyanogenOTAUpdate.setUpdateInformationAvailable(settingsManager.getBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE));
+        cyanogenOTAUpdate.setFileName(settingsManager.getPreference(PROPERTY_OFFLINE_FILE_NAME));
+        return cyanogenOTAUpdate;
     }
 
     /**
@@ -509,100 +681,42 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
+    /*
+      -------------- USER INTERFACE ELEMENT METHODS -------------------
+     */
+
+    private boolean areAllServerMessageBarsLoaded() {
+        return inAppMessageBars.containsKey(KEY_APP_UPDATE_BARS) && inAppMessageBars.containsKey(KEY_NO_NETWORK_CONNECTION_BARS) && inAppMessageBars.containsKey(KEY_SERVER_ERROR_BARS) && inAppMessageBars.containsKey(KEY_SERVER_MESSAGE_BARS);
+    }
+
     private Button getDownloadButton() {
         return (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
-    }
-
-    private TextView getDownloadStatusText() {
-        return (TextView) rootView.findViewById(R.id.updateInformationDownloadDetailsView);
-    }
-
-    private void showDownloadProgressBar() {
-        View downloadProgressBar = rootView.findViewById(R.id.downloadProgressTable);
-        if(downloadProgressBar != null) {
-            rootView.findViewById(R.id.downloadProgressTable).setVisibility(View.VISIBLE);
-        }
-    }
-
-    private ProgressBar getDownloadProgressBar() {
-        return (ProgressBar) rootView.findViewById(R.id.updateInformationDownloadProgressBar);
     }
 
     private ImageButton getDownloadCancelButton() {
         return (ImageButton) rootView.findViewById(R.id.updateInformationDownloadCancelButton);
     }
 
-    private void hideDownloadProgressBar() {
-        rootView.findViewById(R.id.downloadProgressTable).setVisibility(View.GONE);
 
+    private TextView getDownloadStatusText() {
+        return (TextView) rootView.findViewById(R.id.updateInformationDownloadDetailsView);
     }
 
-    private void showVerifyingNotification(boolean error) {
-        NotificationCompat.Builder builder;
-        try {
-                builder = new NotificationCompat.Builder(getActivity())
-                        .setSmallIcon(android.R.drawable.stat_sys_download)
-                        .setOngoing(true)
-                        .setProgress(100, 50, true);
 
-            if(error) {
-                builder.setContentTitle(getString(R.string.verifying_error));
-            } else {
-                builder.setContentTitle(getString(R.string.verifying));
-            }
+    private ProgressBar getDownloadProgressBar() {
+        return (ProgressBar) rootView.findViewById(R.id.updateInformationDownloadProgressBar);
+    }
 
-            if (Build.VERSION.SDK_INT >= 21) {
-                builder.setCategory(Notification.CATEGORY_PROGRESS);
-            }
-            NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify(NOTIFICATION_ID, builder.build());
-        } catch(Exception e) {
-            try {
-                NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
-                manager.cancel(NOTIFICATION_ID);
-            } catch(Exception e1) {
-                try {
-                    // If cancelling the notification fails fails (and yes, it happens!), then I assume either that the user's device has a (corrupt) custom firmware or that something is REALLY going wrong.
-                    // We try it once more but now with the Application Context instead of the Activity.
-                    NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-                    manager.cancel(NOTIFICATION_ID);
-                } catch (Exception ignored) {
-                    // If the last attempt has also failed, well then there's no hope.
-                    // We leave everything as is, but the user will likely be stuck with a download notification that stays until a reboot.
-                }
-            }
+    private void showDownloadProgressBar() {
+        View downloadProgressBar = rootView.findViewById(R.id.downloadProgressTable);
+        if(downloadProgressBar != null) {
+            downloadProgressBar.setVisibility(VISIBLE);
         }
     }
 
-    private void hideVerifyingNotification() {
-        NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
-        manager.cancel(NOTIFICATION_ID);
-    }
+    private void hideDownloadProgressBar() {
+        rootView.findViewById(R.id.downloadProgressTable).setVisibility(GONE);
 
-
-    private void showDownloadError(String title, String message, String positiveButtonText, String negativeButtonText, boolean closable) {
-        MessageDialog errorDialog = new MessageDialog()
-                .setTitle(title)
-                .setMessage(message)
-                .setPositiveButtonText(positiveButtonText)
-                .setNegativeButtonText(negativeButtonText)
-                .setClosable(closable)
-                .setDialogListener(new MessageDialog.DialogListener() {
-                    @Override
-                    public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
-
-                    }
-
-                    @Override
-                    public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
-                        updateDownloader.cancelDownload();
-                        updateDownloader.downloadUpdate(cyanogenOTAUpdate);
-                    }
-                });
-        errorDialog.setTargetFragment(this, 0);
-        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
-        transaction.add(errorDialog, "DownloadError");
-        transaction.commitAllowingStateLoss();
     }
 
     private void hideRefreshIcons() {
@@ -618,80 +732,11 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
-    private void initLayout() {
-        if (updateInformationRefreshLayout == null && rootView != null && isAdded()) {
-            updateInformationRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationRefreshLayout);
-            systemIsUpToDateRefreshLayout = (SwipeRefreshLayout) rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout);
-            if(updateInformationRefreshLayout != null) {
-                updateInformationRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        if (networkConnectionManager.checkNetworkConnection()) {
-                            getServerData();
-                        } else if (settingsManager.checkIfCacheIsAvailable()) {
-                            displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
-                        } else {
-                            showNetworkError();
-                        }
-                    }
-                });
-                updateInformationRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
-            }
-            if(systemIsUpToDateRefreshLayout != null) {
-                systemIsUpToDateRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-                    @Override
-                    public void onRefresh() {
-                        if (networkConnectionManager.checkNetworkConnection()) {
-                            getServerData();
-                        } else if (settingsManager.checkIfCacheIsAvailable()) {
-                            displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
-                        } else {
-                            showNetworkError();
-                        }
-                    }
-                });
-                systemIsUpToDateRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
-            }
-        }
-    }
 
-    private void initData() {
-        if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
-            if (networkConnectionManager.checkNetworkConnection()) {
-                getServerData();
-                showAds();
-                refreshedDate = DateTime.now();
-                isFetched = true;
-            } else if (settingsManager.checkIfCacheIsAvailable()) {
-                cyanogenOTAUpdate = buildOfflineCyanogenOTAUpdate();
-                displayUpdateInformation(cyanogenOTAUpdate, false, false);
-                initDownloadManager();
-                refreshedDate = DateTime.now();
-                isFetched = true;
-            } else {
-                hideAds();
-                showNetworkError();
-            }
-        }
-    }
+    /*
+      -------------- GOOGLE ADS METHODS -------------------
+     */
 
-    private void getServerData() {
-        new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        if(settingsManager.showNewsMessages() || settingsManager.showAppUpdateMessages()) {
-            new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        }
-        if(settingsManager.showNewsMessages()) {
-            new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        }
-    }
-
-
-
-    private void hideAds() {
-        if (adView != null) {
-            adView.destroy();
-        }
-    }
 
     private void showAds() {
         if(rootView != null) {
@@ -703,25 +748,25 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
-                    .addKeyword("smartphone")
-                    .addKeyword("tablet")
-                    .addKeyword("games")
-                    .addKeyword("android")
-                    .addKeyword("cyanogen")
-                    .addKeyword("cyanogenmod")
-                    .addKeyword("cyanogenos")
-                    .addKeyword("cyanogen os")
-                    .addKeyword("raspberrypi")
-                    .addKeyword("oneplus")
-                    .addKeyword("yu")
-                    .addKeyword("oppo")
-
                     .build();
 
             adView.loadAd(adRequest);
         }
     }
 
+    private void hideAds() {
+        if (adView != null) {
+            adView.destroy();
+        }
+    }
+
+    /*
+      -------------- UPDATE DOWNLOAD METHODS -------------------
+     */
+
+    /**
+     * Creates a {@link UpdateDownloader} and applies an {@link UpdateDownloadListener} to it to allow displaying update download progress and error messages.
+     */
     @Override
     protected void initDownloadManager() {
         if(isAdded() && updateDownloader == null) {
@@ -899,6 +944,44 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
+    /**
+     * Shows an {@link MessageDialog} with the occured download error.
+     * @param title Title of the error message
+     * @param message Contents of the error message
+     * @param positiveButtonText Rightmost button text
+     * @param negativeButtonText Leftmost button text
+     * @param closable If the dialog may be closed, this is set to true. If not, this is set to false. In that case, the application will be killed on exiting the dialog.
+     */
+    private void showDownloadError(String title, String message, String positiveButtonText, String negativeButtonText, boolean closable) {
+        MessageDialog errorDialog = new MessageDialog()
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButtonText(positiveButtonText)
+                .setNegativeButtonText(negativeButtonText)
+                .setClosable(closable)
+                .setDialogListener(new MessageDialog.DialogListener() {
+                    @Override
+                    public void onDialogPositiveButtonClick(DialogFragment dialogFragment) {
+
+                    }
+
+                    @Override
+                    public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
+                        updateDownloader.cancelDownload();
+                        updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                    }
+                });
+        errorDialog.setTargetFragment(this, 0);
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        transaction.add(errorDialog, "DownloadError");
+        transaction.commitAllowingStateLoss();
+    }
+
+    /**
+     * Common actions for changing download button parameters and deleting incomplete download files.
+     * @param updateIsDownloaded Whether or not the update is successfully downloaded.
+     * @param fileMayBeDeleted Whether or not the update file may be deleted.
+     */
     private void onUpdateDownloaded(boolean updateIsDownloaded, boolean fileMayBeDeleted) {
         final Button downloadButton = getDownloadButton();
 
@@ -937,6 +1020,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
+    /**
+     * Download button click listener. Performs these actions when the button is clicked.
+     * @param downloadButton Button to perform actions on.
+     */
     private void onDownloadButtonClick(Button downloadButton) {
         MainActivity mainActivity = (MainActivity) getActivity();
         if(mainActivity != null) {
@@ -950,6 +1037,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         }
     }
 
+    /**
+     * Allows an already downloaded update file to be deleted to save storage space.
+     */
     private void onDownloadedButtonClick() {
         MessageDialog dialog = new MessageDialog()
                 .setTitle(getString(R.string.delete_message_title))
@@ -981,9 +1071,84 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         transaction.commitAllowingStateLoss();
     }
 
+    /**
+     * Checks if an update file is already downloaded.
+     * @param cyanogenOTAUpdate Cyanogen Update data containing the file name of the update.
+     */
     @Override
     public void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate) {
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
         onUpdateDownloaded(file.exists(), false);
+    }
+
+
+    /*
+      -------------- UPDATE VERIFICATION METHODS -------------------
+     */
+
+
+    /**
+     * Shows a notification that the downloaded update file is being verified on MD5 sums.
+     * @param error If an error occurred during verification, display an error text in the notification.
+     */
+    private void showVerifyingNotification(boolean error) {
+        NotificationCompat.Builder builder;
+        try {
+            builder = new NotificationCompat.Builder(getActivity())
+                    .setSmallIcon(android.R.drawable.stat_sys_download)
+                    .setOngoing(true)
+                    .setProgress(100, 50, true);
+
+            if(error) {
+                builder.setContentTitle(getString(R.string.verifying_error));
+            } else {
+                builder.setContentTitle(getString(R.string.verifying));
+            }
+
+            if (Build.VERSION.SDK_INT >= 21) {
+                builder.setCategory(Notification.CATEGORY_PROGRESS);
+            }
+            NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(NOTIFICATION_ID, builder.build());
+        } catch(Exception e) {
+            try {
+                NotificationManager manager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.cancel(NOTIFICATION_ID);
+            } catch(Exception e1) {
+                try {
+                    // If cancelling the notification fails fails (and yes, it happens!), then I assume either that the user's device has a (corrupt) custom firmware or that something is REALLY going wrong.
+                    // We try it once more but now with the Application Context instead of the Activity.
+                    NotificationManager manager = (NotificationManager) getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+                    manager.cancel(NOTIFICATION_ID);
+                } catch (Exception ignored) {
+                    // If the last attempt has also failed, well then there's no hope.
+                    // We leave everything as is, but the user will likely be stuck with a verifying notification that stays until a reboot.
+                }
+            }
+        }
+    }
+
+    /**
+     * Hides the verifying notification. Used when verification has succeeded.
+     */
+    private void hideVerifyingNotification() {
+        NotificationManager manager = (NotificationManager)getApplicationContext().getSystemService(Context.NOTIFICATION_SERVICE);
+        manager.cancel(NOTIFICATION_ID);
+    }
+
+
+    /**
+     * Converts DiP units to pixels
+     */
+    private int diPToPixels(int numberOfPixels) {
+        if(getActivity() != null && getActivity().getResources() != null) {
+            return (int) TypedValue.applyDimension(
+                    TypedValue.COMPLEX_UNIT_DIP,
+                    numberOfPixels,
+                    getActivity().getResources().getDisplayMetrics()
+            );
+        } else {
+            return 0;
+        }
     }
 }
