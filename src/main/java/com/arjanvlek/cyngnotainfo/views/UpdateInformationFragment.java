@@ -154,6 +154,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     getServerData();
                     refreshedDate = DateTime.now();
                 } else if (settingsManager.checkIfCacheIsAvailable()) {
+                    getServerData();
                     displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
                     refreshedDate = DateTime.now();
                 } else {
@@ -189,6 +190,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         if (networkConnectionManager.checkNetworkConnection()) {
                             getServerData();
                         } else if (settingsManager.checkIfCacheIsAvailable()) {
+                            getServerData();
                             displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
                         } else {
                             showNetworkError();
@@ -204,6 +206,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         if (networkConnectionManager.checkNetworkConnection()) {
                             getServerData();
                         } else if (settingsManager.checkIfCacheIsAvailable()) {
+                            getServerData();
                             displayUpdateInformation(buildOfflineCyanogenOTAUpdate(), false, false);
                         } else {
                             showNetworkError();
@@ -228,6 +231,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 refreshedDate = DateTime.now();
                 isFetched = true;
             } else if (settingsManager.checkIfCacheIsAvailable()) {
+                getServerData();
                 cyanogenOTAUpdate = buildOfflineCyanogenOTAUpdate();
                 displayUpdateInformation(cyanogenOTAUpdate, false, false);
                 initDownloadManager();
@@ -235,7 +239,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 refreshedDate = DateTime.now();
                 isFetched = true;
             } else {
-                hideAds();
                 hideAds();
                 showNetworkError();
             }
@@ -252,6 +255,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         if(settingsManager.showNewsMessages()) {
             new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         }
+        checkNoConnectionBar();
     }
 
 
@@ -260,7 +264,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
      */
 
 
-    private void displayNoConnectionBar() {
+    private void checkNoConnectionBar() {
         // Display the "No connection" bar depending on the network status of the device.
         List<Object> noConnectionBars = new ArrayList<>(1);
 
@@ -294,7 +298,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
      * @param serverStatus Server status data from the backend
      */
     public void displayServerStatus(ServerStatus serverStatus) {
-        displayNoConnectionBar();
 
         List<Object> serverErrorBars = new ArrayList<>(1);
         List<Object> appUpdateBars = new ArrayList<>(1);
@@ -483,8 +486,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 if(updateInformationRefreshLayout != null) {
                     updateInformationRefreshLayout.setLayoutParams(params);
                 }
-            } else {
-                // TODO maybe set swipeRefreshLayouts to be below the top of the screen.
             }
         }
 
@@ -922,6 +923,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         @Override
                         public void onVerifyStarted() {
                             if(isAdded()) {
+                                showDownloadProgressBar();
                                 getDownloadProgressBar().setIndeterminate(true);
                                 showVerifyingNotification(false);
                                 getDownloadButton().setText(getString(R.string.verifying));
@@ -1012,6 +1014,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             });
         } else {
             if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null) {
+                updateDownloader.checkDownloadProgress(cyanogenOTAUpdate);
                 downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1030,7 +1033,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 downloadButton.setEnabled(false);
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
             }
-            downloadButton.setText(getString(R.string.download));
         }
     }
 
@@ -1073,6 +1075,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
                             if(file.exists()) {
                                 if(file.delete()) {
+                                    getDownloadButton().setText(getString(R.string.download));
                                     checkIfUpdateIsAlreadyDownloaded(cyanogenOTAUpdate);
                                 }
                             }
@@ -1092,7 +1095,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate) {
         File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
-        onUpdateDownloaded(file.exists(), false);
+        onUpdateDownloaded(file.exists() && !settingsManager.containsPreference(PROPERTY_DOWNLOAD_ID), false);
     }
 
 

@@ -6,7 +6,7 @@
     <string name="settings_device">Apparaat</string>
     <string name="settings_update_method">Update-methode</string>
     <string name="download">Downloaden</string>
-    <string name="download_description">Cyanogen OS-update</string>
+    <string name="download_description">Cyanogen Update Tracker Downloader</string>
     <string name="update_information_latest_available_update">Er is een nieuwe systeemupdate beschikbaar:</string>
     <string name="install_guide">Installatiehandleiding</string>
     <string name="update_information_header">Update-informatie</string>
@@ -146,7 +146,7 @@
     <string name="reload">Opnieuw laden</string>
     <string name="install_guide_step3_recovery_internal_storage_api23">- Kies Choose from Emulated.</string>
     <string name="downloaded">Gedownload</string>
-    <string name="download_title">Downloaden Cyanogen OS-versie %1$s</string>
+    <string name="download_title">Downloaden: %1$s.</string>
     <string name="download_error_sd_card">Er is geen SD-kaart aanwezig in je apparaat. Plaats een SD-kaart in je apparaat. Probeer hierna de update opnieuw te downloaden.</string>
     <string name="download_pending">Je download begint zometeen…</string>
     <string name="download_verifying">Je download wordt nu gecontroleerd…</string>

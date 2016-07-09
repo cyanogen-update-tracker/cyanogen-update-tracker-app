@@ -55,7 +55,7 @@
     <string name="download_error_sd_card">There is no SD card present in your device. Please insert an SD card into your device. After you have done so, try downloading the update again.</string>
     <string name="download_error_directory">It looks like there is no external storage available on your device. If you have an SD card, please make sure your device is not connected to a PC and make sure the SD card is configured to be used as external storage.</string>
     <string name="download_size_megabyte">%1$d MB</string>
-    <string name="download_title">Downloading Cyanogen OS version %1$s.</string>
+    <string name="download_title">Downloading: %1$s.</string>
     <string name="download_error_close">CLOSE</string>
     <string name="download_error_retry">RETRY</string>
     <string name="download_waiting_for_wifi">Waiting for a Wi-Fi connection…</string>
@@ -69,7 +69,7 @@
     <string name="download_progress_text_with_time_remaining">%1$d %%, %2$s remaining (%3$.2f %4$s)</string>
     <string name="download_progress_text_verifying">100 %, Verifying…</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
-    <string name="download_description">Cyanogen OS Update</string>
+    <string name="download_description">Cyanogen Update Tracker Downloader</string>
     <string name="cyanogen_os_version">Cyanogen OS Version: %1$s</string>
     <string name="download_cyanogen_os">Cyanogen OS Version</string>
     <string name="download_complete">Download complete</string>

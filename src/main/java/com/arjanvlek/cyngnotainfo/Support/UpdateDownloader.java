@@ -73,7 +73,7 @@ public class UpdateDownloader {
         Uri downloadUri = Uri.parse(cyanogenOTAUpdate.getDownloadUrl());
 
         DownloadManager.Request request = new DownloadManager.Request(downloadUri)
-                .setDescription(cyanogenOTAUpdate.getDownloadUrl())
+                .setDescription(baseActivity.getString(R.string.download_description))
                 .setTitle(baseActivity.getString(R.string.download_title, cyanogenOTAUpdate.getName()))
                 .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
                 .setVisibleInDownloadsUi(false)
@@ -293,8 +293,10 @@ public class UpdateDownloader {
         protected void onPostExecute(Boolean result) {
             if (result) {
                 listener.onVerifyComplete();
+                clearUp();
             } else {
                 listener.onVerifyError();
+                clearUp();
             }
         }
     }
