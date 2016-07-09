@@ -38,7 +38,6 @@ public class UpdateDownloader {
 
     private final Activity baseActivity;
     private final DownloadManager downloadManager;
-    private boolean initialized;
     private final SettingsManager settingsManager;
 
     private UpdateDownloadListener listener;
@@ -46,6 +45,7 @@ public class UpdateDownloader {
 
     public final static int NOT_SET = -1;
 
+    private boolean initialized;
     private long previousBytesDownloadedSoFar = NOT_SET;
     private long previousTimeStamp;
     private DownloadSpeedUnits previousSpeedUnits = BYTES;
@@ -147,6 +147,7 @@ public class UpdateDownloader {
                         listener.onDownloadError(cursor.getInt(cursor.getColumnIndex(COLUMN_REASON)));
                         break;
                 }
+                cursor.close();
             }
         }
     }
