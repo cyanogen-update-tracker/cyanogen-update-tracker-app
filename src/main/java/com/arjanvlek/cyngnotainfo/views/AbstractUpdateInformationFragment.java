@@ -66,7 +66,7 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
 
         @Override
         protected List<ServerMessage> doInBackground(Void... arg0) {
-            return getApplicationContext().getServerConnector().getServerMessages();
+            return getApplicationContext().getServerConnector().getServerMessages(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
         }
 
         @Override

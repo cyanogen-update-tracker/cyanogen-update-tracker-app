@@ -49,7 +49,7 @@ public class ServerMessage {
         this.deviceId = deviceId;
     }
 
-    public Long getUpdateMethodId() {
+    public long getUpdateMethodId() {
         return updateMethodId;
     }
 

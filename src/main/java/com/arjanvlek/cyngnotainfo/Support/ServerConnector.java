@@ -26,8 +26,8 @@ import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_METHODS;
 
 public class ServerConnector {
 
-    public final static String SERVER_URL = "** Add the base URL of your API / backend here **v3/";
-    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3/";
+    public final static String SERVER_URL = "** Add the base URL of your API / backend here **";
+    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3.1/";
 
     private ObjectMapper objectMapper;
 
@@ -55,8 +55,8 @@ public class ServerConnector {
         return findOneFromServerResponse(fetchDataFromServer(SERVER_STATUS), ServerStatus.class);
     }
 
-    public List<ServerMessage> getServerMessages() {
-        return findMultipleFromServerResponse(fetchDataFromServer(SERVER_MESSAGES), ServerMessage.class);
+    public List<ServerMessage> getServerMessages(Long deviceId, Long updateMethodId) {
+        return findMultipleFromServerResponse(fetchDataFromServer(SERVER_MESSAGES, deviceId.toString(), updateMethodId.toString()), ServerMessage.class);
     }
 
     private <T> List<T> findMultipleFromServerResponse(String response, Class<T> returnClass) {

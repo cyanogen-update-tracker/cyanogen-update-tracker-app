@@ -66,8 +66,8 @@ public class GcmRegistrationIntentService extends IntentService {
 
 
     //Server URLs and properties
-    public static final String SERVER_URL = "** Add the base URL of your API / backend here **v3/registerDevice";
-    public static final String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3/registerDevice";
+    public static final String SERVER_URL = "** Add the base URL of your API / backend here **registerDevice";
+    public static final String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3.1/registerDevice";
 
     public GcmRegistrationIntentService() {
         super(TAG);

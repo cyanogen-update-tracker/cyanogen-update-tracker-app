@@ -40,7 +40,7 @@ public enum ServerRequest {
     SERVER_MESSAGES {
         @Override
         URL getURL(String... params) throws MalformedURLException {
-            return new URL(getBaseUrl() + "serverMessages");
+            return new URL(getBaseUrl() + "serverMessages/" + params[0] + "/" + params[1]);
         }
     };
 

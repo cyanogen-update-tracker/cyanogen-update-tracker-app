@@ -79,7 +79,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private SwipeRefreshLayout updateInformationRefreshLayout;
     private SwipeRefreshLayout systemIsUpToDateRefreshLayout;
     private RelativeLayout rootView;
-    private ViewGroup container;
     private AdView adView;
 
     private Context context;
@@ -121,7 +120,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         this.rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_updateinformation, container, false);
-        this.container = container;
         return this.rootView;
     }
 
@@ -238,6 +236,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 isFetched = true;
             } else {
                 hideAds();
+                hideAds();
                 showNetworkError();
             }
         }
@@ -247,6 +246,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
      * Fetches all server data. This includes update information, server messages and server status checks
      */
     private void getServerData() {
+        this.inAppMessageBarData = new HashMap<>();
         new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         if(settingsManager.showNewsMessages()) {
@@ -279,9 +279,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
         if(serverMessages != null && settingsManager.showNewsMessages()) {
             for(ServerMessage serverMessage : serverMessages) {
-                if(!serverMessage.isDeviceSpecific() || (serverMessage.isDeviceSpecific() && serverMessage.getDeviceId() == settingsManager.getLongPreference(PROPERTY_DEVICE_ID) && (!serverMessage.isUpdateMethodSpecific() || (serverMessage.isUpdateMethodSpecific() && serverMessage.getUpdateMethodId() == settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID))))) {
-                    serverMessageBars.add(serverMessage);
-                }
+                serverMessageBars.add(serverMessage);
             }
         }
         inAppMessageBarData.put(KEY_SERVER_MESSAGE_BARS, serverMessageBars);
@@ -337,7 +335,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private void deleteAllInAppMessageBars() {
         for(ServerMessageView view : this.inAppMessageBars) {
             if(view != null && isAdded()) {
-                this.container.removeView(view);
+                this.rootView.removeView(view);
             }
         }
         this.inAppMessageBars = new ArrayList<>();
