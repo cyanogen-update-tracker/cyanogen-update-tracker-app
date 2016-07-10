@@ -107,8 +107,8 @@
     <string name="settings_system_hide_when_up_to_date">Mijn systeem up-to-date is</string>
     <string name="settings_system_up_to_date">Verberg update-informatie wanneer:</string>
     <string name="settings_push_new_device">Nieuw apparaat wordt ondersteund</string>
-    <string name="error_app_not_valid">Ongeldige app-versie</string>
-    <string name="error_app_not_valid_message">Deze versie van de app kan niet langer meer worden gebruikt. Probeer hem te updaten via de Play Store door op Play Store te klikken en vervolgens op Updaten te klikken. Als deze fout blijt, verwijder de app dan en installeer hem opnieuw.</string>
+    <string name="error_app_not_valid">Verouderde app-versie</string>
+    <string name="error_app_not_valid_message">Deze versie van de app is te oud en kan daarom niet meer worden gebruikt. Probeer de app via de Play Store bij te werken. Dit kan door hieronder op "Play Store" te klikken. Klik vervolgens in Google Play op "Bijwerken".</string>
     <string name="error_maintenance">Serveronderhoud</string>
     <string name="error_maintenance_message">Een ogenblik geduld terwijl de server wordt onderhouden. De server zal zeer snel weer online zijn.</string>
     <string name="update_information_last_checked_on">Voor het laatst gecontroleerd om: %1$s</string>
@@ -146,7 +146,6 @@
     <string name="reload">Opnieuw laden</string>
     <string name="install_guide_step3_recovery_internal_storage_api23">- Kies Choose from Emulated.</string>
     <string name="downloaded">Gedownload</string>
-    <string name="download_title">Downloaden: %1$s.</string>
     <string name="download_error_sd_card">Er is geen SD-kaart aanwezig in je apparaat. Plaats een SD-kaart in je apparaat. Probeer hierna de update opnieuw te downloaden.</string>
     <string name="download_pending">Je download begint zometeen…</string>
     <string name="download_verifying">Je download wordt nu gecontroleerd…</string>
@@ -155,18 +154,20 @@
     <string name="download_will_retry_soon">Je download zal zometeen herstarten…</string>
     <string name="download_paused_unknown">Je download is mogelijk vastgelopen. Probeer opnieuw te downloaden…</string>
     <string name="update_already_downloaded">De update was al gedownload. Het staat klaar om geïnstalleerd te worden.</string>
-    <string name="download_progress_text_unknown_time_remaining">%1$d %%, Resterende tijd berekenen…</string>
-    <string name="download_progress_text_verifying">100 %, Controleren op fouten…</string>
+    <string name="download_progress_text_unknown_time_remaining">%1$d%%, Resterende tijd berekenen…</string>
+    <string name="download_progress_text_verifying">100 %,Controleren op fouten…</string>
     <string name="delete_message_delete_button">Verwijder</string>
     <string name="delete_message_title">Verwijder update-bestand?</string>
     <string name="delete_message_contents">Je hebt deze update al gedownload, maar nog niet geïnstalleerd. Klik op "Sluiten" om dit bericht te sluiten, en klik vervolgens op "Installatiehandleiding" voor installatie-instructies. Klik op "Verwijder" om het bestand definitief te verwijderen.</string>
     <string name="error_unable_to_rate_app">Je kunt de app niet beoordelen, omdat de Google Play Store of je webbrowser ontbreekt.</string>
     <string name="verifying_error">Bestand is beschadigd</string>
-    <string name="download_progress_text_hours_remaining">%1$d%%, %2$s uur resterend</string>
+    <string name="download_progress_text_hours_remaining">%1$d%%, ongeveer %2$s uur resterend</string>
     <string name="download_progress_text_less_than_a_minute_remaining">%1$d%%, minder dan een minuut resterend</string>
-    <string name="download_progress_text_minutes_remaining">%1$d%%, %2$s minuten resterend</string>
-    <string name="download_progress_text_one_minute_remaining">%1$d%%, 1 minuut resterend</string>
+    <string name="download_progress_text_minutes_remaining">%1$d%%, ongeveer %2$s minuten resterend</string>
+    <string name="download_progress_text_one_minute_remaining">%1$d%%, ongeveer een minuut resterend</string>
     <string name="download_progress_text_seconds_remaining">%1$d%%, enkele seconden resterend</string>
-    <string name="download_progress_text_one_hour_remaining">%1$d%%, 1 uur resterend</string>
+    <string name="download_progress_text_one_hour_remaining">%1$d%%, ongeveer 1 uur resterend</string>
+    <string name="download_unknown_update_name">Cyanogen OS-update</string>
+    <string name="device_information_incremental_os_version">Incrementele OS-versie</string>
 
 </resources>

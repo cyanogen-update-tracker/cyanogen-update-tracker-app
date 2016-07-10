@@ -97,7 +97,7 @@ public class DeviceInformationTest extends ActivityInstrumentationTestCase2<Main
 
         assertEquals(Build.MANUFACTURER + " " + deviceName, headerView.getText());
         assertEquals(Build.BOARD, socView.getText());
-        assertNotNull(cpuFreqView.getText()); //TODO test this reliably on all devices and emulators
+        assertNotNull(cpuFreqView.getText());
         if(Build.VERSION.SDK_INT > Build.VERSION_CODES.HONEYCOMB) {
             assertEquals(memory, memoryView.getText());
         }

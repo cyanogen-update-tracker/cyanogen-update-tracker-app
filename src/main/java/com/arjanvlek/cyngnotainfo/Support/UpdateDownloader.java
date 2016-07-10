@@ -74,7 +74,7 @@ public class UpdateDownloader {
 
         DownloadManager.Request request = new DownloadManager.Request(downloadUri)
                 .setDescription(baseActivity.getString(R.string.download_description))
-                .setTitle(baseActivity.getString(R.string.download_title, cyanogenOTAUpdate.getName()))
+                .setTitle(cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null") && !cyanogenOTAUpdate.getName().isEmpty() ? cyanogenOTAUpdate.getName() : baseActivity.getString(R.string.download_unknown_update_name))
                 .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
                 .setVisibleInDownloadsUi(false)
                 .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED);

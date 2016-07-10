@@ -6,12 +6,13 @@ import java.io.RandomAccessFile;
 import java.math.BigDecimal;
 
 public class DeviceInformationData {
-    private String deviceManufacturer;
-    private String deviceName;
-    private String soc;
-    private String cpuFrequency;
-    private String osVersion;
-    private String serialNumber;
+    private final String deviceManufacturer;
+    private final String deviceName;
+    private final String soc;
+    private final String cpuFrequency;
+    private final String osVersion;
+    private final String incrementalOsVersion;
+    private final String serialNumber;
 
     private static final String CPU_FREQUENCY_FILE_PATH = "/sys/devices/system/cpu/cpu0/cpufreq/cpuinfo_max_freq";
     public static final String UNKNOWN = "-";
@@ -21,6 +22,7 @@ public class DeviceInformationData {
         this.deviceName = Build.DEVICE;
         this.soc = Build.BOARD;
         this.osVersion = Build.VERSION.RELEASE;
+        this.incrementalOsVersion = Build.VERSION.INCREMENTAL;
         this.serialNumber = Build.SERIAL;
         this.cpuFrequency = calculateCpuFrequency();
     }
@@ -43,6 +45,10 @@ public class DeviceInformationData {
 
     public String getOsVersion() {
         return osVersion;
+    }
+
+    public String getIncrementalOsVersion() {
+        return incrementalOsVersion;
     }
 
     public String getSerialNumber() {

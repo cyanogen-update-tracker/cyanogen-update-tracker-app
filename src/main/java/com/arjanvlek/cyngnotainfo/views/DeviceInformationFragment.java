@@ -123,6 +123,9 @@ public class DeviceInformationFragment extends AbstractFragment {
             TextView osVerView = (TextView) rootView.findViewById(R.id.device_information_os_ver_field);
             osVerView.setText(deviceInformationData.getOsVersion());
 
+            TextView osIncrementalView = (TextView) rootView.findViewById(R.id.device_information_incremental_os_ver_field);
+            osIncrementalView.setText(deviceInformationData.getIncrementalOsVersion());
+
             TextView osPatchDateView = (TextView) rootView.findViewById(R.id.device_information_os_patch_level_field);
 
             if (!systemVersionProperties.getSecurityPatchDate().equals(NO_CYANOGEN_OS)) {

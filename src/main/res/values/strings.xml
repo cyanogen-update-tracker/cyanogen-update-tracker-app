@@ -55,7 +55,6 @@
     <string name="download_error_sd_card">There is no SD card present in your device. Please insert an SD card into your device. After you have done so, try downloading the update again.</string>
     <string name="download_error_directory">It looks like there is no external storage available on your device. If you have an SD card, please make sure your device is not connected to a PC and make sure the SD card is configured to be used as external storage.</string>
     <string name="download_size_megabyte">%1$d MB</string>
-    <string name="download_title">Downloading: %1$s.</string>
     <string name="download_error_close">CLOSE</string>
     <string name="download_error_retry">RETRY</string>
     <string name="download_waiting_for_wifi">Waiting for a Wi-Fi connection…</string>
@@ -66,13 +65,14 @@
     <string name="update_already_downloaded">The update was already downloaded. It is ready to get installed.</string>
     <string name="download_verifying">Your download will now be verified…</string>
     <string name="download_progress_text_unknown_time_remaining">%1$d%%, calculating time remaining…</string>
-    <string name="download_progress_text_hours_remaining">%1$d%%, %2$s hours remaining</string>
-    <string name="download_progress_text_one_hour_remaining">%1$d%%, 1 hour remaining</string>
-    <string name="download_progress_text_minutes_remaining">%1$d%%, %2$s minutes remaining</string>
-    <string name="download_progress_text_one_minute_remaining">%1$d%%, 1 minute remaining</string>
+    <string name="download_progress_text_hours_remaining">%1$d%%, about %2$s hours remaining</string>
+    <string name="download_progress_text_one_hour_remaining">%1$d%%, about 1 hour remaining</string>
+    <string name="download_progress_text_minutes_remaining">%1$d%%, about %2$s minutes remaining</string>
+    <string name="download_progress_text_one_minute_remaining">%1$d%%, about a minute remaining</string>
     <string name="download_progress_text_less_than_a_minute_remaining">%1$d%%, less than a minute remaining</string>
     <string name="download_progress_text_seconds_remaining">%1$d%%, a few seconds remaining</string>
-    <string name="download_progress_text_verifying">100%, verifying…</string>
+    <string name="download_progress_text_verifying">100%, Verifying file…</string>
+    <string name="download_unknown_update_name">Cyanogen OS Update</string>
     <string name="download_in_background">Your update will be downloaded in the background…</string>
     <string name="download_description">Cyanogen Update Tracker Downloader</string>
     <string name="cyanogen_os_version">Cyanogen OS Version: %1$s</string>
@@ -91,13 +91,13 @@
     <string name="settings_entered_incorrectly">Please wait while your settings are being saved.</string>
 
     <string name="settings_server_messages">Show these messages in the app:</string>
-    <string name="settings_in_app">News and warnings</string>
-    <string name="settings_new_app_version">App update is available</string>
+    <string name="settings_in_app">News and warning messages</string>
+    <string name="settings_new_app_version">App update messages</string>
 
-    <string name="settings_push_notifications">Send me these push notification:</string>
-    <string name="settings_push_from_server">Important warnings</string>
-    <string name="settings_push_new_version">System update is available</string>
-    <string name="settings_push_new_device">New device is supported</string>
+    <string name="settings_push_notifications">Send me these notifications:</string>
+    <string name="settings_push_from_server">Important messages</string>
+    <string name="settings_push_new_version">System update available</string>
+    <string name="settings_push_new_device">New device supported</string>
 
     <string name="settings_system_up_to_date">Hide update information when:</string>
     <string name="settings_system_hide_when_up_to_date">My system is up to date</string>
@@ -114,10 +114,10 @@
     <string name="error_button_retry">Retry</string>
     <string name="error_maintenance">Server maintenance</string>
     <string name="error_maintenance_message">Please wait while the server undergoes maintenance. The server will be back online very soon.</string>
-    <string name="error_app_not_valid">Invalid app version</string>
-    <string name="error_app_not_valid_message">This version of the app can no longer be used. Try updating it from Google Play by clicking on Google Play below and then on Update. If this error persists, uninstall the app and reinstall it again.</string>
+    <string name="error_app_not_valid">Outdated  app version</string>
+    <string name="error_app_not_valid_message">This version of the app is too old and can no longer be used. Try updating the app from Google Play. This can be done by clicking on "Google Play" below. Within Google Play, click on "Update".</string>
     <string name="error_app_requires_network_connection">This app requires an active Internet connection</string>
-    <string name="error_app_requires_network_connection_message">Failed to fetch update information from the server. Please make sure you have an active Internet connection. The application will now close.</string>
+    <string name="error_app_requires_network_connection_message">Failed to obtain update information from the server. Please make sure you have an active Internet connection. The app will now close.</string>
     <string name="error_exit_button_text">Exit</string>
     <string name="error_google_play_button_text" translatable="false">Google Play</string>
     <string name="error_push_failure">Failed to enable notifications. Please restart the app again after a few minutes.</string>
@@ -178,6 +178,7 @@
     <string name="device_information_cpu_frequency">Processor Frequency:</string>
     <string name="device_information_amount_of_memory">Amount of memory:</string>
     <string name="device_information_os_version">Android version:</string>
+    <string name="device_information_incremental_os_version">Incremental OS version:</string>
     <string name="device_information_patch_level_version">Security patch date:</string>
     <string name="device_information_cyanogen_os_version">Cyanogen OS version:</string>
     <string name="device_information_serial_number">Serial number:</string>

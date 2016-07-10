@@ -139,10 +139,28 @@
                 android:gravity="end" />
 
             <TextView
-                android:id="@+id/device_information_os_patch_level_label"
+                android:id="@+id/device_information_incremental_os_ver_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/device_information_os_ver_label"
+                android:layout_marginTop="5dp"
+                android:text="@string/device_information_incremental_os_version" />
+
+            <TextView
+                android:id="@+id/device_information_incremental_os_ver_field"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/device_information_os_ver_field"
+                android:layout_marginTop="5dp"
+                android:gravity="end" />
+
+            <TextView
+                android:id="@+id/device_information_os_patch_level_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/device_information_incremental_os_ver_label"
                 android:layout_marginTop="5dp"
                 android:text="@string/device_information_patch_level_version" />
 
@@ -152,7 +170,7 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
-                android:layout_below="@id/device_information_os_ver_field"
+                android:layout_below="@id/device_information_incremental_os_ver_field"
                 android:layout_marginTop="5dp"
                 android:gravity="end" />
 
