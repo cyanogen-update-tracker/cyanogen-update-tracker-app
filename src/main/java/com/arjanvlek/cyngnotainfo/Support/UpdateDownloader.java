@@ -107,7 +107,7 @@ public class UpdateDownloader {
             query.setFilterById(downloadId);
 
             Cursor cursor = downloadManager.query(query);
-            if (cursor.moveToFirst()) {
+            if (cursor != null && cursor.moveToFirst()) {
                 int status = cursor.getInt(cursor.getColumnIndex(COLUMN_STATUS));
                 switch (status) {
                     case STATUS_PENDING:

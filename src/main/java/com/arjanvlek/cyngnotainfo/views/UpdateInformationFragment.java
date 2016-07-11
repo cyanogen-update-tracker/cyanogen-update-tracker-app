@@ -345,6 +345,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
     private void displayInAppMessageBars() {
+        if(!isAdded()) {
+            return;
+        }
         deleteAllInAppMessageBars();
         int numberOfBars = 0;
 
@@ -1015,7 +1018,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private void onUpdateDownloaded(boolean updateIsDownloaded, boolean fileMayBeDeleted) {
         final Button downloadButton = getDownloadButton();
 
-        if(updateIsDownloaded) {
+        if(updateIsDownloaded && isAdded()) {
             downloadButton.setEnabled(true);
             downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
             downloadButton.setClickable(true);
@@ -1027,8 +1030,12 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 }
             });
         } else {
-            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null) {
-                updateDownloader.checkDownloadProgress(cyanogenOTAUpdate);
+            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null && isAdded()) {
+                if(updateDownloader != null) {
+                    updateDownloader.checkDownloadProgress(cyanogenOTAUpdate);
+                } else {
+                    initDownloadManager();
+                }
                 downloadButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -1044,8 +1051,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     file.delete();
                 }
             } else {
-                downloadButton.setEnabled(false);
-                downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+                if(isAdded()) {
+                    downloadButton.setEnabled(false);
+                    downloadButton.setTextColor(ContextCompat.getColor(context, R.color.dark_grey));
+                }
             }
         }
     }
@@ -1108,8 +1117,10 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
      */
     @Override
     public void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate) {
-        File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
-        onUpdateDownloaded(file.exists() && !settingsManager.containsPreference(PROPERTY_DOWNLOAD_ID), false);
+        if(cyanogenOTAUpdate != null) {
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+            onUpdateDownloaded(file.exists() && !settingsManager.containsPreference(PROPERTY_DOWNLOAD_ID), false);
+        }
     }
 
 
