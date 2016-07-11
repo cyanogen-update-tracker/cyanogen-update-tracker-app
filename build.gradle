@@ -15,13 +15,13 @@ android {
         applicationId "com.arjanvlek.cyngnotainfo"
         minSdkVersion 15
         targetSdkVersion 24
-        versionCode 21
-        versionName "1.6.1"
+        versionCode 22
+        versionName "1.6.2"
     }
     buildTypes {
         release {
             buildConfigField "Boolean", "USE_TEST_SERVER", "false"
-            minifyEnabled false
+            minifyEnabled true
             shrinkResources false
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
