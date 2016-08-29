@@ -7,3 +7,5 @@
 /captures
 *.jks
 /app/build
+Release_*/
+gen/
