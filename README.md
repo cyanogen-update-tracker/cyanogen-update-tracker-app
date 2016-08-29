@@ -20,37 +20,10 @@ This Android Studio project requires the following to be installed (from Android
 - Google Play Services
 
 ###Obtaining the code:
-- Make a directory called 'CyngnOtaInfo'.
-- `cd` into that directory
-
-####Clone the project:
 ```
 git clone https://github.com/arjanvlek/android-cyanogen-update-tracker-app.git
 ```
-
-- Rename the cloned directory to `app`. (this is important!)
-- Copy the file `missing-git-files.zip` to the `CyngnOtaInfo` directory (dir above the app directory).
-- Extract all the contents of this zip file in the `CyngnOtaInfo` directory.
-
-It should have at least these contents:
-```
-Directories:
- .gradle (gradle dir)
- .idea (Android Studio dir)
- app (Main source code)
- build (Build folder for running)
- gradle (Gradle distribution)
- 
-Files:
- build.gradle (Top-level build.gradle file)
- CyngnOtaInfo.iml (Android Studio Project)
- gradle.properties (Gradle settings)
- gradlew (Mac / Linux version of command-line Gradle runner)
- gradlew.bat (Windows version of command-line Gradle runner) 
- local.properties (Local SDK settings - will prompt to correct SDK location on first run)
- settings.gradle (Gradle settings)
-```
-- In Android studio, browse to the CyngnOtaInfo directory and open Build.gradle (not the Build.gradle in the app directory!)
+- In Android studio, browse to the android-cyanogen-update-tracker directory and open build.gradle (not the Build.gradle in the app directory!)
 
 
 ###Adding your API keys
