@@ -59,7 +59,7 @@ public class ServerConnector {
         return findMultipleFromServerResponse(fetchDataFromServer(SERVER_MESSAGES, deviceId.toString(), updateMethodId.toString()), ServerMessage.class);
     }
 
-    private <T> List<T> findMultipleFromServerResponse(String response, Class<T> returnClass) {
+    protected  <T> List<T> findMultipleFromServerResponse(String response, Class<T> returnClass) {
         try {
             return objectMapper.readValue(response, objectMapper.getTypeFactory().constructCollectionType(List.class, returnClass));
         } catch (Exception e) {
@@ -67,7 +67,7 @@ public class ServerConnector {
         }
     }
 
-    private <T> T findOneFromServerResponse(String response, Class<T> returnClass) {
+    protected  <T> T findOneFromServerResponse(String response, Class<T> returnClass) {
         try {
             return objectMapper.readValue(response, returnClass);
         } catch(Exception e) {
@@ -75,7 +75,7 @@ public class ServerConnector {
         }
     }
 
-    private String fetchDataFromServer(ServerRequest request, String... params) {
+    protected String fetchDataFromServer(ServerRequest request, String... params) {
 
         try {
             URL requestUrl = request.getURL(params);
