@@ -26,26 +26,27 @@
 
     <string name="update_information_close">Sluiten</string>
     <string name="about">Over deze app</string>
-    <string name="install_guide_image_description">Plaatje van de handleiding.</string>
-    <string name="install_guide_step1_download_update">Download de update.</string>
-    <string name="install_guide_step1_explanation">Druk op de Download-knop om het downloaden te starten. De download zal verschijnen als melding in uw notificatiescherm. Als het downloaden klaar is, ziet u een melding zoals deze:</string>
-    <string name="install_guide_step2_press_buttons">- houdt zowel de aan-uit knop als de volume-omlaag knop tegelijkertijd ingedrukt.</string>
-    <string name="install_guide_step2_recovery_mode">Ga naar de Recovery-modus.</string>
-    <string name="install_guide_step2_turn_off_phone">- Zet uw apparaat eerst uit.</string>
-    <string name="install_guide_step2_wait">- Wacht totdat u het recovery-menu op het scherm ziet.</string>
-    <string name="install_guide_step3_apply_update">Installeer de gedownloade update.</string>
-    <string name="install_guide_step3_browse_for_update">- Kies "0".\n\n- Gebruik de volume-omlaag-toets om omlaag te scrollen naar "Download".\n\n- Kies "Download".\n\n- Kies het zip-bestand met dezelfde bestandsnaam als in de app getoond.\n\n- De installatie begint vanzelf.</string>
-    <string name="install_guide_step3_recovery_apply">- In het recovery-menu, kies Apply Update.</string>
-    <string name="install_guide_step3_recovery_internal_storage">- Kies Choose from Internal Storage.</string>
-    <string name="install_guide_step4_android_is_upgrading">- Na deze stap, zult u  \'Android wordt bijgewerkt\' zien, terwijl uw apps worden geoptimaliseerd.</string>
-    <string name="install_guide_step4_cyanogen_logo">- Uw apparaat zal het Cyanogen-logo een poosje laten zien terwijl de update wordt uitgevoerd.</string>
-    <string name="install_guide_step4_reboot_now">- In het recovery-menu, kies Reboot System Now.</string>
-    <string name="install_guide_step4_restart">Start uw apparaat opnieuw op.</string>
-    <string name="install_guide_step5_check_version">- Nadat het updateproces is voltooid, kunt u de geïnstalleerde systeemversie controleren:</string>
-    <string name="install_guide_step5_close_button">Sluit de installatiehandleiding</string>
-    <string name="install_guide_step5_done">Klaar. Geniet van uw nieuwe Cyanogen OS!</string>
-    <string name="install_guide_step5_rate_app">- Als u deze app geweldig vindt, geef hem dan 5 sterren op Google Play!</string>
-    <string name="install_guide_step5_settings_app">- Ga naar Instellingen, Over de telefoon en bekijk de Cyanogen OS-versie</string>
+
+    <string name="install_guide_image_description">Plaatje van de installatiehandleiding.</string>
+
+    <string name="install_guide_page_1_title">Download de update.</string>
+    <string name="install_guide_page_1_text">- Druk op de Download-knop om het downloaden te starten. De download zal verschijnen als melding in uw notificatiescherm.\n\n- Als het downloaden klaar is, ziet u een melding met de tekst "Download voltooid".</string>
+
+    <string name="install_guide_page_2_title">Ga naar de Recovery-modus.</string>
+    <string name="install_guide_page_2_text">- Zet uw apparaat eerst uit.\n\n- houdt zowel de aan-uit knop als de volume-omlaag knop tegelijkertijd ingedrukt.\n\n- Wacht totdat u het recovery-menu op het scherm ziet.</string>
+
+    <string name="install_guide_page_3_title">Installeer de gedownloade update.</string>
+    <string name="install_guide_page_3_text">- In het recovery-menu, kies Apply Update.\n\n- Kies Choose from Internal Storage of Choose from Emulated, afhankelijk van wat zichtbaar is.\n\n- Kies "0".\n\n- Gebruik de volume-omlaag-toets om omlaag te scrollen naar "Download".\n\n- Kies "Download".\n\n- Kies het zip-bestand met dezelfde bestandsnaam als in de app getoond.\n\n- De installatie begint vanzelf.</string>
+
+    <string name="install_guide_page_4_title">Start uw apparaat opnieuw op.</string>
+    <string name="install_guide_page_4_text">- In het recovery-menu, kies Reboot System Now.\n\n- Uw apparaat zal het Cyanogen-logo een poosje laten zien terwijl de update wordt uitgevoerd.\n\n- Na deze stap, zult u  \'Android wordt bijgewerkt\' zien, terwijl uw apps worden geoptimaliseerd.</string>
+
+    <string name="install_guide_page_5_title">Klaar. Geniet van uw nieuwe Cyanogen OS!</string>
+    <string name="install_guide_page_5_text">- Nadat het updateproces is voltooid, kunt u de geïnstalleerde systeemversie controleren:\n\n- Ga naar Instellingen, Over de telefoon en bekijk de Cyanogen OS-versie.\n\n- Als u deze app geweldig vindt, geef hem dan 5 sterren op Google Play!</string>
+
+    <string name="install_guide_close_button">Sluit de installatiehandleiding</string>
+
+
     <string name="device_information_amount_of_memory">Hoeveelheid geheugen:</string>
     <string name="device_information_cpu_frequency">Frequentie van de processor:</string>
     <string name="device_information_image_description">Plaatje van uw apparaat</string>
@@ -144,7 +145,6 @@
     <string name="faq_no_network">Je hebt een internetverbinding nodig om de pagina met veelgestelde vragen te bekijken.</string>
     <string name="faq_no_network_title">Geen internetverbinding beschikbaar.</string>
     <string name="reload">Opnieuw laden</string>
-    <string name="install_guide_step3_recovery_internal_storage_api23">- Kies Choose from Emulated.</string>
     <string name="downloaded">Gedownload</string>
     <string name="download_error_sd_card">Er is geen SD-kaart aanwezig in je apparaat. Plaats een SD-kaart in je apparaat. Probeer hierna de update opnieuw te downloaden.</string>
     <string name="download_pending">Je download begint zometeen…</string>
@@ -161,9 +161,9 @@
     <string name="delete_message_contents">Je hebt deze update al gedownload, maar nog niet geïnstalleerd. Klik op "Sluiten" om dit bericht te sluiten, en klik vervolgens op "Installatiehandleiding" voor installatie-instructies. Klik op "Verwijder" om het bestand definitief te verwijderen.</string>
     <string name="error_unable_to_rate_app">Je kunt de app niet beoordelen, omdat de Google Play Store of je webbrowser ontbreekt.</string>
     <string name="verifying_error">Bestand is beschadigd</string>
-    <string name="download_progress_text_hours_remaining">%1$d%%, ongeveer %2$s uur resterend</string>
+    <string name="download_progress_text_hours_remaining">%1$d%%, ongeveer %2$d uur resterend</string>
     <string name="download_progress_text_less_than_a_minute_remaining">%1$d%%, minder dan een minuut resterend</string>
-    <string name="download_progress_text_minutes_remaining">%1$d%%, ongeveer %2$s minuten resterend</string>
+    <string name="download_progress_text_minutes_remaining">%1$d%%, ongeveer %2$d minuten resterend</string>
     <string name="download_progress_text_one_minute_remaining">%1$d%%, ongeveer een minuut resterend</string>
     <string name="download_progress_text_seconds_remaining">%1$d%%, enkele seconden resterend</string>
     <string name="download_progress_text_one_hour_remaining">%1$d%%, ongeveer 1 uur resterend</string>

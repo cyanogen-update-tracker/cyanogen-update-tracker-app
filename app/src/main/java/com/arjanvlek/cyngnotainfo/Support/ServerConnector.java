@@ -61,7 +61,7 @@ public class ServerConnector {
         return findMultipleFromServerResponse(fetchDataFromServer(SERVER_MESSAGES, deviceId.toString(), updateMethodId.toString()), ServerMessage.class);
     }
 
-    public InstallGuideData fetchInstallGuidePageFromServer(Integer pageNumber, Long deviceId, Long updateMethodId) {
+    public InstallGuideData fetchInstallGuidePageFromServer(Long deviceId, Long updateMethodId, Integer pageNumber) {
         return findOneFromServerResponse(fetchDataFromServer(INSTALL_GUIDE, deviceId.toString(), updateMethodId.toString(), pageNumber.toString()), InstallGuideData.class);
     }
 

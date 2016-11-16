@@ -46,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private ViewPager mViewPager;
     private SettingsManager settingsManager;
     private NetworkConnectionManager networkConnectionManager;
+    private ActivityLauncher activityLauncher;
 
     // Used for Google Play Services check
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -114,6 +115,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                             .setTabListener(this));
         }
 
+        this.activityLauncher = new ActivityLauncher(this);
+
     }
 
     @Override
@@ -139,7 +142,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             // Show the welcome tutorial if the app needs to be set up.
             if(!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE)) {
                 if(networkConnectionManager.checkNetworkConnection()) {
-                    Tutorial();
+                    activityLauncher.Tutorial();
                 } else {
                     showNetworkError();
                 }
@@ -170,21 +173,21 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            Settings();
+            activityLauncher.Settings();
             return true;
         }
         if (id == R.id.action_about) {
-            About();
+            activityLauncher.About();
             return true;
         }
 
         if (id == R.id.action_help) {
-            Help();
+            activityLauncher.Help();
             return true;
         }
 
         if (id == R.id.action_faq) {
-            FAQ();
+            activityLauncher.FAQ();
             return true;
         }
 
@@ -292,56 +295,6 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         }
     }
 
-    /**
-     * Opens the settings page.
-     */
-    private void Settings() {
-        Intent i = new Intent(this, SettingsActivity.class);
-        startActivity(i);
-    }
-
-    /**
-     * Opens the welcome tutorial.
-     */
-    private void Tutorial() {
-        Intent i = new Intent(this, TutorialActivity.class);
-        startActivity(i);
-    }
-
-    /**
-     * Opens the about page.
-     */
-    private void About() {
-        Intent i = new Intent(this, AboutActivity.class);
-        startActivity(i);
-    }
-
-    /**
-     * Opens the help page.
-     */
-    private void Help() {
-        Intent i = new Intent(this, HelpActivity.class);
-        startActivity(i);
-    }
-
-    /**
-     * Opens the faq page.
-     */
-    private void FAQ() {
-        Intent i = new Intent(this, FAQActivity.class);
-        startActivity(i);
-    }
-
-
-    /**
-     * Opens the update instructions page.
-     * @param v View (button onclick from XML).
-     */
-    public void UpdateInstructions(View v) {
-        Intent i = new Intent(this, UpdateInstallationGuideActivity.class);
-        startActivity(i);
-    }
-
 
     /**
      * Checks if the Google Play Services are installed on the device.
@@ -400,5 +353,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         } else {
             return true;
         }
+    }
+
+    public ActivityLauncher getActivityLauncher() {
+        return this.activityLauncher;
     }
 }

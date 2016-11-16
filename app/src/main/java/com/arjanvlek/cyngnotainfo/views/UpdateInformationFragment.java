@@ -26,6 +26,7 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.arjanvlek.cyngnotainfo.ActivityLauncher;
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.MainActivity;
 import com.arjanvlek.cyngnotainfo.Model.DownloadProgressData;
@@ -198,6 +199,14 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         }
                     }
                 });
+                Button installGuideButton = (Button) updateInformationRefreshLayout.findViewById(R.id.updateInstallationInstructionsButton);
+                installGuideButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        ((MainActivity)getActivity()).getActivityLauncher().UpdateInstructions();
+                    }
+                });
+
                 updateInformationRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
             }
             if(systemIsUpToDateRefreshLayout != null) {
@@ -216,6 +225,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 });
                 systemIsUpToDateRefreshLayout.setColorSchemeResources(R.color.lightBlue, R.color.holo_orange_light, R.color.holo_red_light);
             }
+
         }
     }
 

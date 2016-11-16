@@ -65,9 +65,9 @@
     <string name="update_already_downloaded">The update was already downloaded. It is ready to get installed.</string>
     <string name="download_verifying">Your download will now be verified…</string>
     <string name="download_progress_text_unknown_time_remaining">%1$d%%, calculating time remaining…</string>
-    <string name="download_progress_text_hours_remaining">%1$d%%, about %2$s hours remaining</string>
+    <string name="download_progress_text_hours_remaining">%1$d%%, about %2$d hours remaining</string>
     <string name="download_progress_text_one_hour_remaining">%1$d%%, about 1 hour remaining</string>
-    <string name="download_progress_text_minutes_remaining">%1$d%%, about %2$s minutes remaining</string>
+    <string name="download_progress_text_minutes_remaining">%1$d%%, about %2$d minutes remaining</string>
     <string name="download_progress_text_one_minute_remaining">%1$d%%, about a minute remaining</string>
     <string name="download_progress_text_less_than_a_minute_remaining">%1$d%%, less than a minute remaining</string>
     <string name="download_progress_text_seconds_remaining">%1$d%%, a few seconds remaining</string>
@@ -144,30 +144,23 @@
     <!-- Installation guide strings -->
     <string name="install_guide">Install guide</string>
     <string name="install_guide_image_description">Tutorial image.</string>
-    <string name="install_guide_step1_download_update">Download the update.</string>
-    <string name="install_guide_step1_explanation">Press the Download button to start the download process. The download will appear in your notifications screen. When it\'s done, you\'ll see a notification like this:</string>
 
-    <string name="install_guide_step2_recovery_mode">Enter Recovery Mode.</string>
-    <string name="install_guide_step2_turn_off_phone">- Turn off your device first.</string>
-    <string name="install_guide_step2_press_buttons">- Press both the power and the volume down button at the same time.</string>
-    <string name="install_guide_step2_wait">- Wait until you see the recovery menu on your screen.</string>
+    <string name="install_guide_page_1_title">Download the update.</string>
+    <string name="install_guide_page_1_text">- Press the Download button to start the download process.\n\n- The download will appear in your notifications screen.\n\n- When it\'s done, you\'ll see a notification with the text \"Download complete\".</string>
 
-    <string name="install_guide_step3_apply_update">Apply the downloaded update.</string>
-    <string name="install_guide_step3_recovery_apply">- Within the recovery menu, choose Apply Update.</string>
-    <string name="install_guide_step3_recovery_internal_storage">- Select Choose from Internal Storage.</string>
-    <string name="install_guide_step3_recovery_internal_storage_api23">- Select Choose from Emulated.</string>
-    <string name="install_guide_step3_browse_for_update">- Select "0".\n\n- Scroll down using the volume down key until you find "Download". \n\n- Select "Download".\n\n- Select the zip file with the file name shown within the app.\n\n- Installation starts automatically.</string>
+    <string name="install_guide_page_2_title">Enter Recovery Mode.</string>
+    <string name="install_guide_page_2_text">- Turn off your device first.\n\n- Press both the power and the volume down button at the same time.\n\n- Wait until you see the recovery menu on your screen.</string>
 
-    <string name="install_guide_step4_restart">Restart your device.</string>
-    <string name="install_guide_step4_reboot_now">- Within the recovery menu, choose Reboot System Now.</string>
-    <string name="install_guide_step4_cyanogen_logo">- Your device will show the Cyanogen logo for a long time while it is updating.</string>
-    <string name="install_guide_step4_android_is_upgrading">- After this step, you\'ll see \'Android is upgrading\' while your apps are being optimized.</string>
+    <string name="install_guide_page_3_title">Apply the downloaded update.</string>
+    <string name="install_guide_page_3_text">- Within the recovery menu, choose Apply Update.\n\n- Select Choose from Internal Storage or Choose from Emulated, depending on which option is visible.\n\n- Select Choose from Emulated.\n\n- Select "0".\n\n- Scroll down using the volume down key until you find "Download". \n\n- Select "Download".\n\n- Select the zip file with the file name shown within the app.\n\n- Installation starts automatically.</string>
 
-    <string name="install_guide_step5_done">Done. Enjoy your new Cyanogen OS!</string>
-    <string name="install_guide_step5_check_version">- After your device has finished the update process, you can check the version of your system:</string>
-    <string name="install_guide_step5_settings_app">- Go to Settings, About Phone, and check the Cyanogen OS Version.</string>
-    <string name="install_guide_step5_rate_app">- If you like this app, give it 5 stars at Google Play!</string>
-    <string name="install_guide_step5_close_button">Close Installation Guide</string>
+    <string name="install_guide_page_4_title">Restart your device.</string>
+    <string name="install_guide_page_4_text">- Within the recovery menu, choose Reboot System Now.\n\n- Your device will show the Cyanogen logo for a long time while it is updating.\n\n- After this step, you\'ll see \'Android is upgrading\' while your apps are being optimized.</string>
+
+    <string name="install_guide_page_5_title">Done. Enjoy your new Cyanogen OS!</string>
+    <string name="install_guide_page_5_text">- After your device has finished the update process, you can check the version of your system:\n\n- Go to Settings, About Phone, and check the Cyanogen OS Version.\n\n- If you like this app, give it 5 stars at Google Play!</string>
+
+    <string name="install_guide_close_button">Close Installation Guide</string>
 
     <!-- Device information strings -->
     <string name="device_information_header">Device information</string>

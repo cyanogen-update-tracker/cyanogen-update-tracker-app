@@ -1,29 +1,21 @@
 package com.arjanvlek.cyngnotainfo.Model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class InstallGuideData {
 
     private Long id;
-    @JsonProperty(value = "device_id")
     private Long deviceId;
-    @JsonProperty(value = "update_method_id")
     private Long updateMethodId;
-    @JsonProperty(value = "page_number")
-    private int pageNumber;
-    @JsonProperty(value = "file_extension")
+    private Integer pageNumber;
     private String fileExtension;
-    @JsonProperty(value = "image_url")
     private String imageUrl;
-    @JsonProperty(value = "use_custom_image")
-    private boolean useCustomImage;
-    @JsonProperty(value = "title_en")
+    private Boolean useCustomImage;
     private String englishTitle;
-    @JsonProperty(value = "title_nl")
     private String dutchTitle;
-    @JsonProperty(value = "text_en")
     private String englishText;
-    @JsonProperty(value = "text_nl")
     private String dutchText;
 
     public Long getId() {
@@ -38,6 +30,7 @@ public class InstallGuideData {
         return deviceId;
     }
 
+    @JsonProperty(value = "device_id")
     public void setDeviceId(Long deviceId) {
         this.deviceId = deviceId;
     }
@@ -46,15 +39,17 @@ public class InstallGuideData {
         return updateMethodId;
     }
 
+    @JsonProperty(value = "update_method_id")
     public void setUpdateMethodId(Long updateMethodId) {
         this.updateMethodId = updateMethodId;
     }
 
-    public int getPageNumber() {
+    public Integer getPageNumber() {
         return pageNumber;
     }
 
-    public void setPageNumber(int pageNumber) {
+    @JsonProperty(value = "page_number")
+    public void setPageNumber(Integer pageNumber) {
         this.pageNumber = pageNumber;
     }
 
@@ -62,6 +57,7 @@ public class InstallGuideData {
         return fileExtension;
     }
 
+    @JsonProperty(value = "file_extension")
     public void setFileExtension(String fileExtension) {
         this.fileExtension = fileExtension;
     }
@@ -70,22 +66,25 @@ public class InstallGuideData {
         return imageUrl;
     }
 
+    @JsonProperty(value = "image_url")
     public void setImageUrl(String imageUrl) {
         this.imageUrl = imageUrl;
     }
 
-    public boolean isUseCustomImage() {
+    public Boolean getUseCustomImage() {
         return useCustomImage;
     }
 
-    public void setUseCustomImage(boolean useCustomImage) {
-        this.useCustomImage = useCustomImage;
+    @JsonProperty(value = "use_custom_image")
+    public void setUseCustomImage(String useCustomImage) {
+        this.useCustomImage = useCustomImage != null && useCustomImage.equals("1");
     }
 
     public String getEnglishTitle() {
         return englishTitle;
     }
 
+    @JsonProperty(value = "title_en")
     public void setEnglishTitle(String englishTitle) {
         this.englishTitle = englishTitle;
     }
@@ -94,6 +93,7 @@ public class InstallGuideData {
         return dutchTitle;
     }
 
+    @JsonProperty(value = "title_nl")
     public void setDutchTitle(String dutchTitle) {
         this.dutchTitle = dutchTitle;
     }
@@ -102,6 +102,7 @@ public class InstallGuideData {
         return englishText;
     }
 
+    @JsonProperty(value = "text_en")
     public void setEnglishText(String englishText) {
         this.englishText = englishText;
     }
@@ -110,6 +111,7 @@ public class InstallGuideData {
         return dutchText;
     }
 
+    @JsonProperty(value = "text_nl")
     public void setDutchText(String dutchText) {
         this.dutchText = dutchText;
     }

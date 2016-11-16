@@ -142,7 +142,6 @@
                             android:layout_marginLeft="10dp"
                             android:layout_marginStart="10dp"
                             android:enabled="true"
-                            android:onClick="UpdateInstructions"
                             android:text="@string/install_guide"
                             android:textAppearance="?android:textAppearanceSmall"
                             android:textColor="@color/lightBlue" />
