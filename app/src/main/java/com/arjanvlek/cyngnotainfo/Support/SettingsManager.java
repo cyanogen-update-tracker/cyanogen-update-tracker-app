@@ -278,8 +278,8 @@ public class SettingsManager {
     public boolean checkIfCacheIsAvailable() {
         try {
             return  containsPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE) // update description may be null; should not be checked.
-                    && containsPreference(PROPERTY_OFFLINE_UPDATE_NAME)
-                    && containsPreference(PROPERTY_OFFLINE_FILE_NAME);
+                    && containsPreference(PROPERTY_OFFLINE_UPDATE_NAME);
+                    //&& containsPreference(PROPERTY_OFFLINE_FILE_NAME);
         } catch(Exception ignored) {
             return false;
         }

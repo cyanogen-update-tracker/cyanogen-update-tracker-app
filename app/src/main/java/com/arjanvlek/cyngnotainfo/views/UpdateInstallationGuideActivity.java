@@ -1,6 +1,7 @@
 package com.arjanvlek.cyngnotainfo.views;
 
 import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,15 +12,21 @@ import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.InstallGuideData;
 import com.arjanvlek.cyngnotainfo.R;
-import com.arjanvlek.cyngnotainfo.Support.InstallGuideNetworkListener;
-import com.arjanvlek.cyngnotainfo.Support.InstallGuideServerConnector;
 import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
-import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
+
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
+import static com.arjanvlek.cyngnotainfo.ApplicationContext.NUMBER_OF_INSTALL_GUIDE_PAGES;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DEVICE_ID;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_METHOD_ID;
 
@@ -53,72 +60,89 @@ public class UpdateInstallationGuideActivity extends AppCompatActivity {
         @Override
         public int getCount() {
             // Show 5 total pages.
-            return 5;
+            return NUMBER_OF_INSTALL_GUIDE_PAGES;
         }
     }
 
     public static class InstallationGuideFragment extends Fragment {
         /**
-         * The fragment argument representing the section number for this
+         * The fragment argument representing the page number for this
          * fragment.
          */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final String ARG_PAGE_NUMBER = "page_number";
 
         /**
-         * Returns a new instance of this fragment for the given section
+         * Returns a new instance of this fragment for the given page
          * number.
          */
-        public static InstallationGuideFragment newInstance(int sectionNumber) {
+        public static InstallationGuideFragment newInstance(int pageNumber) {
             InstallationGuideFragment fragment = new InstallationGuideFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putInt(ARG_PAGE_NUMBER, pageNumber);
             fragment.setArguments(args);
             return fragment;
         }
 
         @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            Bundle args = getArguments();
-            final int sectionNumber = args.getInt(ARG_SECTION_NUMBER, 0);
-            final SettingsManager settingsManager = new SettingsManager(getContext());
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            return inflater.inflate(R.layout.fragment_install_guide_base, container, false);
+        }
 
-            final InstallGuideServerConnector serverConnector = new InstallGuideServerConnector();
-            serverConnector.addNetworkListener(new InstallGuideNetworkListener() {
-                @Override
-                public void onInstallGuideContentsReceived(InstallGuideData contents) {
-                    // view.setText(contents.getTextEn():
-                }
+        private class fetchInstallGuide extends AsyncTask<Object, Void, List<Object>> {
 
-                @Override
-                public void onInstallGuideImageReceived(Bitmap image) {
-                    // imageview.setImageBitmap(image);
-                }
-            });
-            new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    serverConnector.fetchInstallGuidePageFromServer(sectionNumber, settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
-                }
-            }).start();
+            @Override
+            protected List<Object> doInBackground(Object... params) {
+                List<Object> returns = new ArrayList<>();
+                View installGuideView = (View) params[0];
+                returns.add(0, installGuideView);
 
-
-            if (sectionNumber == 1) {
-                return inflater.inflate(R.layout.fragment_update_installation_instructions_1, container, false);
-            } else if (sectionNumber == 2) {
-                return inflater.inflate(R.layout.fragment_update_installation_instructions_2, container, false);
-
-            } else if (sectionNumber == 3) {
-                return inflater.inflate(R.layout.fragment_update_installation_instructions_3, container, false);
-
-            } else if (sectionNumber == 4) {
-                return inflater.inflate(R.layout.fragment_update_installation_instructions_4, container, false);
-
-            } else if (sectionNumber == 5) {
-                return inflater.inflate(R.layout.fragment_update_installation_instructions_5, container, false);
-
+                int pageNumber = (int) params[1];
+                long deviceId = (long) params[2];
+                long updateMethodId = (long) params[3];
+                ServerConnector connector = ((ApplicationContext)getActivity().getApplication()).getServerConnector();
+                returns.add(1, connector.fetchInstallGuidePageFromServer(pageNumber, deviceId, updateMethodId));
+                returns.add(2, pageNumber);
+                return returns;
             }
-            return null;
+
+            @Override
+            protected void onPostExecute(List<Object> installGuideData) {
+                View installGuideView = (View) installGuideData.get(0);
+                InstallGuideData data = (InstallGuideData) installGuideData.get(1);
+                int pageNumber = (int) installGuideData.get(2);
+                displayInstallGuide(installGuideView, data, pageNumber);
+            }
+        }
+
+        private void displayInstallGuide(View installGuideView, InstallGuideData installGuideData, int pageNumber) {
+            if(installGuideData == null) {
+                displayDefaultInstallGuide(installGuideView, pageNumber);
+            } else {
+                displayCustomInstallGuide(installGuideView, installGuideData);
+            }
+        }
+
+        private void displayDefaultInstallGuide(View installGuideView, int pageNumber) {
+
+        }
+
+        private void displayCustomInstallGuide(View installGuideView, InstallGuideData installGuideData) {
+            final TextView titleTextView = (TextView) installGuideView.findViewById(R.id.installGuideTitle);
+            final TextView contentsTextView = (TextView) installGuideView.findViewById(R.id.installGuideText);
+            final String appLocale = Locale.getDefault().getDisplayLanguage();
+
+
+            if(appLocale.equals(LOCALE_DUTCH)) {
+                titleTextView.setText(installGuideData.getDutchTitle());
+                contentsTextView.setText(installGuideData.getDutchText());
+            } else {
+                titleTextView.setText(installGuideData.getEnglishTitle());
+                contentsTextView.setText(installGuideData.getEnglishText());
+            }
+        }
+
+        private void loadCustomImage (ImageView view, Bitmap image) {
+
         }
     }
 

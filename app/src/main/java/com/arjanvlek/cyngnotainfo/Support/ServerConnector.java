@@ -4,6 +4,7 @@ import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.Device;
+import com.arjanvlek.cyngnotainfo.Model.InstallGuideData;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.APP_USER_AGENT;
+import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.INSTALL_GUIDE;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.MOST_RECENT_UPDATE_DATA;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.DEVICES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_MESSAGES;
@@ -27,7 +29,7 @@ import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_METHODS;
 public class ServerConnector {
 
     public final static String SERVER_URL = "** Add the base URL of your API / backend here **";
-    public final static String TEST_SERVER_URL = "https://cyanogenupdatetracker.com/test/api/v3.1/";
+    public final static String TEST_SERVER_URL = "** Add the base URL of your test API / backend here **";
 
     private ObjectMapper objectMapper;
 
@@ -57,6 +59,10 @@ public class ServerConnector {
 
     public List<ServerMessage> getServerMessages(Long deviceId, Long updateMethodId) {
         return findMultipleFromServerResponse(fetchDataFromServer(SERVER_MESSAGES, deviceId.toString(), updateMethodId.toString()), ServerMessage.class);
+    }
+
+    public InstallGuideData fetchInstallGuidePageFromServer(Integer pageNumber, Long deviceId, Long updateMethodId) {
+        return findOneFromServerResponse(fetchDataFromServer(INSTALL_GUIDE, deviceId.toString(), updateMethodId.toString(), pageNumber.toString()), InstallGuideData.class);
     }
 
     protected  <T> List<T> findMultipleFromServerResponse(String response, Class<T> returnClass) {
