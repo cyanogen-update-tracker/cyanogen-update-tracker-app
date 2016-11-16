@@ -1,5 +1,6 @@
 package com.arjanvlek.cyngnotainfo.views;
 
+import android.graphics.Bitmap;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
@@ -11,7 +12,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.arjanvlek.cyngnotainfo.ApplicationContext;
+import com.arjanvlek.cyngnotainfo.Model.InstallGuideData;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.InstallGuideNetworkListener;
+import com.arjanvlek.cyngnotainfo.Support.InstallGuideServerConnector;
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
+import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DEVICE_ID;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_METHOD_ID;
 
 public class UpdateInstallationGuideActivity extends AppCompatActivity {
 
@@ -70,7 +80,29 @@ public class UpdateInstallationGuideActivity extends AppCompatActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             Bundle args = getArguments();
-            int sectionNumber = args.getInt(ARG_SECTION_NUMBER, 0);
+            final int sectionNumber = args.getInt(ARG_SECTION_NUMBER, 0);
+            final SettingsManager settingsManager = new SettingsManager(getContext());
+
+            final InstallGuideServerConnector serverConnector = new InstallGuideServerConnector();
+            serverConnector.addNetworkListener(new InstallGuideNetworkListener() {
+                @Override
+                public void onInstallGuideContentsReceived(InstallGuideData contents) {
+                    // view.setText(contents.getTextEn():
+                }
+
+                @Override
+                public void onInstallGuideImageReceived(Bitmap image) {
+                    // imageview.setImageBitmap(image);
+                }
+            });
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    serverConnector.fetchInstallGuidePageFromServer(sectionNumber, settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
+                }
+            }).start();
+
+
             if (sectionNumber == 1) {
                 return inflater.inflate(R.layout.fragment_update_installation_instructions_1, container, false);
             } else if (sectionNumber == 2) {

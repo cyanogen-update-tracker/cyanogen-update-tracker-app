@@ -4,9 +4,6 @@ import com.arjanvlek.cyngnotainfo.Model.InstallGuideData;
 
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.INSTALL_GUIDE;
 
-/**
- * Created by arjan on 16-10-16.
- */
 
 public class InstallGuideServerConnector extends ServerConnector {
 
@@ -19,6 +16,8 @@ public class InstallGuideServerConnector extends ServerConnector {
 
     public void fetchInstallGuidePageFromServer(Integer pageNumber, Long deviceId, Long updateMethodId) {
         InstallGuideData data = findOneFromServerResponse(fetchDataFromServer(INSTALL_GUIDE, deviceId.toString(), updateMethodId.toString(), pageNumber.toString()), InstallGuideData.class);
-        
+        if(listener != null) {
+            listener.onInstallGuideContentsReceived(data);
+        }
     }
 }

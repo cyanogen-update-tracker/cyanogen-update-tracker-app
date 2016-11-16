@@ -16,7 +16,7 @@ public enum ServerRequest {
     INSTALL_GUIDE {
         @Override
         URL getURL(String... params) throws MalformedURLException {
-            return new URL(getBaseUrl() + "installGuide/" + params[0] + "/" + params[1]);
+            return new URL(getBaseUrl() + "installGuide/" + params[0] + "/" + params[1] + "/" + params[2]);
         }
     },
     INSTALL_GUIDE_IMAGE {

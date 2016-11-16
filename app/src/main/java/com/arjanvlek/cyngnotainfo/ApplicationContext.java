@@ -24,6 +24,7 @@ public class ApplicationContext extends Application {
     public static final String APP_USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
     public static final String PACKAGE_REPLACED_KEY = "package_upgrade";
     public static final String LOCALE_DUTCH = "Nederlands";
+    public static final int NUMBER_OF_INSTALL_GUIDE_PAGES = 5;
     private static SystemVersionProperties SYSTEM_VERSION_PROPERTIES_INSTANCE;
 
     /**
