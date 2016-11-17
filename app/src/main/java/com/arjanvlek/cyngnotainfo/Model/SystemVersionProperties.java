@@ -2,8 +2,6 @@ package com.arjanvlek.cyngnotainfo.Model;
 
 import android.os.Build;
 
-import com.arjanvlek.cyngnotainfo.ApplicationContext;
-
 import java.util.List;
 
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;

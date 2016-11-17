@@ -6,9 +6,11 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.preference.PreferenceManager;
 
-import com.arjanvlek.cyngnotainfo.MainActivity;
+import com.arjanvlek.cyngnotainfo.view.MainActivity;
 
-import static com.arjanvlek.cyngnotainfo.GcmRegistrationIntentService.*;
+import static com.arjanvlek.cyngnotainfo.GcmRegistrationIntentService.PROPERTY_GCM_DEVICE_ID;
+import static com.arjanvlek.cyngnotainfo.GcmRegistrationIntentService.PROPERTY_GCM_REGISTRATION_TOKEN;
+import static com.arjanvlek.cyngnotainfo.GcmRegistrationIntentService.PROPERTY_GCM_UPDATE_METHOD_ID;
 
 public class SettingsManager {
 

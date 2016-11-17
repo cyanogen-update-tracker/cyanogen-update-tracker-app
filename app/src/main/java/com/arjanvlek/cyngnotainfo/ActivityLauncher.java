@@ -2,14 +2,13 @@ package com.arjanvlek.cyngnotainfo;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.view.View;
 
-import com.arjanvlek.cyngnotainfo.views.AboutActivity;
-import com.arjanvlek.cyngnotainfo.views.FAQActivity;
-import com.arjanvlek.cyngnotainfo.views.HelpActivity;
-import com.arjanvlek.cyngnotainfo.views.SettingsActivity;
-import com.arjanvlek.cyngnotainfo.views.TutorialActivity;
-import com.arjanvlek.cyngnotainfo.views.UpdateInstallationGuideActivity;
+import com.arjanvlek.cyngnotainfo.view.AboutActivity;
+import com.arjanvlek.cyngnotainfo.view.FAQActivity;
+import com.arjanvlek.cyngnotainfo.view.HelpActivity;
+import com.arjanvlek.cyngnotainfo.view.SettingsActivity;
+import com.arjanvlek.cyngnotainfo.view.SetupActivity;
+import com.arjanvlek.cyngnotainfo.view.InstallGuideActivity;
 
 public class ActivityLauncher {
 
@@ -23,35 +22,35 @@ public class ActivityLauncher {
     /**
      * Opens the settings page.
      */
-    protected void Settings() {
+    public void Settings() {
         startActivity(SettingsActivity.class);
     }
 
     /**
      * Opens the welcome tutorial.
      */
-    protected void Tutorial() {
-        startActivity(TutorialActivity.class);
+    public void Tutorial() {
+        startActivity(SetupActivity.class);
     }
 
     /**
      * Opens the about page.
      */
-    protected void About() {
+    public void About() {
         startActivity(AboutActivity.class);
     }
 
     /**
      * Opens the help page.
      */
-    protected void Help() {
+    public void Help() {
         startActivity(HelpActivity.class);
     }
 
     /**
      * Opens the faq page.
      */
-    protected void FAQ() {
+    public void FAQ() {
         startActivity(FAQActivity.class);
     }
 
@@ -60,7 +59,7 @@ public class ActivityLauncher {
      * Opens the update instructions page.
      */
     public void UpdateInstructions() {
-        startActivity(UpdateInstallationGuideActivity.class);
+        startActivity(InstallGuideActivity.class);
     }
 
     private <T> void startActivity(Class<T> activityClass) {

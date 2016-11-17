@@ -9,7 +9,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.UpdateMethod;
 import com.arjanvlek.cyngnotainfo.R;

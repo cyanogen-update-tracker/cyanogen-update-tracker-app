@@ -9,6 +9,7 @@ import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+import com.arjanvlek.cyngnotainfo.view.MainActivity;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
 import com.google.android.gms.iid.InstanceID;
 
@@ -27,7 +28,11 @@ import java.util.Locale;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.APP_USER_AGENT;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.PACKAGE_REPLACED_KEY;
-import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.*;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DEVICE;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DEVICE_ID;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_DATA_LINK;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_METHOD;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_METHOD_ID;
 
 public class GcmRegistrationIntentService extends IntentService {
 

@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
+import com.arjanvlek.cyngnotainfo.view.MainActivity;
 
 import java.util.Locale;
 

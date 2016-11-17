@@ -11,6 +11,7 @@ public class ServerMessage {
     private ServerMessagePriority priority;
     private boolean marquee;
 
+    @SuppressWarnings("WeakerAccess")
     public enum ServerMessagePriority {
         LOW, MEDIUM, HIGH
     }

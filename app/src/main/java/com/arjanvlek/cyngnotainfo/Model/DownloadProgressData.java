@@ -1,9 +1,6 @@
 package com.arjanvlek.cyngnotainfo.Model;
 
-import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.DownloadSpeedUnits;
-
-import java.util.Locale;
 
 import static com.arjanvlek.cyngnotainfo.Support.UpdateDownloader.NOT_SET;
 
@@ -53,7 +50,7 @@ public class DownloadProgressData {
         private int minutesRemaining;
         private int secondsRemaining;
 
-        public TimeRemaining(int hoursRemaining, int minutesRemaining, int secondsRemaining) {
+        TimeRemaining(int hoursRemaining, int minutesRemaining, int secondsRemaining) {
             this.hoursRemaining = hoursRemaining;
             this.minutesRemaining = minutesRemaining;
             this.secondsRemaining = secondsRemaining;

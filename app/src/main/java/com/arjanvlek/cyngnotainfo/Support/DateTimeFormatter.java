@@ -1,7 +1,7 @@
 package com.arjanvlek.cyngnotainfo.Support;
 
-import android.support.v4.app.Fragment;
 import android.content.Context;
+import android.support.v4.app.Fragment;
 
 import com.arjanvlek.cyngnotainfo.R;
 

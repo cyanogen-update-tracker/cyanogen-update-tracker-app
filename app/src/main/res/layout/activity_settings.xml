@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".views.SettingsActivity">
+    tools:context=".view.SettingsActivity">
 
     <View
         android:id="@+id/settingsNoConnectionBar"
@@ -32,12 +32,12 @@
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
         android:paddingTop="@dimen/activity_vertical_margin"
-        tools:context="com.arjanvlek.cyngnotainfo.views.SettingsActivity">
+        tools:context="com.arjanvlek.cyngnotainfo.view.SettingsActivity">
 
         <RelativeLayout xmlns:tools="http://schemas.android.com/tools"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            tools:context="com.arjanvlek.cyngnotainfo.views.SettingsActivity">
+            tools:context="com.arjanvlek.cyngnotainfo.view.SettingsActivity">
 
 
             <TextView
@@ -46,7 +46,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="10dp"
                 android:text="@string/settings_header"
-                android:textColor="#ff88e0ff"
+                android:textColor="#ff48e0ff"
                 android:textStyle="bold" />
 
             <View
@@ -54,7 +54,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="2dip"
                 android:layout_below="@id/settingsDescriptionView"
-                android:background="#ff88e0ff" />
+                android:background="#ff48e0ff" />
 
             <TextView
                 android:id="@+id/settingsDeviceView"
@@ -125,7 +125,7 @@
                 android:layout_below="@id/settingsUpdateMethodSpinner"
                 android:layout_marginTop="10dp"
                 android:text="@string/settings_server_messages"
-                android:textColor="#ff88e0ff"
+                android:textColor="#ff48e0ff"
                 android:textStyle="bold" />
 
             <View
@@ -133,7 +133,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="2dip"
                 android:layout_below="@id/settingsServerMessagesLabel"
-                android:background="#ff88e0ff" />
+                android:background="#ff48e0ff" />
 
             <TextView
                 android:id="@+id/settingsServerMessagesView"
@@ -182,7 +182,7 @@
                 android:layout_below="@id/settingsAppMessagesSwitch"
                 android:layout_marginTop="10dp"
                 android:text="@string/settings_push_notifications"
-                android:textColor="#ff88e0ff"
+                android:textColor="#ff48e0ff"
                 android:textStyle="bold" />
 
             <View
@@ -191,7 +191,7 @@
                 android:layout_height="2dip"
                 android:layout_below="@id/settingsPushNotificationsLabel"
 
-                android:background="#ff88e0ff" />
+                android:background="#ff48e0ff" />
 
             <TextView
                 android:id="@+id/settingsImportantPushNotificationsView"
@@ -257,7 +257,7 @@
                 android:layout_below="@id/settingsNewDevicePushNotificationsSwitch"
                 android:layout_marginTop="10dp"
                 android:text="@string/settings_system_up_to_date"
-                android:textColor="#ff88e0ff"
+                android:textColor="#ff48e0ff"
                 android:textStyle="bold" />
 
             <View
@@ -266,7 +266,7 @@
                 android:layout_height="2dip"
                 android:layout_below="@id/settingsHideUpdateInformationTextView"
 
-                android:background="#ff88e0ff" />
+                android:background="#ff48e0ff" />
 
             <TextView
                 android:id="@+id/settingsSystemIsUpToDateView"
@@ -294,7 +294,7 @@
                 android:layout_below="@id/settingsSystemIsUpToDateSwitch"
                 android:layout_marginTop="10dp"
                 android:text="@string/settings_explanation_update_methods"
-                android:textColor="#ff88e0ff"
+                android:textColor="#ff48e0ff"
                 android:textStyle="bold" />
 
             <View
@@ -303,7 +303,7 @@
                 android:layout_height="2dip"
                 android:layout_below="@id/settingsDescriptionTextView"
 
-                android:background="#ff88e0ff" />
+                android:background="#ff48e0ff" />
 
 
             <TextView

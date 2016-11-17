@@ -5,7 +5,7 @@ import com.arjanvlek.cyngnotainfo.BuildConfig;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-public enum ServerRequest {
+enum ServerRequest {
 
     DEVICES {
         @Override
