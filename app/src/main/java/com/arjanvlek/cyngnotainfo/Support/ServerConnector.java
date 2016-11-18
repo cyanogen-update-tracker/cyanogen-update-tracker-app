@@ -79,17 +79,19 @@ public class ServerConnector {
         }
     }
 
-    private String fetchDataFromServer(ServerRequest request, int timeout, String... params) {
+    private String fetchDataFromServer(ServerRequest request, int timeoutInSeconds, String... params) {
 
         try {
             URL requestUrl = request.getURL(params);
 
             HttpURLConnection urlConnection = (HttpURLConnection) requestUrl.openConnection();
 
+            int timeOutInMilliseconds = timeoutInSeconds * 1000;
+
             //setup request
             urlConnection.setRequestProperty("User-Agent", APP_USER_AGENT);
-            urlConnection.setConnectTimeout(timeout);
-            urlConnection.setReadTimeout(timeout);
+            urlConnection.setConnectTimeout(timeOutInMilliseconds);
+            urlConnection.setReadTimeout(timeOutInMilliseconds);
 
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String inputLine;

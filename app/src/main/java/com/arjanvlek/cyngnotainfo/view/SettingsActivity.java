@@ -2,6 +2,7 @@ package com.arjanvlek.cyngnotainfo.view;
 
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.widget.SwitchCompat;
 import android.view.MenuItem;
@@ -52,7 +53,7 @@ public class SettingsActivity extends AbstractActivity {
         } catch (Exception ignored) {
 
         }
-        new DeviceDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        new DeviceDataFetcher().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         initSwitches();
     }
 
@@ -142,14 +143,14 @@ public class SettingsActivity extends AbstractActivity {
             Spinner spinner = (Spinner) findViewById(R.id.settingsDeviceSpinner);
 
             // Set the spinner to the previously selected device.
-            Integer position = null;
+            Integer selectedPosition = null;
             int tempRecommendedPosition = -1;
             String currentDeviceName = settingsManager.getPreference(SettingsManager.PROPERTY_DEVICE);
             SystemVersionProperties systemVersionProperties = ((ApplicationContext)getApplication()).getSystemVersionProperties();
             if (currentDeviceName != null) {
                 for (int i = 0; i < devices.size(); i++) {
                     if (devices.get(i).getDeviceName().equals(currentDeviceName)) {
-                        position = i;
+                        selectedPosition = i;
                     }
                     if (devices.get(i).getModelNumber() != null && devices.get(i).getModelNumber().equals(systemVersionProperties.getCyanogenDeviceCodeName())) {
                         tempRecommendedPosition = i;
@@ -161,22 +162,23 @@ public class SettingsActivity extends AbstractActivity {
 
             ArrayAdapter<Device> adapter = new ArrayAdapter<Device>(this, android.R.layout.simple_spinner_item, devices) {
 
+                @NonNull
                 @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    return CustomDropdown.initCustomDeviceDropdown(position, convertView, parent, android.R.layout.simple_spinner_item, devices, recommendedPosition, this.getContext());
+                public View getView(int currentPosition, View convertView, @NonNull ViewGroup parent) {
+                    return CustomDropdown.initCustomDeviceDropdown(currentPosition, convertView, parent, android.R.layout.simple_spinner_item, devices, recommendedPosition, this.getContext());
                 }
 
                 @Override
-                public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                    return CustomDropdown.initCustomDeviceDropdown(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item, devices, recommendedPosition, this.getContext());
+                public View getDropDownView(int currentPosition, View convertView, @NonNull ViewGroup parent) {
+                    return CustomDropdown.initCustomDeviceDropdown(currentPosition, convertView, parent, android.R.layout.simple_spinner_dropdown_item, devices, recommendedPosition, this.getContext());
                 }
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
             if(spinner != null) {
                 spinner.setAdapter(adapter);
-                if (position != null) {
-                    spinner.setSelection(position);
+                if (selectedPosition != null) {
+                    spinner.setSelection(selectedPosition);
                 }
 
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -192,7 +194,7 @@ public class SettingsActivity extends AbstractActivity {
                         } catch (Exception ignored) {
                         }
 
-                        new UpdateDataFetcher().executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, device.getId());
+                        new UpdateDataFetcher().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR, device.getId());
                     }
 
                     @Override
@@ -245,12 +247,12 @@ public class SettingsActivity extends AbstractActivity {
         if(updateMethods != null && !updateMethods.isEmpty()) {
             Spinner spinner = (Spinner) findViewById(R.id.settingsUpdateMethodSpinner);
             String currentUpdateMethod = settingsManager.getPreference(SettingsManager.PROPERTY_UPDATE_METHOD);
-            Integer position = null;
+            Integer selectedPosition = null;
             final List<Integer> recommendedPositions = new ArrayList<>();
 
             for (int i = 0; i < updateMethods.size(); i++) {
                 if (currentUpdateMethod != null && updateMethods.get(i).getUpdateMethod().equals(currentUpdateMethod) || updateMethods.get(i).getUpdateMethodNl().equalsIgnoreCase(currentUpdateMethod)) {
-                    position = i;
+                    selectedPosition = i;
                 }
                 if(updateMethods.get(i).isRecommended()) {
                     recommendedPositions.add(i);
@@ -259,14 +261,15 @@ public class SettingsActivity extends AbstractActivity {
 
             ArrayAdapter<UpdateMethod> adapter = new ArrayAdapter<UpdateMethod>(this, android.R.layout.simple_spinner_item, updateMethods) {
 
+                @NonNull
                 @Override
-                public View getView(int position, View convertView, ViewGroup parent) {
-                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_item, updateMethods, recommendedPositions, this.getContext());
+                public View getView(int currentPosition, View convertView, @NonNull ViewGroup parent) {
+                    return CustomDropdown.initCustomUpdateMethodDropdown(currentPosition, convertView, parent, android.R.layout.simple_spinner_item, updateMethods, recommendedPositions, this.getContext());
                 }
 
                 @Override
-                public View getDropDownView(int position, View convertView, ViewGroup parent) {
-                    return CustomDropdown.initCustomUpdateMethodDropdown(position, convertView, parent, android.R.layout.simple_spinner_dropdown_item, updateMethods, recommendedPositions, this.getContext());
+                public View getDropDownView(int currentPosition, View convertView, @NonNull ViewGroup parent) {
+                    return CustomDropdown.initCustomUpdateMethodDropdown(currentPosition, convertView, parent, android.R.layout.simple_spinner_dropdown_item, updateMethods, recommendedPositions, this.getContext());
                 }
             };
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -274,8 +277,8 @@ public class SettingsActivity extends AbstractActivity {
             if(spinner != null) {
                 spinner.setAdapter(adapter);
 
-                if (position != null) {
-                    spinner.setSelection(position);
+                if (selectedPosition != null) {
+                    spinner.setSelection(selectedPosition);
                 }
 
                 spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
