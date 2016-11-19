@@ -51,7 +51,16 @@ public class SetupStep3Fragment extends AbstractFragment {
 
         @Override
         protected List<Device> doInBackground(Void... params) {
-            return getApplicationContext().getDevices();
+            int numberOfTimes = 0;
+            List<Device> devices = getApplicationContext().getDevices(true);
+            if(devices == null || devices.isEmpty()) {
+                while(numberOfTimes < 5) {
+                    numberOfTimes++;
+                    devices = getApplicationContext().getServerConnector().getDevices();
+                    if (devices != null && !devices.isEmpty()) break;
+                }
+            }
+            return devices;
         }
 
         @Override

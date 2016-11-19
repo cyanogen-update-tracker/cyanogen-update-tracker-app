@@ -222,7 +222,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             View checkBoxView = View.inflate(MainActivity.this, R.layout.message_dialog_checkbox, null);
             final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.unsupported_device_warning_checkbox);
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setView(checkBoxView);
             builder.setTitle(getString(R.string.unsupported_device_warning_title));
             builder.setMessage(getString(R.string.unsupported_device_warning_message));

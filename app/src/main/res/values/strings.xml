@@ -7,7 +7,7 @@
     <string name="update_information_header">Update information</string>
     <string name="update_information_header_short">Update info</string>
     <string name="update_information_latest_available_update">A new system update is available:</string>
-    <string name="update_information_installed_update">The latest version is:</string>
+    <string name="update_information_installed_update">The latest system update is:</string>
     <string name="update">Update</string>
     <string name="update_information_for">for</string>
     <string name="update_information_system_is_up_to_date">Your system is up to date.</string>
@@ -33,7 +33,7 @@
     <string name="server_status_unreachable">The server can\'t be reached. Try refreshing the page.</string>
 
     <!-- New app version notification strings -->
-    <string name = "new_app_version">App update available! Version &lt;a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s&lt;/a> has been released!</string>
+    <string name ="new_app_version">App update available! Version &lt;a href="https://play.google.com/store/apps/details?id=com.arjanvlek.cyngnotainfo">%1$s&lt;/a> has been released!</string>
 
     <!-- Date and time strings -->
     <string name="at">at</string>
@@ -47,7 +47,7 @@
     <string name="downloading">Downloading…</string>
     <string name="verifying">Verifying…</string>
     <string name="verifying_error">File is damaged</string>
-    <string name="download_permissions">Click Download again to download the update.</string>
+    <string name="download_permissions">Tap Download again to download the update.</string>
     <string name="download_error">Download Error</string>
     <string name="download_error_corrupt">The downloaded update is corrupt! Please try downloading it again.</string>
     <string name="download_error_network">A network error occurred while downloading the update. Please make sure your Internet connection works and try downloading it again.</string>
@@ -103,7 +103,7 @@
     <string name="settings_system_hide_when_up_to_date">My system is up to date</string>
 
     <!-- FAQ strings -->
-    <string name="faq">FAQ page</string>
+    <string name="faq">FAQ</string>
     <string name="faq_menuitem">FAQ</string>
     <string name="faq_no_network_title">No connection.</string>
     <string name="faq_no_network">You\'ll need a working data connection to view the FAQ page.</string>
@@ -126,39 +126,39 @@
 
     <!-- Message strings -->
     <string name="delete_message_title">Delete update?</string>
-    <string name="delete_message_contents">You have already downloaded this update, but not yet installed it. Click on "Close" to close this message, then click on "Installation Guide" to view how to install this update. Click on "Delete" to permanently delete the file.</string>
+    <string name="delete_message_contents">You have already downloaded this update, but not yet installed it. Tap on \"Close\" to close this message, then tap on \"Install Guide\" to view how to install this update. Tap on \"Delete\" to permanently delete the file.</string>
     <string name="delete_message_delete_button">Delete</string>
 
     <!-- First-time tutorial strings -->
     <string name="introduction_title">Welcome</string>
     <string name="introduction_welcome">Welcome to Cyanogen update tracker!</string>
-    <string name="introduction_page_1">This app will allow you to:\n\n- Download the latest system updates for your Cyanogen® OS powered device early after release.\n\n- Fix updating issues on your device\n\n-View information about the software you are currently running\n\nSwipe to the left to continue.</string>
+    <string name="introduction_page_1">This app will allow you to:\n\n- Download the latest system updates for your Cyanogen OS powered device early after release.\n\n- Fix updating issues on your device\n\n-View information about the software you are currently running\n\n- View information about your device\n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_device">Choose your device:</string>
     <string name="introduction_page_2">The device to receive updates for is usually automatically selected. If not, select your device above.\n\nSwipe to the left to continue.</string>
     <string name="introduction_choose_update_method">Choose your update method:</string>
     <string name="introduction_page_3">Usually, the incremental update is the right choice here.\n\nIf you are using a rooted device, or use a very old Android version (e.g. you want to update from Android 4.4.4 to Android 6.0.1), or don\'t know if you are rooted or on a very old version, select Full update.\n\nSwipe to the left to continue.</string>
     <string name="introduction_ready_to_start">You are ready to go!</string>
-    <string name="introduction_page_4">Enjoy using this app!\n\nYou can always change your settings: Tap the three dots in the top right corner, and tap on \'Settings\'.</string>
+    <string name="introduction_page_4">Enjoy using this app!\n\nYou can always change your settings later on: Tap the three dots in the top right corner, and tap on \"Settings\".</string>
     <string name="introduction_close_button">start app</string>
 
     <!-- Installation guide strings -->
     <string name="install_guide">Install guide</string>
-    <string name="install_guide_image_description">Tutorial image.</string>
+    <string name="install_guide_image_description">Contextual image. Please tap on a lower place on the screen to hear the install guide.</string>
 
     <string name="install_guide_page_1_title">Download the update.</string>
-    <string name="install_guide_page_1_text">- Press the Download button to start the download process.\n\n- The download will appear in your notifications screen.\n\n- When it\'s done, you\'ll see a notification with the text \"Download complete\".</string>
+    <string name="install_guide_page_1_text">- Press the Download button to start the download process.\n\n- The download progress will appear in the app and in your notifications screen.\n\n- When the download is done, you\'ll see a notification with the text \"Download complete\".\nIf there is a download error, open the app and try to download again.</string>
 
     <string name="install_guide_page_2_title">Enter Recovery Mode.</string>
-    <string name="install_guide_page_2_text">- Turn off your device first.\n\n- Press both the power and the volume down button at the same time.\n\n- Wait until you see the recovery menu on your screen.</string>
+    <string name="install_guide_page_2_text">- Power off your device first.\n\n- Press both the power and the volume down buttons at the same time.\n\n- Your device will now start in Recovery Mode. Wait until you see the recovery menu on your screen.</string>
 
     <string name="install_guide_page_3_title">Apply the downloaded update.</string>
-    <string name="install_guide_page_3_text">- Within the recovery menu, choose Apply Update.\n\n- Select Choose from Internal Storage or Choose from Emulated, depending on which option is visible.\n\n- Select Choose from Emulated.\n\n- Select "0".\n\n- Scroll down using the volume down key until you find "Download". \n\n- Select "Download".\n\n- Select the zip file with the file name shown within the app.\n\n- Installation starts automatically.</string>
+    <string name="install_guide_page_3_text">- Within the recovery menu, tap on (or use the volume buttons to navigate and the power button to select) \"Apply Update\".\n\n- Next, tap on \"Choose from Internal Storage\" or \"Choose from Emulated\", depending on which option is visible.\n\n- Now, select \"0\", if visible. If \"0\" is not visible, continue to the next step.\n\n- Next, scroll down using the volume down key until you find a row with the text \"Download\". \n\n- Tap on \"Download\", and tap on the \".zip\" file with the file name shown within the app. (Usually, this is a file starting with \"cm-\").\n\n- Installation of the update will start automatically.</string>
 
     <string name="install_guide_page_4_title">Restart your device.</string>
-    <string name="install_guide_page_4_text">- Within the recovery menu, choose Reboot System Now.\n\n- Your device will show the Cyanogen logo for a long time while it is updating.\n\n- After this step, you\'ll see \'Android is upgrading\' while your apps are being optimized.</string>
+    <string name="install_guide_page_4_text">- When the installation of the update is finished, you\'ll be back at the Recovery Menu. Within the recovery menu, tap on \"Reboot System Now\".\n\n- Your device will show the Cyanogen logo for a long time while it is starting up.\n\n- Afterwards, you\'ll see a white message with the title \"Android is upgrading\", while your apps are being optimized.</string>
 
-    <string name="install_guide_page_5_title">Done. Enjoy your new Cyanogen OS!</string>
-    <string name="install_guide_page_5_text">- After your device has finished the update process, you can check the version of your system:\n\n- Go to Settings, About Phone, and check the Cyanogen OS Version.\n\n- If you like this app, give it 5 stars at Google Play!</string>
+    <string name="install_guide_page_5_title">Done. Enjoy the new Cyanogen OS version!</string>
+    <string name="install_guide_page_5_text">- After your device has finished optimizing apps, the update has been successfully installed.\nTo verify this, you can check the current version of your system as following:\n\n- Go to Settings, tap on \"About Phone\", and check the Cyanogen OS Version.\n\n- If you like this app, give it 5 stars at Google Play!</string>
 
     <string name="install_guide_close_button">Close Installation Guide</string>
 
@@ -183,8 +183,8 @@
     <string name="about">About this app</string>
     <string name="about_version">Version: %1$s</string>
     <string name="about_rate_app_button_text">Rate on Google Play</string>
-    <string name="about_app_description">The ultimate toolkit for Cyanogen OS updates.</string>
-    <string name="about_background_story">This app is written by Arjan Vlek.\n\nThis app is inspired by a website (cyanogen-ota-bacon.somee.com), which provided similar functionality but no longer works. This app is a nice follow-up. It aims to be more user-friendly and to offer more features.\n\n\nPlease note, this is not an official Cyanogen application.\n\nIf you like this app, please rate it on Google play now:</string>
+    <string name="about_app_description">The ultimate tool for Cyanogen OS updates.</string>
+    <string name="about_background_story">This app is written by Arjan Vlek.\n\nThis app is inspired by a website (cyanogen-ota-bacon.somee.com), which provided similar functionality but no longer works. This app aims to be a nice follow-up, attempting to be more user-friendly and to offer some additional features, like notifications.\n\n\nPlease note, this is not an official Cyanogen application. \nCyanogen and Cyanogen OS are registered trademarks of Cyanogen Inc. \nAndroid, Google, Google Play and the Google Play logo are registered trademarks of Google Inc. \nThis app uses data from Cyanogen Inc to show update information.\n\nIf you like this app, please rate it on Google play now:</string>
 
     <!-- Advertisement strings -->
     <string name="update_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
@@ -202,12 +202,12 @@
     <!-- Help strings -->
     <string name="help">Help</string>
     <string name="help_how_works_app">How to use this app:</string>
-    <string name="help_top_update">If a new update is available, it\'s version number, new features and download size displayed on the main screen.</string>
+    <string name="help_top_update">If a new update is available, it\'s version number, new features and download size are displayed on the main screen.</string>
     <string name="help_middle_stats">If you want to install a new update, start by tapping on the Download button.\nWhen the update is downloaded, read the Install Guide to learn how to install it.\n\nIf your device is up to date, you can tap on \"View Update Information\" to read more about the software you are currently using.\n\nSwipe to the left or tap on \"Device Info\" to view technical information about your device.</string>
-    <string name="help_bottom_description">At the top right you can find the menu. From there, you can go to the settings, the FAQ page or this Help screen.</string>
+    <string name="help_bottom_description">At the top right you can find the menu. From there, you can go to the settings, the FAQ page or this Help screen. In the settings, you can re-select your device, update method and select which notifications to receive.</string>
     <string name="help_used_symbols">Used icons:</string>
     <string name="help_symbol_download">Download size of the update.</string>
-    <string name="help_symbol_download_cancel">Cancels downloading this update when tapped.</string>
+    <string name="help_symbol_download_cancel">Cancels downloading the current update when tapped.</string>
     <string name="unknown_update_name">Update for %1$s</string>
 
     <!-- Unsupported device warning strings -->

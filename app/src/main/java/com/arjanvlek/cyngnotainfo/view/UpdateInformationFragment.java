@@ -653,7 +653,11 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             downloadSizeImage.setVisibility(GONE);
             downloadSizeView.setVisibility(GONE);
         } else {
-            headerLabel.setText(getString(R.string.update_information_latest_available_update));
+            if(cyanogenOTAUpdate.isSystemIsUpToDateCheck()) {
+                headerLabel.setText(getString(R.string.update_information_installed_update));
+            } else {
+                headerLabel.setText(getString(R.string.update_information_latest_available_update));
+            }
             downloadButton.setVisibility(VISIBLE);
             updateInstallationGuideButton.setVisibility(VISIBLE);
             fileNameView.setVisibility(VISIBLE);

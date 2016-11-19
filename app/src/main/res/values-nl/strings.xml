@@ -27,40 +27,40 @@
     <string name="update_information_close">Sluiten</string>
     <string name="about">Over deze app</string>
 
-    <string name="install_guide_image_description">Plaatje van de installatiehandleiding.</string>
+    <string name="install_guide_image_description">Extra afbeelding voor de duidelijkheid. Tik lager op het scherm voor de installatiehandleiding.</string>
 
     <string name="install_guide_page_1_title">Download de update.</string>
-    <string name="install_guide_page_1_text">- Druk op de Download-knop om het downloaden te starten. De download zal verschijnen als melding in uw notificatiescherm.\n\n- Als het downloaden klaar is, ziet u een melding met de tekst "Download voltooid".</string>
+    <string name="install_guide_page_1_text">- Druk op de Download-knop om het downloaden te starten. De downloadvoortgang zal in de app verschijnen, en als melding in je notificatiescherm.\n\n- Als het downloaden klaar is, zie je een notificatie met de tekst \"Download voltooid\".\nAls er een fout is opgetreden, probeer je de update opnieuw te downloaden.</string>
 
-    <string name="install_guide_page_2_title">Ga naar de Recovery-modus.</string>
-    <string name="install_guide_page_2_text">- Zet uw apparaat eerst uit.\n\n- houdt zowel de aan-uit knop als de volume-omlaag knop tegelijkertijd ingedrukt.\n\n- Wacht totdat u het recovery-menu op het scherm ziet.</string>
+    <string name="install_guide_page_2_title">Ga naar de Recovery Modus.</string>
+    <string name="install_guide_page_2_text">- Schakel je apparaat eerst volledig uit.\n\n- houd hierna zowel de aan-uit knop als de volume-omlaag knop tegelijkertijd ingedrukt.\n\n- Je apparaat start nu op in Recovery Modus.Wacht totdat je het Recovery Modus-menu op het scherm ziet.</string>
 
     <string name="install_guide_page_3_title">Installeer de gedownloade update.</string>
-    <string name="install_guide_page_3_text">- In het recovery-menu, kies Apply Update.\n\n- Kies Choose from Internal Storage of Choose from Emulated, afhankelijk van wat zichtbaar is.\n\n- Kies "0".\n\n- Gebruik de volume-omlaag-toets om omlaag te scrollen naar "Download".\n\n- Kies "Download".\n\n- Kies het zip-bestand met dezelfde bestandsnaam als in de app getoond.\n\n- De installatie begint vanzelf.</string>
+    <string name="install_guide_page_3_text">- In het recovery-menu, tik op (of gebruik de volumeknoppen om te scrollen en de aan-uit knop voor het selecteren van) \"Apply Update\".\n\n- Tik op \"Choose from Internal Storage\" of \"Choose from Emulated\", afhankelijk van welke optie zichtbaar is.\n\n- Tik hierna op \"0\", als dit zichtbaar is. Als \"0\" niet zichtbaar is, ga je door naar de volgende stap.\n\n- Gebruik de volume-omlaag-toets om omlaag te scrollen naar een rij genaamd \"Download\".\n\n- Tik op \"Download\", en tik op het \".zip\" bestand met dezelfde bestandsnaam als in de app getoond Dit is meestal een bestand beginnend met \"cm-\".\n\n- De installatie van de update begint vanzelf.</string>
 
-    <string name="install_guide_page_4_title">Start uw apparaat opnieuw op.</string>
-    <string name="install_guide_page_4_text">- In het recovery-menu, kies Reboot System Now.\n\n- Uw apparaat zal het Cyanogen-logo een poosje laten zien terwijl de update wordt uitgevoerd.\n\n- Na deze stap, zult u  \'Android wordt bijgewerkt\' zien, terwijl uw apps worden geoptimaliseerd.</string>
+    <string name="install_guide_page_4_title">Start je apparaat opnieuw op.</string>
+    <string name="install_guide_page_4_text">- Als de installatie van de update klaar is, kom je terug in het Recovery-menu. In het recovery-menu, tik op \"Reboot System Now\".\n\n- Je apparaat zal het Cyanogen-logo een lange tijd laten zien terwijl het opstart.\n\n- Hierna verschijnt er een wit venster met de titel \"Android wordt bijgewerkt\" , terwijl je apps worden geoptimaliseerd.</string>
 
-    <string name="install_guide_page_5_title">Klaar. Geniet van uw nieuwe Cyanogen OS!</string>
-    <string name="install_guide_page_5_text">- Nadat het updateproces is voltooid, kunt u de geïnstalleerde systeemversie controleren:\n\n- Ga naar Instellingen, Over de telefoon en bekijk de Cyanogen OS-versie.\n\n- Als u deze app geweldig vindt, geef hem dan 5 sterren op Google Play!</string>
+    <string name="install_guide_page_5_title">Klaar. Geniet van je nieuwe Cyanogen OS-versie!</string>
+    <string name="install_guide_page_5_text">- Nadat het optimaliseren van de apps is voltooid, is de update succesvol geinstalleerd. Je kunt dit controleren door de nieuwe systeemversie te bekijken:\n\n- Ga naar Instellingen, tik op \"Over de telefoon\" en bekijk de Cyanogen OS-versie.\n\n- Als je deze app geweldig vindt, geef hem dan 5 sterren op Google Play!</string>
 
     <string name="install_guide_close_button">Sluit de installatiehandleiding</string>
 
 
     <string name="device_information_amount_of_memory">Hoeveelheid geheugen:</string>
     <string name="device_information_cpu_frequency">Processorsnelheid:</string>
-    <string name="device_information_image_description">Plaatje van uw apparaat</string>
+    <string name="device_information_image_description">Plaatje van jouw apparaat</string>
     <string name="device_information_os_version">Android-versie:</string>
     <string name="device_information_serial_number">Serienummer:</string>
-    <string name="device_information_system_on_a_chip">Systeem-op-een-chip:</string>
-    <string name="device_information_your_device">Uw apparaat:</string>
+    <string name="device_information_system_on_a_chip">Chipset:</string>
+    <string name="device_information_your_device">Jouw apparaat:</string>
     <string name="icon">Icoon</string>
     <string name="device_information_unknown">onbekend</string>
-    <string name="about_app_description">De ultime app voor alles over Cyanogen OS updates.</string>
+    <string name="about_app_description">De ultieme app voor alles over Cyanogen OS updates.</string>
     <string name="about_rate_app_button_text">Beoordeel op Google Play</string>
     <string name="about_version">Versie: %1$s</string>
-    <string name="about_background_story">Deze app is gemaakt door Arjan Vlek.\n\nDeze app is geïnspireerd door een website (http://www.cyanogen-ota-bacon.somee.com) die ook informatie over updates bood, maar niet langer meer werkt. Deze app is daarvoor een mooie opvolger, en probeert nóg gebruiskvriendelijker te zijn en om meer functies te bieden.\n\n\nOpmerking: Dit is géén officiële app van Cyanogen.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
-    <string name="settings_saved">Uw instellingen worden automatisch opgeslagen.</string>
+    <string name="about_background_story">Deze app is gemaakt door Arjan Vlek.\n\nDeze app is geïnspireerd door een website (http://www.cyanogen-ota-bacon.somee.com) die ook informatie over updates bood, maar niet langer meer werkt. Deze app probeert een waardige opvolger voor deze site te zijn, door nóg gebruiskvriendelijker te zijn en om meer functies te bieden, zoals notificaties.\n\n\nOpmerking: Dit is géén officiële app van Cyanogen.\nCyanogen en Cyanogen OS zijn geregistreerde handelsmerken van Cyanogen Inc. \nAndroid, Google, Google Play en het Google Play-logo zijn geregistreerde handelsmerken van Google Inc. \nDeze app gebruikt gegevens van Cyanogen Inc om update-informatie te tonen.\n\nAls je deze app leuk vindt, beoordeel hem dan nu op Google Play!</string>
+    <string name="settings_saved">Je instellingen worden automatisch opgeslagen.</string>
     <string name="settings_explanation_update_methods">Toelichting op de update-methodes</string>
     <string name="settings">Instellingen</string>
     <string name="help">Help</string>
@@ -71,14 +71,14 @@
     <string name="notification_is_now_available">is nu beschikbaar voor de</string>
     <string name="notification_new_device_2">kunnen nu worden gevolgd!</string>
     <string name="notification_version">Versie</string>
-    <string name="settings_entered_incorrectly">Een ogenblik geduld terwijl uw instellingen worden opgeslagen.</string>
+    <string name="settings_entered_incorrectly">Fout tijdens opslaan van instellingen. Ga terug en stel je instellingen opnieuw in.</string>
     <string name="introduction_choose_device">Kies je apparaat:</string>
     <string name="introduction_choose_update_method">Kies je update-methode:</string>
     <string name="introduction_close_button">start de app</string>
-    <string name="introduction_page_1">Met deze app kun je:\n\n- De nieuwste updates voor jouw Cyanogen® OS-apparaat als eerste downloaden\n\n- Update-problemen met je apparaat oplossen\n\n- Informatie over de huidige software bekijken\n\nSwipe naar links om verder te gaan.</string>
+    <string name="introduction_page_1">Met deze app kun je:\n\n- De nieuwste updates voor jouw Cyanogen OS-apparaat als eerste downloaden\n\n- Update-problemen met je apparaat oplossen\n\n- Informatie over je huidige software bekijken\n\n- Informatie over je apparaat bekijken\n\nSwipe naar links om verder te gaan.</string>
     <string name="introduction_page_2">Meestal is het juiste apparaat al gekozen. Als dit niet zo is, kies het dan hierboven.\n\nSwipe naar links om verder te gaan.</string>
     <string name="introduction_page_3">De Incrementele Update is meestal de beste keuze.\n\nGebruik je een \"rooted\" apparaat, of heb je een zeer oude Android-versie (je wilt bijv. van 4.4.4 naar 6.0.1 updaten)? Kies dan de Volledige Update. Doe dit ook als je niet weet of je apparaat \"rooted\" is of over een zeer oude versie beschikt.\n\nSwipe naar links om door te gaan.</string>
-    <string name="introduction_page_4">Veel plezier met het gebruik van deze app!\n\nJe kan je instellingen altijd veranderen door op de drie puntjes rechtsbovenin te tikken en vervolgens op \'Instellingen\' te tikken. </string>
+    <string name="introduction_page_4">Veel plezier met het gebruik van deze app!\n\nJe kan je instellingen altijd veranderen door op de drie puntjes rechtsbovenin te tikken en vervolgens op \"Instellingen\" te tikken. </string>
     <string name="introduction_ready_to_start">Klaar!</string>
     <string name="introduction_welcome">Welkom bij Cyanogen updatetracker!</string>
     <string name="introduction_title">Welkom</string>
@@ -86,11 +86,11 @@
     <string name="notification_unknown_version_number">Er is een nieuwe versie beschikbaar voor je</string>
     <string name="error_no_internet_connection">Geen verbinding.</string>
     <string name="help_how_works_app">Hoe werkt deze app?</string>
-    <string name="help_middle_stats">Als je een update wilt installeren, klik je eerst op de \"Download\"-knop.\n\nAls de update is gedownload, tik je op \"Installatiehandleiding\" om de installatiehandleiding te lezen.\n\nAls je apparaat up-to-date is, kun je op \"Bekijk update-informatie\" tikken om informatie over je huidige software te bekijken.\n\nVeeg naar links of tik op \"Apparaat-info\" om technische informatie over je apparaat te bekijken.</string>
+    <string name="help_middle_stats">Als je een update wilt installeren, tik je eerst op de \"Download\"-knop.\n\nAls de update is gedownload, tik je op \"Installatiehandleiding\" om de installatiehandleiding te lezen.\n\nAls je apparaat up-to-date is, kun je op \"Bekijk update-informatie\" tikken om informatie over je huidige software te bekijken.\n\nVeeg naar links of tik op \"Apparaat-info\" om technische informatie over je apparaat te bekijken.</string>
     <string name="help_symbol_download">Toont de downloadgrootte van deze update.</string>
     <string name="help_used_symbols">Gebruikte symoblen:</string>
     <string name="help_top_update">Als een nieuwe update beschikbaar is, staan het versienummer, de nieuwe functies (Engels) en de downloadgrootte op het hoofdscherm.</string>
-    <string name="update_information_system_is_up_to_date">Uw systeem is bijgewerkt.</string>
+    <string name="update_information_system_is_up_to_date">Jouw systeem is bijgewerkt.</string>
     <string name="update_information_view_update_information">Bekijk update-informatie</string>
     <string name="update_information_version">-versie:</string>
     <string name="server_status_error">Sommige functies werken mogelijk niet zoals verwacht.</string>
@@ -109,7 +109,7 @@
     <string name="settings_system_up_to_date">Verberg update-informatie wanneer:</string>
     <string name="settings_push_new_device">Nieuw apparaat wordt ondersteund</string>
     <string name="error_app_not_valid">Oeps!</string>
-    <string name="error_app_not_valid_message">Deze versie van de app komt uit de prehistorie. Het is tijd om hem bij te werken! Dit kan door hieronder op \"Play Store\" te klikken. Klik vervolgens in Google Play op \"Bijwerken\".</string>
+    <string name="error_app_not_valid_message">Deze versie van de app is wel erg oud. Het is tijd om hem bij te werken! Dit kan door hieronder op \"Play Store\" te tikken. Tik vervolgens in Google Play op \"Bijwerken\".</string>
     <string name="error_maintenance">Serveronderhoud</string>
     <string name="error_maintenance_message">Een ogenblik geduld. De server zal zeer snel weer beschikbaar zijn.</string>
     <string name="update_information_last_checked_on">Voor het laatst gecontroleerd om: %1$s</string>
@@ -127,7 +127,7 @@
     <string name="download_error_storage">Er is onvoldoende opslagruimte op je apparaat beschikbaar om de update te downloaden. Verwijder één of meer bestanden en probeer het opnieuw te downloaden.</string>
     <string name="verifying">Controleren…</string>
     <string name="download_error_directory">Het lijkt erop dat er geen opslagruimte op je apparaat beschikbaar is. Als je een SD-kaart hebt, zorg dan dat je apparaat niet is verbonden met een PC en dat de SD-kaart werkt.</string>
-    <string name="download_permissions">Klik nogmaals op Downloaden om de update te downloaden.</string>
+    <string name="download_permissions">Tik nogmaals op Downloaden om de update te downloaden.</string>
     <string name="device_information_cyanogen_os_version">Cyanogen OS-versie:</string>
     <string name="help_bottom_description">Rechtsbovenin staat het menu. Daarvandaan kun je naar de instellingen, de pagina met veelgestelde vragen en naar dit Help-scherm gaan.</string>
     <string name="update_information_file_name">Bestandsnaam: %1$s</string>
@@ -138,7 +138,7 @@
     <string name="update_information_installed_update">Deze update wordt momenteel verspreid:</string>
     <string name="settings_cannot_launch_downloading">Je kunt het Instellingen-scherm niet openen tijdens het downloaden van een update…</string>
     <string name="unsupported_device_warning_checkbox_title">Toon deze waarschuwing niet nogmaals</string>
-    <string name="unsupported_device_warning_message">Het lijkt erop dat jouw apparaat (momenteel) geen Cyanogen OS draait. Deze app kan alleen systeemupdates voor apparaten met Cyanogen OS downloaden. \n\nAndere apparaten of apparaten met CyanogenMod (Custom ROM) worden niet ondersteund.</string>
+    <string name="unsupported_device_warning_message">Het lijkt erop dat jouw apparaat (momenteel) geen Cyanogen OS draait. Deze app kan alleen systeemupdates voor apparaten met Cyanogen OS installeren. \n\nAndere apparaten, waaronder apparaten met CyanogenMod (Custom ROM) worden momenteel niet ondersteund.</string>
     <string name="unsupported_device_warning_title">Niet-ondersteund apparaat</string>
     <string name="faq">Veelgestelde vragen</string>
     <string name="faq_menuitem">Veelgest. vragen</string>
@@ -158,7 +158,7 @@
     <string name="download_progress_text_verifying">100 %,Controleren op fouten…</string>
     <string name="delete_message_delete_button">Verwijder</string>
     <string name="delete_message_title">Verwijder update?</string>
-    <string name="delete_message_contents">Je hebt deze update al gedownload, maar nog niet geïnstalleerd. Klik op "Sluiten" om dit bericht te sluiten, en klik vervolgens op "Installatiehandleiding" voor installatie-instructies. Klik op "Verwijder" om het bestand definitief te verwijderen.</string>
+    <string name="delete_message_contents">Je hebt deze update al gedownload, maar nog niet geïnstalleerd. Tik op \"Sluiten\" om dit bericht te sluiten, en tik vervolgens op \"Installatiehandleiding\" voor installatie-instructies. Tik op \"Verwijder\" om het bestand definitief te verwijderen.</string>
     <string name="error_unable_to_rate_app">Je kunt de app niet beoordelen, omdat de Google Play Store op je apparaat ontbreekt.</string>
     <string name="verifying_error">Bestand is beschadigd</string>
     <string name="download_progress_text_hours_remaining">%1$d%%, ongeveer %2$d uur resterend</string>
