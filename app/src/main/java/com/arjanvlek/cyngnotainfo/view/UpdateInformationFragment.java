@@ -3,6 +3,7 @@ package com.arjanvlek.cyngnotainfo.view;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
@@ -27,12 +28,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
+import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.Model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.Model.DownloadProgressData;
 import com.arjanvlek.cyngnotainfo.Model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.Model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.Callback;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloadListener;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader;
@@ -70,6 +73,7 @@ import static android.widget.RelativeLayout.BELOW;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 import static com.arjanvlek.cyngnotainfo.Model.ServerStatus.Status.OK;
+import static com.arjanvlek.cyngnotainfo.Model.ServerStatus.Status.UNREACHABLE;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DEVICE;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DOWNLOAD_ID;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_OFFLINE_FILE_NAME;
@@ -326,6 +330,13 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             appUpdateBars.add(serverStatus);
         }
 
+        if(serverStatus == null) {
+            ServerStatus status = new ServerStatus();
+            status.setLatestAppVersion(BuildConfig.VERSION_NAME);
+            status.setStatus(UNREACHABLE);
+            serverErrorBars.add(status);
+        }
+
         inAppMessageBarData.put(KEY_SERVER_ERROR_BARS, serverErrorBars);
         inAppMessageBarData.put(KEY_APP_UPDATE_BARS, appUpdateBars);
 
@@ -433,13 +444,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
 
                 appUpdateMessageBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_green_light));
 
-                // The text contains an HTML link to the Google Play store to allow quick updating of the app.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                    appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion()), Html.FROM_HTML_MODE_LEGACY));
-                } else {
-                    //noinspection deprecation as it is only for older Android versions
-                    appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
-                }
+                appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
                 appUpdateMessageTextView.setMovementMethod(LinkMovementMethod.getInstance());
                 numberOfBars = addMessageBar(appUpdateMessageView, numberOfBars);
             }
@@ -523,7 +528,16 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, final boolean online, boolean displayInfoWhenUpToDate) {
         // Abort if no update data is found or if the fragment is not attached to its activity to prevent crashes.
-        if(cyanogenOTAUpdate == null || !isAdded()) {
+        if(!isAdded() || rootView == null) {
+            return;
+        }
+
+        View loadingScreen = rootView.findViewById(R.id.updateInformationLoadingScreen);
+        if(loadingScreen != null) {
+            loadingScreen.setVisibility(GONE);
+        }
+
+        if(cyanogenOTAUpdate == null) {
             return;
         }
 
@@ -787,6 +801,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         if (adView != null) {
             AdRequest adRequest = new AdRequest.Builder()
                     .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
+                    .addTestDevice(ADS_TEST_DEVICE_ID_TEST_DEVICE)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
                     .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
@@ -1091,11 +1106,21 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         MainActivity mainActivity = (MainActivity) getActivity();
         if(mainActivity != null) {
             if(mainActivity.hasDownloadPermissions()) {
-                updateDownloader.downloadUpdate(cyanogenOTAUpdate);
-                downloadButton.setText(getString(R.string.downloading));
-                downloadButton.setClickable(false);
+                if(updateDownloader != null) {
+                    updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                    downloadButton.setText(getString(R.string.downloading));
+                    downloadButton.setClickable(false);
+                }
             } else {
-                mainActivity.requestDownloadPermissions();
+                Callback callback = new Callback() {
+                    @Override
+                    public void onActionPerformed(Object... result) {
+                        if((int)result[0] == PackageManager.PERMISSION_GRANTED && updateDownloader != null && cyanogenOTAUpdate != null) {
+                            updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                        }
+                    }
+                };
+                mainActivity.requestDownloadPermissions(callback);
             }
         }
     }

@@ -182,6 +182,7 @@ public class DeviceInformationFragment extends AbstractFragment {
 
         AdRequest adRequest = new AdRequest.Builder()
                 .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
+                .addTestDevice(ADS_TEST_DEVICE_ID_TEST_DEVICE)
                 .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
                 .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
                 .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)

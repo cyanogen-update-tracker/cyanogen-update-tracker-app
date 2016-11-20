@@ -70,23 +70,25 @@ public class UpdateDownloader {
 
 
     public void downloadUpdate(CyanogenOTAUpdate cyanogenOTAUpdate) {
-        Uri downloadUri = Uri.parse(cyanogenOTAUpdate.getDownloadUrl());
+        if(cyanogenOTAUpdate != null) {
+            Uri downloadUri = Uri.parse(cyanogenOTAUpdate.getDownloadUrl());
 
-        DownloadManager.Request request = new DownloadManager.Request(downloadUri)
-                .setDescription(baseActivity.getString(R.string.download_description))
-                .setTitle(cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null") && !cyanogenOTAUpdate.getName().isEmpty() ? cyanogenOTAUpdate.getName() : baseActivity.getString(R.string.download_unknown_update_name))
-                .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
-                .setVisibleInDownloadsUi(false)
-                .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+            DownloadManager.Request request = new DownloadManager.Request(downloadUri)
+                    .setDescription(baseActivity.getString(R.string.download_description))
+                    .setTitle(cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null") && !cyanogenOTAUpdate.getName().isEmpty() ? cyanogenOTAUpdate.getName() : baseActivity.getString(R.string.download_unknown_update_name))
+                    .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
+                    .setVisibleInDownloadsUi(false)
+                    .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
-        long downloadID = downloadManager.enqueue(request);
+            long downloadID = downloadManager.enqueue(request);
 
-        previousBytesDownloadedSoFar = NOT_SET;
-        settingsManager.saveLongPreference(PROPERTY_DOWNLOAD_ID, downloadID);
+            previousBytesDownloadedSoFar = NOT_SET;
+            settingsManager.saveLongPreference(PROPERTY_DOWNLOAD_ID, downloadID);
 
-        checkDownloadProgress(cyanogenOTAUpdate);
+            checkDownloadProgress(cyanogenOTAUpdate);
 
-        listener.onDownloadStarted(downloadID);
+            listener.onDownloadStarted(downloadID);
+        }
     }
 
     public void cancelDownload() {

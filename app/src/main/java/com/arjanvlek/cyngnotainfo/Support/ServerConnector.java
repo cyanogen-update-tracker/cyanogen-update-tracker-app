@@ -36,27 +36,27 @@ public class ServerConnector {
     }
 
     public List<Device> getDevices() {
-        return findMultipleFromServerResponse(fetchDataFromServer(DEVICES, 30), Device.class);
+        return findMultipleFromServerResponse(fetchDataFromServer(DEVICES, 20), Device.class);
     }
 
     public CyanogenOTAUpdate getCyanogenOTAUpdate(Long deviceId, Long updateMethodId, String incrementalSystemVersion) {
-        return findOneFromServerResponse(fetchDataFromServer(UPDATE_DATA, 30, deviceId.toString(), updateMethodId.toString(), incrementalSystemVersion), CyanogenOTAUpdate.class);
+        return findOneFromServerResponse(fetchDataFromServer(UPDATE_DATA, 15, deviceId.toString(), updateMethodId.toString(), incrementalSystemVersion), CyanogenOTAUpdate.class);
     }
 
     public CyanogenOTAUpdate getMostRecentCyanogenOTAUpdate(Long deviceId, Long updateMethodId) {
-        return findOneFromServerResponse(fetchDataFromServer(MOST_RECENT_UPDATE_DATA, 30, deviceId.toString(), updateMethodId.toString()), CyanogenOTAUpdate.class);
+        return findOneFromServerResponse(fetchDataFromServer(MOST_RECENT_UPDATE_DATA, 10, deviceId.toString(), updateMethodId.toString()), CyanogenOTAUpdate.class);
     }
 
     public List<UpdateMethod> getUpdateMethods(Long deviceId) {
-        return findMultipleFromServerResponse(fetchDataFromServer(UPDATE_METHODS, 30, deviceId.toString()), UpdateMethod.class);
+        return findMultipleFromServerResponse(fetchDataFromServer(UPDATE_METHODS, 20, deviceId.toString()), UpdateMethod.class);
     }
 
     public ServerStatus getServerStatus() {
-        return findOneFromServerResponse(fetchDataFromServer(SERVER_STATUS, 30), ServerStatus.class);
+        return findOneFromServerResponse(fetchDataFromServer(SERVER_STATUS, 10), ServerStatus.class);
     }
 
     public List<ServerMessage> getServerMessages(Long deviceId, Long updateMethodId) {
-        return findMultipleFromServerResponse(fetchDataFromServer(SERVER_MESSAGES, 30, deviceId.toString(), updateMethodId.toString()), ServerMessage.class);
+        return findMultipleFromServerResponse(fetchDataFromServer(SERVER_MESSAGES, 20, deviceId.toString(), updateMethodId.toString()), ServerMessage.class);
     }
 
     public InstallGuideData fetchInstallGuidePageFromServer(Long deviceId, Long updateMethodId, Integer pageNumber) {

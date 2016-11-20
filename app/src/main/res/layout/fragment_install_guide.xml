@@ -29,7 +29,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/installGuideImage"
             android:layout_centerHorizontal="true"
-            android:text="Title"
             android:textAppearance="?android:textAppearanceLarge"
             android:visibility="invisible"
             android:textStyle="bold" />
@@ -40,7 +39,6 @@
             android:layout_height="wrap_content"
             android:layout_below="@+id/installGuideTitle"
             android:layout_marginTop="20dp"
-            android:text="Text\nText\nText"
             android:visibility="invisible"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey" />

@@ -25,6 +25,7 @@ import com.arjanvlek.cyngnotainfo.ActivityLauncher;
 import com.arjanvlek.cyngnotainfo.ApplicationContext;
 import com.arjanvlek.cyngnotainfo.GcmRegistrationIntentService;
 import com.arjanvlek.cyngnotainfo.R;
+import com.arjanvlek.cyngnotainfo.Support.Callback;
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.Support.SupportedDeviceCallback;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private SettingsManager settingsManager;
     private NetworkConnectionManager networkConnectionManager;
     private ActivityLauncher activityLauncher;
+    private Callback callback;
 
     // Used for Google Play Services check
     private final static int PLAY_SERVICES_RESOLUTION_REQUEST = 9000;
@@ -327,8 +329,9 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
 
     // New Android 6.0 permissions methods
 
-    public void requestDownloadPermissions() {
+    public void requestDownloadPermissions(Callback callback) {
         if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M) {
+            this.callback = callback;
             requestPermissions(new String[]{DOWNLOAD_PERMISSION}, PERMISSION_REQUEST_CODE);
         }
     }
@@ -338,8 +341,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         switch (permsRequestCode) {
             case PERMISSION_REQUEST_CODE:
                 try {
-                    if(grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this, getString(R.string.download_permissions), Toast.LENGTH_LONG).show();
+                    if(this.callback != null) {
+                        this.callback.onActionPerformed(grantResults[0]);
                     }
                 } catch (Exception ignored) {
 

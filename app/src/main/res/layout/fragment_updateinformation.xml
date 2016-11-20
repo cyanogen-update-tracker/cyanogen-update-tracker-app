@@ -6,6 +6,15 @@
     android:layout_height="wrap_content"
     tools:context=".view.MainActivity">
 
+    <!-- Loading screen -->
+    <ProgressBar
+        android:id="@+id/updateInformationLoadingScreen"
+        style="?android:attr/progressBarStyleLarge"
+        android:layout_width="70dp"
+        android:layout_height="70dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"/>
+
     <!-- Main screen -->
     <android.support.v4.widget.SwipeRefreshLayout
         android:id="@+id/updateInformationRefreshLayout"
