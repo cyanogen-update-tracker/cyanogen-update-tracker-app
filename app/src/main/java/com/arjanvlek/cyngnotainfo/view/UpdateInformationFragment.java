@@ -575,7 +575,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         TextView versionNumberView = (TextView) rootView.findViewById(R.id.updateInformationSystemIsUpToDateVersionTextView);
         if(!cyanogenOSVersion.equals(NO_CYANOGEN_OS)) {
             versionNumberView.setVisibility(VISIBLE);
-            versionNumberView.setText(String.format(getString(R.string.cyanogen_os_version), cyanogenOSVersion));
+            versionNumberView.setText(String.format(getString(R.string.update_information_cyanogen_os_version), cyanogenOSVersion));
         } else {
             versionNumberView.setVisibility(GONE);
         }
@@ -618,7 +618,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
             buildNumberView.setText(cyanogenOTAUpdate.getName());
         } else {
-            buildNumberView.setText(String.format(getString(R.string.unknown_update_name), deviceName));
+            buildNumberView.setText(String.format(getString(R.string.update_information_unknown_update_name), deviceName));
         }
 
         // Display download size.
@@ -628,7 +628,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         // Display update description.
         String description = cyanogenOTAUpdate.getDescription();
         TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
-        descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_description_not_available));
+        descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_information_description_not_available));
 
         // Display update file name.
         TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
@@ -920,7 +920,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                         @Override
                         public void onDownloadComplete() {
                             if(isAdded()) {
-                                Toast.makeText(getApplicationContext(), getString(R.string.download_verifying), Toast.LENGTH_LONG).show();
+                                Toast.makeText(getApplicationContext(), getString(R.string.download_verifying_start), Toast.LENGTH_LONG).show();
                             }
                         }
 
@@ -964,7 +964,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                             }
                                             break;
                                         case ERROR_FILE_ALREADY_EXISTS:
-                                            Toast.makeText(getApplicationContext(), getString(R.string.update_already_downloaded), Toast.LENGTH_LONG).show();
+                                            Toast.makeText(getApplicationContext(), getString(R.string.download_already_downloaded), Toast.LENGTH_LONG).show();
                                             onUpdateDownloaded(true, false);
                                     }
                                 }
@@ -982,7 +982,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                                 showDownloadProgressBar();
                                 getDownloadProgressBar().setIndeterminate(true);
                                 showVerifyingNotification(false);
-                                getDownloadButton().setText(getString(R.string.verifying));
+                                getDownloadButton().setText(getString(R.string.download_verifying));
                                 getDownloadStatusText().setText(getString(R.string.download_progress_text_verifying));
                             }
                         }
@@ -1191,9 +1191,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     .setProgress(100, 50, true);
 
             if(error) {
-                builder.setContentTitle(getString(R.string.verifying_error));
+                builder.setContentTitle(getString(R.string.download_verifying_error));
             } else {
-                builder.setContentTitle(getString(R.string.verifying));
+                builder.setContentTitle(getString(R.string.download_verifying));
             }
 
             if (Build.VERSION.SDK_INT >= 21) {

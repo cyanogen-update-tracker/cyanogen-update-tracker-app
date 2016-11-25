@@ -45,7 +45,7 @@ public class GcmNotificationListenerService extends com.google.android.gms.gcm.G
         if (msg != null) {
             if (msg.getString("version_number") != null && msg.getString("device_name") != null && settingsManager.receiveSystemUpdateNotifications()) {
                 String deviceName = msg.getString("device_name");
-                message = getString(R.string.notification_version) + " " + msg.getString("version_number") + " " + getString(R.string.notification_is_now_available) + " " + deviceName + "!";
+                message = getString(R.string.notification_version) + " " + msg.getString("version_number") + " " + getString(R.string.notification_version_is_now_available) + " " + deviceName + "!";
                 messageType = "update";
             } else if (msg.getString("new_device") != null && settingsManager.receiveNewDeviceNotifications()) {
                 String deviceName = msg.getString("new_device");

@@ -18,7 +18,7 @@
             android:layout_height="wrap_content"
             android:layout_centerHorizontal="true"
             android:layout_marginTop="10dp"
-            android:text="@string/help_how_works_app"
+            android:text="@string/help_title"
             android:textAppearance="?android:textAppearanceLarge"
             android:textSize="18sp"
             android:textStyle="bold" />
@@ -31,7 +31,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:text="@string/help_top_update"
+            android:text="@string/help_top"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey" />
 
@@ -43,7 +43,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:text="@string/help_middle_stats"
+            android:text="@string/help_middle"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey" />
 
@@ -55,7 +55,7 @@
             android:layout_marginLeft="10dp"
             android:layout_marginStart="10dp"
             android:layout_marginTop="20dp"
-            android:text="@string/help_bottom_description"
+            android:text="@string/help_bottom"
             android:textAppearance="?android:textAppearanceMedium"
             android:textColor="@color/material_blue_grey" />
 
