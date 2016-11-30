@@ -14,7 +14,7 @@
     <string name="update_information_header_short">Update-info</string>
     <string name="update_information_installed_update">Deze update wordt momenteel verspreid:</string>
     <string name="update_information_last_checked_on">Voor het laatst gecontroleerd om: %1$s</string>
-    <string name="update_information_latest_available_update">Er is een nieuwe systeemupdate
+    <string name="update_information_latest_available_update">Er is een nieuwe systeemupdate beschikbaar:</string>
     <string name="update_information_no_update_data_available">Er is geen update-informatie beschikbaar</string>
     <string name="update_information_system_is_up_to_date">Jouw systeem is bijgewerkt.</string>
     <string name="update_information_unknown_update_name">Naamloze update voor %1$s</string>
@@ -104,7 +104,6 @@
     <string name="settings_system_hide_when_up_to_date">Mijn systeem up-to-date is</string>
 
     <string name="settings_update_method">Update-methode</string>
- beschikbaar:</string>
 
     <!-- FAQ strings -->
     <string name="faq">Veelgestelde vragen</string>
