@@ -117,7 +117,7 @@
     <string name="setup_close_button">start app</string>
 
     <string name="setup_page_1_title">Welcome to Cyanogen update tracker!</string>
-    <string name="setup_page_1_text">This app will allow you to:\n\n- Download the latest system updates for your Cyanogen OS powered device, early after release.\n\n- Fix issues that cause updates not to appear on your device\n\n- View what\'s new in the system software you are currently using\n\n- View some technical information about your device\n\nSwipe to the left to continue.</string>
+    <string name="setup_page_1_text">This app will allow you to:\n\n- Download the latest system updates for your Cyanogen OS powered device, early after release\n\n-Update a rooted device\n\n- Fix issues that cause updates not to appear on your device\n\n- View what\'s new in the system software you are currently using\n\n- View some technical information about your device\n\nSwipe to the left to continue.</string>
     
     <!-- Page 2 is found under "Help Strings" as it is also the help page of this app -->
     <string name="setup_page_3_title">Choose your device:</string>
@@ -133,16 +133,16 @@
     <string name="install_guide_close_button">Close Installation Guide</string>
     <string name="install_guide_image_description">Contextual image. Please tap on a lower place on the screen to hear the install guide.</string>
 
-    <string name="install_guide_page_1_title">Download the update.</string>
-    <string name="install_guide_page_1_text">- It\'s recommended to write all steps down, as you\'ll need to power off your device during the installation of the update.\n\n- Press the Download button to start downloading the update.\n\n- The download progress will appear in the app, and as a notification in your notifications screen.\n\n- When the download has finished, you\'ll see a notification with the text \"Download complete\".\nIf a download error occurred, open the app and try to downloading the update again. If this doesn\'t work, make sure you have a working connection. Otherwise, contact the developer of the app. You can do this by visiting the \"My apps\" section of the Google Play Store.</string>
+    <string name="install_guide_page_1_title">Download the update</string>
+    <string name="install_guide_page_1_text">- It\'s recommended to write all steps down, as you\'ll need to power off your device during the installation of the update.\n\n- Press the Download button to start downloading the update.\n\n- The download progress will appear in the app, and as a notification in your notifications screen.\n\n- When the download has finished, you\'ll see a notification with the text \"Download complete\".\n\nIf a download error occurred, open the app and try to downloading the update again. If this doesn\'t work, make sure you have a working connection. Otherwise, contact the developer of the app. You can do this by visiting the \"My apps\" section of the Google Play Store.</string>
 
-    <string name="install_guide_page_2_title">Enter Recovery Mode.</string>
+    <string name="install_guide_page_2_title">Enter Recovery Mode</string>
     <string name="install_guide_page_2_text">- First, power off your device.\n\n- Then, press both the power and the volume down buttons at the same time.\n\n- Your device will now start in Recovery Mode. Wait until you see the recovery menu on your screen.</string>
 
-    <string name="install_guide_page_3_title">Apply the downloaded update.</string>
+    <string name="install_guide_page_3_title">Apply the downloaded update</string>
     <string name="install_guide_page_3_text">- Within the recovery menu, tap on (or use the volume buttons to navigate and the power button to select) \"Apply Update\".\n\n- Next, tap on \"Choose from Internal Storage\" or \"Choose from Emulated\", depending on which option is visible.\n\n- Now, select \"0\", if visible. If \"0\" is not visible, continue to the next step.\n\n- Next, scroll down using the volume down key until you find a row with the text \"Download\". \n\n- Tap on \"Download\", and tap on the \".zip\" file with the file name shown within the app. (Usually, this is a file starting with \"cm-\").\n\n- Installation of the update will start automatically.</string>
 
-    <string name="install_guide_page_4_title">Restart your device.</string>
+    <string name="install_guide_page_4_title">Restart your device</string>
     <string name="install_guide_page_4_text">- When the installation of the update is finished, you\'ll be back at the Recovery Menu. Within the recovery menu, tap on \"Reboot System Now\".\n\n- Your device will show the Cyanogen logo for a long time while it is starting up.\n\n- Afterwards, you\'ll see a white message with the title \"Android is upgrading\", while your apps are being optimized.</string>
 
     <string name="install_guide_page_5_title">Done. Enjoy the new Cyanogen OS version!</string>

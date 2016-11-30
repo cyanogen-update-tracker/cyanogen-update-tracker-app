@@ -118,7 +118,7 @@
     <string name="setup_close_button">start de app</string>
 
     <string name="setup_page_1_title">Welkom bij Cyanogen updatetracker!</string>
-    <string name="setup_page_1_text">Met deze app kun je:\n\n- De nieuwste systeemupdates voor jouw Cyanogen OS-apparaat als eerste downloaden\n\n- Problemen met het verkrijgen van systeemupdates voor je apparaat oplossen\n\n- Bekijken wat er nieuw is in je huidige systeemsoftware.\n\n- Enkele technische details over je apparaat bekijken\n\nVeeg naar links om verder te gaan.</string>
+    <string name="setup_page_1_text">Met deze app kun je:\n\n- De nieuwste systeemupdates voor jouw Cyanogen OS-apparaat als eerste downloaden\n\n- Een \'geroot\' apparaat bijwerken\n\n- Problemen met het verkrijgen van systeemupdates voor je apparaat oplossen\n\n- Bekijken wat er nieuw is in je huidige systeemsoftware.\n\n- Enkele technische details over je apparaat bekijken\n\nVeeg naar links om verder te gaan.</string>
 
     <!-- Page 2 is found under "Help Strings" as it is also the help page of this app -->
     <string name="setup_page_3_title">Kies je apparaat:</string>
@@ -137,16 +137,16 @@
 
     <string name="install_guide_image_description">Extra afbeelding voor de duidelijkheid. Tik lager op het scherm voor de installatiehandleiding.</string>
 
-    <string name="install_guide_page_1_title">Download de update.</string>
-    <string name="install_guide_page_1_text">- Het is aan te raden om alle stappen ergens op te schrijven, omdat jouw apparaat moet worden uitgezet tijdens de installatie van de update.\n\n-Druk op de Download-knop om het downloaden te starten. De downloadvoortgang zal in de app verschijnen, en verschijnt ook als melding in je notificatiescherm.\n\n- Als het downloaden is voltooid, zie je een melding met de tekst \"Download voltooid\".\nAls er tijdens het downloaden een fout is opgetreden, probeer je de update opnieuw te downloaden. Indien dit niet werkt, controleer dan je internetverbinding, of neem contact op met de ontwikkelaar. Dit kun je via de Google Play-store doen, onder het tabblad \"Mijn apps\".</string>
+    <string name="install_guide_page_1_title">Download de update</string>
+    <string name="install_guide_page_1_text">- Het is aan te raden om alle stappen ergens op te schrijven, omdat jouw apparaat moet worden uitgezet tijdens de installatie van de update.\n\n-Druk op de Download-knop om het downloaden te starten. De downloadvoortgang zal in de app verschijnen, en verschijnt ook als melding in je notificatiescherm.\n\n- Als het downloaden is voltooid, zie je een melding met de tekst \"Download voltooid\".\n\nAls er tijdens het downloaden een fout is opgetreden, probeer je de update opnieuw te downloaden. Indien dit niet werkt, controleer dan je internetverbinding, of neem contact op met de ontwikkelaar. Dit kun je via de Google Play-store doen, onder het tabblad \"Mijn apps\".</string>
 
-    <string name="install_guide_page_2_title">Ga naar de Recovery Modus.</string>
+    <string name="install_guide_page_2_title">Ga naar de Recovery Modus</string>
     <string name="install_guide_page_2_text">- Schakel je apparaat eerst volledig uit.\n\n- Houd hierna zowel de aan-uit knop als de volume-omlaag knop tegelijkertijd ingedrukt.\n\n- Je apparaat start nu op in Recovery Modus. Wacht totdat je het Recovery Modus-menu op het scherm ziet.</string>
 
-    <string name="install_guide_page_3_title">Installeer de gedownloade update.</string>
-    <string name="install_guide_page_3_text">- In het recovery-menu, tik op (of gebruik de volumeknoppen om te scrollen en de aan-uit knop voor het selecteren van) \"Apply Update\".\n\n- Tik op \"Choose from Internal Storage\" of \"Choose from Emulated\", afhankelijk van welke optie zichtbaar is.\n\n- Tik hierna op \"0\", als dit zichtbaar is. Als \"0\" niet zichtbaar is, ga je door naar de volgende stap.\n\n- Gebruik de volume-omlaag-toets om omlaag te scrollen naar een rij genaamd \"Download\".\n\n- Tik op \"Download\", en tik op het \".zip\" bestand met dezelfde bestandsnaam als in de app getoond. Dit is meestal een bestand beginnend met \"cm-\".\n\n- De installatie van de update begint vanzelf.</string>
+    <string name="install_guide_page_3_title">Installeer de gedownloade update</string>
+    <string name="install_guide_page_3_text">- In het recovery-menu, tik op (of gebruik de volumeknoppen om te scrollen en de aan-uit knop voor het selecteren van) \"Apply Update\".\n\n- Tik op \"Choose from Internal Storage\" of \"Choose from Emulated\", afhankelijk van welke optie zichtbaar is.\n\n- Tik hierna op \"0\", als dit zichtbaar is. Als \"0\" niet zichtbaar is, ga je door naar de volgende stap.\n\n- Gebruik de volume-omlaag-knop om omlaag te scrollen naar een rij genaamd \"Download\".\n\n- Tik op \"Download\", en tik op het \".zip\" bestand met dezelfde bestandsnaam als in de app getoond. Dit is meestal een bestand beginnend met \"cm-\".\n\n- De installatie van de update begint vanzelf.</string>
 
-    <string name="install_guide_page_4_title">Start je apparaat opnieuw op.</string>
+    <string name="install_guide_page_4_title">Start je apparaat opnieuw op</string>
     <string name="install_guide_page_4_text">- Als de installatie van de update is voltooid, keert je apparaat vanzelf terug naar het Recovery-menu. In het Recovery-menu, tik je op \"Reboot System Now\".\n\n- Je apparaat zal het Cyanogen-logo een lange tijd laten zien terwijl het opstart.\n\n- Hierna verschijnt er een wit venster met de titel \"Android wordt bijgewerkt\" , terwijl je apps worden geoptimaliseerd.</string>
 
     <string name="install_guide_page_5_title">Klaar. Geniet van je nieuwe Cyanogen OS-versie!</string>

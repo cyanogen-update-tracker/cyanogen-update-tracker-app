@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,7 @@ import static com.arjanvlek.cyngnotainfo.ApplicationContext.APP_USER_AGENT;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.DEVICES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.INSTALL_GUIDE;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.MOST_RECENT_UPDATE_DATA;
+import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.REGISTER_DEVICE;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_MESSAGES;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.SERVER_STATUS;
 import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_DATA;
@@ -26,8 +28,7 @@ import static com.arjanvlek.cyngnotainfo.Support.ServerRequest.UPDATE_METHODS;
 
 public class ServerConnector {
 
-    final static String SERVER_URL = "** Add the base URL of your API / backend here **";
-    final static String TEST_SERVER_URL = "** Add the base URL of your test API / backend here **";
+    private static final String USER_AGENT_HEADER = "User-Agent";
 
     private ObjectMapper objectMapper;
 
@@ -63,6 +64,14 @@ public class ServerConnector {
         return findOneFromServerResponse(fetchDataFromServer(INSTALL_GUIDE, 10, deviceId.toString(), updateMethodId.toString(), pageNumber.toString()), InstallGuideData.class);
     }
 
+    public URL getDeviceRegistrationURL() {
+        try {
+            return REGISTER_DEVICE.getURL();
+        } catch (MalformedURLException e) {
+            return null;
+        }
+    }
+
     private <T> List<T> findMultipleFromServerResponse(String response, Class<T> returnClass) {
         try {
             return objectMapper.readValue(response, objectMapper.getTypeFactory().constructCollectionType(List.class, returnClass));
@@ -89,7 +98,7 @@ public class ServerConnector {
             int timeOutInMilliseconds = timeoutInSeconds * 1000;
 
             //setup request
-            urlConnection.setRequestProperty("User-Agent", APP_USER_AGENT);
+            urlConnection.setRequestProperty(USER_AGENT_HEADER, APP_USER_AGENT);
             urlConnection.setConnectTimeout(timeOutInMilliseconds);
             urlConnection.setReadTimeout(timeOutInMilliseconds);
 

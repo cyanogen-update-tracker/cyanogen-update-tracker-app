@@ -8,6 +8,7 @@ import android.os.AsyncTask;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
+import com.arjanvlek.cyngnotainfo.Support.ServerConnector;
 import com.arjanvlek.cyngnotainfo.Support.SettingsManager;
 import com.arjanvlek.cyngnotainfo.view.MainActivity;
 import com.google.android.gms.gcm.GoogleCloudMessaging;
@@ -68,11 +69,6 @@ public class GcmRegistrationIntentService extends IntentService {
     private static final String LEGACY_UPDATE_METHOD_FULL_KEY = "full_update";
     private static final String LEGACY_UPDATE_METHOD_FULL_VALUE_EN = "Full update";
     private static final String LEGACY_UPDATE_METHOD_FULL_VALUE_NL = "Volledige update";
-
-
-    //Server URLs and properties
-    public static final String SERVER_URL = "** Add the base URL of your API / backend here **registerDevice";
-    public static final String TEST_SERVER_URL = "** Add the base URL of your test API / backend here **registerDevice";
 
     public GcmRegistrationIntentService() {
         super(TAG);
@@ -199,18 +195,18 @@ public class GcmRegistrationIntentService extends IntentService {
             String result = null;
             try {
 
-                JSONObject jsonResponse = new JSONObject();
-                jsonResponse.put(JSON_PROPERTY_REGISTRATION_TOKEN, registrationId);
-                jsonResponse.put(JSON_PROPERTY_DEVICE_ID, deviceId);
-                jsonResponse.put(JSON_PROPERTY_UPDATE_METHOD_ID, updateMethodId);
-                jsonResponse.put(JSON_PROPERTY_OLD_REGISTRATION_TOKEN, oldRegistrationId);
-                jsonResponse.put(JSON_PROPERTY_APP_VERSION, BuildConfig.VERSION_NAME);
-                URL url;
-                if(BuildConfig.USE_TEST_SERVER) {
-                    url = new URL(TEST_SERVER_URL);
-                } else {
-                    url = new URL(SERVER_URL);
-                }
+                ServerConnector serverConnector = new ServerConnector();
+
+                JSONObject jsonRequest = new JSONObject();
+                jsonRequest.put(JSON_PROPERTY_REGISTRATION_TOKEN, registrationId);
+                jsonRequest.put(JSON_PROPERTY_DEVICE_ID, deviceId);
+                jsonRequest.put(JSON_PROPERTY_UPDATE_METHOD_ID, updateMethodId);
+                jsonRequest.put(JSON_PROPERTY_OLD_REGISTRATION_TOKEN, oldRegistrationId);
+                jsonRequest.put(JSON_PROPERTY_APP_VERSION, BuildConfig.VERSION_NAME);
+
+                URL url = serverConnector.getDeviceRegistrationURL();
+                assert url != null;
+
                 urlConnection = (HttpURLConnection) url.openConnection();
                 urlConnection.setDoOutput(true);
                 urlConnection.setRequestProperty("User-Agent", APP_USER_AGENT);
@@ -220,8 +216,9 @@ public class GcmRegistrationIntentService extends IntentService {
                 urlConnection.setConnectTimeout(10000);
                 urlConnection.setReadTimeout(10000);
                 urlConnection.connect();
+
                 OutputStream out = urlConnection.getOutputStream();
-                byte[] outputBytes = jsonResponse.toString().getBytes();
+                byte[] outputBytes = jsonRequest.toString().getBytes();
                 out.write(outputBytes);
                 out.close();
                 in = new BufferedInputStream(urlConnection.getInputStream());

@@ -37,6 +37,7 @@ import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.Support.Callback;
 import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
+import com.arjanvlek.cyngnotainfo.Support.UpdateDescriptionParser;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloadListener;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader;
 import com.google.android.gms.ads.AdRequest;
@@ -628,7 +629,8 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         // Display update description.
         String description = cyanogenOTAUpdate.getDescription();
         TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
-        descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? description : getString(R.string.update_information_description_not_available));
+        descriptionView.setMovementMethod(LinkMovementMethod.getInstance());
+        descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? UpdateDescriptionParser.parse(description) : getString(R.string.update_information_description_not_available));
 
         // Display update file name.
         TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);

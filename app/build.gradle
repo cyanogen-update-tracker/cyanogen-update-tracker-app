@@ -2,9 +2,16 @@ apply plugin: 'com.android.application'
 apply plugin: 'com.google.gms.google-services'
 
 android {
+    signingConfigs {
+        releaseConfig {
+            keyAlias '** Add the name / alias of the signing key you use here **'
+            keyPassword '** Add the password of the key here **'
+            storeFile file('** Add the full path to the key store file here **')
+            storePassword '** Add the password of the key here **'
+        }
+    }
     compileSdkVersion 25
     buildToolsVersion "25.0.1"
-
     packagingOptions {
         exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/LICENSE.txt'
@@ -15,25 +22,29 @@ android {
         applicationId "com.arjanvlek.cyngnotainfo"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 23
-        versionName "1.7.0"
+        versionCode 24
+        versionName "1.7.1"
+        signingConfig signingConfigs.releaseConfig
     }
     buildTypes {
         release {
-            buildConfigField "Boolean", "USE_TEST_SERVER", "false"
+            buildConfigField "String", "SERVER_BASE_URL", "\"** Add the base URL of your API / backend here **\""
             minifyEnabled true
             shrinkResources false
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            buildConfigField "Boolean", "USE_TEST_SERVER", "true"
+            buildConfigField "String", "SERVER_BASE_URL", "\"** Add the base URL of your test API / backend here **\""
             debuggable true
+            signingConfig signingConfigs.releaseConfig
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_7
         targetCompatibility JavaVersion.VERSION_1_7
+    }
+    productFlavors {
     }
 }
 
