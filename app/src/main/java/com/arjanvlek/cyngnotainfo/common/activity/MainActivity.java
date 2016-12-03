@@ -20,8 +20,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.CheckBox;
 
+import com.arjanvlek.cyngnotainfo.cm.fragment.CMUpdateInformationFragment;
 import com.arjanvlek.cyngnotainfo.common.internal.ActivityLauncher;
 import com.arjanvlek.cyngnotainfo.common.internal.ApplicationData;
+import com.arjanvlek.cyngnotainfo.common.internal.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.common.notification.GcmRegistrationIntentService;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.Callback;
@@ -29,7 +31,7 @@ import com.arjanvlek.cyngnotainfo.common.internal.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
 import com.arjanvlek.cyngnotainfo.common.internal.SupportedDeviceCallback;
 import com.arjanvlek.cyngnotainfo.common.internal.SupportedDeviceManager;
-import com.arjanvlek.cyngnotainfo.cos.fragment.UpdateInformationFragment;
+import com.arjanvlek.cyngnotainfo.cos.fragment.COSUpdateInformationFragment;
 import com.arjanvlek.cyngnotainfo.common.fragment.DeviceInformationFragment;
 import com.arjanvlek.cyngnotainfo.common.view.MessageDialog;
 import com.google.android.gms.common.ConnectionResult;
@@ -65,6 +67,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private String updateMethod = "";
     private long updateMethodId = 0L;
 
+
+    private final ApplicationData applicationData;
+
+    public MainActivity () {
+        this.applicationData = (ApplicationData)getApplication();
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -91,7 +100,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         }
         setTitle(getString(R.string.app_name));
 
-        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager(), this.applicationData);
 
         mViewPager = (ViewPager) findViewById(R.id.mainActivityPager);
 
@@ -250,15 +259,18 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      */
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
-        public SectionsPagerAdapter(FragmentManager fm) {
+        private final ApplicationData applicationData;
+
+        public SectionsPagerAdapter(FragmentManager fm, ApplicationData applicationData) {
             super(fm);
+            this.applicationData = applicationData;
         }
 
         @Override
         public Fragment getItem(int position) {
             // getItem is called to instantiate the fragment for the given page.
             // Return a FragmentBuilder (defined as a static inner class below).
-            return FragmentBuilder.newInstance(position + 1);
+            return FragmentBuilder.newInstance(position + 1, applicationData);
         }
 
         @Override
@@ -289,9 +301,13 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static Fragment newInstance(int sectionNumber) {
+        public static Fragment newInstance(int sectionNumber, ApplicationData applicationData) {
             if (sectionNumber == 1) {
-                return new UpdateInformationFragment();
+                if (applicationData.SYSTEM_TYPE == SystemVersionProperties.SystemType.CM) {
+                    return new CMUpdateInformationFragment();
+                } else {
+                    return new COSUpdateInformationFragment();
+                }
             }
             if (sectionNumber == 2) {
                 return new DeviceInformationFragment();

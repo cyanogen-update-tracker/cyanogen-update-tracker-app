@@ -88,7 +88,7 @@ import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERT
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_UPDATE_CHECKED_DATE;
 import static com.arjanvlek.cyngnotainfo.common.internal.UpdateDownloader.NOT_SET;
 
-public class UpdateInformationFragment extends AbstractUpdateInformationFragment {
+public class COSUpdateInformationFragment extends AbstractUpdateInformationFragment {
 
 
     private SwipeRefreshLayout updateInformationRefreshLayout;
@@ -134,7 +134,7 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        this.rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_updateinformation, container, false);
+        this.rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_cosupdateinformation, container, false);
         return this.rootView;
     }
 

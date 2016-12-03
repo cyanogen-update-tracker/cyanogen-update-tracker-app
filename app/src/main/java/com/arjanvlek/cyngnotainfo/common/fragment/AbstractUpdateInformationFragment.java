@@ -7,6 +7,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
+import android.widget.RelativeLayout;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
@@ -16,6 +17,7 @@ import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
 import com.arjanvlek.cyngnotainfo.common.view.MessageDialog;
+import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
@@ -27,6 +29,9 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
     protected SettingsManager settingsManager;
     protected NetworkConnectionManager networkConnectionManager;
     protected CyanogenOTAUpdate cyanogenOTAUpdate;
+
+    protected RelativeLayout rootView;
+    protected AdView adView;
 
     public static final String UNABLE_TO_FIND_A_MORE_RECENT_BUILD = "unable to find a more recent build";
 

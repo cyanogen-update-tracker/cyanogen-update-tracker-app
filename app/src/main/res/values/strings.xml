@@ -129,6 +129,7 @@
 
 
     <!-- Install guide strings -->
+    <string name="install">Install</string>
     <string name="install_guide">Install guide</string>
     <string name="install_guide_close_button">Close Installation Guide</string>
     <string name="install_guide_image_description">Contextual image. Please tap on a lower place on the screen to hear the install guide.</string>
