@@ -4,7 +4,7 @@
     android:id="@+id/updateInformationFragmentTop"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    tools:context=".view.MainActivity">
+    tools:context=".common.activity.MainActivity">
 
     <!-- Loading screen -->
     <ProgressBar
@@ -34,7 +34,7 @@
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
                 android:paddingTop="@dimen/activity_vertical_margin"
-                tools:context=".view.MainActivity$PlaceholderFragment">
+                tools:context=".common.activity.MainActivity$PlaceholderFragment">
 
                 <TextView
                     android:id="@+id/headerLabel"
@@ -206,7 +206,7 @@
                 android:layout_height="wrap_content"
                 android:paddingLeft="@dimen/activity_horizontal_margin"
                 android:paddingRight="@dimen/activity_horizontal_margin"
-                tools:context=".view.MainActivity$PlaceholderFragment">
+                tools:context=".common.activity.MainActivity$PlaceholderFragment">
 
 
                 <TextView
