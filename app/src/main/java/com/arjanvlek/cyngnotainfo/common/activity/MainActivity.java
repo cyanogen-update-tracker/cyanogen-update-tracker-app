@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -21,22 +22,27 @@ import android.view.View;
 import android.widget.CheckBox;
 
 import com.arjanvlek.cyngnotainfo.cm.fragment.CMUpdateInformationFragment;
+import com.arjanvlek.cyngnotainfo.common.fragment.UnknownCMVersionErrorFragment;
+import com.arjanvlek.cyngnotainfo.common.fragment.UnofficialCMVersionErrorFragment;
 import com.arjanvlek.cyngnotainfo.common.internal.ActivityLauncher;
 import com.arjanvlek.cyngnotainfo.common.internal.ApplicationData;
 import com.arjanvlek.cyngnotainfo.common.internal.SystemVersionProperties;
+import com.arjanvlek.cyngnotainfo.common.internal.asynctask.GetServerStatus;
 import com.arjanvlek.cyngnotainfo.common.notification.GcmRegistrationIntentService;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.Callback;
 import com.arjanvlek.cyngnotainfo.common.internal.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
-import com.arjanvlek.cyngnotainfo.common.internal.SupportedDeviceCallback;
-import com.arjanvlek.cyngnotainfo.common.internal.SupportedDeviceManager;
 import com.arjanvlek.cyngnotainfo.cos.fragment.COSUpdateInformationFragment;
 import com.arjanvlek.cyngnotainfo.common.fragment.DeviceInformationFragment;
 import com.arjanvlek.cyngnotainfo.common.view.MessageDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
+import java.net.MalformedURLException;
+import java.net.URL;
+
+import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.IS_COS_KEY;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DEVICE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DEVICE_ID;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
@@ -47,7 +53,7 @@ import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERT
 
 
 @SuppressWarnings("deprecation")
-public class MainActivity extends AppCompatActivity implements ActionBar.TabListener, SupportedDeviceCallback {
+public class MainActivity extends AppCompatActivity implements ActionBar.TabListener {
 
     private ViewPager mViewPager;
     private SettingsManager settingsManager;
@@ -68,24 +74,18 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     private long updateMethodId = 0L;
 
 
-    private final ApplicationData applicationData;
+    private ApplicationData applicationData;
 
-    public MainActivity () {
-        this.applicationData = (ApplicationData)getApplication();
-    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        this.applicationData = (ApplicationData)getApplication();
         setContentView(R.layout.activity_main_activity);
         Context context = getApplicationContext();
         settingsManager = new SettingsManager(context);
         networkConnectionManager = new NetworkConnectionManager(context);
 
-        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && networkConnectionManager.checkNetworkConnection()) {
-            SupportedDeviceManager supportedDeviceManager = new SupportedDeviceManager(this, ((ApplicationData)getApplication()));
-            supportedDeviceManager.execute();
-        }
 
         //Fetch currently selected device and update method
         device = settingsManager.getPreference(PROPERTY_DEVICE);
@@ -139,7 +139,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         // Check if Google Play services are installed on the device
         if (checkPlayServices()) {
             // Check if a device and update method have been set
-            if (settingsManager.checkIfDeviceIsSet()) {
+            if (settingsManager.checkIfDeviceIsSet(this.applicationData.SYSTEM_TYPE)) {
                 //Check if app needs to register for push notifications (like after device type change etc.)
                 if(device != null && updateMethod != null) {
                     if (!settingsManager.checkIfRegistrationIsValid(deviceId, updateMethodId) || settingsManager.checkIfRegistrationHasFailed() && networkConnectionManager.checkNetworkConnection()) {
@@ -148,8 +148,8 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
                 }
             }
 
-            // Mark the welcome tutorial as finished if the user is moving from older app version. This is checked by either having stored update information for offline viewing, or if the last update checked date is set (if user always had up to date system and never viewed update information before).
-            if(!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE) && (settingsManager.checkIfCacheIsAvailable() || settingsManager.containsPreference(PROPERTY_UPDATE_CHECKED_DATE))) {
+            // Mark the welcome tutorial as finished if the user is not running COS, or is moving from older app version. The latter is checked by either having stored update information for offline viewing, or if the last update checked date is set (if user always had up to date system and never viewed update information before).
+            if(this.applicationData.SYSTEM_TYPE != SystemVersionProperties.SystemType.COS || (!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE) && (settingsManager.checkIfCacheIsAvailable() || settingsManager.containsPreference(PROPERTY_UPDATE_CHECKED_DATE)))) {
                 settingsManager.saveBooleanPreference(PROPERTY_SETUP_DONE, true);
             }
 
@@ -228,28 +228,24 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
     public void onTabReselected(ActionBar.Tab tab, FragmentTransaction fragmentTransaction) {
     }
 
-    @Override
-    public void displayUnsupportedMessage(boolean deviceIsSupported) {
+    public void onCmDownloadPageButtonClick(View view) {
+        new GetServerStatus(this.applicationData, new Callback() {
+            @Override
+            public void onActionPerformed(Object... result) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse((String)result[0]));
+                startActivity(i);
+            }
+        }).execute();
+    }
 
-        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
-            View checkBoxView = View.inflate(MainActivity.this, R.layout.message_dialog_checkbox, null);
-            final CheckBox checkBox = (CheckBox) checkBoxView.findViewById(R.id.unsupported_device_warning_checkbox);
-
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setView(checkBoxView);
-            builder.setTitle(getString(R.string.unsupported_device_warning_title));
-            builder.setMessage(getString(R.string.unsupported_device_warning_message));
-
-            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    SettingsManager settingsManager = new SettingsManager(getApplicationContext());
-                    settingsManager.saveBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS, checkBox.isChecked());
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
-        }
+    public void onCmInstallationGuideButtonClick(View view) {
+        new GetServerStatus(this.applicationData, new Callback() {
+            @Override
+            public void onActionPerformed(Object... result) {
+                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse((String)result[0]));
+                startActivity(i);
+            }
+        }).execute();
     }
 
 
@@ -303,10 +299,17 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
          */
         public static Fragment newInstance(int sectionNumber, ApplicationData applicationData) {
             if (sectionNumber == 1) {
-                if (applicationData.SYSTEM_TYPE == SystemVersionProperties.SystemType.CM) {
-                    return new CMUpdateInformationFragment();
-                } else {
-                    return new COSUpdateInformationFragment();
+                switch(applicationData.SYSTEM_TYPE) {
+                    case COS:
+                        return new COSUpdateInformationFragment();
+                    case OFFICIAL_CM:
+                        return new CMUpdateInformationFragment();
+                    case UNOFFICIAL_CM:
+                        return new UnofficialCMVersionErrorFragment();
+                    case UNKNOWN:
+                        return new UnknownCMVersionErrorFragment();
+                    default:
+                        return new UnknownCMVersionErrorFragment();
                 }
             }
             if (sectionNumber == 2) {
@@ -342,6 +345,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      */
     private void registerInBackground() {
         Intent intent = new Intent(this,GcmRegistrationIntentService.class);
+        intent.putExtra(IS_COS_KEY, this.applicationData.SYSTEM_TYPE == SystemVersionProperties.SystemType.COS);
         startService(intent);
     }
 

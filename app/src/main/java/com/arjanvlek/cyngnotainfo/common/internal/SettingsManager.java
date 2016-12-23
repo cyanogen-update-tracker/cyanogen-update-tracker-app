@@ -217,8 +217,8 @@ public class SettingsManager {
      * Checks if a device and update method have been set.
      * @return if the application is set up properly.
      */
-    public boolean checkIfDeviceIsSet() {
-        return containsPreference(PROPERTY_DEVICE) && containsPreference(PROPERTY_UPDATE_METHOD);
+    public boolean checkIfDeviceIsSet(SystemVersionProperties.SystemType systemType) {
+        return systemType != SystemVersionProperties.SystemType.COS || (containsPreference(PROPERTY_DEVICE) && containsPreference(PROPERTY_UPDATE_METHOD));
     }
 
 

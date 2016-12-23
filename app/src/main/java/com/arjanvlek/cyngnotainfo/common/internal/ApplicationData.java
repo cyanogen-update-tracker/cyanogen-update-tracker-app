@@ -22,6 +22,7 @@ public class ApplicationData extends Application {
 
     public static final String APP_USER_AGENT = "Cyanogen_update_tracker_" + BuildConfig.VERSION_NAME;
     public static final String PACKAGE_REPLACED_KEY = "package_upgrade";
+    public static final String IS_COS_KEY = "is_cos";
     public static final String LOCALE_DUTCH = "Nederlands";
     public static final int NUMBER_OF_INSTALL_GUIDE_PAGES = 5;
 

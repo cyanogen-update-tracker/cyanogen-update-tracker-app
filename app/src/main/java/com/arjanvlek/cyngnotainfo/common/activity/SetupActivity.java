@@ -19,14 +19,12 @@ import com.arjanvlek.cyngnotainfo.common.internal.ApplicationData;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
-import com.arjanvlek.cyngnotainfo.common.internal.SupportedDeviceCallback;
-import com.arjanvlek.cyngnotainfo.common.internal.SupportedDeviceManager;
 import com.arjanvlek.cyngnotainfo.cos.fragment.SetupStep3Fragment;
 import com.arjanvlek.cyngnotainfo.cos.fragment.SetupStep4Fragment;
 
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
 
-public class SetupActivity extends AppCompatActivity implements SupportedDeviceCallback {
+public class SetupActivity extends AppCompatActivity {
 
     private Fragment step3Fragment;
     private Fragment step4Fragment;
@@ -45,11 +43,6 @@ public class SetupActivity extends AppCompatActivity implements SupportedDeviceC
         setContentView(R.layout.activity_setup);
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-        }
-
-        if(!settingsManager.getBooleanPreference(SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && networkConnectionManager.checkNetworkConnection()) {
-            SupportedDeviceManager supportedDeviceManager = new SupportedDeviceManager(this, ((ApplicationData)getApplication()));
-            supportedDeviceManager.execute();
         }
 
         // Create the adapter that will return a fragment for each of the three
@@ -87,24 +80,6 @@ public class SetupActivity extends AppCompatActivity implements SupportedDeviceC
             }
         });
 
-    }
-
-    @Override
-    public void displayUnsupportedMessage(boolean deviceIsSupported) {
-
-        if(!settingsManager.getBooleanPreference(PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS) && !deviceIsSupported) {
-            AlertDialog.Builder builder = new AlertDialog.Builder(SetupActivity.this);
-            builder.setTitle(getString(R.string.unsupported_device_warning_title));
-            builder.setMessage(getString(R.string.unsupported_device_warning_message));
-
-            builder.setPositiveButton(getString(R.string.download_error_close), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    dialog.dismiss();
-                }
-            });
-            builder.show();
-        }
     }
 
     /**
@@ -183,7 +158,7 @@ public class SetupActivity extends AppCompatActivity implements SupportedDeviceC
     }
 
     public void closeInitialTutorial(View view) {
-        if (settingsManager.checkIfDeviceIsSet()) {
+        if (settingsManager.checkIfDeviceIsSet(((ApplicationData)getApplication()).SYSTEM_TYPE)) {
             settingsManager.saveBooleanPreference(SettingsManager.PROPERTY_SETUP_DONE, true);
             NavUtils.navigateUpFromSameTask(this);
         } else {

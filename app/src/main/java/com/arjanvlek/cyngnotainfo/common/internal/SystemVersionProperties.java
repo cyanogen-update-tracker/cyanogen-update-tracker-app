@@ -11,10 +11,35 @@ import java.io.InputStreamReader;
 public class SystemVersionProperties {
 
     public enum SystemType {
-        COS, CM, UNKNOWN;
+        COS, OFFICIAL_CM, UNOFFICIAL_CM, UNKNOWN;
 
-        static SystemType of(String rawType) {
-            return rawType.equals("RELEASE") ? COS : (rawType.equals("NIGHTLY") || rawType.equals("SNAPSHOT") || rawType.equals("MILESTONE") || rawType.equals("EXPERIMENTAL")) ? CM : UNKNOWN;
+        private static final String TYPE_RELEASE = "RELEASE";
+        private static final String TYPE_NIGHTLY = "NIGHTLY";
+        private static final String TYPE_SNAPSHOT = "SNAPSHOT";
+        private static final String TYPE_MILESTONE = "MILESTONE";
+        private static final String TYPE_EXPERIMENTAL = "EXPERIMENTAL";
+        private static final String TYPE_UNOFFICIAL = "UNOFFICIAL";
+        private static final String OPPO_N1 = "n1";
+
+        static SystemType of(final String rawType, final String cyanogenDeviceCodename) {
+            if (rawType == null || rawType.isEmpty()) return UNKNOWN;
+            final String type = rawType.toUpperCase();
+            return isCos(type, cyanogenDeviceCodename) ? COS : isOfficialCm(type) ? OFFICIAL_CM : isUnofficialCm(type) ? UNOFFICIAL_CM : UNKNOWN;
+        }
+
+        static boolean isCos(final String systemType, final String cyanogenDeviceCodename) {
+            // Cyanogen OS uses the RELEASE type, from CM11S onwards. The only exception is the Oppo N1 CyanogenMod edition, which had CyanogenOS based on CM10.2
+            return (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT || (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR2 && cyanogenDeviceCodename.equalsIgnoreCase(OPPO_N1))) && systemType.equalsIgnoreCase(TYPE_RELEASE);
+        }
+
+        static boolean isOfficialCm (final String systemType) {
+            // Until CM11, the Release type was used for stable CM builds. From CM11 onwards, the RELEASE type is only used for COS - and SNAPSHOT is used to mark a release as stable.
+            return ((Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2 && systemType.equals(TYPE_RELEASE)) || systemType.equals(TYPE_NIGHTLY) || systemType.equals(TYPE_SNAPSHOT) || systemType.equals(TYPE_MILESTONE) || systemType.equals(TYPE_EXPERIMENTAL));
+        }
+
+        static boolean isUnofficialCm (final String systemType) {
+            // Unofficial CM builds are unsupported in this app. Users running such versions must get a warning that their device is not supported
+            return systemType.equals(TYPE_UNOFFICIAL);
         }
     }
 
@@ -22,16 +47,16 @@ public class SystemVersionProperties {
 
     private final String cyanogenDeviceName; // Ro.cm.device in Build.prop
     private final String cyanogenVersion; // ro.cm.display.version
-    private final String securityPatchDate; // ro.build.version.security_patch (is here only for lollipop users, because the Android SDK says it requires Marshmallow or higher).
+    private final String securityPatchDate; // ro.build.version.security_patch (is here for lollipop users, because the Android SDK includes it on Marshmallow and higher only).
 
     public static final String NOT_SET = "not_set";
 
 
     SystemVersionProperties() {
-        SystemType systemType = SystemType.UNKNOWN;
+        final SystemType systemType;
         String cyanogenOSVersion = NOT_SET;
         String cyanogenDeviceCodeName = NOT_SET;
-        String systemTypeRaw;
+        String systemTypeRaw = NOT_SET;
         String securityPatchDate = NOT_SET;
 
 
@@ -61,7 +86,6 @@ public class SystemVersionProperties {
                     systemTypeRaw = inputLine.replace("[ro.cm.releasetype]: ", "");
                     systemTypeRaw = systemTypeRaw.replace("[", "");
                     systemTypeRaw = systemTypeRaw.replace("]", "");
-                    systemType = SystemType.of(systemTypeRaw);
                 }
 
                 if (securityPatchDate.equals(NOT_SET)) {
@@ -81,6 +105,8 @@ public class SystemVersionProperties {
         } catch (IOException e) {
             Log.e("IOException buildProp", e.getLocalizedMessage());
         }
+        systemType = SystemType.of(systemTypeRaw, cyanogenDeviceCodeName);
+
         this.cyanogenDeviceName = cyanogenDeviceCodeName;
         this.cyanogenVersion = cyanogenOSVersion;
         this.securityPatchDate = securityPatchDate;

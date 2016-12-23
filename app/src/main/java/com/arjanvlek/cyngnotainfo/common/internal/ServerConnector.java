@@ -1,10 +1,10 @@
 package com.arjanvlek.cyngnotainfo.common.internal;
 
+import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.cos.model.Device;
 import com.arjanvlek.cyngnotainfo.cos.model.InstallGuideData;
 import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
-import com.arjanvlek.cyngnotainfo.common.model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.common.model.UpdateMethod;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -52,8 +52,8 @@ public class ServerConnector {
         return findMultipleFromServerResponse(fetchDataFromServer(UPDATE_METHODS, 20, deviceId.toString()), UpdateMethod.class);
     }
 
-    public ServerStatus getServerStatus() {
-        return findOneFromServerResponse(fetchDataFromServer(SERVER_STATUS, 10), ServerStatus.class);
+    public ServerParameters getServerParameters() {
+        return findOneFromServerResponse(fetchDataFromServer(SERVER_STATUS, 10), ServerParameters.class);
     }
 
     public List<ServerMessage> getServerMessages(Long deviceId, Long updateMethodId) {

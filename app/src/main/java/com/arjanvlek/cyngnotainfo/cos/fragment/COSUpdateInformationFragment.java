@@ -29,10 +29,11 @@ import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.common.internal.ApplicationData;
 import com.arjanvlek.cyngnotainfo.BuildConfig;
+import com.arjanvlek.cyngnotainfo.common.internal.asynctask.GetServerStatus;
+import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.common.model.DownloadProgressData;
 import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
-import com.arjanvlek.cyngnotainfo.common.model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.common.internal.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.Callback;
@@ -76,8 +77,8 @@ import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
 import static android.widget.RelativeLayout.ABOVE;
 import static android.widget.RelativeLayout.BELOW;
 import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.LOCALE_DUTCH;
-import static com.arjanvlek.cyngnotainfo.common.model.ServerStatus.Status.OK;
-import static com.arjanvlek.cyngnotainfo.common.model.ServerStatus.Status.UNREACHABLE;
+import static com.arjanvlek.cyngnotainfo.common.model.ServerParameters.Status.OK;
+import static com.arjanvlek.cyngnotainfo.common.model.ServerParameters.Status.UNREACHABLE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DEVICE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DOWNLOAD_ID;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_OFFLINE_FILE_NAME;
@@ -275,7 +276,12 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
     private void getServerData() {
         this.inAppMessageBarData = new HashMap<>();
         new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        new GetServerStatus(getApplicationData(), new Callback() {
+            @Override
+            public void onActionPerformed(Object... result) {
+                displayServerStatus((ServerParameters)result[0]);
+            }
+        }).executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         if(settingsManager.showNewsMessages()) {
             new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         }
@@ -319,23 +325,23 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
 
     /**
      * Displays the status of the server (warning, error, maintenance or invalid app version)
-     * @param serverStatus Server status data from the backend
+     * @param serverParameters Server status data from the backend
      */
-    public void displayServerStatus(ServerStatus serverStatus) {
+    public void displayServerStatus(ServerParameters serverParameters) {
 
         List<Object> serverErrorBars = new ArrayList<>(1);
         List<Object> appUpdateBars = new ArrayList<>(1);
 
-        if(serverStatus != null && isAdded() && serverStatus.getStatus() != OK) {
-            serverErrorBars.add(serverStatus);
+        if(serverParameters != null && isAdded() && serverParameters.getStatus() != OK) {
+            serverErrorBars.add(serverParameters);
         }
 
-        if(serverStatus != null && settingsManager.showAppUpdateMessages() && !checkIfAppIsUpToDate(serverStatus.getLatestAppVersion())) {
-            appUpdateBars.add(serverStatus);
+        if(serverParameters != null && settingsManager.showAppUpdateMessages() && !checkIfAppIsUpToDate(serverParameters.getLatestAppVersion())) {
+            appUpdateBars.add(serverParameters);
         }
 
-        if(serverStatus == null) {
-            ServerStatus status = new ServerStatus();
+        if(serverParameters == null) {
+            ServerParameters status = new ServerParameters();
             status.setLatestAppVersion(BuildConfig.VERSION_NAME);
             status.setStatus(UNREACHABLE);
             serverErrorBars.add(status);
@@ -395,7 +401,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
 
         // Display server error bars / messages
         for(Object serverStatusObject : inAppMessageBarData.get(KEY_SERVER_ERROR_BARS)) {
-            ServerStatus serverStatus = (ServerStatus)serverStatusObject;
+            ServerParameters serverParameters = (ServerParameters)serverStatusObject;
 
             // Create a new server message view and get its contents
             ServerMessageBar serverStatusView = new ServerMessageBar(getApplicationData(), null);
@@ -407,7 +413,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
                 serverStatusWarningTextView.setVisibility(VISIBLE);
             }
 
-            switch (serverStatus.getStatus()) {
+            switch (serverParameters.getStatus()) {
                 case WARNING:
                     if (settingsManager.showNewsMessages()) {
                         serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_orange_light));
@@ -439,7 +445,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
 
         // Display app update message if available
         for(Object serverStatusObject : inAppMessageBarData.get(KEY_APP_UPDATE_BARS)) {
-            ServerStatus serverStatus = (ServerStatus)serverStatusObject;
+            ServerParameters serverParameters = (ServerParameters)serverStatusObject;
             if (isAdded()) {
                 // getActivity() is required here. Otherwise, clicking on the update message link will crash the application.
                 ServerMessageBar appUpdateMessageView = new ServerMessageBar(getActivity(), null);
@@ -448,7 +454,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
 
                 appUpdateMessageBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_green_light));
 
-                appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
+                appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverParameters.getLatestAppVersion())));
                 appUpdateMessageTextView.setMovementMethod(LinkMovementMethod.getInstance());
                 numberOfBars = addMessageBar(appUpdateMessageView, numberOfBars);
             }

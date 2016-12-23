@@ -10,9 +10,9 @@ import android.support.v4.app.DialogFragment;
 import android.widget.RelativeLayout;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
+import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
 import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
-import com.arjanvlek.cyngnotainfo.common.model.ServerStatus;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
@@ -42,7 +42,7 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
         networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
     }
 
-    protected abstract void displayServerStatus(ServerStatus serverStatus);
+    protected abstract void displayServerStatus(ServerParameters serverParameters);
 
     protected abstract void displayServerMessages(List<ServerMessage> serverMessages);
 
@@ -53,19 +53,6 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
     protected abstract void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate);
 
     protected abstract CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate();
-
-    public class GetServerStatus extends AsyncTask<Void, Void, ServerStatus> {
-
-        @Override
-        protected ServerStatus doInBackground(Void... arg0) {
-            return getApplicationData().getServerConnector().getServerStatus();
-        }
-
-        @Override
-        protected void onPostExecute(ServerStatus serverStatus) {
-            displayServerStatus(serverStatus);
-        }
-    }
 
     public class GetServerMessages extends  AsyncTask<Void, Void, List<ServerMessage>> {
 

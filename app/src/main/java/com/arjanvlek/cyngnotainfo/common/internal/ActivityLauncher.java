@@ -63,8 +63,8 @@ public class ActivityLauncher {
     }
 
     private <T> void startActivity(Class<T> activityClass) {
-        Intent i = new Intent(baseActivity, activityClass);
-        baseActivity.startActivity(i);
+        Intent i = new Intent(this.baseActivity, activityClass);
+        this.baseActivity.startActivity(i);
     }
 
 

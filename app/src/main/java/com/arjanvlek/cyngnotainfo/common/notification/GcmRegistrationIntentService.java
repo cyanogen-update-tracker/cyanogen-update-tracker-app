@@ -29,6 +29,7 @@ import java.net.URL;
 import java.util.Locale;
 
 import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.APP_USER_AGENT;
+import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.IS_COS_KEY;
 import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.LOCALE_DUTCH;
 import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.PACKAGE_REPLACED_KEY;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DEVICE;
@@ -82,8 +83,14 @@ public class GcmRegistrationIntentService extends IntentService {
         if(checkIfMigrationIsNeeded()) {
             migrateApp();
         }
-        deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
-        updateMethodId = settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID);
+        boolean isCOS = intent.getExtras().getBoolean(IS_COS_KEY);
+        if(isCOS) {
+            deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
+            updateMethodId = settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID);
+        } else {
+            deviceId = -10000; // -10000 is a non-enabled device. CM users can only receive notifications from the server for general messages.
+            updateMethodId = -10000;
+        }
 
         try {
             // In the (unlikely) event that multiple refresh operations occur simultaneously,

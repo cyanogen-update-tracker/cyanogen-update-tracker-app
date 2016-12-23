@@ -38,9 +38,10 @@ import com.arjanvlek.cyngnotainfo.common.internal.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.common.internal.UpdateDescriptionParser;
 import com.arjanvlek.cyngnotainfo.common.internal.UpdateDownloadListener;
 import com.arjanvlek.cyngnotainfo.common.internal.UpdateDownloader;
+import com.arjanvlek.cyngnotainfo.common.internal.asynctask.GetServerStatus;
 import com.arjanvlek.cyngnotainfo.common.model.DownloadProgressData;
 import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
-import com.arjanvlek.cyngnotainfo.common.model.ServerStatus;
+import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.common.view.MessageDialog;
 import com.arjanvlek.cyngnotainfo.common.view.ServerMessageBar;
 import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
@@ -86,8 +87,8 @@ import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERT
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_OFFLINE_UPDATE_NAME;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_UPDATE_CHECKED_DATE;
 import static com.arjanvlek.cyngnotainfo.common.internal.UpdateDownloader.NOT_SET;
-import static com.arjanvlek.cyngnotainfo.common.model.ServerStatus.Status.OK;
-import static com.arjanvlek.cyngnotainfo.common.model.ServerStatus.Status.UNREACHABLE;
+import static com.arjanvlek.cyngnotainfo.common.model.ServerParameters.Status.OK;
+import static com.arjanvlek.cyngnotainfo.common.model.ServerParameters.Status.UNREACHABLE;
 
 public class CMUpdateInformationFragment extends AbstractUpdateInformationFragment {
 
@@ -280,7 +281,12 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
     private void getServerData() {
         this.inAppMessageBarData = new HashMap<>();
         new GetUpdateInformation().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
-        new GetServerStatus().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
+        new GetServerStatus(getApplicationData(), new Callback() {
+            @Override
+            public void onActionPerformed(Object... result) {
+                displayServerStatus((ServerParameters)result[0]);
+            }
+        }).executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         if(settingsManager.showNewsMessages()) {
             new GetServerMessages().executeOnExecutor(AsyncTask.SERIAL_EXECUTOR);
         }
@@ -324,23 +330,23 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
     /**
      * Displays the status of the server (warning, error, maintenance or invalid app version)
-     * @param serverStatus Server status data from the backend
+     * @param serverParameters Server status data from the backend
      */
-    public void displayServerStatus(ServerStatus serverStatus) {
+    public void displayServerStatus(ServerParameters serverParameters) {
 
         List<Object> serverErrorBars = new ArrayList<>(1);
         List<Object> appUpdateBars = new ArrayList<>(1);
 
-        if(serverStatus != null && isAdded() && serverStatus.getStatus() != OK) {
-            serverErrorBars.add(serverStatus);
+        if(serverParameters != null && isAdded() && serverParameters.getStatus() != OK) {
+            serverErrorBars.add(serverParameters);
         }
 
-        if(serverStatus != null && settingsManager.showAppUpdateMessages() && !checkIfAppIsUpToDate(serverStatus.getLatestAppVersion())) {
-            appUpdateBars.add(serverStatus);
+        if(serverParameters != null && settingsManager.showAppUpdateMessages() && !checkIfAppIsUpToDate(serverParameters.getLatestAppVersion())) {
+            appUpdateBars.add(serverParameters);
         }
 
-        if(serverStatus == null) {
-            ServerStatus status = new ServerStatus();
+        if(serverParameters == null) {
+            ServerParameters status = new ServerParameters();
             status.setLatestAppVersion(BuildConfig.VERSION_NAME);
             status.setStatus(UNREACHABLE);
             serverErrorBars.add(status);
@@ -400,7 +406,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
         // Display server error bars / messages
         for(Object serverStatusObject : inAppMessageBarData.get(KEY_SERVER_ERROR_BARS)) {
-            ServerStatus serverStatus = (ServerStatus)serverStatusObject;
+            ServerParameters serverParameters = (ServerParameters)serverStatusObject;
 
             // Create a new server message view and get its contents
             ServerMessageBar serverStatusView = new ServerMessageBar(getApplicationData(), null);
@@ -412,7 +418,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 serverStatusWarningTextView.setVisibility(VISIBLE);
             }
 
-            switch (serverStatus.getStatus()) {
+            switch (serverParameters.getStatus()) {
                 case WARNING:
                     if (settingsManager.showNewsMessages()) {
                         serverStatusWarningBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_orange_light));
@@ -444,7 +450,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
         // Display app update message if available
         for(Object serverStatusObject : inAppMessageBarData.get(KEY_APP_UPDATE_BARS)) {
-            ServerStatus serverStatus = (ServerStatus)serverStatusObject;
+            ServerParameters serverParameters = (ServerParameters)serverStatusObject;
             if (isAdded()) {
                 // getActivity() is required here. Otherwise, clicking on the update message link will crash the application.
                 ServerMessageBar appUpdateMessageView = new ServerMessageBar(getActivity(), null);
@@ -453,7 +459,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
                 appUpdateMessageBar.setBackgroundColor(ContextCompat.getColor(context, R.color.holo_green_light));
 
-                appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverStatus.getLatestAppVersion())));
+                appUpdateMessageTextView.setText(Html.fromHtml(String.format(getString(R.string.new_app_version), serverParameters.getLatestAppVersion())));
                 appUpdateMessageTextView.setMovementMethod(LinkMovementMethod.getInstance());
                 numberOfBars = addMessageBar(appUpdateMessageView, numberOfBars);
             }

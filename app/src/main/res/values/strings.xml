@@ -208,6 +208,15 @@
 
     <string name="error_unable_to_rate_app">You can\'t rate the app, because the Google Play Store is missing on your device.</string>
 
+    <string name="error_unofficial_cm_header">Unofficial CyanogenMod version</string>
+    <string name="error_unofficial_cm_text">An unofficial version of CyanogenMod was found on your device.\nThis app only supports devices running official versions of CyanogenMod.\n\nIf you\'d like to install an official CyanogenMod version on your device, tap the button below to navigate to the CyanogenMod download page.\n\nNOTE: Not all devices are supported by CyanogenMod. Some devices only have unofficial CyanogenMod versions available. These devices are not supported in this app.</string>
+    <string name="error_unofficial_cm_button_text">CyanogenMod Download Page</string>
+
+    <string name="error_no_cm_header">CyanogenMod is not installed</string>
+    <string name="error_no_cm_text">Your device has currently no CyanogenMod or Cyanogen OS ROM installed.\nThis app supports devices running CyanogenMod 10.1 or newer, and Cyanogen OS devices.\n\nIf you\'d like to install CyanogenMod on your device, tap the button below to view the installation instructions.</string>
+    <string name="error_no_cm_button_text">CyanogenMod Installation Guide</string>
+
+
     <!-- Message box strings -->
     <string name="delete_message_title">Update already downloaded</string>
     <string name="delete_message_contents">You have already downloaded this update, but not yet installed it. Tap on \"Close\" to close this message, then tap on \"Install Guide\" to view how to install this update. Tap on \"Delete\" to permanently delete the file.</string>
