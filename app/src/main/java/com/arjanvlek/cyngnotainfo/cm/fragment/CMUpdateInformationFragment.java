@@ -44,7 +44,7 @@ import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.common.view.MessageDialog;
 import com.arjanvlek.cyngnotainfo.common.view.ServerMessageBar;
-import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
+import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOSUpdateData;
 import com.google.android.gms.ads.AdRequest;
 import com.google.android.gms.ads.AdView;
 
@@ -214,13 +214,14 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 });
 
                 // Todo this part is custom for CM!!!
-                Button installGuideButton = (Button) updateInformationRefreshLayout.findViewById(R.id.updateInstallButton);
-                installGuideButton.setOnClickListener(new View.OnClickListener() {
+                Button installUpdateButton = (Button) updateInformationRefreshLayout.findViewById(R.id.updateInstallButton);
+                installUpdateButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         try {
                             Process p = Runtime.getRuntime().exec("su");
                         } catch (IOException e) {
+                            Toast.makeText(getContext(), "Root test failed", Toast.LENGTH_LONG).show();
                             e.printStackTrace();
                         }
                     }
@@ -250,8 +251,8 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
     /**
      * Checks if there is a network connection. If that's the case, start the connections to the backend
-     * If not, build an offline {@link CyanogenOTAUpdate} and display it without trying to reach the server at all
-     * If an offline {@link CyanogenOTAUpdate} is not available, display a "No network connection error message".
+     * If not, build an offline {@link CyanogenOSUpdateData} and display it without trying to reach the server at all
+     * If an offline {@link CyanogenOSUpdateData} is not available, display a "No network connection error message".
      */
     private void initData() {
         if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
@@ -262,8 +263,8 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 isFetched = true;
             } else if (settingsManager.checkIfCacheIsAvailable()) {
                 getServerData();
-                cyanogenOTAUpdate = buildOfflineCyanogenOTAUpdate();
-                displayUpdateInformation(cyanogenOTAUpdate, false, false);
+                cyanogenOSUpdateData = buildOfflineCyanogenOTAUpdate();
+                displayUpdateInformation(cyanogenOSUpdateData, false, false);
                 initDownloadManager();
                 hideAds();
                 refreshedDate = DateTime.now();
@@ -535,13 +536,13 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
     }
 
     /**
-     * Displays the update information from a {@link CyanogenOTAUpdate} with update information.
-     * @param cyanogenOTAUpdate Update information to display
+     * Displays the update information from a {@link CyanogenOSUpdateData} with update information.
+     * @param cyanogenOSUpdateData Update information to display
      * @param online Whether or not the device has an active network connection
      * @param displayInfoWhenUpToDate Flag set to show update information anyway, even if the system is up to date.
      */
     @Override
-    public void displayUpdateInformation(final CyanogenOTAUpdate cyanogenOTAUpdate, final boolean online, boolean displayInfoWhenUpToDate) {
+    public void displayUpdateInformation(final CyanogenOSUpdateData cyanogenOSUpdateData, final boolean online, boolean displayInfoWhenUpToDate) {
         // Abort if no update data is found or if the fragment is not attached to its activity to prevent crashes.
         if(!isAdded() || rootView == null) {
             return;
@@ -552,27 +553,27 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
             loadingScreen.setVisibility(GONE);
         }
 
-        if(cyanogenOTAUpdate == null) {
+        if(cyanogenOSUpdateData == null) {
             return;
         }
 
-        if(!cyanogenOTAUpdate.isSystemIsUpToDateCheck()) {
-            cyanogenOTAUpdate.setSystemIsUpToDate(isSystemUpToDateStringCheck(cyanogenOTAUpdate));
+        if(!cyanogenOSUpdateData.isSystemIsUpToDateCheck()) {
+            cyanogenOSUpdateData.setSystemIsUpToDate(isSystemUpToDateStringCheck(cyanogenOSUpdateData));
         }
 
-        if(((cyanogenOTAUpdate.isSystemIsUpToDate(settingsManager)) && !displayInfoWhenUpToDate) || !cyanogenOTAUpdate.isUpdateInformationAvailable()) {
-            displayUpdateInformationWhenUpToDate(cyanogenOTAUpdate, online);
+        if(((cyanogenOSUpdateData.isSystemIsUpToDate(settingsManager)) && !displayInfoWhenUpToDate) || !cyanogenOSUpdateData.isUpdateInformationAvailable()) {
+            displayUpdateInformationWhenUpToDate(cyanogenOSUpdateData, online);
         } else {
-            displayUpdateInformationWhenNotUpToDate(cyanogenOTAUpdate, online, displayInfoWhenUpToDate);
+            displayUpdateInformationWhenNotUpToDate(cyanogenOSUpdateData, online, displayInfoWhenUpToDate);
         }
 
         if(online) {
             // Save update data for offline viewing
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOTAUpdate.getName());
-            settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOTAUpdate.getSize());
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOTAUpdate.getDescription());
-            settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOTAUpdate.getFileName());
-            settingsManager.saveBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE, cyanogenOTAUpdate.isUpdateInformationAvailable());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOSUpdateData.getName());
+            settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOSUpdateData.getSize());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOSUpdateData.getDescription());
+            settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOSUpdateData.getFileName());
+            settingsManager.saveBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE, cyanogenOSUpdateData.isUpdateInformationAvailable());
             settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
         }
 
@@ -580,7 +581,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
         hideRefreshIcons();
     }
 
-    private void displayUpdateInformationWhenUpToDate(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online) {
+    private void displayUpdateInformationWhenUpToDate(final CyanogenOSUpdateData cyanogenOSUpdateData, boolean online) {
         // Show "System is up to date" view.
         rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(GONE);
         rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(VISIBLE);
@@ -597,7 +598,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
         // Set "No Update Information Is Available" button if needed.
         Button updateInformationButton = (Button) rootView.findViewById(R.id.updateInformationSystemIsUpToDateStatisticsButton);
-        if(!cyanogenOTAUpdate.isUpdateInformationAvailable()) {
+        if(!cyanogenOSUpdateData.isUpdateInformationAvailable()) {
             updateInformationButton.setText(getString(R.string.update_information_no_update_data_available));
             updateInformationButton.setClickable(false);
         } else {
@@ -606,7 +607,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
             updateInformationButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    displayUpdateInformation(cyanogenOTAUpdate, true, true);
+                    displayUpdateInformation(cyanogenOSUpdateData, true, true);
                 }
             });
         }
@@ -623,37 +624,37 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
     }
 
-    private void displayUpdateInformationWhenNotUpToDate(final CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean displayInfoWhenUpToDate) {
+    private void displayUpdateInformationWhenNotUpToDate(final CyanogenOSUpdateData cyanogenOSUpdateData, boolean online, boolean displayInfoWhenUpToDate) {
         // Show "System update available" view.
         rootView.findViewById(R.id.updateInformationRefreshLayout).setVisibility(VISIBLE);
         rootView.findViewById(R.id.updateInformationSystemIsUpToDateRefreshLayout).setVisibility(GONE);
 
         // Display available update version number.
         TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
-        if (cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null")) {
-            buildNumberView.setText(cyanogenOTAUpdate.getName());
+        if (cyanogenOSUpdateData.getName() != null && !cyanogenOSUpdateData.getName().equals("null")) {
+            buildNumberView.setText(cyanogenOSUpdateData.getName());
         } else {
             buildNumberView.setText(String.format(getString(R.string.update_information_unknown_update_name), deviceName));
         }
 
         // Display download size.
         TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
-        downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), cyanogenOTAUpdate.getSize()));
+        downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), cyanogenOSUpdateData.getSize()));
 
         // Display update description.
-        String description = cyanogenOTAUpdate.getDescription();
+        String description = cyanogenOSUpdateData.getDescription();
         TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
         descriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? UpdateDescriptionParser.parse(description) : getString(R.string.update_information_description_not_available));
 
         // Display update file name.
         TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
-        fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOTAUpdate.getFileName()));
+        fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOSUpdateData.getFileName()));
 
         final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
 
         // Activate download button, or make it gray when the device is offline or if the update is not downloadable.
-        if (online && cyanogenOTAUpdate.getDownloadUrl() != null) {
+        if (online && cyanogenOSUpdateData.getDownloadUrl() != null) {
             downloadButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -683,7 +684,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
             downloadSizeImage.setVisibility(GONE);
             downloadSizeView.setVisibility(GONE);
         } else {
-            if(cyanogenOTAUpdate.isSystemIsUpToDateCheck()) {
+            if(cyanogenOSUpdateData.isSystemIsUpToDateCheck()) {
                 headerLabel.setText(getString(R.string.update_information_installed_update));
             } else {
                 headerLabel.setText(getString(R.string.update_information_latest_available_update));
@@ -698,33 +699,33 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
     }
 
     /**
-     * Builds a {@link CyanogenOTAUpdate} class based on the data that was stored when the device was online.
-     * @return CyanogenOTAUpdate with data from the latest succesful fetch.
+     * Builds a {@link CyanogenOSUpdateData} class based on the data that was stored when the device was online.
+     * @return CyanogenOSUpdateData with data from the latest succesful fetch.
      */
     @Override
-    protected CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate() {
-        CyanogenOTAUpdate cyanogenOTAUpdate = new CyanogenOTAUpdate();
-        cyanogenOTAUpdate.setName(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
-        cyanogenOTAUpdate.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
-        cyanogenOTAUpdate.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
-        cyanogenOTAUpdate.setUpdateInformationAvailable(settingsManager.getBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE));
-        cyanogenOTAUpdate.setFileName(settingsManager.getPreference(PROPERTY_OFFLINE_FILE_NAME));
-        return cyanogenOTAUpdate;
+    protected CyanogenOSUpdateData buildOfflineCyanogenOTAUpdate() {
+        CyanogenOSUpdateData cyanogenOSUpdateData = new CyanogenOSUpdateData();
+        cyanogenOSUpdateData.setName(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
+        cyanogenOSUpdateData.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
+        cyanogenOSUpdateData.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
+        cyanogenOSUpdateData.setUpdateInformationAvailable(settingsManager.getBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE));
+        cyanogenOSUpdateData.setFileName(settingsManager.getPreference(PROPERTY_OFFLINE_FILE_NAME));
+        return cyanogenOSUpdateData;
     }
 
     /**
      * Additional check if system is up to date by comparing version Strings.
      * This is needed to show the "System is up to date" message for full updates as incremental (parent) versions are not checked there.
-     * @param cyanogenOTAUpdate CyanogenOTAUpdate that needs to be checked against the current version.
+     * @param cyanogenOSUpdateData CyanogenOSUpdateData that needs to be checked against the current version.
      * @return True if the system is up to date, false if not.
      */
-    private boolean isSystemUpToDateStringCheck(CyanogenOTAUpdate cyanogenOTAUpdate) {
+    private boolean isSystemUpToDateStringCheck(CyanogenOSUpdateData cyanogenOSUpdateData) {
         if(settingsManager.showIfSystemIsUpToDate()) {
             // This grabs Cyanogen OS version from build.prop. As there is no direct SDK way to do this, it has to be done in this way.
             ApplicationData applicationData = ((ApplicationData)getActivity().getApplication());
 
             String cyanogenOSVersion = applicationData.CYANOGEN_VERSION;
-            String newCyanogenOSVersion = cyanogenOTAUpdate.getName();
+            String newCyanogenOSVersion = cyanogenOSUpdateData.getName();
 
             if(newCyanogenOSVersion == null || newCyanogenOSVersion.isEmpty()) {
                 return false;
@@ -975,8 +976,8 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                                             break;
                                         case ERROR_CANNOT_RESUME:
                                             updateDownloader.cancelDownload();
-                                            if (networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null) {
-                                                updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                                            if (networkConnectionManager.checkNetworkConnection() && cyanogenOSUpdateData != null && cyanogenOSUpdateData.getDownloadUrl() != null) {
+                                                updateDownloader.downloadUpdate(cyanogenOSUpdateData);
                                             }
                                             break;
                                         case ERROR_FILE_ALREADY_EXISTS:
@@ -1008,7 +1009,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                         public void onVerifyError() {
                             if(isAdded()) {
                                 showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
-                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
                                 try {
                                     //noinspection ResultOfMethodCallIgnored
                                     file.delete();
@@ -1029,7 +1030,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                             }
                         }
                     });
-            updateDownloader.checkDownloadProgress(cyanogenOTAUpdate);
+            updateDownloader.checkDownloadProgress(cyanogenOSUpdateData);
         }
     }
 
@@ -1057,7 +1058,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                     @Override
                     public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
                         updateDownloader.cancelDownload();
-                        updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                        updateDownloader.downloadUpdate(cyanogenOSUpdateData);
                     }
                 });
         errorDialog.setTargetFragment(this, 0);
@@ -1086,9 +1087,9 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 }
             });
         } else {
-            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenOTAUpdate != null && cyanogenOTAUpdate.getDownloadUrl() != null && isAdded()) {
+            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenOSUpdateData != null && cyanogenOSUpdateData.getDownloadUrl() != null && isAdded()) {
                 if(updateDownloader != null) {
-                    updateDownloader.checkDownloadProgress(cyanogenOTAUpdate);
+                    updateDownloader.checkDownloadProgress(cyanogenOSUpdateData);
                 } else {
                     initDownloadManager();
                 }
@@ -1102,7 +1103,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
 
                 if(fileMayBeDeleted) {
-                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
                     //noinspection ResultOfMethodCallIgnored
                     file.delete();
                 }
@@ -1124,7 +1125,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
         if(mainActivity != null) {
             if(mainActivity.hasDownloadPermissions()) {
                 if(updateDownloader != null) {
-                    updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                    updateDownloader.downloadUpdate(cyanogenOSUpdateData);
                     downloadButton.setText(getString(R.string.downloading));
                     downloadButton.setClickable(false);
                 }
@@ -1132,8 +1133,8 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 Callback callback = new Callback() {
                     @Override
                     public void onActionPerformed(Object... result) {
-                        if((int)result[0] == PackageManager.PERMISSION_GRANTED && updateDownloader != null && cyanogenOTAUpdate != null) {
-                            updateDownloader.downloadUpdate(cyanogenOTAUpdate);
+                        if((int)result[0] == PackageManager.PERMISSION_GRANTED && updateDownloader != null && cyanogenOSUpdateData != null) {
+                            updateDownloader.downloadUpdate(cyanogenOSUpdateData);
                         }
                     }
                 };
@@ -1160,12 +1161,12 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
                     @Override
                     public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
-                        if(cyanogenOTAUpdate != null) {
-                            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+                        if(cyanogenOSUpdateData != null) {
+                            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
                             if(file.exists()) {
                                 if(file.delete()) {
                                     getDownloadButton().setText(getString(R.string.download));
-                                    checkIfUpdateIsAlreadyDownloaded(cyanogenOTAUpdate);
+                                    checkIfUpdateIsAlreadyDownloaded(cyanogenOSUpdateData);
                                 }
                             }
                         }
@@ -1179,12 +1180,12 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
     /**
      * Checks if an update file is already downloaded.
-     * @param cyanogenOTAUpdate Cyanogen Update data containing the file name of the update.
+     * @param cyanogenOSUpdateData Cyanogen Update data containing the file name of the update.
      */
     @Override
-    public void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate) {
-        if(cyanogenOTAUpdate != null) {
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOTAUpdate.getFileName());
+    public void checkIfUpdateIsAlreadyDownloaded(CyanogenOSUpdateData cyanogenOSUpdateData) {
+        if(cyanogenOSUpdateData != null) {
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
             onUpdateDownloaded(file.exists() && !settingsManager.containsPreference(PROPERTY_DOWNLOAD_ID), false);
         }
     }

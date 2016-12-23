@@ -11,7 +11,7 @@ import android.widget.RelativeLayout;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
-import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
+import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOSUpdateData;
 import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.NetworkConnectionManager;
@@ -28,7 +28,7 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
 
     protected SettingsManager settingsManager;
     protected NetworkConnectionManager networkConnectionManager;
-    protected CyanogenOTAUpdate cyanogenOTAUpdate;
+    protected CyanogenOSUpdateData cyanogenOSUpdateData;
 
     protected RelativeLayout rootView;
     protected AdView adView;
@@ -46,13 +46,13 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
 
     protected abstract void displayServerMessages(List<ServerMessage> serverMessages);
 
-    protected abstract void displayUpdateInformation(CyanogenOTAUpdate cyanogenOTAUpdate, boolean online, boolean force);
+    protected abstract void displayUpdateInformation(CyanogenOSUpdateData cyanogenOSUpdateData, boolean online, boolean force);
 
     protected abstract void initDownloadManager();
 
-    protected abstract void checkIfUpdateIsAlreadyDownloaded(CyanogenOTAUpdate cyanogenOTAUpdate);
+    protected abstract void checkIfUpdateIsAlreadyDownloaded(CyanogenOSUpdateData cyanogenOSUpdateData);
 
-    protected abstract CyanogenOTAUpdate buildOfflineCyanogenOTAUpdate();
+    protected abstract CyanogenOSUpdateData buildOfflineCyanogenOTAUpdate();
 
     public class GetServerMessages extends  AsyncTask<Void, Void, List<ServerMessage>> {
 
@@ -68,16 +68,16 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
     }
 
 
-    public class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOTAUpdate> {
+    public class GetUpdateInformation extends AsyncTask<Void, Void, CyanogenOSUpdateData> {
 
         @Override
-        protected CyanogenOTAUpdate doInBackground(Void... arg0) {
-            CyanogenOTAUpdate cyanogenOTAUpdate = getApplicationData().getServerConnector().getCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID), Build.VERSION.INCREMENTAL);
-            if (cyanogenOTAUpdate != null) {
-                if(cyanogenOTAUpdate.getInformation() != null && cyanogenOTAUpdate.getInformation().equals(UNABLE_TO_FIND_A_MORE_RECENT_BUILD) && cyanogenOTAUpdate.isUpdateInformationAvailable() && cyanogenOTAUpdate.isSystemIsUpToDateCheck()) {
-                    cyanogenOTAUpdate = getApplicationData().getServerConnector().getMostRecentCyanogenOTAUpdate(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
+        protected CyanogenOSUpdateData doInBackground(Void... arg0) {
+            CyanogenOSUpdateData cyanogenOSUpdateData = getApplicationData().getServerConnector().getCyanogenOSUpdateData(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID), Build.VERSION.INCREMENTAL);
+            if (cyanogenOSUpdateData != null) {
+                if(cyanogenOSUpdateData.getInformation() != null && cyanogenOSUpdateData.getInformation().equals(UNABLE_TO_FIND_A_MORE_RECENT_BUILD) && cyanogenOSUpdateData.isUpdateInformationAvailable() && cyanogenOSUpdateData.isSystemIsUpToDateCheck()) {
+                    cyanogenOSUpdateData = getApplicationData().getServerConnector().getMostRecentCyanogenOSUpdateData(settingsManager.getLongPreference(PROPERTY_DEVICE_ID), settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID));
                 }
-                return cyanogenOTAUpdate;
+                return cyanogenOSUpdateData;
 
             } else {
                 if (settingsManager.checkIfCacheIsAvailable()) {
@@ -90,12 +90,12 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
         }
 
         @Override
-        protected void onPostExecute(CyanogenOTAUpdate result) {
+        protected void onPostExecute(CyanogenOSUpdateData result) {
             super.onPostExecute(result);
-            cyanogenOTAUpdate = result;
+            cyanogenOSUpdateData = result;
             displayUpdateInformation(result, networkConnectionManager.checkNetworkConnection(), false);
             initDownloadManager();
-            checkIfUpdateIsAlreadyDownloaded(cyanogenOTAUpdate);
+            checkIfUpdateIsAlreadyDownloaded(cyanogenOSUpdateData);
         }
     }
 

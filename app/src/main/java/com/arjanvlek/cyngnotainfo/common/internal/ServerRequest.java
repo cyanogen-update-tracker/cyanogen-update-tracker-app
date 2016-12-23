@@ -25,13 +25,13 @@ enum ServerRequest {
             return new URL(SERVER_BASE_URL + "updateMethods/" + params[0]);
         }
     },
-    UPDATE_DATA {
+    COS_UPDATE_DATA {
         @Override
         URL getURL(String... params) throws MalformedURLException {
             return new URL(SERVER_BASE_URL + "updateData/" + params[0] + "/" + params[1] + "/" + params[2]);
         }
     },
-    MOST_RECENT_UPDATE_DATA {
+    MOST_RECENT_COS_UPDATE_DATA {
         @Override
         URL getURL(String... params) throws MalformedURLException {
             return new URL(SERVER_BASE_URL + "mostRecentUpdateData/" + params[0] + "/" + params[1]);

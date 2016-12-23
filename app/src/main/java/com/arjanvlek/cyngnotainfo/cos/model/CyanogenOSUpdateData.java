@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CyanogenOTAUpdate {
+public class CyanogenOSUpdateData {
 
     private int size;
     private String downloadUrl;

@@ -9,7 +9,7 @@ import android.os.AsyncTask;
 import android.os.Environment;
 import android.os.Handler;
 
-import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
+import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOSUpdateData;
 import com.arjanvlek.cyngnotainfo.common.model.DownloadProgressData;
 import com.arjanvlek.cyngnotainfo.R;
 
@@ -69,14 +69,14 @@ public class UpdateDownloader {
     }
 
 
-    public void downloadUpdate(CyanogenOTAUpdate cyanogenOTAUpdate) {
-        if(cyanogenOTAUpdate != null) {
-            Uri downloadUri = Uri.parse(cyanogenOTAUpdate.getDownloadUrl());
+    public void downloadUpdate(CyanogenOSUpdateData cyanogenOSUpdateData) {
+        if(cyanogenOSUpdateData != null) {
+            Uri downloadUri = Uri.parse(cyanogenOSUpdateData.getDownloadUrl());
 
             DownloadManager.Request request = new DownloadManager.Request(downloadUri)
                     .setDescription(baseActivity.getString(R.string.download_description))
-                    .setTitle(cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null") && !cyanogenOTAUpdate.getName().isEmpty() ? cyanogenOTAUpdate.getName() : baseActivity.getString(R.string.download_unknown_update_name))
-                    .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
+                    .setTitle(cyanogenOSUpdateData.getName() != null && !cyanogenOSUpdateData.getName().equals("null") && !cyanogenOSUpdateData.getName().isEmpty() ? cyanogenOSUpdateData.getName() : baseActivity.getString(R.string.download_unknown_update_name))
+                    .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOSUpdateData.getFileName())
                     .setVisibleInDownloadsUi(false)
                     .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
 
@@ -85,7 +85,7 @@ public class UpdateDownloader {
             previousBytesDownloadedSoFar = NOT_SET;
             settingsManager.saveLongPreference(PROPERTY_DOWNLOAD_ID, downloadID);
 
-            checkDownloadProgress(cyanogenOTAUpdate);
+            checkDownloadProgress(cyanogenOSUpdateData);
 
             listener.onDownloadStarted(downloadID);
         }
@@ -100,7 +100,7 @@ public class UpdateDownloader {
         }
     }
 
-    public void checkDownloadProgress(CyanogenOTAUpdate cyanogenOTAUpdate) {
+    public void checkDownloadProgress(CyanogenOSUpdateData cyanogenOSUpdateData) {
 
         final long downloadId = settingsManager.getLongPreference(PROPERTY_DOWNLOAD_ID);
 
@@ -115,12 +115,12 @@ public class UpdateDownloader {
                     case STATUS_PENDING:
                         listener.onDownloadPending();
 
-                        recheckDownloadProgress(cyanogenOTAUpdate, 1);
+                        recheckDownloadProgress(cyanogenOSUpdateData, 1);
                         break;
                     case STATUS_PAUSED:
                         listener.onDownloadPaused(cursor.getInt(cursor.getColumnIndex(COLUMN_REASON)));
 
-                        recheckDownloadProgress(cyanogenOTAUpdate, 5);
+                        recheckDownloadProgress(cyanogenOSUpdateData, 5);
                         break;
                     case STATUS_RUNNING:
 
@@ -133,7 +133,7 @@ public class UpdateDownloader {
 
                         previousBytesDownloadedSoFar = cursor.getInt(cursor.getColumnIndex(COLUMN_BYTES_DOWNLOADED_SO_FAR));
 
-                        recheckDownloadProgress(cyanogenOTAUpdate, 1);
+                        recheckDownloadProgress(cyanogenOSUpdateData, 1);
 
                         break;
                     case DownloadManager.STATUS_SUCCESSFUL:
@@ -141,7 +141,7 @@ public class UpdateDownloader {
 
                         listener.onDownloadComplete();
 
-                        verifyDownload(cyanogenOTAUpdate);
+                        verifyDownload(cyanogenOSUpdateData);
                         break;
                     case DownloadManager.STATUS_FAILED:
                         clearUp();
@@ -154,8 +154,8 @@ public class UpdateDownloader {
         }
     }
 
-    public void verifyDownload(CyanogenOTAUpdate cyanogenOTAUpdate) {
-        new DownloadVerifier().execute(cyanogenOTAUpdate);
+    public void verifyDownload(CyanogenOSUpdateData cyanogenOSUpdateData) {
+        new DownloadVerifier().execute(cyanogenOSUpdateData);
     }
 
     public boolean makeDownloadDirectory() {
@@ -163,11 +163,11 @@ public class UpdateDownloader {
         return downloadDirectory.mkdirs();
     }
 
-    private void recheckDownloadProgress(final CyanogenOTAUpdate cyanogenOTAUpdate, int secondsDelay) {
+    private void recheckDownloadProgress(final CyanogenOSUpdateData cyanogenOSUpdateData, int secondsDelay) {
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                checkDownloadProgress(cyanogenOTAUpdate);
+                checkDownloadProgress(cyanogenOSUpdateData);
             }
         }, (secondsDelay * 1000));
     }
@@ -278,7 +278,7 @@ public class UpdateDownloader {
         }
     }
 
-    private class DownloadVerifier extends AsyncTask<CyanogenOTAUpdate, Integer, Boolean> {
+    private class DownloadVerifier extends AsyncTask<CyanogenOSUpdateData, Integer, Boolean> {
 
         @Override
         protected void onPreExecute() {
@@ -286,7 +286,7 @@ public class UpdateDownloader {
         }
 
         @Override
-        protected Boolean doInBackground(CyanogenOTAUpdate... params) {
+        protected Boolean doInBackground(CyanogenOSUpdateData... params) {
             String filename = params[0].getFileName();
             File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + filename);
             return params[0] == null || params[0].getMD5Sum() == null || MD5.checkMD5(params[0].getMD5Sum(), file);

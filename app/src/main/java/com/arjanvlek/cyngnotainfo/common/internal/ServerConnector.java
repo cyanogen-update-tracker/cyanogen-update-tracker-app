@@ -1,7 +1,7 @@
 package com.arjanvlek.cyngnotainfo.common.internal;
 
 import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
-import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOTAUpdate;
+import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOSUpdateData;
 import com.arjanvlek.cyngnotainfo.cos.model.Device;
 import com.arjanvlek.cyngnotainfo.cos.model.InstallGuideData;
 import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
@@ -19,11 +19,11 @@ import java.util.List;
 import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.APP_USER_AGENT;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.DEVICES;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.INSTALL_GUIDE;
-import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.MOST_RECENT_UPDATE_DATA;
+import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.MOST_RECENT_COS_UPDATE_DATA;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.REGISTER_DEVICE;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.SERVER_MESSAGES;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.SERVER_PARAMETERS;
-import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.UPDATE_DATA;
+import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.COS_UPDATE_DATA;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.UPDATE_METHODS;
 
 public class ServerConnector {
@@ -40,12 +40,12 @@ public class ServerConnector {
         return findMultipleFromServerResponse(fetchDataFromServer(DEVICES, 20), Device.class);
     }
 
-    public CyanogenOTAUpdate getCyanogenOTAUpdate(Long deviceId, Long updateMethodId, String incrementalSystemVersion) {
-        return findOneFromServerResponse(fetchDataFromServer(UPDATE_DATA, 15, deviceId.toString(), updateMethodId.toString(), incrementalSystemVersion), CyanogenOTAUpdate.class);
+    public CyanogenOSUpdateData getCyanogenOSUpdateData(Long deviceId, Long updateMethodId, String incrementalSystemVersion) {
+        return findOneFromServerResponse(fetchDataFromServer(COS_UPDATE_DATA, 15, deviceId.toString(), updateMethodId.toString(), incrementalSystemVersion), CyanogenOSUpdateData.class);
     }
 
-    public CyanogenOTAUpdate getMostRecentCyanogenOTAUpdate(Long deviceId, Long updateMethodId) {
-        return findOneFromServerResponse(fetchDataFromServer(MOST_RECENT_UPDATE_DATA, 10, deviceId.toString(), updateMethodId.toString()), CyanogenOTAUpdate.class);
+    public CyanogenOSUpdateData getMostRecentCyanogenOSUpdateData(Long deviceId, Long updateMethodId) {
+        return findOneFromServerResponse(fetchDataFromServer(MOST_RECENT_COS_UPDATE_DATA, 10, deviceId.toString(), updateMethodId.toString()), CyanogenOSUpdateData.class);
     }
 
     public List<UpdateMethod> getUpdateMethods(Long deviceId) {

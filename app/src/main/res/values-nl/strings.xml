@@ -207,6 +207,14 @@
     <string name="error_push_failure">Notificaties konden niet worden aangezet. Sluit de app volledig af en start hem over enkele minuten opnieuw op.</string>
     <string name="error_reload">Opnieuw laden</string>
     <string name="error_unable_to_rate_app">Je kunt de app niet beoordelen, omdat de Google Play Store op je apparaat ontbreekt.</string>
+
+    <string name="error_unofficial_cm_header">Onofficiële CyanogenMod-versie</string>
+    <string name="error_unofficial_cm_text">Jouw apparaat beschikt over een niet-originele versie van CyanogenMod.\nDeze app ondersteunt alleen apparaten met een originele versie van Cyanogenmod.\n\nAls je een officiële versie van CyanogenMod wilt installeren, tik dan op de onderstaande knop om je webbrowser te openen en naar de CyanogenMod downloadpagina te gaan.\n\nLET OP: niet alle apparaten worden door CyanogenMod ondersteund. Voor sommige apparaten is enkel een onofficiële versie van CyanogenMod beschikbaar. Deze apparaten worden helaas niet door deze app ondersteund.</string>
+    <string name="error_unofficial_cm_button_text">CyanogenMod-Downloadpagina</string>
+
+    <string name="error_no_cm_header">CyanogenMod is niet geïnstalleerd</string>
+    <string name="error_no_cm_text">Jouw apparaat beschikb momenteel niet over CyanogenMod- of Cyanogen OS-software.\nDeze app ondersteunt CyanogenMod versies 10 en nieuwer, en apparaten met Cyanogen OS.\n\nAls je CyanogenMod op je apparaat wilt installeren, tik op de onderstaande knop om installatie-instructies te bekijken.</string>
+    <string name="error_no_cm_button_text">CyanogenMod Installatiegids</string>
     
     <!-- Message box strings -->
     <string name="delete_message_title">Update is al gedownload</string>
