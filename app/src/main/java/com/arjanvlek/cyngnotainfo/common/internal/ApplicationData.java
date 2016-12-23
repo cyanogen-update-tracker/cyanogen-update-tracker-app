@@ -25,6 +25,8 @@ public class ApplicationData extends Application {
     public static final String IS_COS_KEY = "is_cos";
     public static final String LOCALE_DUTCH = "Nederlands";
     public static final int NUMBER_OF_INSTALL_GUIDE_PAGES = 5;
+    public static final String DEFAULT_CM_DOWNLOAD_URL = "https://get.cm";
+    public static final String DEFAULT_CM_INSTALL_GUIDE_URL = "https://cyanogenmod.org";
 
 
     public final SystemVersionProperties.SystemType SYSTEM_TYPE;

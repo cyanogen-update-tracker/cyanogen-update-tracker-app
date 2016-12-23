@@ -37,10 +37,10 @@ enum ServerRequest {
             return new URL(SERVER_BASE_URL + "mostRecentUpdateData/" + params[0] + "/" + params[1]);
         }
     },
-    SERVER_STATUS {
+    SERVER_PARAMETERS {
         @Override
         URL getURL(String... params) throws MalformedURLException {
-            return new URL(SERVER_BASE_URL + "serverStatus");
+            return new URL(SERVER_BASE_URL + "serverParameters");
         }
     },
     REGISTER_DEVICE {

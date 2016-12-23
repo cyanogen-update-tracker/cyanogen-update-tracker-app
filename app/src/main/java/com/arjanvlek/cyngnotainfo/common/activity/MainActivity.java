@@ -1,8 +1,6 @@
 package com.arjanvlek.cyngnotainfo.common.activity;
 
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -19,15 +17,15 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.CheckBox;
 
 import com.arjanvlek.cyngnotainfo.cm.fragment.CMUpdateInformationFragment;
-import com.arjanvlek.cyngnotainfo.common.fragment.UnknownCMVersionErrorFragment;
-import com.arjanvlek.cyngnotainfo.common.fragment.UnofficialCMVersionErrorFragment;
+import com.arjanvlek.cyngnotainfo.cm.fragment.UnknownCMVersionErrorFragment;
+import com.arjanvlek.cyngnotainfo.cm.fragment.UnofficialCMVersionErrorFragment;
 import com.arjanvlek.cyngnotainfo.common.internal.ActivityLauncher;
 import com.arjanvlek.cyngnotainfo.common.internal.ApplicationData;
 import com.arjanvlek.cyngnotainfo.common.internal.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.common.internal.asynctask.GetServerStatus;
+import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.common.notification.GcmRegistrationIntentService;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.Callback;
@@ -39,13 +37,10 @@ import com.arjanvlek.cyngnotainfo.common.view.MessageDialog;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-
+import static android.content.Intent.ACTION_VIEW;
 import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.IS_COS_KEY;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DEVICE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DEVICE_ID;
-import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_SETUP_DONE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_UPDATE_CHECKED_DATE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_UPDATE_METHOD;
@@ -232,7 +227,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         new GetServerStatus(this.applicationData, new Callback() {
             @Override
             public void onActionPerformed(Object... result) {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse((String)result[0]));
+                Intent i = new Intent(ACTION_VIEW, Uri.parse(((ServerParameters)result[0]).getCmDownloadUrl()));
                 startActivity(i);
             }
         }).execute();
@@ -242,7 +237,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         new GetServerStatus(this.applicationData, new Callback() {
             @Override
             public void onActionPerformed(Object... result) {
-                Intent i = new Intent(Intent.ACTION_VIEW, Uri.parse((String)result[0]));
+                Intent i = new Intent(ACTION_VIEW, Uri.parse(((ServerParameters)result[0]).getCmInstallGuideUrl()));
                 startActivity(i);
             }
         }).execute();

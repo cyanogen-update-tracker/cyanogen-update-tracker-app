@@ -1,4 +1,4 @@
-package com.arjanvlek.cyngnotainfo.common.fragment;
+package com.arjanvlek.cyngnotainfo.cm.fragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

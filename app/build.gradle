@@ -22,20 +22,20 @@ android {
         applicationId "com.arjanvlek.cyngnotainfo"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 24
-        versionName "1.7.1"
+        versionCode 25
+        versionName "2.0.0"
         signingConfig signingConfigs.releaseConfig
     }
     buildTypes {
         release {
-            buildConfigField "String", "SERVER_BASE_URL", "\"** Add the base URL of your API / backend here **\""
+            buildConfigField "String", "SERVER_BASE_URL", "\"** Add the base URL of your API / backend here **v4/\""
             minifyEnabled true
             shrinkResources false
             debuggable false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
         debug {
-            buildConfigField "String", "SERVER_BASE_URL", "\"** Add the base URL of your test API / backend here **\""
+            buildConfigField "String", "SERVER_BASE_URL", "\"** Add the base URL of your test API / backend here **v4/\""
             debuggable true
             signingConfig signingConfigs.releaseConfig
         }

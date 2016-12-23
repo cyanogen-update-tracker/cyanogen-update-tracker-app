@@ -3,12 +3,15 @@ package com.arjanvlek.cyngnotainfo.common.model;
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.DEFAULT_CM_DOWNLOAD_URL;
+import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.DEFAULT_CM_INSTALL_GUIDE_URL;
+
 public class ServerParameters {
 
     private Status status;
     private String latestAppVersion;
-    private String cyanogenModDownloadUrl;
-    private String cyanogenModInstallGuideUrl;
+    private String cmDownloadUrl;
+    private String cmInstallGuideUrl;
 
     public Status getStatus() {
         return status;
@@ -27,22 +30,22 @@ public class ServerParameters {
         this.latestAppVersion = latestAppVersion != null ? latestAppVersion : BuildConfig.VERSION_NAME; // To prevent incorrect app update messages if response is null / invalid
     }
 
-    public String getCyanogenModDownloadUrl() {
-        return cyanogenModDownloadUrl != null ? cyanogenModDownloadUrl : "https://get.cm"; // todo implement
+    public String getCmDownloadUrl() {
+        return cmDownloadUrl != null && !cmDownloadUrl.isEmpty() ? cmDownloadUrl : DEFAULT_CM_DOWNLOAD_URL;
     }
 
-    @JsonProperty("cyanogen_mod_download_url")
-    public void setCyanogenModDownloadUrl(String cyanogenModDownloadUrl) {
-        this.cyanogenModDownloadUrl = cyanogenModDownloadUrl;
+    @JsonProperty("cm_download_url")
+    public void setCmDownloadUrl(String cmDownloadUrl) {
+        this.cmDownloadUrl = cmDownloadUrl;
     }
 
-    public String getCyanogenModInstallGuideUrl() {
-        return cyanogenModInstallGuideUrl != null ? cyanogenModInstallGuideUrl : "https://cyanogenmod.org";
+    public String getCmInstallGuideUrl() {
+        return cmInstallGuideUrl != null && !cmInstallGuideUrl.isEmpty() ? cmInstallGuideUrl : DEFAULT_CM_INSTALL_GUIDE_URL;
     }
 
-    @JsonProperty("cyanogen_mod_install_guide_url")
-    public void setCyanogenModInstallGuideUrl(String cyanogenModInstallGuideUrl) {
-        this.cyanogenModInstallGuideUrl = cyanogenModInstallGuideUrl;
+    @JsonProperty("cm_install_guide_url")
+    public void setCmInstallGuideUrl(String cmInstallGuideUrl) {
+        this.cmInstallGuideUrl = cmInstallGuideUrl;
     }
 
     public enum Status {

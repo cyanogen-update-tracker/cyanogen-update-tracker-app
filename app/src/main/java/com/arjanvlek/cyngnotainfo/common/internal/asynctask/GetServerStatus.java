@@ -23,6 +23,7 @@ public class GetServerStatus extends AsyncTask<Void, Void, ServerParameters> {
 
     @Override
     protected void onPostExecute(ServerParameters serverParameters) {
+        if (serverParameters == null) serverParameters = new ServerParameters();
         callback.onActionPerformed(serverParameters);
     }
 }

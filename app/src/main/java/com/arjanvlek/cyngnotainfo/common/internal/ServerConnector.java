@@ -22,7 +22,7 @@ import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.INSTALL_G
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.MOST_RECENT_UPDATE_DATA;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.REGISTER_DEVICE;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.SERVER_MESSAGES;
-import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.SERVER_STATUS;
+import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.SERVER_PARAMETERS;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.UPDATE_DATA;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.UPDATE_METHODS;
 
@@ -53,7 +53,7 @@ public class ServerConnector {
     }
 
     public ServerParameters getServerParameters() {
-        return findOneFromServerResponse(fetchDataFromServer(SERVER_STATUS, 10), ServerParameters.class);
+        return findOneFromServerResponse(fetchDataFromServer(SERVER_PARAMETERS, 10), ServerParameters.class);
     }
 
     public List<ServerMessage> getServerMessages(Long deviceId, Long updateMethodId) {
