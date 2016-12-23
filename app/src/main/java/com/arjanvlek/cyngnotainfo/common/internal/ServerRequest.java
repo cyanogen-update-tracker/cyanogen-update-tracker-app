@@ -54,6 +54,18 @@ enum ServerRequest {
         URL getURL(String... params) throws MalformedURLException {
             return new URL(SERVER_BASE_URL + "serverMessages/" + params[0] + "/" + params[1]);
         }
+    },
+    CM_API_URL {
+        @Override
+        URL getURL(String... params) throws MalformedURLException {
+            return new URL(SERVER_BASE_URL + "cyanogenModApiUrl");
+        }
+    },
+    CM_UPDATE_DATA {
+        @Override
+        URL getURL(String... params) throws MalformedURLException {
+            return new URL(params[0]);
+        }
     };
 
     abstract URL getURL(String...params) throws MalformedURLException;

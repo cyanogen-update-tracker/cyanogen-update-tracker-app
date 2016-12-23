@@ -44,6 +44,7 @@ public class SystemVersionProperties {
     }
 
     private final SystemType systemType;
+    private final String cyanogenModChannel;
 
     private final String cyanogenDeviceName; // Ro.cm.device in Build.prop
     private final String cyanogenVersion; // ro.cm.display.version
@@ -110,11 +111,16 @@ public class SystemVersionProperties {
         this.cyanogenDeviceName = cyanogenDeviceCodeName;
         this.cyanogenVersion = cyanogenOSVersion;
         this.securityPatchDate = securityPatchDate;
+        this.cyanogenModChannel = systemTypeRaw;
         this.systemType = systemType;
     }
 
     public SystemType getSystemType() {
         return systemType;
+    }
+
+    public String getCyanogenModChannel() {
+        return cyanogenModChannel;
     }
 
     public String getCyanogenDeviceName() {

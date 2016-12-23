@@ -3,7 +3,6 @@ package com.arjanvlek.cyngnotainfo.cm.model;
 
 import android.os.Build;
 
-import com.arjanvlek.cyngnotainfo.common.internal.ApplicationData;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
