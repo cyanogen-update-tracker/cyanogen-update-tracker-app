@@ -1,17 +1,12 @@
 package com.arjanvlek.cyngnotainfo.common.internal;
 
 import android.app.Application;
-import android.os.Build;
-import android.util.Log;
 
 import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.cos.model.Device;
 
 import org.joda.time.LocalDateTime;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
 import java.util.List;
 
 public class ApplicationData extends Application {
@@ -29,7 +24,7 @@ public class ApplicationData extends Application {
     public static final String DEFAULT_CM_INSTALL_GUIDE_URL = "https://cyanogenmod.org";
 
 
-    public final SystemVersionProperties.SystemType SYSTEM_TYPE;
+    public final SystemVersionProperties SYSTEM_PROPERTIES;
     public final String CYANOGEN_VERSION;
     public final String CYANOGEN_DEVICE;
     public final String SECURITY_PATCH_DATE;
@@ -40,7 +35,7 @@ public class ApplicationData extends Application {
 
     public ApplicationData() {
         SystemVersionProperties properties = new SystemVersionProperties();
-        SYSTEM_TYPE = properties.getSystemType();
+        SYSTEM_PROPERTIES = properties;
         CYANOGEN_VERSION = properties.getCyanogenVersion();
         CYANOGEN_DEVICE = properties.getCyanogenDeviceName();
         SECURITY_PATCH_DATE = properties.getSecurityPatchDate();

@@ -1,8 +1,6 @@
 package com.arjanvlek.cyngnotainfo.common.activity;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -21,8 +19,6 @@ import com.arjanvlek.cyngnotainfo.common.internal.NetworkConnectionManager;
 import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
 import com.arjanvlek.cyngnotainfo.cos.fragment.SetupStep3Fragment;
 import com.arjanvlek.cyngnotainfo.cos.fragment.SetupStep4Fragment;
-
-import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
 
 public class SetupActivity extends AppCompatActivity {
 
@@ -158,7 +154,7 @@ public class SetupActivity extends AppCompatActivity {
     }
 
     public void closeInitialTutorial(View view) {
-        if (settingsManager.checkIfDeviceIsSet(((ApplicationData)getApplication()).SYSTEM_TYPE)) {
+        if (settingsManager.checkIfDeviceIsSet(((ApplicationData)getApplication()).SYSTEM_PROPERTIES.getSystemType())) {
             settingsManager.saveBooleanPreference(SettingsManager.PROPERTY_SETUP_DONE, true);
             NavUtils.navigateUpFromSameTask(this);
         } else {

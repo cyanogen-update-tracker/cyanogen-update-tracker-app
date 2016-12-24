@@ -3,13 +3,14 @@ package com.arjanvlek.cyngnotainfo.cm.model;
 
 import android.os.Build;
 
+import com.arjanvlek.cyngnotainfo.common.model.UpdateData;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CyanogenModUpdateData {
+public class CyanogenModUpdateData extends UpdateData {
 
     private String id;
     private List<CyanogenModUpdateDataResult> result;
@@ -39,6 +40,10 @@ public class CyanogenModUpdateData {
         return result == null || result.isEmpty() ? null : result.get(0);
     }
 
+    public boolean isUpdateInformationAvailable() {
+        return result != null && !result.isEmpty();
+    }
+
     public boolean isSystemUpToDate() {
         return this.result == null || this.result.isEmpty() || Build.VERSION.INCREMENTAL.equals(result.get(0).getIncrementalVersion());
     }
@@ -48,7 +53,7 @@ public class CyanogenModUpdateData {
     }
 
     @JsonIgnoreProperties(ignoreUnknown =  true)
-    public class CyanogenModUpdateDataResult {
+    public static class CyanogenModUpdateDataResult {
         private String downloadUrl;
         private String md5sum;
         private String filename;
@@ -116,6 +121,11 @@ public class CyanogenModUpdateData {
         @JsonProperty("api_level")
         public void setApiLevel(Integer apiLevel) {
             this.apiLevel = apiLevel;
+        }
+
+        public String getVersionNumber() {
+            if (filename == null || filename.isEmpty() || !filename.contains(".zip")) return null;
+            return filename.substring(0, filename.lastIndexOf(".zip"));
         }
     }
 

@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         // Check if Google Play services are installed on the device
         if (checkPlayServices()) {
             // Check if a device and update method have been set
-            if (settingsManager.checkIfDeviceIsSet(this.applicationData.SYSTEM_TYPE)) {
+            if (settingsManager.checkIfDeviceIsSet(this.applicationData.SYSTEM_PROPERTIES.getSystemType())) {
                 //Check if app needs to register for push notifications (like after device type change etc.)
                 if(device != null && updateMethod != null) {
                     if (!settingsManager.checkIfRegistrationIsValid(deviceId, updateMethodId) || settingsManager.checkIfRegistrationHasFailed() && networkConnectionManager.checkNetworkConnection()) {
@@ -144,7 +144,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
             }
 
             // Mark the welcome tutorial as finished if the user is not running COS, or is moving from older app version. The latter is checked by either having stored update information for offline viewing, or if the last update checked date is set (if user always had up to date system and never viewed update information before).
-            if(this.applicationData.SYSTEM_TYPE != SystemVersionProperties.SystemType.COS || (!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE) && (settingsManager.checkIfCacheIsAvailable() || settingsManager.containsPreference(PROPERTY_UPDATE_CHECKED_DATE)))) {
+            if(this.applicationData.SYSTEM_PROPERTIES.getSystemType() != SystemVersionProperties.SystemType.COS || (!settingsManager.getBooleanPreference(PROPERTY_SETUP_DONE) && (settingsManager.checkIfCacheIsAvailable() || settingsManager.containsPreference(PROPERTY_UPDATE_CHECKED_DATE)))) {
                 settingsManager.saveBooleanPreference(PROPERTY_SETUP_DONE, true);
             }
 
@@ -294,7 +294,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
          */
         public static Fragment newInstance(int sectionNumber, ApplicationData applicationData) {
             if (sectionNumber == 1) {
-                switch(applicationData.SYSTEM_TYPE) {
+                switch(applicationData.SYSTEM_PROPERTIES.getSystemType()) {
                     case COS:
                         return new COSUpdateInformationFragment();
                     case OFFICIAL_CM:
@@ -340,7 +340,7 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
      */
     private void registerInBackground() {
         Intent intent = new Intent(this,GcmRegistrationIntentService.class);
-        intent.putExtra(IS_COS_KEY, this.applicationData.SYSTEM_TYPE == SystemVersionProperties.SystemType.COS);
+        intent.putExtra(IS_COS_KEY, this.applicationData.SYSTEM_PROPERTIES.getSystemType() == SystemVersionProperties.SystemType.COS);
         startService(intent);
     }
 

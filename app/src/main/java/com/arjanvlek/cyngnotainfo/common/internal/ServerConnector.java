@@ -1,6 +1,8 @@
 package com.arjanvlek.cyngnotainfo.common.internal;
 
 import com.arjanvlek.cyngnotainfo.cm.model.CyanogenModUpdateData;
+import com.arjanvlek.cyngnotainfo.cm.model.CyanogenModUpdateDataRequest;
+import com.arjanvlek.cyngnotainfo.cm.model.CyanogenModUpdateDataRequest.CMRequestParams;
 import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOSUpdateData;
 import com.arjanvlek.cyngnotainfo.cos.model.Device;
@@ -33,6 +35,9 @@ import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.UPDATE_ME
 public class ServerConnector {
 
     private static final String USER_AGENT_HEADER = "User-Agent";
+    private static final String CONTENT_TYPE_HEADER = "Content-Type";
+    private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
+    private static final String METHOD_POST = "POST";
 
     private ObjectMapper objectMapper;
 
@@ -73,7 +78,13 @@ public class ServerConnector {
     }
 
     public CyanogenModUpdateData getCyanogenModUpdateData(SystemVersionProperties systemVersionProperties) {
-        return findOneFromServerResponse(postFromServer(CM_UPDATE_DATA, 15, ("{\"method\": \"get_latest_build\", \"params\": {\"device\": \"" + systemVersionProperties.getCyanogenDeviceName() + "\", \"channels\": [\"" + systemVersionProperties.getCyanogenModChannel() + "\"]}}"), getCyanogenModApiURLFromServer()), CyanogenModUpdateData.class);
+        CyanogenModUpdateDataRequest request = new CyanogenModUpdateDataRequest(
+                new CMRequestParams(
+                    systemVersionProperties.getCyanogenDeviceName(),
+                    systemVersionProperties.getCyanogenModChannel()
+                )
+        );
+        return findOneFromServerResponse(postFromServer(CM_UPDATE_DATA, 15, request, getCyanogenModApiURLFromServer()), CyanogenModUpdateData.class);
     }
 
     public URL getDeviceRegistrationURL() {
@@ -129,28 +140,28 @@ public class ServerConnector {
         }
     }
 
-    private String postFromServer(ServerRequest request, int timeoutInSeconds, String postData, String...params) {
-        // {"method": "get_latest_build", "params": {"device": "bacon", "channels": ["snapshot"]}}
+    private String postFromServer(ServerRequest request, int timeoutInSeconds, CyanogenModUpdateDataRequest postData, String...params) {
 
         try {
             URL requestUrl = request.getURL(params);
 
             HttpURLConnection urlConnection = (HttpURLConnection) requestUrl.openConnection();
-            urlConnection.setRequestMethod("POST");
+            urlConnection.setRequestMethod(METHOD_POST);
 
             int timeOutInMilliseconds = timeoutInSeconds * 1000;
 
             //setup request
             urlConnection.setRequestProperty(USER_AGENT_HEADER, APP_USER_AGENT);
             urlConnection.setConnectTimeout(timeOutInMilliseconds);
-            urlConnection.setRequestProperty("Content-Type", "application/json");
+            urlConnection.setRequestProperty(CONTENT_TYPE_HEADER, CONTENT_TYPE_APPLICATION_JSON);
             urlConnection.setReadTimeout(timeOutInMilliseconds);
             urlConnection.setDoOutput(true);
 
             OutputStream outputStream = urlConnection.getOutputStream();
-            outputStream.write(postData.getBytes());
+            objectMapper.writeValue(outputStream, postData);
             outputStream.flush();
             outputStream.close();
+
 
             BufferedReader in = new BufferedReader(new InputStreamReader(urlConnection.getInputStream()));
             String inputLine;

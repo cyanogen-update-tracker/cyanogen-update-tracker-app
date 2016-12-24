@@ -1,11 +1,12 @@
 package com.arjanvlek.cyngnotainfo.cos.model;
 
 import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
+import com.arjanvlek.cyngnotainfo.common.model.UpdateData;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class CyanogenOSUpdateData {
+public class CyanogenOSUpdateData extends UpdateData {
 
     private int size;
     private String downloadUrl;

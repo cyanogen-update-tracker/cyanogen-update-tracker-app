@@ -8,6 +8,7 @@
     <string name="update">Update</string>
     <string name="update_information_close">Close</string>
     <string name="update_information_cyanogen_os_version">Cyanogen OS Version: %1$s</string>
+    <string name="update_information_cyanogen_mod_version">CyanogenMod Version: %1$s</string>
     <string name="update_information_description_not_available" translatable="false">There is no official information about the new features this update provides. Usually, such an update provides bug fixes, performance enhancements, and / or critical security updates for your device.</string>
     <string name="update_information_file_name">File name: %1$s</string>
     <string name="update_information_for">for</string>
