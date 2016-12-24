@@ -3,6 +3,7 @@ package com.arjanvlek.cyngnotainfo.cm.model;
 
 import android.os.Build;
 
+import com.arjanvlek.cyngnotainfo.common.internal.SettingsManager;
 import com.arjanvlek.cyngnotainfo.common.model.UpdateData;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -15,6 +16,28 @@ public class CyanogenModUpdateData extends UpdateData {
     private String id;
     private List<CyanogenModUpdateDataResult> result;
     private String error;
+
+    @Override
+    public String getVersionNumber() {
+        String filename = result.get(0).getFilename();
+        if (filename == null || filename.isEmpty() || !filename.contains(".zip")) return null;
+        return filename.substring(0, filename.lastIndexOf(".zip"));
+    }
+
+    @Override
+    public String getDownloadUrl() {
+        return result.get(0).getDownloadUrl();
+    }
+
+    @Override
+    public String getFilename() {
+        return result.get(0).getFilename();
+    }
+
+    @Override
+    public String getMd5sum() {
+        return result.get(0).getMd5sum();
+    }
 
     public String getId() {
         return id;
@@ -36,15 +59,15 @@ public class CyanogenModUpdateData extends UpdateData {
         this.error = error;
     }
 
-    public CyanogenModUpdateDataResult getCyanogenModUpdateData() {
-        return result == null || result.isEmpty() ? null : result.get(0);
-    }
-
     public boolean isUpdateInformationAvailable() {
         return result != null && !result.isEmpty();
     }
 
-    public boolean isSystemUpToDate() {
+    public String getChangelogUrl() {
+        return result.get(0).getChangelogUrl();
+    }
+
+    public boolean isSystemUpToDate(SettingsManager _) {
         return this.result == null || this.result.isEmpty() || Build.VERSION.INCREMENTAL.equals(result.get(0).getIncrementalVersion());
     }
 
@@ -53,43 +76,24 @@ public class CyanogenModUpdateData extends UpdateData {
     }
 
     @JsonIgnoreProperties(ignoreUnknown =  true)
-    public static class CyanogenModUpdateDataResult {
-        private String downloadUrl;
-        private String md5sum;
-        private String filename;
+    private static class CyanogenModUpdateDataResult extends UpdateData {
         private String incrementalVersion;
         private String channel;
         private String changelogUrl;
         private Integer apiLevel;
 
-        public String getDownloadUrl() {
-            return downloadUrl;
-        }
+        public CyanogenModUpdateDataResult() {
 
-        @JsonProperty("download_url")
-        public void setDownloadUrl(String downloadUrl) {
-            this.downloadUrl = downloadUrl;
-        }
-
-        public String getMd5sum() {
-            return md5sum;
-        }
-
-        @JsonProperty("md5sum")
-        public void setMd5sum(String md5sum) {
-            this.md5sum = md5sum;
-        }
-
-        public String getFilename() {
-            return filename;
-        }
-
-        public void setFilename(String filename) {
-            this.filename = filename;
         }
 
         public String getIncrementalVersion() {
             return incrementalVersion;
+        }
+
+        @Override
+        @JsonProperty("url")
+        public void setDownloadUrl(String downloadUrl) {
+            super.setDownloadUrl(downloadUrl);
         }
 
         @JsonProperty("incremental")
@@ -123,9 +127,9 @@ public class CyanogenModUpdateData extends UpdateData {
             this.apiLevel = apiLevel;
         }
 
-        public String getVersionNumber() {
-            if (filename == null || filename.isEmpty() || !filename.contains(".zip")) return null;
-            return filename.substring(0, filename.lastIndexOf(".zip"));
+        @Override
+        public boolean isSystemUpToDate(SettingsManager settingsManager) {
+            throw new UnsupportedOperationException("Function is not implemented in this class!");
         }
     }
 

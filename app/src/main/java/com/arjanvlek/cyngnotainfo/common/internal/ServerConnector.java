@@ -22,7 +22,7 @@ import java.util.List;
 
 import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.APP_USER_AGENT;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.CM_API_URL;
-import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.CM_UPDATE_DATA;
+import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.CUSTOM_URL;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.DEVICES;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.INSTALL_GUIDE;
 import static com.arjanvlek.cyngnotainfo.common.internal.ServerRequest.MOST_RECENT_COS_UPDATE_DATA;
@@ -38,6 +38,7 @@ public class ServerConnector {
     private static final String CONTENT_TYPE_HEADER = "Content-Type";
     private static final String CONTENT_TYPE_APPLICATION_JSON = "application/json";
     private static final String METHOD_POST = "POST";
+    private static final String DESCRIPTION_NOT_FOUND = "404";
 
     private ObjectMapper objectMapper;
 
@@ -84,7 +85,12 @@ public class ServerConnector {
                     systemVersionProperties.getCyanogenModChannel()
                 )
         );
-        return findOneFromServerResponse(postFromServer(CM_UPDATE_DATA, 15, request, getCyanogenModApiURLFromServer()), CyanogenModUpdateData.class);
+        CyanogenModUpdateData data = findOneFromServerResponse(postFromServer(CUSTOM_URL, 15, request, getCyanogenModApiURLFromServer()), CyanogenModUpdateData.class);
+        if(data != null) {
+            String description = fetchDataFromServer(CUSTOM_URL, 10, data.getChangelogUrl());
+            if(description != null && !description.equals(DESCRIPTION_NOT_FOUND)) data.setDescription(description);
+        }
+        return data;
     }
 
     public URL getDeviceRegistrationURL() {

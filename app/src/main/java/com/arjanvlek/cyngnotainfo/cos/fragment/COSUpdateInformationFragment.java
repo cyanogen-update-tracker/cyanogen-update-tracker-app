@@ -13,8 +13,6 @@ import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.text.Html;
-import android.text.TextUtils;
 import android.text.method.LinkMovementMethod;
 import android.util.TypedValue;
 import android.view.LayoutInflater;
@@ -28,13 +26,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.arjanvlek.cyngnotainfo.common.internal.ApplicationData;
-import com.arjanvlek.cyngnotainfo.BuildConfig;
 import com.arjanvlek.cyngnotainfo.common.internal.asynctask.GetServerStatus;
 import com.arjanvlek.cyngnotainfo.common.model.ServerParameters;
 import com.arjanvlek.cyngnotainfo.common.model.UpdateData;
 import com.arjanvlek.cyngnotainfo.cos.model.CyanogenOSUpdateData;
 import com.arjanvlek.cyngnotainfo.common.model.DownloadProgressData;
-import com.arjanvlek.cyngnotainfo.common.model.ServerMessage;
 import com.arjanvlek.cyngnotainfo.common.internal.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
 import com.arjanvlek.cyngnotainfo.common.internal.Callback;
@@ -56,7 +52,6 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import static android.app.DownloadManager.ERROR_CANNOT_RESUME;
@@ -73,13 +68,6 @@ import static android.app.DownloadManager.PAUSED_WAITING_FOR_NETWORK;
 import static android.app.DownloadManager.PAUSED_WAITING_TO_RETRY;
 import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
-import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
-import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.widget.RelativeLayout.ABOVE;
-import static android.widget.RelativeLayout.BELOW;
-import static com.arjanvlek.cyngnotainfo.common.internal.ApplicationData.LOCALE_DUTCH;
-import static com.arjanvlek.cyngnotainfo.common.model.ServerParameters.Status.OK;
-import static com.arjanvlek.cyngnotainfo.common.model.ServerParameters.Status.UNREACHABLE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DEVICE;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_DOWNLOAD_ID;
 import static com.arjanvlek.cyngnotainfo.common.internal.SettingsManager.PROPERTY_OFFLINE_FILE_NAME;
@@ -317,7 +305,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
             cyanogenOSUpdateData.setSystemIsUpToDate(isSystemUpToDateStringCheck(cyanogenOSUpdateData));
         }
 
-        if(((cyanogenOSUpdateData.isSystemIsUpToDate(settingsManager)) && !displayInfoWhenUpToDate) || !cyanogenOSUpdateData.isUpdateInformationAvailable()) {
+        if(((cyanogenOSUpdateData.isSystemUpToDate(settingsManager)) && !displayInfoWhenUpToDate) || !cyanogenOSUpdateData.isUpdateInformationAvailable()) {
             displayUpdateInformationWhenUpToDate(cyanogenOSUpdateData, online);
         } else {
             displayUpdateInformationWhenNotUpToDate(cyanogenOSUpdateData, online, displayInfoWhenUpToDate);
@@ -325,10 +313,10 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
 
         if(online) {
             // Save update data for offline viewing
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOSUpdateData.getName());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenOSUpdateData.getVersionNumber());
             settingsManager.saveIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE, cyanogenOSUpdateData.getSize());
             settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenOSUpdateData.getDescription());
-            settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOSUpdateData.getFileName());
+            settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenOSUpdateData.getFilename());
             settingsManager.saveBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE, cyanogenOSUpdateData.isUpdateInformationAvailable());
             settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
         }
@@ -387,8 +375,8 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
 
         // Display available update version number.
         TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
-        if (cyanogenOSUpdateData.getName() != null && !cyanogenOSUpdateData.getName().equals("null")) {
-            buildNumberView.setText(cyanogenOSUpdateData.getName());
+        if (cyanogenOSUpdateData.getVersionNumber() != null && !cyanogenOSUpdateData.getVersionNumber().equals("null")) {
+            buildNumberView.setText(cyanogenOSUpdateData.getVersionNumber());
         } else {
             buildNumberView.setText(String.format(getString(R.string.update_information_unknown_update_name), deviceName));
         }
@@ -405,7 +393,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
 
         // Display update file name.
         TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
-        fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOSUpdateData.getFileName()));
+        fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenOSUpdateData.getFilename()));
 
         final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
 
@@ -461,11 +449,11 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
     @Override
     protected UpdateData buildOfflineUpdateData() {
         CyanogenOSUpdateData cyanogenOSUpdateData = new CyanogenOSUpdateData();
-        cyanogenOSUpdateData.setName(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
+        cyanogenOSUpdateData.setVersionNumber(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_NAME));
         cyanogenOSUpdateData.setSize(settingsManager.getIntPreference(PROPERTY_OFFLINE_UPDATE_DOWNLOAD_SIZE));
         cyanogenOSUpdateData.setDescription(settingsManager.getPreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION));
         cyanogenOSUpdateData.setUpdateInformationAvailable(settingsManager.getBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE));
-        cyanogenOSUpdateData.setFileName(settingsManager.getPreference(PROPERTY_OFFLINE_FILE_NAME));
+        cyanogenOSUpdateData.setFilename(settingsManager.getPreference(PROPERTY_OFFLINE_FILE_NAME));
         return cyanogenOSUpdateData;
     }
 
@@ -481,7 +469,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
             ApplicationData applicationData = ((ApplicationData)getActivity().getApplication());
 
             String cyanogenOSVersion = applicationData.CYANOGEN_VERSION;
-            String newCyanogenOSVersion = cyanogenOSUpdateData.getName();
+            String newCyanogenOSVersion = cyanogenOSUpdateData.getVersionNumber();
 
             if(newCyanogenOSVersion == null || newCyanogenOSVersion.isEmpty()) {
                 return false;
@@ -765,7 +753,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
                         public void onVerifyError() {
                             if(isAdded()) {
                                 showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
-                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
+                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFilename());
                                 try {
                                     //noinspection ResultOfMethodCallIgnored
                                     file.delete();
@@ -859,7 +847,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
 
                 if(fileMayBeDeleted) {
-                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFilename());
                     //noinspection ResultOfMethodCallIgnored
                     file.delete();
                 }
@@ -918,7 +906,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
                     @Override
                     public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
                         if(cyanogenOSUpdateData != null) {
-                            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
+                            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFilename());
                             if(file.exists()) {
                                 if(file.delete()) {
                                     getDownloadButton().setText(getString(R.string.download));
@@ -942,7 +930,7 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
     public void checkIfUpdateIsAlreadyDownloaded(UpdateData updateData) {
         if(cyanogenOSUpdateData != null) {
             CyanogenOSUpdateData cyanogenOSUpdateData = (CyanogenOSUpdateData) updateData;
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFileName());
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenOSUpdateData.getFilename());
             onUpdateDownloaded(file.exists() && !settingsManager.containsPreference(PROPERTY_DOWNLOAD_ID), false);
         }
     }
@@ -1000,21 +988,5 @@ public class COSUpdateInformationFragment extends AbstractUpdateInformationFragm
     private void hideVerifyingNotification() {
         NotificationManager manager = (NotificationManager) getApplicationData().getSystemService(Context.NOTIFICATION_SERVICE);
         manager.cancel(NOTIFICATION_ID);
-    }
-
-
-    /**
-     * Converts DiP units to pixels
-     */
-    private int diPToPixels(int numberOfPixels) {
-        if(getActivity() != null && getActivity().getResources() != null) {
-            return (int) TypedValue.applyDimension(
-                    TypedValue.COMPLEX_UNIT_DIP,
-                    numberOfPixels,
-                    getActivity().getResources().getDisplayMetrics()
-            );
-        } else {
-            return 0;
-        }
     }
 }

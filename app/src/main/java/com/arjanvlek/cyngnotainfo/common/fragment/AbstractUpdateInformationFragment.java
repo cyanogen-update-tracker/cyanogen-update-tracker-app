@@ -142,9 +142,9 @@ public abstract class AbstractUpdateInformationFragment extends AbstractFragment
         @Override
         protected CyanogenModUpdateData doInBackground(Void... arg0) {
             ApplicationData applicationData = getApplicationData();
-            CyanogenModUpdateData cyanogenOSUpdateData = getApplicationData().getServerConnector().getCyanogenModUpdateData(applicationData.SYSTEM_PROPERTIES);
-            if (cyanogenOSUpdateData != null) {
-                return cyanogenOSUpdateData;
+            CyanogenModUpdateData cyanogenModUpdateData = getApplicationData().getServerConnector().getCyanogenModUpdateData(applicationData.SYSTEM_PROPERTIES);
+            if (cyanogenModUpdateData != null) {
+                return cyanogenModUpdateData;
 
             } else {
                 if (settingsManager.checkIfCacheIsAvailable()) {

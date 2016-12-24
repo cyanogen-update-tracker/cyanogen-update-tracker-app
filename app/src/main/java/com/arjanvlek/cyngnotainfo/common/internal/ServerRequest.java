@@ -61,7 +61,7 @@ enum ServerRequest {
             return new URL(SERVER_BASE_URL + "cyanogenModApiUrl");
         }
     },
-    CM_UPDATE_DATA {
+    CUSTOM_URL {
         @Override
         URL getURL(String... params) throws MalformedURLException {
             return new URL(params[0]);

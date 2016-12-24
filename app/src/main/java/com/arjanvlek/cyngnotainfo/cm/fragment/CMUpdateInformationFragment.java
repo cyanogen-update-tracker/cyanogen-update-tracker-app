@@ -307,7 +307,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
         CyanogenModUpdateData cyanogenModUpdateData = (CyanogenModUpdateData)updateData;
 
-        if(((cyanogenModUpdateData.isSystemUpToDate()) && !displayInfoWhenUpToDate) || !cyanogenModUpdateData.isUpdateInformationAvailable()) {
+        if(((cyanogenModUpdateData.isSystemUpToDate(null)) && !displayInfoWhenUpToDate) || !cyanogenModUpdateData.isUpdateInformationAvailable()) {
             displayUpdateInformationWhenUpToDate(cyanogenModUpdateData, online);
         } else {
             displayUpdateInformationWhenNotUpToDate(cyanogenModUpdateData, online, displayInfoWhenUpToDate);
@@ -315,9 +315,9 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
         if(online) {
             // Save update data for offline viewing
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenModUpdateData.getCyanogenModUpdateData().getVersionNumber());
-            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenModUpdateData.getCyanogenModUpdateData().getChangelogUrl()); // TODO implement
-            settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenModUpdateData.getCyanogenModUpdateData().getFilename());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_NAME, cyanogenModUpdateData.getVersionNumber());
+            settingsManager.savePreference(PROPERTY_OFFLINE_UPDATE_DESCRIPTION, cyanogenModUpdateData.getDescription()); // TODO implement
+            settingsManager.savePreference(PROPERTY_OFFLINE_FILE_NAME, cyanogenModUpdateData.getFilename());
             settingsManager.saveBooleanPreference(PROPERTY_OFFLINE_UPDATE_INFORMATION_AVAILABLE, cyanogenModUpdateData.isUpdateInformationAvailable());
             settingsManager.savePreference(PROPERTY_UPDATE_CHECKED_DATE, LocalDateTime.now().toString());
         }
@@ -376,8 +376,8 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
         // Display available update version number.
         TextView buildNumberView = (TextView) rootView.findViewById(R.id.updateInformationBuildNumberView);
-        if (cyanogenModUpdateData.getCyanogenModUpdateData().getVersionNumber() != null && !cyanogenModUpdateData.getCyanogenModUpdateData().getVersionNumber().equals("null")) {
-            buildNumberView.setText(cyanogenModUpdateData.getCyanogenModUpdateData().getVersionNumber());
+        if (cyanogenModUpdateData.getVersionNumber() != null && !cyanogenModUpdateData.getVersionNumber().equals("null")) {
+            buildNumberView.setText(cyanogenModUpdateData.getVersionNumber());
         } else {
             buildNumberView.setText(String.format(getString(R.string.update_information_unknown_update_name), deviceName));
         }
@@ -386,20 +386,20 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
         //TextView downloadSizeView = (TextView) rootView.findViewById(R.id.updateInformationDownloadSizeView);
         //downloadSizeView.setText(String.format(getString(R.string.download_size_megabyte), cyanogenModUpdateData.getSize()));
 
-        // Display update description. TODO implement changelog URL.
-        String description = "TEST";
+        // Display update description.
+        String description = cyanogenModUpdateData.getDescription();
         TextView descriptionView = (TextView) rootView.findViewById(R.id.updateDescriptionView);
         descriptionView.setMovementMethod(LinkMovementMethod.getInstance());
         descriptionView.setText(description != null && !description.isEmpty() && !description.equals("null") ? UpdateDescriptionParser.parse(description) : getString(R.string.update_information_description_not_available));
 
         // Display update file name.
         TextView fileNameView = (TextView) rootView.findViewById(R.id.updateFileNameView);
-        fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenModUpdateData.getCyanogenModUpdateData().getFilename()));
+        fileNameView.setText(String.format(getString(R.string.update_information_file_name), cyanogenModUpdateData.getFilename()));
 
         final Button downloadButton = (Button) rootView.findViewById(R.id.updateInformationDownloadButton);
 
         // Activate download button, or make it gray when the device is offline or if the update is not downloadable.
-        if (online && cyanogenModUpdateData.getCyanogenModUpdateData().getDownloadUrl() != null) {
+        if (online && cyanogenModUpdateData.getDownloadUrl() != null) {
             downloadButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -415,7 +415,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
 
         // Format top title based on system version installed.
         TextView headerLabel = (TextView) rootView.findViewById(R.id.headerLabel);
-        Button updateInstallationGuideButton = (Button) rootView.findViewById(R.id.updateInstallationInstructionsButton);
+        Button updateInstallationButton = (Button) rootView.findViewById(R.id.updateInstallButton);
         View downloadSizeTable = rootView.findViewById(R.id.buttonTable);
         View downloadSizeImage = rootView.findViewById(R.id.downloadSizeImage);
 
@@ -423,19 +423,19 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
         if(displayInfoWhenUpToDate) {
             headerLabel.setText(getString(R.string.update_information_installed_update));
             downloadButton.setVisibility(GONE);
-            updateInstallationGuideButton.setVisibility(GONE);
+            updateInstallationButton.setVisibility(GONE);
             fileNameView.setVisibility(GONE);
             downloadSizeTable.setVisibility(GONE);
             downloadSizeImage.setVisibility(GONE);
             //downloadSizeView.setVisibility(GONE);
         } else {
-            if(cyanogenModUpdateData.isSystemUpToDate()) {
+            if(cyanogenModUpdateData.isSystemUpToDate(null)) {
                 headerLabel.setText(getString(R.string.update_information_installed_update));
             } else {
                 headerLabel.setText(getString(R.string.update_information_latest_available_update));
             }
             downloadButton.setVisibility(VISIBLE);
-            updateInstallationGuideButton.setVisibility(VISIBLE);
+            updateInstallationButton.setVisibility(VISIBLE);
             fileNameView.setVisibility(VISIBLE);
             downloadSizeTable.setVisibility(VISIBLE);
             downloadSizeImage.setVisibility(VISIBLE);
@@ -451,12 +451,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
     protected UpdateData buildOfflineUpdateData() { // TODO implement
         CyanogenModUpdateData cyanogenModUpdateData = new CyanogenModUpdateData();
 
-        CyanogenModUpdateData.CyanogenModUpdateDataResult result = new CyanogenModUpdateData.CyanogenModUpdateDataResult();
-
-        List<CyanogenModUpdateData.CyanogenModUpdateDataResult> results = new ArrayList<>();
-        results.add(result);
-
-        cyanogenModUpdateData.setResult(results);
+        //cyanogenModUpdateData.setResult(results);
         return cyanogenModUpdateData;
     }
 
@@ -678,7 +673,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                                             break;
                                         case ERROR_CANNOT_RESUME:
                                             updateDownloader.cancelDownload();
-                                            if (networkConnectionManager.checkNetworkConnection() && cyanogenModUpdateData != null && cyanogenModUpdateData.getCyanogenModUpdateData().getDownloadUrl() != null) {
+                                            if (networkConnectionManager.checkNetworkConnection() && cyanogenModUpdateData != null && cyanogenModUpdateData.getDownloadUrl() != null) {
                                                 updateDownloader.downloadUpdate(cyanogenOSUpdateData);
                                             }
                                             break;
@@ -711,7 +706,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                         public void onVerifyError() {
                             if(isAdded()) {
                                 showDownloadError(getString(R.string.download_error), getString(R.string.download_error_corrupt), getString(R.string.download_error_close), getString(R.string.download_error_retry), true);
-                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getCyanogenModUpdateData().getFilename());
+                                File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getFilename());
                                 try {
                                     //noinspection ResultOfMethodCallIgnored
                                     file.delete();
@@ -789,7 +784,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 }
             });
         } else {
-            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenModUpdateData != null && cyanogenModUpdateData.getCyanogenModUpdateData().getDownloadUrl() != null && isAdded()) {
+            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection() && cyanogenModUpdateData != null && cyanogenModUpdateData.getDownloadUrl() != null && isAdded()) {
                 if(updateDownloader != null) {
                     updateDownloader.checkDownloadProgress(cyanogenOSUpdateData);
                 } else {
@@ -805,7 +800,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                 downloadButton.setTextColor(ContextCompat.getColor(context, R.color.lightBlue));
 
                 if(fileMayBeDeleted) {
-                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getCyanogenModUpdateData().getFilename());
+                    File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getFilename());
                     //noinspection ResultOfMethodCallIgnored
                     file.delete();
                 }
@@ -864,7 +859,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
                     @Override
                     public void onDialogNegativeButtonClick(DialogFragment dialogFragment) {
                         if(cyanogenModUpdateData != null) {
-                            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getCyanogenModUpdateData().getFilename());
+                            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getFilename());
                             if(file.exists()) {
                                 if(file.delete()) {
                                     getDownloadButton().setText(getString(R.string.download));
@@ -888,7 +883,7 @@ public class CMUpdateInformationFragment extends AbstractUpdateInformationFragme
     public void checkIfUpdateIsAlreadyDownloaded(UpdateData updateData) {
         if(updateData != null) {
             CyanogenModUpdateData cyanogenModUpdateData = (CyanogenModUpdateData)updateData;
-            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getCyanogenModUpdateData().getFilename());
+            File file = new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).getPath() + File.separator + cyanogenModUpdateData.getFilename());
             onUpdateDownloaded(file.exists() && !settingsManager.containsPreference(PROPERTY_DOWNLOAD_ID), false);
         }
     }
