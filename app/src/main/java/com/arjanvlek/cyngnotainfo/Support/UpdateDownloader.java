@@ -23,6 +23,7 @@ import static android.app.DownloadManager.COLUMN_BYTES_DOWNLOADED_SO_FAR;
 import static android.app.DownloadManager.COLUMN_REASON;
 import static android.app.DownloadManager.COLUMN_STATUS;
 import static android.app.DownloadManager.COLUMN_TOTAL_SIZE_BYTES;
+import static android.app.DownloadManager.Request.VISIBILITY_VISIBLE;
 import static android.app.DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED;
 import static android.app.DownloadManager.STATUS_PAUSED;
 import static android.app.DownloadManager.STATUS_PENDING;
@@ -71,23 +72,27 @@ public class UpdateDownloader {
 
     public void downloadUpdate(CyanogenOTAUpdate cyanogenOTAUpdate) {
         if(cyanogenOTAUpdate != null) {
-            Uri downloadUri = Uri.parse(cyanogenOTAUpdate.getDownloadUrl());
+            if(!cyanogenOTAUpdate.getDownloadUrl().contains("http")) {
+                listener.onDownloadError(404);
+            } else {
+                Uri downloadUri = Uri.parse(cyanogenOTAUpdate.getDownloadUrl());
 
-            DownloadManager.Request request = new DownloadManager.Request(downloadUri)
-                    .setDescription(baseActivity.getString(R.string.download_description))
-                    .setTitle(cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null") && !cyanogenOTAUpdate.getName().isEmpty() ? cyanogenOTAUpdate.getName() : baseActivity.getString(R.string.download_unknown_update_name))
-                    .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
-                    .setVisibleInDownloadsUi(false)
-                    .setNotificationVisibility(VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
+                DownloadManager.Request request = new DownloadManager.Request(downloadUri)
+                        .setDescription(baseActivity.getString(R.string.download_description))
+                        .setTitle(cyanogenOTAUpdate.getName() != null && !cyanogenOTAUpdate.getName().equals("null") && !cyanogenOTAUpdate.getName().isEmpty() ? cyanogenOTAUpdate.getName() : baseActivity.getString(R.string.download_unknown_update_name))
+                        .setDestinationInExternalPublicDir(DIRECTORY_DOWNLOADS, cyanogenOTAUpdate.getFileName())
+                        .setVisibleInDownloadsUi(false)
+                        .setNotificationVisibility(VISIBILITY_VISIBLE);
 
-            long downloadID = downloadManager.enqueue(request);
+                long downloadID = downloadManager.enqueue(request);
 
-            previousBytesDownloadedSoFar = NOT_SET;
-            settingsManager.saveLongPreference(PROPERTY_DOWNLOAD_ID, downloadID);
+                previousBytesDownloadedSoFar = NOT_SET;
+                settingsManager.saveLongPreference(PROPERTY_DOWNLOAD_ID, downloadID);
 
-            checkDownloadProgress(cyanogenOTAUpdate);
+                checkDownloadProgress(cyanogenOTAUpdate);
 
-            listener.onDownloadStarted(downloadID);
+                listener.onDownloadStarted(downloadID);
+            }
         }
     }
 

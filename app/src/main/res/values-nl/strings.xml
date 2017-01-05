@@ -42,6 +42,7 @@
 
     <string name="download_already_downloaded">De update was al gedownload. Het staat klaar om geïnstalleerd te worden.</string>
     <string name="download_complete">Download voltooid</string>
+    <string name="download_complete_notification">Download voltooid. Tik voor installatiehandleiding.</string>
     <string name="download_cyanogen_os">Cyanogen OS-versie</string>
     <string name="download_description">Cyanogen Updatetracker</string>
 
@@ -56,6 +57,13 @@
 
     <string name="download_failed">Downloaden mislukt</string>
     <string name="download_in_background">De update zal op de achtergrond worden gedownload…</string>
+
+    <string name="download_notification_error_network">Netwerkfout. Controleer je verbinding en probeer het opnieuw.</string>
+    <string name="download_notification_error_storage_full">Onvoldoende opslagruimte.</string>
+    <string name="download_notification_error_storage_not_found">Verbreek de verbinding met je computer en probeer het opnieuw.</string>
+    <string name="download_notification_error_sd_card_missing">Plaats een SD-kaart en probeer het opnieuw.</string>
+    <string name="download_notification_error_corrupt">Bestandscontrole mislukt. Controleer je verbinding en probeer het opnieuw.</string>
+
     <string name="download_paused_unknown">Je download is mogelijk vastgelopen. Probeer opnieuw te downloaden…</string>
     <string name="download_pending">Je download begint zometeen…</string>
     <string name="download_permissions">Tik nogmaals op Downloaden om de update te downloaden.</string>
@@ -117,7 +125,7 @@
     <string name="setup_close_button">start de app</string>
 
     <string name="setup_page_1_title">Welkom bij Cyanogen updatetracker!</string>
-    <string name="setup_page_1_text">Met deze app kun je:\n\n- De nieuwste systeemupdates voor jouw Cyanogen OS-apparaat als eerste downloaden\n\n- Een \'geroot\' apparaat bijwerken\n\n- Problemen met het verkrijgen van systeemupdates voor je apparaat oplossen\n\n- Bekijken wat er nieuw is in je huidige systeemsoftware.\n\n- Enkele technische details over je apparaat bekijken\n\nVeeg naar links om verder te gaan.</string>
+    <string name="setup_page_1_text">Met deze app kun je:\n\n- De nieuwste systeemsoftware voor jouw Cyanogen OS-apparaat downloaden en installeren, ongeacht de huidige versie van de software\n\n- Bekijken wat er nieuw is in je huidige systeemsoftware.\n\n- Enkele technische gegevens over je apparaat bekijken\n\nVeeg naar links om verder te gaan.</string>
 
     <!-- Page 2 is found under "Help Strings" as it is also the help page of this app -->
     <string name="setup_page_3_title">Kies je apparaat:</string>
@@ -132,12 +140,15 @@
 
     <!-- Install guide strings -->
     <string name="install_guide">Installatiehandleiding</string>
+    <string name="install_guide_title">Installatie - %1$d van %2$d</string>
     <string name="install_guide_close_button">Sluit de installatiehandleiding</string>
+    <string name="install_guide_header">Veeg &lt;- -&gt; om tussen pagina\'s te wisselen.</string>
+    <string name="install_guide_tip">- Het is aan te raden om alle stappen ergens op te schrijven, omdat je het apparaat tijdens de installatie van de update opnieuw moet opstarten.</string>
 
     <string name="install_guide_image_description">Extra afbeelding voor de duidelijkheid. Tik lager op het scherm voor de installatiehandleiding.</string>
 
     <string name="install_guide_page_1_title">Download de update</string>
-    <string name="install_guide_page_1_text">- Het is aan te raden om alle stappen ergens op te schrijven, omdat jouw apparaat moet worden uitgezet tijdens de installatie van de update.\n\n-Druk op de Download-knop om het downloaden te starten. De downloadvoortgang zal in de app verschijnen, en verschijnt ook als melding in je notificatiescherm.\n\n- Als het downloaden is voltooid, zie je een melding met de tekst \"Download voltooid\".\n\nAls er tijdens het downloaden een fout is opgetreden, probeer je de update opnieuw te downloaden. Indien dit niet werkt, controleer dan je internetverbinding, of neem contact op met de ontwikkelaar. Dit kun je via de Google Play-store doen, onder het tabblad \"Mijn apps\".</string>
+    <string name="install_guide_page_1_text">-Druk op de Download-knop om het downloaden te starten. De downloadvoortgang zal in de app verschijnen, en verschijnt ook als melding in je notificatiescherm.\n\n- Als het downloaden is voltooid, zie je een melding met de tekst \"Download voltooid\".\n\nAls er tijdens het downloaden een fout is opgetreden, probeer je de update opnieuw te downloaden. Indien dit niet werkt, controleer dan je internetverbinding, of neem contact op met de ontwikkelaar. Dit kun je via de Google Play-store doen, onder het tabblad \"Mijn apps\".</string>
 
     <string name="install_guide_page_2_title">Ga naar de Recovery Modus</string>
     <string name="install_guide_page_2_text">- Schakel je apparaat eerst volledig uit.\n\n- Houd hierna zowel de aan-uit knop als de volume-omlaag knop tegelijkertijd ingedrukt.\n\n- Je apparaat start nu op in Recovery Modus. Wacht totdat je het Recovery Modus-menu op het scherm ziet.</string>
@@ -191,7 +202,7 @@
     <string name="help_symbol_download">Toont de downloadgrootte van deze update.</string>
     <string name="help_symbol_download_cancel">Indien je hier op tikt, wordt het downloaden van deze update afgebroken.</string>
     <string name="help_title">Hoe werkt deze app?</string>
-    <string name="help_top">Als een nieuwe update beschikbaar is, staan het versienummer, de nieuwe functies (Engels) en de downloadgrootte op het hoofdscherm.</string>
+    <string name="help_top">Als een systeemupdate beschikbaar is, staan het versienummer, de nieuwe functies (Engels) en de downloadgrootte op het hoofdscherm.</string>
     <string name="help_used_symbols">Gebruikte symoblen:</string>
     
     <!-- Error strings -->
@@ -206,7 +217,7 @@
     <string name="error_maintenance_message">Een ogenblik geduld. De server zal zeer snel weer beschikbaar zijn.</string>
     <string name="error_push_failure">Notificaties konden niet worden aangezet. Sluit de app volledig af en start hem over enkele minuten opnieuw op.</string>
     <string name="error_reload">Opnieuw laden</string>
-    <string name="error_unable_to_rate_app">Je kunt de app niet beoordelen, omdat de Google Play Store op je apparaat ontbreekt.</string>
+    <string name="error_unable_to_rate_app">Je kunt de app niet beoordelen, omdat de Google Play Store niet op je apparaat aanwezig is.</string>
     
     <!-- Message box strings -->
     <string name="delete_message_title">Update is al gedownload</string>
@@ -214,7 +225,7 @@
     <string name="delete_message_delete_button">Verwijder</string>
 
     <string name="unsupported_device_warning_title">Niet-ondersteund apparaat</string>
-    <string name="unsupported_device_warning_message">Het lijkt erop dat jouw apparaat (momenteel) niet over Cyanogen OS-systeemsoftware beschikt. Deze app kan alleen systeemupdates voor apparaten met Cyanogen OS installeren. \n\nAndere apparaten, waaronder apparaten met CyanogenMod (Custom ROM) worden momenteel niet ondersteund.</string>
+    <string name="unsupported_device_warning_message">Het lijkt erop dat jouw apparaat (momenteel) niet over Cyanogen OS-systeemsoftware beschikt. Deze app kan alleen systeemupdates voor apparaten met Cyanogen OS installeren. \n\nAndere apparaten, waaronder apparaten met CyanogenMod / LineageOS (Custom ROM) worden niet ondersteund. Raadpleeg de website van je toestelfabrikant of custom ROM om updates te krijgen.</string>
     <string name="unsupported_device_warning_checkbox_title">Toon deze waarschuwing niet nogmaals</string>
 
 
