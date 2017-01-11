@@ -112,17 +112,6 @@ public class SettingsActivity extends AbstractActivity {
             });
             newDevicePushNotificationsSwitch.setChecked(settingsManager.receiveNewDeviceNotifications());
         }
-
-        SwitchCompat systemIsUpToDateSwitch = (SwitchCompat) findViewById(R.id.settingsSystemIsUpToDateSwitch);
-        if (systemIsUpToDateSwitch != null) {
-            systemIsUpToDateSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-                @Override
-                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                    settingsManager.saveBooleanPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE, isChecked);
-                }
-            });
-            systemIsUpToDateSwitch.setChecked(settingsManager.showIfSystemIsUpToDate());
-        }
     }
 
     private class DeviceDataFetcher extends AsyncTask<Void, Integer, List<Device>> {

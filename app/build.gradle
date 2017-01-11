@@ -22,8 +22,8 @@ android {
         applicationId "com.arjanvlek.cyngnotainfo"
         minSdkVersion 15
         targetSdkVersion 25
-        versionCode 25
-        versionName "1.7.2"
+        versionCode 26
+        versionName "1.7.3"
         signingConfig signingConfigs.releaseConfig
     }
     buildTypes {

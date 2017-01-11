@@ -251,47 +251,10 @@
                 android:layout_marginTop="5dp" />
 
             <TextView
-                android:id="@+id/settingsHideUpdateInformationTextView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/settingsNewDevicePushNotificationsSwitch"
-                android:layout_marginTop="10dp"
-                android:text="@string/settings_system_up_to_date"
-                android:textColor="#ff48e0ff"
-                android:textStyle="bold" />
-
-            <View
-                android:id="@+id/settingsLowerDivisor"
-                android:layout_width="fill_parent"
-                android:layout_height="2dip"
-                android:layout_below="@id/settingsHideUpdateInformationTextView"
-
-                android:background="#ff48e0ff" />
-
-            <TextView
-                android:id="@+id/settingsSystemIsUpToDateView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentLeft="true"
-                android:layout_alignParentStart="true"
-                android:layout_alignTop="@+id/settingsSystemIsUpToDateSwitch"
-                android:text="@string/settings_system_hide_when_up_to_date"
-                android:textAppearance="?android:attr/textAppearanceMedium" />
-
-            <android.support.v7.widget.SwitchCompat
-                android:id="@+id/settingsSystemIsUpToDateSwitch"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
-                android:layout_below="@id/settingsLowerDivisor"
-                android:layout_marginTop="5dp" />
-
-            <TextView
                 android:id="@+id/settingsDescriptionTextView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_below="@id/settingsSystemIsUpToDateSwitch"
+                android:layout_below="@id/settingsNewDevicePushNotificationsSwitch"
                 android:layout_marginTop="10dp"
                 android:text="@string/settings_explanation_update_methods"
                 android:textColor="#ff48e0ff"

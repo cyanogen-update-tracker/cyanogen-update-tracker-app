@@ -37,6 +37,7 @@ import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DEVICE
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_DEVICE_ID;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_IGNORE_UNSUPPORTED_DEVICE_WARNINGS;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_SETUP_DONE;
+import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_CHECKED_DATE;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_METHOD;
 import static com.arjanvlek.cyngnotainfo.Support.SettingsManager.PROPERTY_UPDATE_METHOD_ID;
@@ -81,6 +82,10 @@ public class MainActivity extends AppCompatActivity implements ActionBar.TabList
         deviceId = settingsManager.getLongPreference(PROPERTY_DEVICE_ID);
         updateMethod = settingsManager.getPreference(PROPERTY_UPDATE_METHOD);
         updateMethodId = settingsManager.getLongPreference(PROPERTY_UPDATE_METHOD_ID);
+
+        if (settingsManager.containsPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE) && !settingsManager.getBooleanPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE)) {
+            settingsManager.saveBooleanPreference(PROPERTY_SHOW_IF_SYSTEM_IS_UP_TO_DATE, true);
+        }
 
         // Set up the action bar.
         final ActionBar actionBar = getSupportActionBar();
