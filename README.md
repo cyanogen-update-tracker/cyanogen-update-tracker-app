@@ -2,7 +2,18 @@
 Cyanogen Update Tracker app for Android devices
 
 This is the end-user application for Cyanogen Update Tracker.
-This open source version does not contain ads, and serves as a base for great ideas. If you have a really great feature and like to have it in the official version on Google Play, please [contact the main developer] (mailto:arjan.vlek.dev@gmail.com)
+This open source version does not contain ads, and you are free to work on it.
+
+##Contributing
+If you'd like to contribute to this project, create a pull request with your changes. Once they're approved, they will be merged to the appropriate branch.
+If you have a really great feature / improvement and like to have it in the official version of the app, which is released on Google Play, please [contact the main developer] (mailto:arjan.vlek.dev@gmail.com) to get it merged to the private play store repository.
+
+There are a few rules / limitations for Play Store commits:
+- The code must be tested on a real Cyanogen OS (or Lineage OS, if you add support for that) device
+- The code may not interfere with AdMob and / or Google Cloud Messaging.
+- The code must support non-rooted devices, or offer a manual installation guide for them.
+- Changes to the back-end should be pushed to the back-end repository first, possibly in a new API version directory if it breaks things for older app versions.
+- Changes to the database should also be pushed to the back-end repository, in a new SQL file. Database changes may never cause data to get lost. All data should always be migrated.
 
 ##How to develop?
 
@@ -42,8 +53,11 @@ You can now run the app on an emulator or on your own phone, just by clicking th
 
 
 ###Notes:
-This is not an official Cyanogen application.
-Cyanogen and Cyanogen OS are registred trademarks of Cyanogen inc.
-I'm not responsible for bricked devices / failed updates.
+- This is not an official Cyanogen application.
+- Cyanogen and Cyanogen OS are registered trademarks of Cyanogen inc.
+- I'm not responsible for bricked devices / failed updates.
+- The branches are for each released version. Try to make a new branch when adding changes.
+- The version-2.0.0 branch contains a work in progress on CyanogenMod support, which I never finished. It might be easy to migrate this to LineageOS and finish, but I don't have the time myself to do so.
+If you do like to finish it, go ahead :)
 
 
