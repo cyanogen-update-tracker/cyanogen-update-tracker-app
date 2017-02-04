@@ -12,8 +12,8 @@ There are a few rules / limitations for Play Store commits:
 - The code must be tested on a real Cyanogen OS (or Lineage OS, if you add support for that) device
 - The code may not interfere with AdMob and / or Google Cloud Messaging.
 - The code must support non-rooted devices, or offer a manual installation guide for them.
-- Changes to the back-end should be pushed to the back-end repository first, possibly in a new API version directory if it breaks things for older app versions.
-- Changes to the database should also be pushed to the back-end repository, in a new SQL file. Database changes may never cause data to get lost. All data should always be migrated.
+- Changes to the back-end should be pushed to the [back-end repository] (https://github.com/arjanvlek/cyanogen-update-tracker-api) first, possibly in a new API version directory if it breaks things for older app versions.
+- Changes to the database should also be pushed to the [back-end] (https://github.com/arjanvlek/cyanogen-update-tracker-api) repository, in a new SQL file. Database changes may never cause data to get lost. All data should always be migrated.
 
 ##How to develop?
 
