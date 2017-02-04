@@ -22,9 +22,9 @@ This Android Studio project requires the following to be installed (from Android
 
 ###Obtaining the code:
 ```
-git clone https://github.com/arjanvlek/android-cyanogen-update-tracker-app.git
+git clone https://github.com/arjanvlek/cyanogen-update-tracker-app.git
 ```
-- In Android studio, browse to the android-cyanogen-update-tracker directory and open build.gradle (not the Build.gradle in the app directory!)
+- In Android studio, browse to the cyanogen-update-tracker directory and open build.gradle (not the Build.gradle in the app directory!)
 
 
 ###Adding your API keys
