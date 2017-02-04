@@ -21,7 +21,7 @@ There are a few rules / limitations for Play Store commits:
 The app in general requires:
 - Web server or VPS running the LAMP or the WAMP stack (Linux / Windows, Apache, MySQL, PHP)
 - Domain name or static IP address
-- [Cyanogen Update Tracker API] (https://github.com/arjanvlek/cyanogen-update-tracker-api)
+- [Cyanogen Update Tracker API and database] (https://github.com/arjanvlek/cyanogen-update-tracker-api)
 - Cyanogen OS Version data (either from a third party API or added manually to the Web server)
 
 This Android Studio project requires the following to be installed (from Android Studio or Android SDK Manager):
