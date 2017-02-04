@@ -2,19 +2,20 @@
 Cyanogen Update Tracker app for Android devices
 
 This is the end-user application for Cyanogen Update Tracker.
-It is available on Google Play and uses Google Services.
+This open source version does not contain ads, and serves as a base for great ideas. If you have a really great feature and like to have it in the official version on Google Play, please [contact the main developer] (mailto:arjan.vlek.dev@gmail.com)
 
 ##How to develop?
 
 ###Prerequisites:
 The app in general requires:
-- Web server (apache, php, mysql) or VPS (apache, php, mysql and automatic update fetching using CRON)
-- Domain name
-- Cyanogen OS Version data (either from Cyanogen or added manually to the Web server)
+- Web server or VPS running the LAMP or the WAMP stack (Linux / Windows, Apache, MySQL, PHP)
+- Domain name or static IP address
+- [Cyanogen Update Tracker API] (https://github.com/arjanvlek/cyanogen-update-tracker-api)
+- Cyanogen OS Version data (either from a third party API or added manually to the Web server)
 
 This Android Studio project requires the following to be installed (from Android Studio or Android SDK Manager):
 - Android Studio (latest version)
-- Android 6.0 SDK, with Build-tools 21.1.2 and Tools 24.4.1 or higher
+- Android 7.1 SDK, with Build-tools 25.0.1 and Tools 25.0.1 or higher
 - Android support library and repository
 - Google Repository
 - Google Play Services
@@ -27,18 +28,14 @@ git clone https://github.com/arjanvlek/android-cyanogen-update-tracker-app.git
 
 
 ###Adding your API keys
-This project uses Google Cloud messaging and Admob.
-- You can configure these APIs at https://developers.google.com/android/.
-- Please note that Admob is integrated in an old way, so you need to update it in `fragment_updateinformation.xml` and `fragment_deviceinformation.xml` to use the new Google-Services.json file format.
+This project uses Google Cloud messaging. If you'd like to enable push notifications, do the following:
+- Create a new GCM project at https://developers.google.com/android/.
+- Add the google-services.json file you get from Google to the /app directory.
+- Add the Sender ID of GCM to /app/src/main/res/values-nl/google-services.xml (to prevent a release build error)
 
 ###Set up the app API Server
-- Follow the guide from the [API server project] (https://github.com/arjanvlek/android-cyanogen-update-tracker-api).
-- Add the base URL of the API to these files:
-
-```
-ServerConnector.java: lines 28 and 29
-GCMRegistrationIntentService.java: lines 52 and 53
-```
+- Follow the guide from the [API server project] (https://github.com/arjanvlek/cyanogen-update-tracker-api).
+- Add the base URL of the API to Build.gradle (this time in the /app folder). If you don't have a test version, add the same URL in the debug config
 
 ###Test it!
 You can now run the app on an emulator or on your own phone, just by clicking the Run or Debug button in Android Studio.
