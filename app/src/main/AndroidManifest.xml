@@ -116,12 +116,6 @@
                 android:value="com.arjanvlek.cyngnotainfo.view.MainActivity" />
         </activity>
 
-        <!-- Advertisements -->
-        <activity
-            android:name="com.google.android.gms.ads.AdActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenLayout|uiMode|screenSize|smallestScreenSize"
-            android:theme="@android:style/Theme.Translucent" />
-
         <!-- Push notifications services and receiver, Package updated receiver -->
         <receiver
             android:name="com.google.android.gms.gcm.GcmReceiver"

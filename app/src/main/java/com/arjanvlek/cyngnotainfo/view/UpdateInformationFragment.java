@@ -43,8 +43,6 @@ import com.arjanvlek.cyngnotainfo.Support.DateTimeFormatter;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDescriptionParser;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloadListener;
 import com.arjanvlek.cyngnotainfo.Support.UpdateDownloader;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
@@ -72,7 +70,6 @@ import static android.view.View.GONE;
 import static android.view.View.VISIBLE;
 import static android.view.ViewGroup.LayoutParams.MATCH_PARENT;
 import static android.view.ViewGroup.LayoutParams.WRAP_CONTENT;
-import static android.widget.RelativeLayout.ABOVE;
 import static android.widget.RelativeLayout.BELOW;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.LOCALE_DUTCH;
 import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
@@ -95,7 +92,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     private SwipeRefreshLayout updateInformationRefreshLayout;
     private SwipeRefreshLayout systemIsUpToDateRefreshLayout;
     private RelativeLayout rootView;
-    private AdView adView;
 
     private Context context;
     private UpdateDownloader updateDownloader;
@@ -158,21 +154,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
     }
 
     @Override
-    public void onPause() {
-        super.onPause();
-        if (adView != null) {
-            adView.pause();
-        }
-
-    }
-
-    @Override
     public void onResume() {
         super.onResume();
 
-        if (adView != null) {
-            adView.resume();
-        }
         if (refreshedDate != null && isFetched && settingsManager.checkIfSettingsAreValid() && isAdded()) {
             if (refreshedDate.plusMinutes(5).isBefore(DateTime.now())) {
                 if (networkConnectionManager.checkNetworkConnection()) {
@@ -186,14 +170,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                     showNetworkError();
                 }
             }
-        }
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (adView != null) {
-            adView.destroy();
         }
     }
 
@@ -262,7 +238,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
         if (!isFetched && settingsManager.checkIfSettingsAreValid()) {
             if (networkConnectionManager.checkNetworkConnection()) {
                 getServerData();
-                showAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
             } else if (settingsManager.checkIfCacheIsAvailable()) {
@@ -270,11 +245,9 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
                 cyanogenOTAUpdate = buildOfflineCyanogenOTAUpdate();
                 displayUpdateInformation(cyanogenOTAUpdate, false, false);
                 initDownloadManager();
-                hideAds();
                 refreshedDate = DateTime.now();
                 isFetched = true;
             } else {
-                hideAds();
                 showNetworkError();
             }
         }
@@ -518,10 +491,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             if (lastServerMessageView != null) {
                 RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(MATCH_PARENT, WRAP_CONTENT);
                 params.addRule(BELOW, lastServerMessageView.getId());
-
-                if(adView != null) {
-                    params.addRule(ABOVE, adView.getId());
-                }
 
                 if(systemIsUpToDateRefreshLayout != null) {
                     systemIsUpToDateRefreshLayout.setLayoutParams(params);
@@ -801,35 +770,6 @@ public class UpdateInformationFragment extends AbstractUpdateInformationFragment
             if (systemIsUpToDateRefreshLayout.isRefreshing()) {
                 systemIsUpToDateRefreshLayout.setRefreshing(false);
             }
-        }
-    }
-
-
-    /*
-      -------------- GOOGLE ADS METHODS -------------------
-     */
-
-
-    private void showAds() {
-        if(rootView != null) {
-            adView = (AdView) rootView.findViewById(R.id.updateInformationAdView);
-        }
-        if (adView != null) {
-            AdRequest adRequest = new AdRequest.Builder()
-                    .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_TEST_DEVICE)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
-                    .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
-                    .build();
-
-            adView.loadAd(adRequest);
-        }
-    }
-
-    private void hideAds() {
-        if (adView != null) {
-            adView.destroy();
         }
     }
 

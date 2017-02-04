@@ -20,7 +20,6 @@
         android:id="@+id/updateInformationRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/updateInformationAdView"
         android:visibility="gone">
         <ScrollView
             android:layout_width="match_parent"
@@ -193,7 +192,6 @@
         android:id="@+id/updateInformationSystemIsUpToDateRefreshLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_above="@+id/updateInformationAdView"
         android:visibility="gone">
         <ScrollView
             android:layout_width="match_parent"
@@ -258,13 +256,4 @@
             </RelativeLayout>
         </ScrollView>
     </android.support.v4.widget.SwipeRefreshLayout>
-
-    <com.google.android.gms.ads.AdView
-        android:id="@+id/updateInformationAdView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        ads:adSize="BANNER"
-        ads:adUnitId="@string/update_information_advertising_id" />
 </RelativeLayout>

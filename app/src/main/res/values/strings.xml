@@ -228,6 +228,4 @@
 
     <!-- Other strings-->
     <string name="icon">Icon</string>
-    <string name="update_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
-    <string name="device_information_advertising_id" translatable="false">** Add your AdMob ad block ID here **</string>
 </resources>

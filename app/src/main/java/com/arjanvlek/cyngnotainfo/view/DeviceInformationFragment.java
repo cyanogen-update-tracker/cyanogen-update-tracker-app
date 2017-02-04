@@ -16,9 +16,6 @@ import com.arjanvlek.cyngnotainfo.Model.Device;
 import com.arjanvlek.cyngnotainfo.Model.DeviceInformationData;
 import com.arjanvlek.cyngnotainfo.Model.SystemVersionProperties;
 import com.arjanvlek.cyngnotainfo.R;
-import com.arjanvlek.cyngnotainfo.Support.NetworkConnectionManager;
-import com.google.android.gms.ads.AdRequest;
-import com.google.android.gms.ads.AdView;
 
 import java.util.List;
 
@@ -26,17 +23,12 @@ import static com.arjanvlek.cyngnotainfo.ApplicationContext.NO_CYANOGEN_OS;
 
 public class DeviceInformationFragment extends AbstractFragment {
     private RelativeLayout rootView;
-    private AdView adView;
-    private NetworkConnectionManager networkConnectionManager = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
         //Inflate the layout for this fragment
         rootView = (RelativeLayout) inflater.inflate(R.layout.fragment_deviceinformation, container, false);
-        if(getActivity() != null) {
-            networkConnectionManager = new NetworkConnectionManager(getActivity().getApplicationContext());
-        }
         return rootView;
     }
 
@@ -138,12 +130,6 @@ public class DeviceInformationFragment extends AbstractFragment {
 
             TextView serialNumberView = (TextView) rootView.findViewById(R.id.device_information_serial_number_field);
             serialNumberView.setText(deviceInformationData.getSerialNumber());
-
-            if (networkConnectionManager != null && networkConnectionManager.checkNetworkConnection()) {
-                showAds();
-            } else {
-                hideAds();
-            }
         }
     }
 
@@ -163,72 +149,4 @@ public class DeviceInformationFragment extends AbstractFragment {
             displayDeviceInformation(devices);
         }
     }
-
-    private void hideAds() {
-        if (adView != null) {
-            adView.destroy();
-        }
-    }
-
-    private void showAds() {
-
-        // Gets the ad view defined in layout/ad_fragment.xml with ad unit ID set in
-        // values/strings.xml.
-        adView = (AdView) rootView.findViewById(R.id.device_information_banner_field);
-
-        // Create an ad request. Check logcat output for the hashed device ID to
-        // get test ads on a physical device. e.g.
-        // "Use AdRequest.Builder.addTestDevice("ABCDEF012345") to get test ads on this device."
-
-        AdRequest adRequest = new AdRequest.Builder()
-                .addTestDevice(ADS_TEST_DEVICE_ID_OWN_DEVICE)
-                .addTestDevice(ADS_TEST_DEVICE_ID_TEST_DEVICE)
-                .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_1)
-                .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_2)
-                .addTestDevice(ADS_TEST_DEVICE_ID_EMULATOR_3)
-                .addKeyword("smartphone")
-                .addKeyword("tablet")
-                .addKeyword("cyanogen")
-                .addKeyword("android")
-                .addKeyword("games")
-                .build();
-
-        // Start loading the ad in the background.
-        adView.loadAd(adRequest);
-    }
-
-    /**
-     * Called when leaving the activity
-     */
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (adView != null) {
-            adView.pause();
-        }
-
-    }
-
-    /**
-     * Called when the activity enters the foreground
-     */
-    @Override
-    public void onResume() {
-        super.onResume();
-        if (adView != null) {
-            adView.resume();
-        }
-    }
-
-    /**
-     * Called before the activity is destroyed
-     */
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (adView != null) {
-            adView.destroy();
-        }
-    }
-
 }
